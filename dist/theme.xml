@@ -1546,10 +1546,28 @@ const getV = id => { const e = el(id); return e ? e.value : ''; };
 const esc = s => !s ? '' : s.toString().replace(/[&<>'"]/g, t => ({ '&': '&', '<': '<', '>': '>', "'": '&#39;', '"': '&quot;' }[t]));
 
 const fixD = v => {
- if (typeof v !== 'string') return v;
- const m = v.match(/drive\.google\.com.*(?:id=|\/d\/)([a-zA-Z0-9_-]+)/);
- // GANTI URL INI AGAR GAMBAR SELALU MUNCUL
- return m ? `https://lh3.googleusercontent.com/d/${m[1]}` : v;
+    if (typeof v !== 'string' || !v.trim()) return v;
+    v = v.trim();
+    
+    // 1. Google Drive Link converter
+    const gDriveMatch = v.match(/drive\.google\.com.*(?:id=|\/d\/)([a-zA-Z0-9_-]+)/);
+    if (gDriveMatch) return `https://lh3.googleusercontent.com/d/${gDriveMatch[1]}`;
+    
+    // 2. Google Image Search URL (extract original imgurl parameter)
+    if (v.includes('google.com/imgres') || v.includes('google.co.id/imgres')) {
+        try {
+            const urlObj = new URL(v);
+            const imgParam = urlObj.searchParams.get('imgurl') || urlObj.searchParams.get('url');
+            if (imgParam) return decodeURIComponent(imgParam);
+        } catch(e) {}
+    }
+
+    // 3. Dropbox direct link converter
+    if (v.includes('dropbox.com')) {
+        return v.replace('?dl=0', '?raw=1').replace('&dl=0', '&raw=1');
+    }
+
+    return v;
 };
 
 // --- ENGINE LAZY LOADING GAMBAR ---
@@ -2295,24 +2313,26 @@ const rDyn = () => {
 setH('dynamic-banners-container', `
  <div class="flex overflow-x-auto gap-4 pb-2 snap-x hide-scrollbar">
  ${(appData.banners || []).map((b, i) => {
-    const hasImg = b.img && b.img.trim().length > 0;
+    const rawImg = (b.img || '').trim();
+    const fixedImg = rawImg ? fixD(rawImg) : '';
+    const hasImg = fixedImg.length > 0;
     const hasTitle = b.title && b.title.trim().length > 0;
+    const bgTheme = i % 2 === 0 ? 'var(--clr-p)' : 'var(--clr-p-dark)';
     
     if (hasImg) {
         return `
-        <div class="w-[88%] sm:w-[520px] md:w-[640px] aspect-[16/7] sm:aspect-[21/9] snap-center shrink-0 rounded-2xl overflow-hidden shadow-md relative border border-slate-200 dark:border-slate-700 bg-slate-900 group cursor-pointer">
-            <img data-src="${esc(b.img)}" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==" onerror="this.onerror=null;this.src='https://placehold.co/800x350?text=Banner'" class="lazy-load opacity-0 transition-all duration-700 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"/>
-            ${hasTitle ? `
-            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent flex flex-col justify-end p-4 sm:p-5 text-white pointer-events-none">
+        <div class="w-[88%] sm:w-[520px] md:w-[640px] aspect-[16/7] sm:aspect-[21/9] snap-center shrink-0 rounded-2xl overflow-hidden shadow-md relative border border-slate-200 dark:border-slate-700 group cursor-pointer" style="background:${bgTheme}">
+            <img src="${esc(fixedImg)}" loading="eager" onerror="this.style.display='none'" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4 sm:p-5 text-white pointer-events-none ${hasTitle ? '' : 'opacity-0'}">
                 <span class="badge badge-xs w-fit mb-1.5" style="background:var(--clr-p);color:#fff;border-color:transparent">Promo</span>
-                <h2 class="font-bold text-base sm:text-lg leading-tight drop-shadow-md text-white">${esc(b.title)}</h2>
+                <h2 class="font-bold text-base sm:text-lg leading-tight drop-shadow-md text-white">${esc(b.title || '')}</h2>
                 ${b.subtitle ? `<p class="text-xs text-white/90 font-medium drop-shadow-sm mt-0.5">${esc(b.subtitle)}</p>` : ''}
-            </div>` : ''}
+            </div>
         </div>`;
     }
 
     return `
-    <div class="w-[85%] sm:w-[320px] snap-center shrink-0 rounded-2xl p-5 text-white shadow-md relative overflow-hidden flex items-center justify-between border-2 border-transparent" style="background: ${i % 2 === 0 ? 'var(--clr-p)' : 'var(--clr-p-dark)'};">
+    <div class="w-[85%] sm:w-[320px] snap-center shrink-0 rounded-2xl p-5 text-white shadow-md relative overflow-hidden flex items-center justify-between border-2 border-transparent" style="background: ${bgTheme}">
         <div class="flex-1 pr-2 relative z-10">
             <span class="badge badge-xs" style="background:rgba(255,255,255,.25);color:#fff;border-color:rgba(255,255,255,.35)">Promo</span>
             <h2 class="font-bold text-base sm:text-lg mt-2 mb-0.5 leading-tight text-white">${esc(b.title || 'Promo Menarik')}</h2>
