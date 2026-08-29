@@ -2942,6 +2942,13 @@ const _hexToRgba = (hex, alpha = 0.12) => {
 const _urlToBase64 = async (url) => {
   if (!url || typeof url !== 'string') return null;
   if (url.startsWith('data:image/')) return url;
+  
+  // Tautan Google Drive tidak mendukung CORS Canvas dan sering memicu 429 (Rate Limit).
+  // Lewati pengambilan langsung agar tidak membebani jaringan / memunculkan error 429 di konsol.
+  if (/googleusercontent\.com|drive\.google\.com/i.test(url)) {
+    return null;
+  }
+
   return new Promise((resolve) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
