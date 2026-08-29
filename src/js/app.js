@@ -2978,7 +2978,15 @@ window.generateA4Document = async (type) => {
  if (invLogoBox) invLogoBox.style.backgroundColor = themeClr;
 
  if (isLogoUrl) {
-   if (invLogoImg) { invLogoImg.src = logoVal; invLogoImg.classList.remove('hidden'); }
+   if (invLogoImg) {
+     invLogoImg.crossOrigin = 'anonymous';
+     invLogoImg.src = logoVal;
+     invLogoImg.onerror = () => {
+       invLogoImg.classList.add('hidden');
+       if (invLogoIcon) invLogoIcon.classList.remove('hidden');
+     };
+     invLogoImg.classList.remove('hidden');
+   }
    if (invLogoIcon) invLogoIcon.classList.add('hidden');
  } else {
    if (invLogoImg) invLogoImg.classList.add('hidden');
@@ -3049,7 +3057,15 @@ window.generateA4Document = async (type) => {
  if (sjLogoBox) sjLogoBox.style.backgroundColor = themeClr;
 
  if (isLogoUrl) {
-   if (sjLogoImg) { sjLogoImg.src = logoVal; sjLogoImg.classList.remove('hidden'); }
+   if (sjLogoImg) {
+     sjLogoImg.crossOrigin = 'anonymous';
+     sjLogoImg.src = logoVal;
+     sjLogoImg.onerror = () => {
+       sjLogoImg.classList.add('hidden');
+       if (sjLogoIcon) sjLogoIcon.classList.remove('hidden');
+     };
+     sjLogoImg.classList.remove('hidden');
+   }
    if (sjLogoIcon) sjLogoIcon.classList.add('hidden');
  } else {
    if (sjLogoImg) sjLogoImg.classList.add('hidden');
@@ -3091,13 +3107,14 @@ window.generateA4Document = async (type) => {
  
  const tempContainer = document.createElement('div');
  tempContainer.style.position = 'fixed';
- tempContainer.style.top = '-99999px';
- tempContainer.style.left = '-99999px'; 
+ tempContainer.style.top = '0';
+ tempContainer.style.left = '-9999px'; 
  tempContainer.style.width = '794px'; 
  tempContainer.style.minWidth = '794px';
  tempContainer.style.maxWidth = '794px';
  tempContainer.style.backgroundColor = '#ffffff';
- tempContainer.style.zIndex = '-99999'; 
+ tempContainer.style.zIndex = '-9999'; 
+ tempContainer.style.overflow = 'hidden';
  
  const clone = element.cloneNode(true);
  clone.style.display = 'flex';
@@ -3113,6 +3130,9 @@ window.generateA4Document = async (type) => {
  scale: 2,
  backgroundColor: '#ffffff',
  useCORS: true,
+ allowTaint: true,
+ imageTimeout: 2000,
+ logging: false,
  width: 794,
  windowWidth: 794,
  scrollX: 0, 
