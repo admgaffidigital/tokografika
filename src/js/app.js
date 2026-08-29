@@ -4021,6 +4021,19 @@ const buildAndInjectManifest = async () => {
  _pwaIconCache[cacheKey] = { icon192, icon512, icon180 };
  }
 
+ // Update semua favicon (browser tab icon) dari logo toko
+ ['pwa-favicon', 'pwa-favicon-shortcut'].forEach(id => {
+     let elFav = document.getElementById(id);
+     if (!elFav) {
+         elFav = document.createElement('link');
+         elFav.id = id;
+         elFav.rel = id === 'pwa-favicon' ? 'icon' : 'shortcut icon';
+         elFav.type = 'image/png';
+         document.head.appendChild(elFav);
+     }
+     elFav.href = icon180 || icon192 || (logo && (logo.startsWith('http') || logo.startsWith('data:')) ? logo : '');
+ });
+
  // Update semua apple-touch-icon (iOS home screen icon)
  ['pwa-apple-touch-icon','pwa-apple-touch-icon-76','pwa-apple-touch-icon-120',
  'pwa-apple-touch-icon-152','pwa-apple-touch-icon-180'].forEach(id => {

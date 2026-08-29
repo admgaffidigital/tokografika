@@ -17,6 +17,10 @@
     <meta content='yes' name='apple-mobile-web-app-capable'/>
     <meta content='black-translucent' name='apple-mobile-web-app-status-bar-style'/>
     <meta content='Toko' id='pwa-app-name-ios' name='apple-mobile-web-app-title'/>
+    <!-- Favicon (Browser Tab Icon) — otomatis diambil dari logo toko -->
+    <link href='data:,' id='pwa-favicon' rel='icon' type='image/png'/>
+    <link href='data:,' id='pwa-favicon-shortcut' rel='shortcut icon' type='image/png'/>
+    
     <!-- Icon untuk iOS (Apple Touch Icon) -->
     <!-- Icon diisi oleh buildAndInjectManifest() saat JS selesai memuat data toko -->
     <link href='data:,' id='pwa-apple-touch-icon' rel='apple-touch-icon'/>
