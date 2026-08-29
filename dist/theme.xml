@@ -219,6 +219,72 @@ body {
 }
 
 /* --------------------------------------------------------------------------
+   Abstract Background Shapes (Native App Aesthetic)
+   -------------------------------------------------------------------------- */
+.app-bg-shapes {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.shape-grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(var(--clr-p-10) 1.2px, transparent 1.2px);
+    background-size: 24px 24px;
+    opacity: 0.75;
+}
+
+.shape-blob-1 {
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 320px;
+    height: 320px;
+    background-color: var(--clr-p-10);
+    border-radius: 50% 40% 60% 50% / 60% 50% 50% 60%;
+    transform: rotate(20deg);
+    transition: background-color 0.3s ease;
+}
+
+.shape-blob-2 {
+    position: absolute;
+    top: 40%;
+    left: -90px;
+    width: 260px;
+    height: 260px;
+    background-color: var(--clr-p-10);
+    border-radius: 40% 60% 50% 60% / 50% 40% 60% 50%;
+    transform: rotate(-15deg);
+    transition: background-color 0.3s ease;
+}
+
+.shape-blob-3 {
+    position: absolute;
+    bottom: 5%;
+    right: -70px;
+    width: 300px;
+    height: 300px;
+    background-color: var(--clr-p-10);
+    border-radius: 60% 40% 50% 50% / 40% 60% 50% 50%;
+    transform: rotate(35deg);
+    transition: background-color 0.3s ease;
+}
+
+html.dark .shape-grid-pattern {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1.2px, transparent 1.2px);
+}
+
+html.dark .shape-blob-1,
+html.dark .shape-blob-2,
+html.dark .shape-blob-3 {
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* --------------------------------------------------------------------------
    5. Components & Forms (Theme-Driven)
    -------------------------------------------------------------------------- */
 .btn-primary {
@@ -961,6 +1027,13 @@ html.dark .badge-counter {
  <!-- 4. MAIN APP CONTAINER -->
  <!-- ========================================================================= -->
  <div class='w-full relative bg-slate-50 dark:bg-slate-900' id='app-container'>
+    <!-- Abstract Decorative Background Shapes (Native App Aesthetic) -->
+    <div class='app-bg-shapes pointer-events-none' aria-hidden='true'>
+        <div class='shape-grid-pattern'></div>
+        <div class='shape-blob-1'></div>
+        <div class='shape-blob-2'></div>
+        <div class='shape-blob-3'></div>
+    </div>
  <!-- ====================================================================- -->
  <!-- VIEW: CATALOG / HOME -->
  <!-- ====================================================================- -->
