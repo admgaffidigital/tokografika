@@ -16,9 +16,7 @@ console.log('Has <b:skin>?', themeXml.includes('<b:skin>'));
 console.log('Has <b:section>?', themeXml.includes('<b:section'));
 
 // Check 3: Check for unescaped ampersands outside CDATA
-// Strip all CDATA blocks first
 let stripped = themeXml.replace(/<!\[CDATA\[[\s\S]*?\]\]>/g, '');
-// Strip comments
 stripped = stripped.replace(/<!--[\s\S]*?-->/g, '');
 
 const badAmpMatches = [];
@@ -52,4 +50,14 @@ if (unclosedTags.length > 0) {
   unclosedTags.slice(0, 10).forEach(u => console.log('  ->', u.match));
 } else {
   console.log('✅ All void tags are properly self-closed (<img />, <input />, <link />, etc.)!');
+}
+
+// Check 5: Blogger section & widget tags pairing
+const bSectionOpen = (themeXml.match(/<b:section\b/g) || []).length;
+const bSectionClose = (themeXml.match(/<\/b:section>/g) || []).length;
+if (bSectionOpen !== bSectionClose) {
+  console.error(`❌ ERROR: <b:section> tag mismatch! Opened: ${bSectionOpen}, Closed: ${bSectionClose}`);
+  process.exit(1);
+} else {
+  console.log(`✅ <b:section> tags balanced (${bSectionOpen} pairs)`);
 }
