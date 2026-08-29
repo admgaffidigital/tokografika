@@ -870,21 +870,19 @@ html.dark .badge-counter {
  <!-- ============================================================ -->
  <!-- BANNER INSTALL PWA &#8212; Muncul otomatis jika belum diinstall -->
  <!-- ============================================================ -->
- <div class='hidden w-full max-w-5xl mx-auto px-4 mt-4' id='pwa-install-banner'>
- <div class='relative flex items-center gap-3 rounded-2xl px-4 py-3 shadow-lg overflow-hidden' id='pwa-banner-inner' style='background:linear-gradient(to right,var(--clr-p),var(--clr-p-dark));border:1px solid var(--clr-p)'>
- <div class='absolute -right-6 -top-6 w-24 h-24 bg-slate-200 rounded-full pointer-events-none'></div>
- <div class='w-11 h-11 shrink-0 bg-slate-100 rounded-xl flex items-center justify-center border border-white/30'>
- <i class='fa-solid fa-mobile-screen-button text-white text-xl' id='pwa-banner-icon'></i>
- </div>
- <div class='flex-1 min-w-0'>
- <p class='text-white font-semibold text-xs leading-tight' id='pwa-banner-title'>Tambahkan ke Layar Utama</p>
- <p class='text-emerald-100 text-[10px] font-medium mt-0.5 leading-tight' id='pwa-banner-desc'>Akses lebih cepat tanpa buka browser</p>
- </div>
- <button class='shrink-0 bg-white font-medium text-[10px] px-3 py-2 rounded-xl shadow-sm active:scale-95 transition-all uppercase tracking-wide' id='pwa-install-btn' onclick='triggerPwaInstall()' style='color:var(--clr-p)'>Install</button>
- <button class='shrink-0 w-7 h-7 flex items-center justify-center text-white/70 hover:text-white transition-colors' onclick='dismissPwaBanner()'><i class='fa-solid fa-xmark text-sm'></i></button>
- </div>
- </div>
- <!-- ============================================================ -->
+    <div class='hidden w-full max-w-5xl mx-auto px-4 mt-4' id='pwa-install-banner'>
+        <div class='relative flex items-center gap-3 rounded-2xl px-4 py-3 shadow-md overflow-hidden bg-emerald-600 dark:bg-emerald-700 border border-emerald-500' id='pwa-banner-inner'>
+            <div class='w-10 h-10 shrink-0 bg-white/20 rounded-xl flex items-center justify-center border border-white/30 text-white'>
+                <i class='fa-solid fa-mobile-screen-button text-lg' id='pwa-banner-icon'></i>
+            </div>
+            <div class='flex-1 min-w-0'>
+                <p class='text-white font-bold text-xs leading-tight' id='pwa-banner-title'>Tambahkan ke Layar Utama</p>
+                <p class='text-emerald-100 text-[10px] font-medium mt-0.5 leading-tight' id='pwa-banner-desc'>Akses lebih cepat tanpa buka browser</p>
+            </div>
+            <button class='shrink-0 bg-white text-emerald-700 font-bold text-[11px] px-3.5 py-2 rounded-xl shadow-sm active:scale-95 transition-all uppercase tracking-wide border border-white' id='pwa-install-btn' onclick='triggerPwaInstall()'>Install</button>
+            <button class='shrink-0 w-7 h-7 flex items-center justify-center text-white/80 hover:text-white transition-colors' onclick='dismissPwaBanner()' title='Tutup'><i class='fa-solid fa-xmark text-sm'></i></button>
+        </div>
+    </div><!-- ============================================================ -->
 
  <div class='w-full max-w-5xl mx-auto px-4 mt-5' id='dynamic-banners-container'></div>
  
@@ -1248,19 +1246,18 @@ html.dark .badge-counter {
  </div>
 
  <div class='hidden' id='driver-riwayat-section'>
- <div class='bg-emerald-500 rounded-[1.5rem] p-6 text-white shadow-lg mb-6 relative overflow-hidden'>
- <div class='absolute -right-6 -top-6 w-32 h-32 bg-slate-200 rounded-full blur-2xl'></div>
- <div class='flex justify-between items-start relative z-10'>
- <div>
- <p class='text-[10px] font-medium uppercase tracking-widest text-emerald-100 mb-1'><i class='fa-solid fa-wallet'></i> Saldo Aktif</p>
- <h2 class='text-3xl font-black tracking-tight drop-shadow-sm' id='driver-total-saldo'>Rp 0</h2>
- </div>
- <button class='bg-white text-emerald-600 px-4 py-2 rounded-xl text-[10px] font-medium shadow-sm hover:scale-105 transition-transform border-2 border-emerald-400' onclick='openWithdrawModal()'><i class='fa-solid fa-money-bill-transfer'></i> Tarik Dana</button>
- </div>
- <p class='text-[9px] font-bold text-emerald-100 mt-4 bg-slate-200 inline-block px-2 py-1 rounded border border-white/20 relative z-10'>
- Rek: <span id='driver-bank-info'>-</span>
- </p>
- </div>
+        <div class='bg-emerald-600 dark:bg-emerald-700 rounded-[1.5rem] p-6 text-white shadow-lg mb-6 relative overflow-hidden'>
+            <div class='flex justify-between items-start relative z-10'>
+                <div>
+                    <p class='text-[10px] font-medium uppercase tracking-widest text-emerald-100 mb-1'><i class='fa-solid fa-wallet'></i> Saldo Aktif</p>
+                    <h2 class='text-3xl font-black tracking-tight drop-shadow-sm' id='driver-total-saldo'>Rp 0</h2>
+                </div>
+                <button class='bg-white text-emerald-700 font-bold px-4 py-2 rounded-xl text-xs shadow-sm hover:scale-105 transition-transform' onclick='openWithdrawModal()'><i class='fa-solid fa-money-bill-transfer'></i> Tarik Dana</button>
+            </div>
+            <p class='text-[10px] font-semibold text-emerald-100 mt-4 bg-black/15 inline-block px-2.5 py-1 rounded-lg border border-white/10 relative z-10'>
+                Rek: <span id='driver-bank-info'>-</span>
+            </p>
+        </div>
 
  <div class='flex bg-slate-200/70 dark:bg-slate-800 p-1 rounded-xl mb-4 border border-slate-300 dark:border-slate-700'>
  <button class='flex-1 py-1.5 text-[10px] font-medium rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all' id='btn-subtab-order' onclick='switchDriverSubTab(&quot;order&quot;)'>Riwayat Order</button>
