@@ -808,12 +808,14 @@ const rDyn = () => {
         if (isUrl) {
             // Tampilkan gambar, sembunyikan icon
             if (img) {
+                img.crossOrigin = 'anonymous';
                 img.src = logoVal;
                 img.style.display = 'block';
                 img.classList.remove('hidden');
                 img.onerror = () => {
                     if (!img.dataset.retried) {
                         img.dataset.retried = '1';
+                        img.crossOrigin = 'anonymous';
                         img.src = `https://wsrv.nl/?url=${encodeURIComponent(logoVal)}&w=300`;
                     } else {
                         img.style.display = 'none';
@@ -824,12 +826,14 @@ const rDyn = () => {
             }
             if (icon) { icon.style.display = 'none'; icon.classList.add('hidden'); }
             if (fImg) {
+                fImg.crossOrigin = 'anonymous';
                 fImg.src = logoVal;
                 fImg.style.display = 'block';
                 fImg.classList.remove('hidden');
                 fImg.onerror = () => {
                     if (!fImg.dataset.retried) {
                         fImg.dataset.retried = '1';
+                        fImg.crossOrigin = 'anonymous';
                         fImg.src = `https://wsrv.nl/?url=${encodeURIComponent(logoVal)}&w=300`;
                     } else {
                         fImg.style.display = 'none';
@@ -2972,16 +2976,28 @@ const _urlToBase64 = async (rawUrl) => {
   if (!rawUrl || typeof rawUrl !== 'string') return null;
   if (rawUrl.startsWith('data:image/')) return rawUrl;
   
-  // Deteksi jika Google Drive / URL eksternal, gunakan wsrv.nl proxy berkecepatan tinggi dengan CORS headers
-  let targetUrl = rawUrl.trim();
-  const gIdMatch = targetUrl.match(/(?:id=|\/d\/)([a-zA-Z0-9_-]+)/);
-  if (gIdMatch) {
-    targetUrl = `https://wsrv.nl/?url=${encodeURIComponent('https://drive.google.com/thumbnail?id=' + gIdMatch[1] + '&sz=w400')}&w=300&output=png`;
-  } else if (/^https?:\/\//i.test(targetUrl) && !targetUrl.includes('wsrv.nl')) {
-    targetUrl = `https://wsrv.nl/?url=${encodeURIComponent(targetUrl)}&w=300&output=png`;
+  // 1. Prioritas Utama: Ambil langsung dari logo navbar/footer yang sudah sukses tampil di browser
+  const hImg = el('dyn-store-logo-img') || el('footer-logo-img');
+  if (hImg && hImg.complete && hImg.naturalWidth > 0 && !hImg.classList.contains('hidden')) {
+    try {
+      const c = document.createElement('canvas');
+      c.width = hImg.naturalWidth || 120;
+      c.height = hImg.naturalHeight || 120;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(hImg, 0, 0, c.width, c.height);
+      const dataUri = c.toDataURL('image/png');
+      if (dataUri && dataUri.length > 200) return dataUri;
+    } catch (e) {}
   }
 
-  return new Promise((resolve) => {
+  // 2. Jika belum ada di DOM, lakukan loading asynchronous dengan timeout
+  let targetUrl = rawUrl.trim();
+  const gIdMatch = targetUrl.match(/(?:drive\.google\.com.*(?:id=|\/d\/)|googleusercontent\.com\/d\/)([a-zA-Z0-9_-]+)/);
+  if (gIdMatch) {
+    targetUrl = `https://drive.google.com/thumbnail?id=${gIdMatch[1]}&sz=w600`;
+  }
+
+  const loadImgAsBase64 = (srcUrl) => new Promise((resolve) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
     let done = false;
@@ -2990,8 +3006,8 @@ const _urlToBase64 = async (rawUrl) => {
       done = true;
       try {
         const c = document.createElement('canvas');
-        c.width = img.naturalWidth || img.width || 120;
-        c.height = img.naturalHeight || img.height || 120;
+        c.width = img.naturalWidth || 120;
+        c.height = img.naturalHeight || 120;
         const ctx = c.getContext('2d');
         ctx.drawImage(img, 0, 0, c.width, c.height);
         resolve(c.toDataURL('image/png'));
@@ -3004,9 +3020,17 @@ const _urlToBase64 = async (rawUrl) => {
     };
     setTimeout(() => {
       if (!done) { done = true; resolve(null); }
-    }, 1500);
-    img.src = targetUrl;
+    }, 2000);
+    img.src = srcUrl;
   });
+
+  // Coba muat melalui Cloudflare Edge CDN wsrv.nl proxy (CORS Enabled)
+  let result = await loadImgAsBase64(`https://wsrv.nl/?url=${encodeURIComponent(targetUrl)}&w=300&output=png`);
+  if (result) return result;
+
+  // Fallback ke direct URL
+  result = await loadImgAsBase64(targetUrl);
+  return result;
 };
 
 window.generateA4Document = async (type) => {
@@ -3057,15 +3081,22 @@ window.generateA4Document = async (type) => {
  if (base64Logo) {
    if (invLogoImg) {
      invLogoImg.src = base64Logo;
+     invLogoImg.style.display = 'block';
      invLogoImg.classList.remove('hidden');
    }
-   if (invLogoSvg) invLogoSvg.classList.add('hidden');
+   if (invLogoSvg) {
+     invLogoSvg.style.display = 'none';
+     invLogoSvg.classList.add('hidden');
+   }
  } else {
    if (invLogoImg) {
-     invLogoImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+     invLogoImg.style.display = 'none';
      invLogoImg.classList.add('hidden');
    }
-   if (invLogoSvg) invLogoSvg.classList.remove('hidden');
+   if (invLogoSvg) {
+     invLogoSvg.style.display = 'block';
+     invLogoSvg.classList.remove('hidden');
+   }
  }
  
  let itemsHtml = (o.items || []).map((item, index) => {
@@ -3131,15 +3162,22 @@ window.generateA4Document = async (type) => {
  if (base64Logo) {
    if (sjLogoImg) {
      sjLogoImg.src = base64Logo;
+     sjLogoImg.style.display = 'block';
      sjLogoImg.classList.remove('hidden');
    }
-   if (sjLogoSvg) sjLogoSvg.classList.add('hidden');
+   if (sjLogoSvg) {
+     sjLogoSvg.style.display = 'none';
+     sjLogoSvg.classList.add('hidden');
+   }
  } else {
    if (sjLogoImg) {
-     sjLogoImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+     sjLogoImg.style.display = 'none';
      sjLogoImg.classList.add('hidden');
    }
-   if (sjLogoSvg) sjLogoSvg.classList.remove('hidden');
+   if (sjLogoSvg) {
+     sjLogoSvg.style.display = 'block';
+     sjLogoSvg.classList.remove('hidden');
+   }
  }
 
  if (o.customer?.note) {
@@ -3196,12 +3234,19 @@ window.generateA4Document = async (type) => {
  if (base64Logo) {
    if (cloneImg) {
      cloneImg.src = base64Logo;
+     cloneImg.style.display = 'block';
+     cloneImg.style.width = '100%';
+     cloneImg.style.height = '100%';
+     cloneImg.style.objectFit = 'contain';
      cloneImg.classList.remove('hidden');
    }
    if (cloneSvg) cloneSvg.remove();
  } else {
    if (cloneImg) cloneImg.remove();
-   if (cloneSvg) cloneSvg.classList.remove('hidden');
+   if (cloneSvg) {
+     cloneSvg.style.display = 'block';
+     cloneSvg.classList.remove('hidden');
+   }
  }
  
  tempContainer.appendChild(clone);
