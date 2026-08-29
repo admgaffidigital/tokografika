@@ -862,8 +862,28 @@ setH('dynamic-banners-container', `
 };
 
 window.filterCategory = c => { aCat = c; cPage = 1; rDyn(); const s = el('catalog-scroll'); if (s) s.scrollTo({ top: 0, behavior: 'smooth' }); };
-window.handleSearch = v => { clearTimeout(window._catST); const cb = el('btn-search-clear'); if (cb) cb.classList.toggle('hidden', !v); window._catST = setTimeout(() => { sQ = v; cPage = 1; rCat(); const s = el('catalog-scroll'); if (s) s.scrollTo({ top: 0, behavior: 'smooth' }); }, 250); };
-window.clearSearch = () => { const si = el('search-input'); if (si) { si.value = ''; si.focus(); } const cb = el('btn-search-clear'); if (cb) cb.classList.add('hidden'); sQ = ''; cPage = 1; rCat(); };
+window.handleSearch = v => {
+    clearTimeout(window._catST);
+    const val = (v || '').trim();
+    const cb = el('btn-search-clear');
+    if (cb) cb.classList.toggle('hidden', !val);
+    window._catST = setTimeout(() => {
+        sQ = val;
+        cPage = 1;
+        rCat();
+        const s = el('catalog-scroll');
+        if (s && val) s.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 200);
+};
+window.clearSearch = () => {
+    const si = el('search-input');
+    if (si) si.value = '';
+    const cb = el('btn-search-clear');
+    if (cb) cb.classList.add('hidden');
+    sQ = '';
+    cPage = 1;
+    rCat();
+};
 window.handleSort = v => { cSort = v; cPage = 1; rCat(); };
 
 window.toggleView = v => {
