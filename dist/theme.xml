@@ -794,7 +794,7 @@ html.dark .badge-counter {
  <!-- 1. NOTIFICATIONS & GLOBAL LOADERS -->
  <!-- ========================================================================= -->
  <div class='bg-slate-900 text-white px-6 py-3 rounded-full border-2 border-slate-700 flex items-center gap-3' id='toast'>
- <i class='fa-solid fa-bell text-emerald-400'></i>
+ <i class='fa-solid fa-bell' style='color:var(--clr-p)'></i>
  <span class='font-bold text-sm tracking-wide' id='toast-message'>Notifikasi</span>
  </div>
 
@@ -1225,7 +1225,7 @@ html.dark .badge-counter {
  <i class='fa-solid fa-xmark'></i>
  </button>
  
- <div class='w-16 h-16 bg-emerald-500 text-white rounded-2xl flex items-center justify-center mb-5 text-3xl shadow-lg shadow-emerald-500/30 ring-4 ring-emerald-50 dark:ring-emerald-900/30'>
+ <div class='w-16 h-16 text-white rounded-2xl flex items-center justify-center mb-5 text-3xl shadow-lg' style='background-color:var(--clr-p);box-shadow:0 8px 24px var(--clr-p-25)'>
  <i class='fa-solid fa-shield-halved'></i>
  </div>
  
@@ -1237,18 +1237,18 @@ html.dark .badge-counter {
  <div class='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
  <i class='fa-solid fa-user text-slate-400 dark:text-slate-500'></i>
  </div>
- <input class='w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all placeholder:text-slate-400' id='login-username' placeholder='Username' type='text'/>
+ <input class='w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white admin-input focus:outline-none transition-all placeholder:text-slate-400' id='login-username' placeholder='Username' type='text'/>
  </div>
  
  <div class='relative'>
  <div class='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
  <i class='fa-solid fa-lock text-slate-400 dark:text-slate-500'></i>
  </div>
- <input class='w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none transition-all placeholder:text-slate-400' id='login-password' placeholder='Password' type='password'/>
+ <input class='w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white admin-input focus:outline-none transition-all placeholder:text-slate-400' id='login-password' placeholder='Password' type='password'/>
  </div>
  
  <div class='pt-4'>
- <button class='w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl py-3.5 text-sm transition-all duration-300 shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 hover:-translate-y-0.5' onclick='processAdminLogin()'>
+ <button class='btn-primary w-full !py-3.5 !text-sm hover:-translate-y-0.5' onclick='processAdminLogin()'>
  Masuk Sistem
  </button>
  </div>
@@ -1265,10 +1265,10 @@ html.dark .badge-counter {
  <div class='bg-white dark:bg-slate-900 shrink-0 px-4 py-3 flex items-center justify-center z-30 border-b border-slate-200/80 dark:border-slate-800 shadow-sm sticky top-0'>
  <div class='flex items-center justify-between w-full max-w-5xl'>
  <div class='flex items-center gap-3'>
- <button class='hidden w-9 h-9 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-emerald-600 transition-all shadow-sm' id='btn-admin-back' onclick='history.back()'>
+ <button class='hidden w-9 h-9 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all shadow-sm' id='btn-admin-back' onclick='history.back()' style='--hover-color:var(--clr-p)'>
  <i class='fa-solid fa-arrow-left text-sm'></i>
  </button>
- <div class='w-10 h-10 rounded-xl bg-emerald-500 border border-emerald-400 text-white flex items-center justify-center shadow-md shadow-emerald-500/20 transition-all' id='admin-logo-box'>
+ <div class='w-10 h-10 rounded-xl text-white flex items-center justify-center shadow-md transition-all' id='admin-logo-box' style='background-color:var(--clr-p);box-shadow:0 4px 12px var(--clr-p-25)'>
  <i class='fa-solid fa-layer-group text-sm'></i>
  </div>
  <div>
@@ -1311,8 +1311,8 @@ html.dark .badge-counter {
  <span class='text-[11px] font-medium text-purple-200 uppercase tracking-wider relative z-10 group-hover:text-white transition-colors'>Analitik Lanjut</span>
  </button>
  
- <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-500/30 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' onclick='openAdminTab(&apos;orders&apos;)'>
- <div class='w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-500/20 transition-all duration-300'>
+ <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' onclick='openAdminTab(&apos;orders&apos;)'>
+ <div class='w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
  <i class='fa-solid fa-receipt text-2xl'></i>
  </div>
  <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Pesanan</span>
@@ -1325,15 +1325,15 @@ html.dark .badge-counter {
  <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Toko</span>
  </button>
 
- <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-500/30 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' onclick='openAdminTab(&apos;products&apos;)'>
- <div class='w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-500/20 transition-all duration-300'>
+ <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' onclick='openAdminTab(&apos;products&apos;)'>
+ <div class='w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
  <i class='fa-solid fa-box-open text-2xl'></i>
  </div>
  <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Produk</span>
  </button>
 
- <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:border-amber-200 dark:hover:border-amber-500/30 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' onclick='openAdminTab(&apos;categories&apos;)'>
- <div class='w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-500/20 transition-all duration-300'>
+ <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' onclick='openAdminTab(&apos;categories&apos;)'>
+ <div class='w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
  <i class='fa-solid fa-tags text-2xl'></i>
  </div>
  <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Kategori</span>
@@ -1360,8 +1360,8 @@ html.dark .badge-counter {
  <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Banner</span>
  </button>
  
- <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-500/30 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' id='btn-menu-accounts' onclick='openAdminTab(&apos;accounts&apos;)'>
- <div class='w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-500/20 transition-all duration-300'>
+ <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' id='btn-menu-accounts' onclick='openAdminTab(&apos;accounts&apos;)'>
+ <div class='w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
  <i class='fa-solid fa-users-gear text-2xl'></i>
  </div>
  <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Kasir</span>
@@ -1380,7 +1380,7 @@ html.dark .badge-counter {
  <!-- ====================================================================- -->
  <div class='view-section flex flex-col items-center justify-center fade-in bg-slate-900 z-50 min-h-screen hidden' id='view-driver-login'>
  <div class='w-full max-w-[360px] p-6 bg-white dark:bg-slate-800 rounded-[2rem] shadow-2xl relative flex flex-col items-center text-center'>
- <div class='w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-5 text-3xl shadow-inner'>
+ <div class='w-16 h-16 rounded-2xl flex items-center justify-center mb-5 text-3xl shadow-inner' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
  <i class='fa-solid fa-motorcycle'></i>
  </div>
  <h2 class='text-2xl font-black text-slate-900 dark:text-white mb-1'>Mitra Driver</h2>
@@ -1389,7 +1389,7 @@ html.dark .badge-counter {
  <div class='space-y-4 w-full text-left'>
  <input class='admin-input !py-3.5 w-full' id='driver-username' placeholder='Nomor WA (Cth: 0812...)' type='text'/>
  <input class='admin-input !py-3.5 w-full' id='driver-password' placeholder='Password' type='password'/>
- <button class='w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl py-3.5 text-sm transition-all shadow-lg' onclick='processDriverLogin()'>
+ <button class='btn-primary w-full !py-3.5 !text-sm' onclick='processDriverLogin()'>
  Masuk
  </button>
  <button class='w-full text-slate-400 font-bold text-xs mt-2 hover:text-slate-600' onclick='changeView(&quot;view-catalog&quot;)'>Kembali ke Toko</button>
@@ -1406,12 +1406,12 @@ html.dark .badge-counter {
  <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 z-50 hidden min-h-screen' id='view-driver'>
  <div class='glass-header shrink-0 px-4 py-3 flex items-center justify-between z-30 sticky top-0 border-b-2 border-slate-200 dark:border-slate-800'>
  <div class='flex items-center gap-3'>
- <div class='w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md'>
+ <div class='w-10 h-10 rounded-xl text-white flex items-center justify-center shadow-md' style='background-color:var(--clr-p)'>
  <i class='fa-solid fa-helmet-safety'></i>
  </div>
  <div>
  <h1 class='text-sm font-semibold text-slate-900 dark:text-white' id='driver-name-display'>Nama Driver</h1>
- <p class='text-[10px] font-bold text-emerald-600'><i class='fa-solid fa-circle-check'></i> Mitra Aktif</p>
+ <p class='text-[10px] font-bold' style='color:var(--clr-p)'><i class='fa-solid fa-circle-check'></i> Mitra Aktif</p>
  </div>
  </div>
  <button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-500 dark:text-rose-400 hover:bg-rose-500 hover:text-white dark:hover:bg-rose-500 dark:hover:text-white transition-all shadow-sm border-2 border-rose-200 dark:border-rose-800' onclick='logoutDriver()'>
@@ -1434,7 +1434,7 @@ html.dark .badge-counter {
  </div>
 
  <div class='hidden' id='driver-riwayat-section'>
-        <div class='bg-emerald-600 dark:bg-emerald-700 rounded-[1.5rem] p-6 text-white shadow-lg mb-6 relative overflow-hidden'>
+        <div class='rounded-[1.5rem] p-6 text-white shadow-lg mb-6 relative overflow-hidden' style='background-color:var(--clr-p)'>
             <div class='flex justify-between items-start relative z-10'>
                 <div>
                     <p class='text-[10px] font-medium uppercase tracking-widest text-emerald-100 mb-1'><i class='fa-solid fa-wallet'></i> Saldo Aktif</p>
@@ -1461,14 +1461,14 @@ html.dark .badge-counter {
  <div class='fixed inset-0 z-[120] bg-slate-900 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300' id='wd-modal' onclick='if(event.target===this) closeWithdrawModal()'>
  <div class='bg-white dark:bg-slate-800 rounded-[1.5rem] w-full max-w-[320px] p-6 shadow-2xl border-2 border-slate-200 dark:border-slate-700 relative transform scale-95 transition-transform duration-300' id='wd-modal-box'>
  <h3 class='font-bold text-slate-900 dark:text-white text-lg mb-1'>Tarik Saldo</h3>
- <p class='text-[10px] text-slate-500 dark:text-slate-400 font-bold mb-4'>Max ditarik: <span class='text-emerald-500' id='wd-max-saldo'>Rp 0</span></p>
+ <p class='text-[10px] text-slate-500 dark:text-slate-400 font-bold mb-4'>Max ditarik: <span style='color:var(--clr-p)' id='wd-max-saldo'>Rp 0</span></p>
  <div class='relative mb-5'>
  <span class='absolute left-4 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400'>Rp</span>
  <input class='admin-input !py-3.5 !pl-10 w-full' id='wd-amount-input' placeholder='Nominal (Min 10.000)' type='number'/>
  </div>
  <div class='flex gap-3'>
  <button class='flex-1 py-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs' onclick='closeWithdrawModal()'>Batal</button>
- <button class='flex-1 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-md text-xs border border-emerald-700' onclick='submitWithdraw()'>Tarik Dana</button>
+ <button class='flex-1 py-3 text-white font-bold rounded-xl shadow-md text-xs' style='background-color:var(--clr-p)' onclick='submitWithdraw()'>Tarik Dana</button>
  </div>
  </div>
  </div>
