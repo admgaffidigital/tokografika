@@ -283,9 +283,10 @@ if (!history.state) history.replaceState({ view: 'view-catalog' }, '', '');
 const sLoad = t => { if (t) setIn('loader-text', t); show('global-loader'); };
 const hLoad = () => hide('global-loader');
 
+const _curFormatter = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 });
 const fCur = a => {
  const n = Number(a);
- return (isNaN(n) || a === null) ? 'Rp 0' : new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(Math.abs(n)).replace(/^/, n < 0 ? '-' : '');
+ return (isNaN(n) || a === null) ? 'Rp 0' : _curFormatter.format(Math.abs(n)).replace(/^/, n < 0 ? '-' : '');
 };
 
 window.getDist = (lat1, lon1, lat2, lon2) => {
@@ -571,7 +572,7 @@ window.executeConfirm = () => {
  const v = (THEME_COLORS_EARLY[tc] || THEME_COLORS_EARLY.emerald).split(',');
  const r = document.documentElement;
  r.style.setProperty('--clr-p', v[0]);
- r.style.setProperty('--clr-p-dark', v[1]);
+r.style.setProperty('--clr-p-dark', v[1]);
  r.style.setProperty('--clr-p-bg', v[2]);
  r.style.setProperty('--clr-p-10', `rgba(${v[3]},${v[4]},${v[5]},0.10)`);
  r.style.setProperty('--clr-p-25', `rgba(${v[3]},${v[4]},${v[5]},0.25)`);
@@ -581,126 +582,141 @@ window.executeConfirm = () => {
 const loadAppData = async () => {
  console.log('[FreshMart] 1. loadAppData started');
  if (document.documentElement.classList.contains('dark')) { 
- const icon = el('icon-theme'); 
- if (icon) icon.className = 'fa-solid fa-sun text-sm text-amber-500'; 
+   const icon = el('icon-theme'); 
+   if (icon) icon.className = 'fa-solid fa-sun text-sm text-amber-500'; 
  }
- sLoad('Sinkron Data...');
+
+ // 1. FAST FIRST RENDER: Cek apakah ada data cache lokal
+ const localCms = sL('freshmart_cms_data');
+ const localProd = sL('freshmart_products');
+ let hasLocalData = false;
+
+ if (localCms) {
+   try {
+     const parsedCms = JSON.parse(localCms);
+     appData = { ...defApp, ...parsedCms };
+     if (localProd) appData.products = JSON.parse(localProd);
+     hasLocalData = true;
+     
+     // Render katalog instan (0 milidetik!)
+     rDyn();
+     updWish();
+     updCart();
+     applyGlobalTheme();
+   } catch(e) {
+     console.warn('[FreshMart] Cache parse error:', e);
+   }
+ }
+
+ // Jika belum ada data lokal sama sekali (kunjungan pertama), tampilkan loader halus
+ if (!hasLocalData) {
+   sLoad('Memuat Toko...');
+ }
+
+ // 2. BACKGROUND / ASYNC SYNC: Ambil data terbaru dari Firestore
  try {
- console.log('[FreshMart] 2. Fetching cms_data from Firestore...');
- const d = await withTimeout(db.collection("freshmart").doc("cms_data").get(), 3000);
- let localProducts = JSON.parse(sL('freshmart_products') || 'null');
- let localUpdate = parseInt(sL('freshmart_last_update') || '0');
- 
- if (d.exists) {
- console.log('[FreshMart] 2a. cms_data document exists');
- const f = d.data(); 
- let oldLic = appData.licenseKey; 
- let oldProMaxLic = appData.promaxLicenseKey;
- appData = { ...defApp, ...f }; 
- appData.licenseKey = f.licenseKey || oldLic || ""; 
- appData.promaxLicenseKey = f.promaxLicenseKey || oldProMaxLic || "";
- 
- appData.store = { ...defApp.store, ...(f.store || {}) }; 
- if(!appData.store.social) appData.store.social = defApp.store.social;
- appData.auth = { ...defApp.auth, ...(f.auth || {}) }; 
- appData.payment = { ...defApp.payment, ...(f.payment || {}) };
- const serverUpdate = f.lastUpdate || 0;
- 
- if (f.products && f.products.length > 0) {
- const batch = db.batch(); 
- f.products.forEach(p => { batch.set(db.collection("freshmart").doc("cms_data").collection("products").doc(p.id.toString()), p); });
- await batch.commit(); 
- await db.collection("freshmart").doc("cms_data").update({ products: firebase.firestore.FieldValue.delete(), lastUpdate: Date.now() });
- appData.products = f.products.sort((a, b) => (b.id || 0) - (a.id || 0)); 
- ssL('freshmart_products', JSON.stringify(appData.products));
- } else {
- if (localProducts && localUpdate >= serverUpdate) {
- appData.products = localProducts;
- } else { 
- const pSnap = await withTimeout(db.collection("freshmart").doc("cms_data").collection("products").get(), 3000); 
- appData.products = pSnap.docs.map(doc => doc.data()).sort((a, b) => (b.id || 0) - (a.id || 0)); 
- ssL('freshmart_products', JSON.stringify(appData.products)); 
- ssL('freshmart_last_update', serverUpdate.toString()); 
- }
- }
- } else {
- console.log('[FreshMart] 2b. cms_data does not exist, using default data');
- }
+   console.log('[FreshMart] 2. Fetching cms_data from Firestore...');
+   const d = await withTimeout(db.collection("freshmart").doc("cms_data").get(), 4000);
+   let localProducts = JSON.parse(sL('freshmart_products') || 'null');
+   let localUpdate = parseInt(sL('freshmart_last_update') || '0');
+   
+   if (d.exists) {
+     console.log('[FreshMart] 2a. cms_data document exists');
+     const f = d.data(); 
+     let oldLic = appData.licenseKey; 
+     let oldProMaxLic = appData.promaxLicenseKey;
+     appData = { ...defApp, ...f }; 
+     appData.licenseKey = f.licenseKey || oldLic || ""; 
+     appData.promaxLicenseKey = f.promaxLicenseKey || oldProMaxLic || "";
+     
+     appData.store = { ...defApp.store, ...(f.store || {}) }; 
+     if(!appData.store.social) appData.store.social = defApp.store.social;
+     appData.auth = { ...defApp.auth, ...(f.auth || {}) }; 
+     appData.payment = { ...defApp.payment, ...(f.payment || {}) };
+     const serverUpdate = f.lastUpdate || 0;
+     
+     if (f.products && f.products.length > 0) {
+       const batch = db.batch(); 
+       f.products.forEach(p => { batch.set(db.collection("freshmart").doc("cms_data").collection("products").doc(p.id.toString()), p); });
+       await batch.commit(); 
+       await db.collection("freshmart").doc("cms_data").update({ products: firebase.firestore.FieldValue.delete(), lastUpdate: Date.now() });
+       appData.products = f.products.sort((a, b) => (b.id || 0) - (a.id || 0)); 
+       ssL('freshmart_products', JSON.stringify(appData.products));
+     } else {
+       if (localProducts && localUpdate >= serverUpdate) {
+         appData.products = localProducts;
+       } else { 
+         const pSnap = await withTimeout(db.collection("freshmart").doc("cms_data").collection("products").get(), 4000); 
+         appData.products = pSnap.docs.map(doc => doc.data()).sort((a, b) => (b.id || 0) - (a.id || 0)); 
+         ssL('freshmart_products', JSON.stringify(appData.products)); 
+         ssL('freshmart_last_update', serverUpdate.toString()); 
+       }
+     }
+     // Update cache CMS
+     const copyData = { ...appData };
+     delete copyData.products;
+     ssL('freshmart_cms_data', JSON.stringify(copyData));
+   }
  } catch (e) {
- console.warn('[FreshMart] 2c. Firestore offline or failed:', e.message); 
- const l = JSON.parse(sL('freshmart_cms_data') || 'null'); 
- const lp = JSON.parse(sL('freshmart_products') || 'null');
- if (l) { 
- appData = { ...defApp, ...l }; 
- appData.store = { ...defApp.store, ...(l.store || {}) };
- if(!appData.store.social) appData.store.social = defApp.store.social;
- }
- if (lp) { appData.products = lp; } 
- showToast("Mode Offline (Data Lokal)");
+   console.warn('[FreshMart] 2c. Firestore offline or failed:', e.message); 
+   if (!hasLocalData) {
+     const l = JSON.parse(sL('freshmart_cms_data') || 'null'); 
+     const lp = JSON.parse(sL('freshmart_products') || 'null');
+     if (l) { 
+       appData = { ...defApp, ...l }; 
+       appData.store = { ...defApp.store, ...(l.store || {}) };
+       if(!appData.store.social) appData.store.social = defApp.store.social;
+     }
+     if (lp) { appData.products = lp; } 
+   }
  } finally {
- // ============================================================
- // CRITICAL: Seluruh rendering & hLoad() ada di finally block
- // agar loading overlay SELALU hilang, bahkan jika ada error.
- // ============================================================
- try {
- appData.products = appData.products || []; 
- appData.categories = appData.categories || [];
- appData.accounts = appData.accounts || []; 
- 
- appData.products.forEach(p => { 
- if(p.img) p.img = fixD(p.img); 
- if (p.variants) p.variants.forEach(v => { if(v.img) v.img = fixD(v.img); }); 
- });
- 
- if (appData.banners) appData.banners.forEach(b => { if(b.img) b.img = fixD(b.img); }); 
- if (appData.categories) appData.categories.forEach(c => { if(c.img) c.img = fixD(c.img); });
- 
- if(appData.store.logo) appData.store.logo = fixD(appData.store.logo); 
- if(appData.store.allProductsIcon) appData.store.allProductsIcon = fixD(appData.store.allProductsIcon); 
- if(appData.payment.qrisUrl) appData.payment.qrisUrl = fixD(appData.payment.qrisUrl);
- 
- cart.forEach(i => { if(i.img) i.img = fixD(i.img); }); 
- wishlist.forEach(i => { if(i.img) i.img = fixD(i.img); });
- 
- console.log('[FreshMart] 3. Rendering catalog & themes...');
-        updWish();
-        updCart();
-        const _siInit = el('search-input');
-        if (_siInit) _siInit.value = '';
-        sQ = '';
-        rDyn();
-        applyGlobalTheme();
- 
- console.log('[FreshMart] 4. Verifying license keys...');
- try {
- let savedProKey = (appData.licenseKey || localStorage.getItem('freshmart_cache_PRO') || '').trim().toUpperCase();
- let savedProMaxKey = (appData.promaxLicenseKey || localStorage.getItem('freshmart_cache_PROMAX') || '').trim().toUpperCase();
-
- isPro = await verifyLicenseInDb(savedProKey, 'PRO');
- isProMax = await verifyLicenseInDb(savedProMaxKey, 'PROMAX');
-
- if (isPro) appData.licenseKey = savedProKey;
- if (isProMax) appData.promaxLicenseKey = savedProMaxKey;
- } catch (licErr) {
- console.warn("[FreshMart] Gagal verifikasi lisensi saat startup:", licErr);
- isPro = !!localStorage.getItem('freshmart_cache_PRO');
- isProMax = !!localStorage.getItem('freshmart_cache_PROMAX');
- }
- 
- const pid = new URLSearchParams(window.location.search).get('p'); 
- if (pid && appData.products.find(x => x.id == parseInt(pid))) {
- setTimeout(() => openProductModal(parseInt(pid)), 600);
- }
- 
- buildAndInjectManifest();
- startPriceWatcher();
- } catch (renderErr) {
- console.error('[FreshMart] Render error in finally block:', renderErr);
- } finally {
- // ABSOLUTE GUARANTEE: loader selalu hilang
- hLoad();
- console.log('[FreshMart] 6. App initialization complete!');
- }
+   try {
+     appData.products = appData.products || []; 
+     appData.categories = appData.categories || [];
+     appData.accounts = appData.accounts || []; 
+     
+     appData.products.forEach(p => { 
+       if(p.img) p.img = fixD(p.img); 
+       if (p.variants) p.variants.forEach(v => { if(v.img) v.img = fixD(v.img); }); 
+     });
+     
+     if (appData.banners) appData.banners.forEach(b => { if(b.img) b.img = fixD(b.img); }); 
+     if (appData.categories) appData.categories.forEach(c => { if(c.img) c.img = fixD(c.img); });
+     
+     if(appData.store.logo) appData.store.logo = fixD(appData.store.logo); 
+     if(appData.store.allProductsIcon) appData.store.allProductsIcon = fixD(appData.store.allProductsIcon); 
+     if(appData.payment.qrisUrl) appData.payment.qrisUrl = fixD(appData.payment.qrisUrl);
+     
+     cart.forEach(i => { if(i.img) i.img = fixD(i.img); }); 
+     wishlist.forEach(i => { if(i.img) i.img = fixD(i.img); });
+     
+     updWish();
+     updCart();
+     rDyn();
+     applyGlobalTheme();
+     
+     try {
+       let savedProKey = (appData.licenseKey || localStorage.getItem('freshmart_cache_PRO') || '').trim().toUpperCase();
+       let savedProMaxKey = (appData.promaxLicenseKey || localStorage.getItem('freshmart_cache_PROMAX') || '').trim().toUpperCase();
+       isPro = await verifyLicenseInDb(savedProKey, 'PRO');
+       isProMax = await verifyLicenseInDb(savedProMaxKey, 'PROMAX');
+       if (isPro) updateProBadges(true);
+       if (isProMax) updateProMaxBadges(true);
+     } catch (e) {}
+     
+     const pid = new URLSearchParams(window.location.search).get('p'); 
+     if (pid && appData.products.find(x => x.id == parseInt(pid))) {
+       setTimeout(() => openProductModal(parseInt(pid)), 600);
+     }
+     
+     buildAndInjectManifest();
+     startPriceWatcher();
+   } catch (err) {
+     console.error('[FreshMart] Final render error:', err);
+   } finally {
+     hLoad();
+     console.log('[FreshMart] App initialization complete!');
+   }
  }
 };
 

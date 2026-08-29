@@ -31,7 +31,15 @@
     <!-- Manifest (Android & Desktop Chrome) — dibuat dinamis via JS -->
     <link id='pwa-manifest-link' rel='manifest'/>
     <!-- ============================================================ -->
-
+    <!-- PRECONNECT & SPEED OPTIMIZATION                              -->
+    <!-- ============================================================ -->
+    <link rel='preconnect' href='https://fonts.googleapis.com'/>
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin='anonymous'/>
+    <link rel='preconnect' href='https://cdnjs.cloudflare.com'/>
+    <link rel='preconnect' href='https://www.gstatic.com'/>
+    <link rel='dns-prefetch' href='https://cdn.jsdelivr.net'/>
+    <link rel='dns-prefetch' href='https://lh3.googleusercontent.com'/>
+    
     <b:skin><![CDATA[ @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap'); ]]></b:skin>
     
     <!-- External CDN Scripts & Libraries -->

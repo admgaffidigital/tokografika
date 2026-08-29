@@ -66,10 +66,23 @@ body {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     scroll-behavior: smooth;
+    overscroll-behavior-y: contain;
 }
 
 .scroll-content::-webkit-scrollbar {
     display: none;
+}
+
+.card-modern {
+    contain: layout style paint;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    background-color: #ffffff;
+    border-radius: 1.25rem;
+}
+
+.lazy-load {
+    will-change: opacity;
 }
 
 /* --------------------------------------------------------------------------
