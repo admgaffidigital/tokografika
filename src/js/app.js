@@ -72,9 +72,11 @@ const fixD = v => {
     if (typeof v !== 'string' || !v.trim()) return v;
     v = v.trim();
     
-    // 1. Google Drive Link converter
-    const gDriveMatch = v.match(/drive\.google\.com.*(?:id=|\/d\/)([a-zA-Z0-9_-]+)/);
-    if (gDriveMatch) return `https://lh3.googleusercontent.com/d/${gDriveMatch[1]}`;
+    // 1. Google Drive Link converter -> gunakan endpoint thumbnail Google yang terbukti stabil & anti-429
+    const gDriveMatch = v.match(/(?:drive\.google\.com.*(?:id=|\/d\/)|googleusercontent\.com\/d\/)([a-zA-Z0-9_-]+)/);
+    if (gDriveMatch) {
+        return `https://drive.google.com/thumbnail?id=${gDriveMatch[1]}&sz=w800`;
+    }
     
     // 2. Google Image Search URL (extract original imgurl parameter)
     if (v.includes('google.com/imgres') || v.includes('google.co.id/imgres')) {
@@ -791,10 +793,14 @@ const rDyn = () => {
                 img.style.display = 'block';
                 img.classList.remove('hidden');
                 img.onerror = () => {
-                    img.onerror = null;
-                    img.style.display = 'none';
-                    img.classList.add('hidden');
-                    if (icon) { icon.style.display = 'inline-block'; icon.classList.remove('hidden'); }
+                    if (!img.dataset.retried) {
+                        img.dataset.retried = '1';
+                        img.src = `https://wsrv.nl/?url=${encodeURIComponent(logoVal)}&w=300`;
+                    } else {
+                        img.style.display = 'none';
+                        img.classList.add('hidden');
+                        if (icon) { icon.style.display = 'inline-block'; icon.classList.remove('hidden'); }
+                    }
                 };
             }
             if (icon) { icon.style.display = 'none'; icon.classList.add('hidden'); }
@@ -803,10 +809,14 @@ const rDyn = () => {
                 fImg.style.display = 'block';
                 fImg.classList.remove('hidden');
                 fImg.onerror = () => {
-                    fImg.onerror = null;
-                    fImg.style.display = 'none';
-                    fImg.classList.add('hidden');
-                    if (fIcon) { fIcon.style.display = 'inline-block'; fIcon.classList.remove('hidden'); }
+                    if (!fImg.dataset.retried) {
+                        fImg.dataset.retried = '1';
+                        fImg.src = `https://wsrv.nl/?url=${encodeURIComponent(logoVal)}&w=300`;
+                    } else {
+                        fImg.style.display = 'none';
+                        fImg.classList.add('hidden');
+                        if (fIcon) { fIcon.style.display = 'inline-block'; fIcon.classList.remove('hidden'); }
+                    }
                 };
             }
             if (fIcon) { fIcon.style.display = 'none'; fIcon.classList.add('hidden'); }
