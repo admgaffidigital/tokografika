@@ -907,46 +907,46 @@ const rCat = () => {
  const v = f.slice(0, cPage * iPP);
  c.innerHTML = v.map(p => {
  let a = p.isActive !== 'false' && p.isActive !== false;
- let tH = p.tag ? `<div class="absolute top-1 left-1 bg-slate-900 text-white text-[7px] font-bold px-1.5 py-0.5 rounded border border-white/10 z-10 shadow-sm max-w-[80%] truncate uppercase tracking-wider">${esc(p.tag)}</div>` : '';
- let nH = !a ? `<div class="absolute inset-0 bg-white-[1px] z-20 flex items-center justify-center"><span class="badge badge-solid-rose">KOSONG</span></div>` : '';
+ let tH = p.tag ? `<div class="absolute top-2 left-2 bg-slate-900/90 text-white text-[8px] font-bold px-2 py-0.5 rounded-md border border-white/10 z-10 shadow-sm max-w-[85%] truncate uppercase tracking-wider">${esc(p.tag)}</div>` : '';
+ let nH = !a ? `<div class="absolute inset-0 bg-slate-900/60 z-20 flex items-center justify-center rounded-xl"><span class="badge badge-solid-rose text-[9px] font-bold">KOSONG</span></div>` : '';
  let bH = `
  <div class="mb-1 flex flex-wrap gap-1 items-center overflow-hidden shrink-0">
- <span class="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 px-1 py-0.5 rounded text-[7px] font-bold truncate max-w-full">
+ <span class="bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded text-[8px] font-semibold truncate max-w-full">
  <i class="fa-solid fa-check"></i> Official
  </span>
- ${p.wholesale?.length ? `<span class="bg-amber-50 dark:bg-amber-900/30 border border-amber-100 dark:border-amber-800 text-amber-600 dark:text-amber-400 px-1 py-0.5 rounded text-[7px] font-bold truncate max-w-full"><i class="fa-solid fa-tags"></i> Grosir</span>` : ''}
+ ${p.wholesale?.length ? `<span class="bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/60 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded text-[8px] font-semibold truncate max-w-full"><i class="fa-solid fa-tags"></i> Grosir</span>` : ''}
  </div>
  `;
 
  if (cView === 'grid') {
  return `
- <div class="card-modern overflow-hidden flex flex-col cursor-pointer group p-2 border-2 border-slate-200 dark:bg-slate-800 dark:border-slate-700" onclick="openProductModal(${p.id})">
- <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 mb-2.5">
- <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${!a ? 'grayscale' : ''}"/>
+ <div class="card-modern overflow-hidden flex flex-col cursor-pointer group p-2.5 sm:p-3 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-200" onclick="openProductModal(${p.id})">
+ <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 mb-2.5">
+ <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${!a ? 'grayscale' : ''}"/>
  ${tH}${nH}
  </div>
- <div class="flex-1 flex flex-col justify-between min-w-0 px-1 pb-1">
+ <div class="flex-1 flex flex-col justify-between min-w-0 px-0.5 pb-0.5">
  <div class="flex flex-col min-w-0">
  ${bH}
- <h4 class="text-[11px] sm:text-xs font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1.5">${esc(p.name)}</h4>
+ <h4 class="text-xs font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
  </div>
- <p class="text-emerald-600 dark:text-emerald-400 font-semibold text-sm mt-auto drop-shadow-sm">${fCur(p.price)}${p.unit ? `<span class="text-slate-400 dark:text-slate-500 font-bold text-[10px] ml-1">/ ${esc(p.unit)}</span>` : ''}</p>
+ <p class="text-emerald-600 dark:text-emerald-400 font-bold text-sm sm:text-base mt-auto pt-1">${fCur(p.price)}${p.unit ? `<span class="text-slate-400 dark:text-slate-500 font-medium text-[10px] ml-1">/ ${esc(p.unit)}</span>` : ''}</p>
  </div>
  </div>
  `;
  } else {
  return `
- <div class="card-modern flex items-center p-2.5 gap-3 cursor-pointer group border-2 border-slate-200 dark:bg-slate-800 dark:border-slate-700" onclick="openProductModal(${p.id})">
- <div class="relative w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
- <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${!a ? 'grayscale' : ''}"/>
+ <div class="card-modern flex items-center p-3 gap-3.5 cursor-pointer group border border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-200" onclick="openProductModal(${p.id})">
+ <div class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60">
+ <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${!a ? 'grayscale' : ''}"/>
  ${tH}${nH}
  </div>
- <div class="flex-1 min-w-0 pr-1 flex flex-col justify-between py-1 h-full">
+ <div class="flex-1 min-w-0 pr-1 flex flex-col justify-between py-0.5 h-full">
  <div>
  ${bH}
- <h4 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1">${esc(p.name)}</h4>
+ <h4 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
  </div>
- <p class="text-emerald-600 dark:text-emerald-400 font-semibold text-sm drop-shadow-sm">${fCur(p.price)}${p.unit ? `<span class="text-slate-400 dark:text-slate-500 font-bold text-[10px] ml-1">/ ${esc(p.unit)}</span>` : ''}</p>
+ <p class="text-emerald-600 dark:text-emerald-400 font-bold text-sm sm:text-base">${fCur(p.price)}${p.unit ? `<span class="text-slate-400 dark:text-slate-500 font-medium text-[10px] ml-1">/ ${esc(p.unit)}</span>` : ''}</p>
  </div>
  </div>
  `;

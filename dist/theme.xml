@@ -50,7 +50,7 @@
 
     <style type='text/css'>/*<![CDATA[*/
 /* ==========================================================================
-   GRAFIKA PWA STORE - STYLESHEET
+   GRAFIKA PWA STORE - STYLESHEET (CLEAN & SOLID DESIGN SYSTEM)
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -64,7 +64,7 @@ body {
     color: #0f172a;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.25s, color 0.25s;
+    transition: background-color 0.2s ease, color 0.2s ease;
     overflow: hidden;
 }
 
@@ -77,16 +77,15 @@ body {
     overflow: hidden;
     margin: 0 auto;
     overscroll-behavior-y: none;
-    transition: background-color 0.3s;
+    transition: background-color 0.2s ease;
 }
 
 @media (min-width: 1280px) {
     #app-container {
         max-width: 1280px;
-        box-shadow: 0 25px 80px rgba(15, 23, 42, 0.15);
-        border-left: 2px solid #e2e8f0;
-        border-right: 2px solid #e2e8f0;
-        border-radius: 0;
+        box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+        border-left: 1px solid #e2e8f0;
+        border-right: 1px solid #e2e8f0;
     }
 }
 
@@ -124,13 +123,13 @@ body {
    2. Animations
    -------------------------------------------------------------------------- */
 .fade-in {
-    animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(6px);
     }
     to {
         opacity: 1;
@@ -139,13 +138,13 @@ body {
 }
 
 .fade-in-scale {
-    animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: fadeInScale 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes fadeInScale {
     from {
         opacity: 0;
-        transform: scale(0.95);
+        transform: scale(0.97);
     }
     to {
         opacity: 1;
@@ -154,19 +153,19 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   3. Header & Nav
+   3. Header & Navigation
    -------------------------------------------------------------------------- */
 .glass-header {
     background: #ffffff;
     z-index: 30;
-    border-bottom: 2px solid #e2e8f0;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .glass-nav {
     background: #ffffff;
-    border-top: 2px solid #e2e8f0;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
 }
 
 /* --------------------------------------------------------------------------
@@ -186,15 +185,14 @@ body {
    -------------------------------------------------------------------------- */
 .admin-input {
     width: 100%;
-    background-color: #fff;
-    border: 2px solid #cbd5e1;
-    border-radius: 1rem;
+    background-color: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 0.875rem;
     padding: 0.75rem 1rem;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     color: #0f172a;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
     box-sizing: border-box;
 }
 
@@ -205,7 +203,7 @@ body {
 .admin-input:focus {
     outline: none;
     border-color: var(--clr-p);
-    box-shadow: 0 0 0 4px var(--clr-p-10);
+    box-shadow: 0 0 0 3px var(--clr-p-10);
 }
 
 .admin-input::placeholder {
@@ -214,40 +212,40 @@ body {
 }
 
 .card-modern {
-    background: #fff;
-    border-radius: 1.25rem;
-    border: 2px solid #e2e8f0;
-    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02);
-    transition: all 0.2s ease;
+    background: #ffffff;
+    border-radius: 1rem;
+    border: 1.5px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     box-sizing: border-box;
 }
 
 .card-modern:hover {
-    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.05);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
     border-color: #cbd5e1;
 }
 
 .custom-radio:checked + div {
     border-color: var(--clr-p) !important;
     background-color: var(--clr-p-bg) !important;
-    box-shadow: 0 8px 25px var(--clr-p-25);
+    box-shadow: 0 4px 12px var(--clr-p-25);
     transform: translateY(-1px);
 }
 
 .custom-radio:checked + div .radio-icon {
     color: var(--clr-p) !important;
-    transform: scale(1.1);
+    transform: scale(1.08);
 }
 
 .btn-primary {
     background: var(--clr-p);
-    color: #fff;
-    padding: 0.875rem 1.5rem;
-    border-radius: 1rem;
-    font-weight: 600;
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.875rem;
+    font-weight: 700;
     font-size: 0.875rem;
-    transition: all 0.25s ease;
-    box-shadow: 0 6px 20px var(--clr-p-25);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px var(--clr-p-25);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -259,13 +257,14 @@ body {
 }
 
 .btn-primary:hover {
-    box-shadow: 0 8px 25px var(--clr-p-35);
-    transform: translateY(-2px);
+    box-shadow: 0 6px 16px var(--clr-p-35);
+    opacity: 0.95;
+    transform: translateY(-1px);
 }
 
 .btn-primary:active {
-    transform: translateY(0) scale(0.98);
-    box-shadow: 0 4px 15px var(--clr-p-25);
+    transform: translateY(0);
+    opacity: 0.9;
 }
 
 .btn-disabled {
@@ -280,9 +279,9 @@ body {
     top: -100px;
     left: 50%;
     transform: translateX(-50%);
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     z-index: 99999;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 /* --------------------------------------------------------------------------
@@ -639,25 +638,31 @@ html.dark .badge-counter {
  </div>
  </div>
 
- <div class='fixed inset-0 z-[70] bg-slate-900 hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-5' id='product-modal' onclick='if(event.target===this) closeProductModal()'>
- <div class='w-full max-w-md bg-white dark:bg-slate-800 rounded-t-[1.5rem] sm:rounded-[1.5rem] max-h-[92dvh] sm:max-h-[95dvh] overflow-y-auto transform translate-y-full sm:translate-y-5 transition-transform duration-300 hide-scrollbar shadow-2xl border-2 border-slate-200 dark:border-slate-700 flex flex-col relative' id='product-modal-content'>
- <button class='absolute top-3 right-14 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 hover:bg-emerald-500 dark:hover:bg-emerald-500 hover:text-white transition-all border-2 border-white/50 dark:border-slate-700 shadow-lg' onclick='shareProduct()'><i class='fa-solid fa-share-nodes text-sm'></i></button><button class='absolute top-3 right-3 z-20 w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 hover:bg-rose-500 dark:hover:bg-rose-500 hover:text-white transition-all border-2 border-white/50 dark:border-slate-700 shadow-lg' onclick='closeProductModal()'><i class='fa-solid fa-xmark text-sm'></i></button>
- <div class='w-full aspect-square bg-slate-100 dark:bg-slate-900 relative overflow-hidden sm:rounded-t-[1.5rem] shrink-0 border-b-2 border-slate-200 dark:border-slate-700'><img class='w-full h-full object-cover transition-opacity duration-300' id='product-modal-img' src=''/></div>
- <div class='p-5 sm:p-6 bg-white dark:bg-slate-800 flex-1'>
- <div class='mb-2 flex flex-wrap gap-1.5' id='product-modal-badges'></div><h3 class='text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-1 leading-tight' id='product-modal-title'>Nama Produk</h3><p class='text-emerald-600 dark:text-emerald-400 font-bold text-xl sm:text-2xl mb-4' id='product-modal-price'>Rp 0</p>
- <div class='bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 mb-5 shadow-sm'><p class='text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed whitespace-pre-wrap' id='product-modal-desc'>Deskripsi Produk</p></div>
- <div id='product-modal-wholesale-container'></div><div class='mb-5 hidden' id='product-modal-options-container'><div class='flex items-center justify-between mb-2'><span class='text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest'>Pilih Varian</span></div><div class='flex flex-wrap gap-2' id='product-modal-options'></div></div>
- <div class='pt-4 border-t-2 border-slate-200 dark:border-slate-700'>
- <div class='space-y-4' id='modal-active-controls'>
- <div class='flex items-center justify-between'><span class='text-sm font-bold text-slate-600 dark:text-slate-300'>Jumlah</span><div class='flex items-center bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-lg h-10 overflow-hidden shadow-sm'><button class='w-10 h-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold' onclick='updateModalQty(-1)'><i class='fa-solid fa-minus text-xs'></i></button><input class='w-10 text-center text-sm font-semibold text-slate-900 dark:text-white bg-transparent focus:outline-none' id='modal-qty-input' min='1' onchange='handleModalQtyChange(this.value)' step='1' type='number' value='1'/><button class='w-10 h-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold' onclick='updateModalQty(1)'><i class='fa-solid fa-plus text-xs'></i></button></div></div>
- <div class='flex items-center justify-between bg-emerald-50 dark:bg-emerald-900/30 p-4 rounded-xl border-2 border-emerald-200 dark:border-emerald-800/50 shadow-sm'><span class='text-xs font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-widest'>Subtotal</span><span class='text-lg font-bold text-emerald-700 dark:text-emerald-300' id='btn-modal-price-preview'>Rp 0</span></div>
- <div class='flex gap-2.5 h-12'><button class='w-12 shrink-0 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded-xl flex items-center justify-center hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-500 dark:hover:text-rose-400 transition-all shadow-sm' onclick='confirmAddToWishlist()'><i class='fa-regular fa-heart text-lg'></i></button><button class='btn-primary flex-1 !rounded-xl text-sm' onclick='confirmAddProductToCart()'><i class='fa-solid fa-cart-plus mr-1'></i> Masuk Keranjang</button></div>
- </div>
- <div class='hidden bg-rose-50 dark:bg-rose-900/30 border-2 border-rose-200 dark:border-rose-800/50 p-4 rounded-xl text-center text-rose-600 dark:text-rose-400 font-bold text-sm shadow-sm' id='modal-inactive-controls'><i class='fa-solid fa-box-open mr-1'></i> Stok Sedang Kosong</div>
- </div>
- </div>
- </div>
- </div>
+    <div class='fixed inset-0 z-[70] bg-slate-900/70 hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-5' id='product-modal' onclick='if(event.target===this) closeProductModal()'>
+        <div class='w-full max-w-md bg-white dark:bg-slate-800 rounded-t-[1.5rem] sm:rounded-[1.5rem] max-h-[90dvh] sm:max-h-[88dvh] overflow-y-auto transform translate-y-full sm:translate-y-5 transition-transform duration-300 hide-scrollbar shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col relative' id='product-modal-content'>
+            <div class='sticky top-0 right-0 left-0 z-30 flex justify-end gap-2 p-3 pointer-events-none'>
+                <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-emerald-500 hover:text-white transition-all border border-slate-200 dark:border-slate-700 shadow-md pointer-events-auto' onclick='shareProduct()' title='Bagikan'><i class='fa-solid fa-share-nodes text-sm'></i></button>
+                <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-rose-500 hover:text-white transition-all border border-slate-200 dark:border-slate-700 shadow-md pointer-events-auto' onclick='closeProductModal()' title='Tutup'><i class='fa-solid fa-xmark text-sm'></i></button>
+            </div>
+            <div class='w-full aspect-square bg-slate-100 dark:bg-slate-900 -mt-15 relative overflow-hidden sm:rounded-t-[1.5rem] shrink-0 border-b border-slate-200 dark:border-slate-700'><img class='w-full h-full object-cover transition-opacity duration-300' id='product-modal-img' src=''/></div>
+            <div class='p-5 sm:p-6 bg-white dark:bg-slate-800 flex-1 flex flex-col'>
+                <div class='mb-2 flex flex-wrap gap-1.5' id='product-modal-badges'></div>
+                <h3 class='text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-1.5 leading-snug' id='product-modal-title'>Nama Produk</h3>
+                <p class='text-emerald-600 dark:text-emerald-400 font-bold text-xl sm:text-2xl mb-4' id='product-modal-price'>Rp 0</p>
+                <div class='bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 mb-5'><p class='text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed whitespace-pre-wrap' id='product-modal-desc'>Deskripsi Produk</p></div>
+                <div id='product-modal-wholesale-container'></div>
+                <div class='mb-5 hidden' id='product-modal-options-container'><div class='flex items-center justify-between mb-2.5'><span class='text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider'>Pilih Varian</span></div><div class='flex flex-wrap gap-2' id='product-modal-options'></div></div>
+                <div class='pt-4 mt-auto border-t border-slate-200 dark:border-slate-700 pb-4'>
+                    <div class='space-y-4' id='modal-active-controls'>
+                        <div class='flex items-center justify-between'><span class='text-sm font-bold text-slate-700 dark:text-slate-300'>Jumlah</span><div class='flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl h-10 overflow-hidden'><button class='w-10 h-full flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold' onclick='updateModalQty(-1)'><i class='fa-solid fa-minus text-xs'></i></button><input class='w-12 text-center text-sm font-semibold text-slate-900 dark:text-white bg-transparent focus:outline-none' id='modal-qty-input' min='1' onchange='handleModalQtyChange(this.value)' step='1' type='number' value='1'/><button class='w-10 h-full flex items-center justify-center text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold' onclick='updateModalQty(1)'><i class='fa-solid fa-plus text-xs'></i></button></div></div>
+                        <div class='flex items-center justify-between bg-emerald-50 dark:bg-emerald-950/40 p-3.5 rounded-xl border border-emerald-200 dark:border-emerald-800/60'><span class='text-xs font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-wider'>Subtotal</span><span class='text-lg font-bold text-emerald-700 dark:text-emerald-300' id='btn-modal-price-preview'>Rp 0</span></div>
+                        <div class='flex gap-2.5 h-12'><button class='w-12 shrink-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded-xl flex items-center justify-center hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-500 dark:hover:text-rose-400 transition-all shadow-sm' onclick='confirmAddToWishlist()' title='Wishlist'><i class='fa-regular fa-heart text-lg'></i></button><button class='btn-primary flex-1 !rounded-xl text-sm' onclick='confirmAddProductToCart()'><i class='fa-solid fa-cart-plus mr-1'></i> Masuk Keranjang</button></div>
+                    </div>
+                    <div class='hidden bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800/50 p-4 rounded-xl text-center text-rose-600 dark:text-rose-400 font-bold text-sm' id='modal-inactive-controls'><i class='fa-solid fa-box-open mr-1'></i> Stok Sedang Kosong</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
  <div class='fixed inset-0 z-[80] bg-slate-900 hidden flex items-center justify-center p-3 opacity-0 transition-opacity duration-300' id='admin-modal' onclick='if(event.target===this) closeAdminModal()'>
  <div class='bg-white dark:bg-slate-800 rounded-[1.5rem] w-full max-w-md max-h-[92dvh] flex flex-col hide-scrollbar shadow-2xl border-2 border-slate-200 dark:border-slate-700 relative transform scale-95 transition-transform duration-300' id='admin-modal-box'>
@@ -2192,46 +2197,46 @@ const rCat = () => {
  const v = f.slice(0, cPage * iPP);
  c.innerHTML = v.map(p => {
  let a = p.isActive !== 'false' && p.isActive !== false;
- let tH = p.tag ? `<div class="absolute top-1 left-1 bg-slate-900 text-white text-[7px] font-bold px-1.5 py-0.5 rounded border border-white/10 z-10 shadow-sm max-w-[80%] truncate uppercase tracking-wider">${esc(p.tag)}</div>` : '';
- let nH = !a ? `<div class="absolute inset-0 bg-white-[1px] z-20 flex items-center justify-center"><span class="badge badge-solid-rose">KOSONG</span></div>` : '';
+ let tH = p.tag ? `<div class="absolute top-2 left-2 bg-slate-900/90 text-white text-[8px] font-bold px-2 py-0.5 rounded-md border border-white/10 z-10 shadow-sm max-w-[85%] truncate uppercase tracking-wider">${esc(p.tag)}</div>` : '';
+ let nH = !a ? `<div class="absolute inset-0 bg-slate-900/60 z-20 flex items-center justify-center rounded-xl"><span class="badge badge-solid-rose text-[9px] font-bold">KOSONG</span></div>` : '';
  let bH = `
  <div class="mb-1 flex flex-wrap gap-1 items-center overflow-hidden shrink-0">
- <span class="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 px-1 py-0.5 rounded text-[7px] font-bold truncate max-w-full">
+ <span class="bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded text-[8px] font-semibold truncate max-w-full">
  <i class="fa-solid fa-check"></i> Official
  </span>
- ${p.wholesale?.length ? `<span class="bg-amber-50 dark:bg-amber-900/30 border border-amber-100 dark:border-amber-800 text-amber-600 dark:text-amber-400 px-1 py-0.5 rounded text-[7px] font-bold truncate max-w-full"><i class="fa-solid fa-tags"></i> Grosir</span>` : ''}
+ ${p.wholesale?.length ? `<span class="bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/60 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded text-[8px] font-semibold truncate max-w-full"><i class="fa-solid fa-tags"></i> Grosir</span>` : ''}
  </div>
  `;
 
  if (cView === 'grid') {
  return `
- <div class="card-modern overflow-hidden flex flex-col cursor-pointer group p-2 border-2 border-slate-200 dark:bg-slate-800 dark:border-slate-700" onclick="openProductModal(${p.id})">
- <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 mb-2.5">
- <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${!a ? 'grayscale' : ''}"/>
+ <div class="card-modern overflow-hidden flex flex-col cursor-pointer group p-2.5 sm:p-3 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-200" onclick="openProductModal(${p.id})">
+ <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 mb-2.5">
+ <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${!a ? 'grayscale' : ''}"/>
  ${tH}${nH}
  </div>
- <div class="flex-1 flex flex-col justify-between min-w-0 px-1 pb-1">
+ <div class="flex-1 flex flex-col justify-between min-w-0 px-0.5 pb-0.5">
  <div class="flex flex-col min-w-0">
  ${bH}
- <h4 class="text-[11px] sm:text-xs font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1.5">${esc(p.name)}</h4>
+ <h4 class="text-xs font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
  </div>
- <p class="text-emerald-600 dark:text-emerald-400 font-semibold text-sm mt-auto drop-shadow-sm">${fCur(p.price)}${p.unit ? `<span class="text-slate-400 dark:text-slate-500 font-bold text-[10px] ml-1">/ ${esc(p.unit)}</span>` : ''}</p>
+ <p class="text-emerald-600 dark:text-emerald-400 font-bold text-sm sm:text-base mt-auto pt-1">${fCur(p.price)}${p.unit ? `<span class="text-slate-400 dark:text-slate-500 font-medium text-[10px] ml-1">/ ${esc(p.unit)}</span>` : ''}</p>
  </div>
  </div>
  `;
  } else {
  return `
- <div class="card-modern flex items-center p-2.5 gap-3 cursor-pointer group border-2 border-slate-200 dark:bg-slate-800 dark:border-slate-700" onclick="openProductModal(${p.id})">
- <div class="relative w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
- <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-105 ${!a ? 'grayscale' : ''}"/>
+ <div class="card-modern flex items-center p-3 gap-3.5 cursor-pointer group border border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-200" onclick="openProductModal(${p.id})">
+ <div class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60">
+ <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${!a ? 'grayscale' : ''}"/>
  ${tH}${nH}
  </div>
- <div class="flex-1 min-w-0 pr-1 flex flex-col justify-between py-1 h-full">
+ <div class="flex-1 min-w-0 pr-1 flex flex-col justify-between py-0.5 h-full">
  <div>
  ${bH}
- <h4 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1">${esc(p.name)}</h4>
+ <h4 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
  </div>
- <p class="text-emerald-600 dark:text-emerald-400 font-semibold text-sm drop-shadow-sm">${fCur(p.price)}${p.unit ? `<span class="text-slate-400 dark:text-slate-500 font-bold text-[10px] ml-1">/ ${esc(p.unit)}</span>` : ''}</p>
+ <p class="text-emerald-600 dark:text-emerald-400 font-bold text-sm sm:text-base">${fCur(p.price)}${p.unit ? `<span class="text-slate-400 dark:text-slate-500 font-medium text-[10px] ml-1">/ ${esc(p.unit)}</span>` : ''}</p>
  </div>
  </div>
  `;

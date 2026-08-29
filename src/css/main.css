@@ -1,5 +1,5 @@
 /* ==========================================================================
-   GRAFIKA PWA STORE - STYLESHEET
+   GRAFIKA PWA STORE - STYLESHEET (CLEAN & SOLID DESIGN SYSTEM)
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -13,7 +13,7 @@ body {
     color: #0f172a;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.25s, color 0.25s;
+    transition: background-color 0.2s ease, color 0.2s ease;
     overflow: hidden;
 }
 
@@ -26,16 +26,15 @@ body {
     overflow: hidden;
     margin: 0 auto;
     overscroll-behavior-y: none;
-    transition: background-color 0.3s;
+    transition: background-color 0.2s ease;
 }
 
 @media (min-width: 1280px) {
     #app-container {
         max-width: 1280px;
-        box-shadow: 0 25px 80px rgba(15, 23, 42, 0.15);
-        border-left: 2px solid #e2e8f0;
-        border-right: 2px solid #e2e8f0;
-        border-radius: 0;
+        box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+        border-left: 1px solid #e2e8f0;
+        border-right: 1px solid #e2e8f0;
     }
 }
 
@@ -73,13 +72,13 @@ body {
    2. Animations
    -------------------------------------------------------------------------- */
 .fade-in {
-    animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(6px);
     }
     to {
         opacity: 1;
@@ -88,13 +87,13 @@ body {
 }
 
 .fade-in-scale {
-    animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: fadeInScale 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes fadeInScale {
     from {
         opacity: 0;
-        transform: scale(0.95);
+        transform: scale(0.97);
     }
     to {
         opacity: 1;
@@ -103,19 +102,19 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   3. Header & Nav
+   3. Header & Navigation
    -------------------------------------------------------------------------- */
 .glass-header {
     background: #ffffff;
     z-index: 30;
-    border-bottom: 2px solid #e2e8f0;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .glass-nav {
     background: #ffffff;
-    border-top: 2px solid #e2e8f0;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
 }
 
 /* --------------------------------------------------------------------------
@@ -135,15 +134,14 @@ body {
    -------------------------------------------------------------------------- */
 .admin-input {
     width: 100%;
-    background-color: #fff;
-    border: 2px solid #cbd5e1;
-    border-radius: 1rem;
+    background-color: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 0.875rem;
     padding: 0.75rem 1rem;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     color: #0f172a;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
     box-sizing: border-box;
 }
 
@@ -154,7 +152,7 @@ body {
 .admin-input:focus {
     outline: none;
     border-color: var(--clr-p);
-    box-shadow: 0 0 0 4px var(--clr-p-10);
+    box-shadow: 0 0 0 3px var(--clr-p-10);
 }
 
 .admin-input::placeholder {
@@ -163,40 +161,40 @@ body {
 }
 
 .card-modern {
-    background: #fff;
-    border-radius: 1.25rem;
-    border: 2px solid #e2e8f0;
-    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02);
-    transition: all 0.2s ease;
+    background: #ffffff;
+    border-radius: 1rem;
+    border: 1.5px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     box-sizing: border-box;
 }
 
 .card-modern:hover {
-    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.05);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
     border-color: #cbd5e1;
 }
 
 .custom-radio:checked + div {
     border-color: var(--clr-p) !important;
     background-color: var(--clr-p-bg) !important;
-    box-shadow: 0 8px 25px var(--clr-p-25);
+    box-shadow: 0 4px 12px var(--clr-p-25);
     transform: translateY(-1px);
 }
 
 .custom-radio:checked + div .radio-icon {
     color: var(--clr-p) !important;
-    transform: scale(1.1);
+    transform: scale(1.08);
 }
 
 .btn-primary {
     background: var(--clr-p);
-    color: #fff;
-    padding: 0.875rem 1.5rem;
-    border-radius: 1rem;
-    font-weight: 600;
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.875rem;
+    font-weight: 700;
     font-size: 0.875rem;
-    transition: all 0.25s ease;
-    box-shadow: 0 6px 20px var(--clr-p-25);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px var(--clr-p-25);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -208,13 +206,14 @@ body {
 }
 
 .btn-primary:hover {
-    box-shadow: 0 8px 25px var(--clr-p-35);
-    transform: translateY(-2px);
+    box-shadow: 0 6px 16px var(--clr-p-35);
+    opacity: 0.95;
+    transform: translateY(-1px);
 }
 
 .btn-primary:active {
-    transform: translateY(0) scale(0.98);
-    box-shadow: 0 4px 15px var(--clr-p-25);
+    transform: translateY(0);
+    opacity: 0.9;
 }
 
 .btn-disabled {
@@ -229,9 +228,9 @@ body {
     top: -100px;
     left: 50%;
     transform: translateX(-50%);
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     z-index: 99999;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 /* --------------------------------------------------------------------------
