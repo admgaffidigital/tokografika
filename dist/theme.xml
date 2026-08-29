@@ -2245,14 +2245,12 @@ const rDyn = () => {
         if (isUrl) {
             // Tampilkan gambar, sembunyikan icon
             if (img) {
-                img.crossOrigin = 'anonymous';
                 img.src = logoVal;
                 img.style.display = 'block';
                 img.classList.remove('hidden');
                 img.onerror = () => {
                     if (!img.dataset.retried) {
                         img.dataset.retried = '1';
-                        img.crossOrigin = 'anonymous';
                         img.src = `https://wsrv.nl/?url=${encodeURIComponent(logoVal)}&w=300`;
                     } else {
                         img.style.display = 'none';
@@ -2263,14 +2261,12 @@ const rDyn = () => {
             }
             if (icon) { icon.style.display = 'none'; icon.classList.add('hidden'); }
             if (fImg) {
-                fImg.crossOrigin = 'anonymous';
                 fImg.src = logoVal;
                 fImg.style.display = 'block';
                 fImg.classList.remove('hidden');
                 fImg.onerror = () => {
                     if (!fImg.dataset.retried) {
                         fImg.dataset.retried = '1';
-                        fImg.crossOrigin = 'anonymous';
                         fImg.src = `https://wsrv.nl/?url=${encodeURIComponent(logoVal)}&w=300`;
                     } else {
                         fImg.style.display = 'none';
