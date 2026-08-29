@@ -4371,6 +4371,38 @@ const _hexToRgba = (hex, alpha = 0.12) => {
   return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
 };
 
+// Helper konversi URL gambar ke Base64 Data URL agar html2canvas tidak melakukan network request
+const _urlToBase64 = async (url) => {
+  if (!url || typeof url !== 'string') return null;
+  if (url.startsWith('data:image/')) return url;
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    let done = false;
+    img.onload = () => {
+      if (done) return;
+      done = true;
+      try {
+        const c = document.createElement('canvas');
+        c.width = img.naturalWidth || img.width || 100;
+        c.height = img.naturalHeight || img.height || 100;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        resolve(c.toDataURL('image/png'));
+      } catch (err) {
+        resolve(null);
+      }
+    };
+    img.onerror = () => {
+      if (!done) { done = true; resolve(null); }
+    };
+    setTimeout(() => {
+      if (!done) { done = true; resolve(null); }
+    }, 900);
+    img.src = url;
+  });
+};
+
 window.generateA4Document = async (type) => {
  if (isSaving) return;
  const o = gOrds.find(x => x.orderId === cVOrd);
@@ -4393,19 +4425,10 @@ window.generateA4Document = async (type) => {
  const logoVal = appData.store?.logo || 'fa-store';
  const isLogoUrl = /^(https?:\/\/|data:image\/)/i.test(logoVal);
  
- // Pre-validasi gambar logo eksternal secara asinkron agar tidak memicu 429 / hang di html2canvas
- let validLogoUrl = null;
+ // Pre-validasi dan konversi logo eksternal ke Base64 Data URL (0 network request di html2canvas)
+ let base64Logo = null;
  if (isLogoUrl) {
-   try {
-     validLogoUrl = await new Promise((resolve) => {
-       const testImg = new Image();
-       let finished = false;
-       testImg.onload = () => { if (!finished) { finished = true; resolve(logoVal); } };
-       testImg.onerror = () => { if (!finished) { finished = true; resolve(null); } };
-       setTimeout(() => { if (!finished) { finished = true; resolve(null); } }, 800);
-       testImg.src = logoVal;
-     });
-   } catch(e) { validLogoUrl = null; }
+   base64Logo = await _urlToBase64(logoVal);
  }
 
  if (type === 'invoice') {
@@ -4425,15 +4448,15 @@ window.generateA4Document = async (type) => {
 
  if (invLogoBox) invLogoBox.style.backgroundColor = themeClr;
 
- if (validLogoUrl) {
+ if (base64Logo) {
    if (invLogoImg) {
-     invLogoImg.src = validLogoUrl;
+     invLogoImg.src = base64Logo;
      invLogoImg.classList.remove('hidden');
    }
    if (invLogoIcon) invLogoIcon.classList.add('hidden');
  } else {
    if (invLogoImg) {
-     invLogoImg.removeAttribute('src');
+     invLogoImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
      invLogoImg.classList.add('hidden');
    }
    if (invLogoIcon) {
@@ -4502,15 +4525,15 @@ window.generateA4Document = async (type) => {
 
  if (sjLogoBox) sjLogoBox.style.backgroundColor = themeClr;
 
- if (validLogoUrl) {
+ if (base64Logo) {
    if (sjLogoImg) {
-     sjLogoImg.src = validLogoUrl;
+     sjLogoImg.src = base64Logo;
      sjLogoImg.classList.remove('hidden');
    }
    if (sjLogoIcon) sjLogoIcon.classList.add('hidden');
  } else {
    if (sjLogoImg) {
-     sjLogoImg.removeAttribute('src');
+     sjLogoImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
      sjLogoImg.classList.add('hidden');
    }
    if (sjLogoIcon) {
@@ -4567,6 +4590,17 @@ window.generateA4Document = async (type) => {
  clone.style.margin = '0';
  clone.style.boxSizing = 'border-box';
  
+ // Bersihkan tag img yang tidak memakai base64 dari clone agar html2canvas tidak melakukan network request
+ const cloneImg = clone.querySelector(type === 'invoice' ? '#inv-logo-img' : '#sj-logo-img');
+ if (cloneImg) {
+   if (base64Logo) {
+     cloneImg.src = base64Logo;
+     cloneImg.classList.remove('hidden');
+   } else {
+     cloneImg.remove();
+   }
+ }
+ 
  tempContainer.appendChild(clone);
  document.body.appendChild(tempContainer);
  
@@ -4575,7 +4609,7 @@ window.generateA4Document = async (type) => {
  backgroundColor: '#ffffff',
  useCORS: true,
  allowTaint: true,
- imageTimeout: 2000,
+ imageTimeout: 1500,
  logging: false,
  width: 794,
  windowWidth: 794,
