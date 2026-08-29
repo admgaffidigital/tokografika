@@ -930,13 +930,13 @@ html.dark .badge-counter {
  <div class='flex justify-between items-start border-b-2 border-slate-800 pb-5 mb-5'>
  <div class='max-w-[420px]'>
  <div class='flex items-center gap-3 mb-1'>
- <div class='w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-lg overflow-hidden shrink-0 shadow-sm' id='inv-logo-box' style='background-color: var(--clr-p, #059669);'>
+ <div class='w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-lg overflow-hidden shrink-0 shadow-sm' id='inv-logo-box' style='background-color: #059669;'>
  <img class='w-full h-full object-contain hidden' id='inv-logo-img' src='' alt='Logo Toko' />
  <i class='fa-solid fa-store text-xl text-white' id='inv-logo-icon'></i>
  </div>
  <div>
  <h1 class='text-xl font-black text-slate-900 tracking-tight leading-tight' id='inv-store-name'>NAMA TOKO</h1>
- <p class='text-[9px] font-bold uppercase tracking-widest' id='inv-store-slogan' style='color: var(--clr-p, #059669);'>RITEL &amp; GROSIR</p>
+ <p class='text-[9px] font-bold uppercase tracking-widest text-emerald-600' id='inv-store-slogan'>RITEL &amp; GROSIR</p>
  </div>
  </div>
  <p class='text-[11px] text-slate-600 mt-2 leading-relaxed' id='inv-store-address'>Alamat Toko</p>
@@ -944,7 +944,7 @@ html.dark .badge-counter {
  </div>
  <div class='text-right'>
  <div class='bg-slate-900 text-white px-5 py-3 rounded-xl border border-slate-800 shadow-sm'>
- <h2 class='text-base font-black tracking-widest uppercase' id='inv-doc-title' style='color: var(--clr-p, #34d399);'>INVOICE PENJUALAN</h2>
+ <h2 class='text-base font-black tracking-widest uppercase text-emerald-400' id='inv-doc-title'>INVOICE PENJUALAN</h2>
  <p class='text-xs font-bold text-white mt-1' id='inv-id'>#ORD123456</p>
  <p class='text-[10px] text-slate-300 mt-0.5' id='inv-date'>Tgl: 29/08/2026</p>
  </div>
@@ -1016,13 +1016,13 @@ html.dark .badge-counter {
  <div class='flex justify-between items-start border-b-2 border-slate-800 pb-5 mb-5'>
  <div class='max-w-[420px]'>
  <div class='flex items-center gap-3 mb-1'>
- <div class='w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-lg overflow-hidden shrink-0 shadow-sm' id='sj-logo-box' style='background-color: var(--clr-p, #0284c7);'>
+ <div class='w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-lg overflow-hidden shrink-0 shadow-sm' id='sj-logo-box' style='background-color: #0284c7;'>
  <img class='w-full h-full object-contain hidden' id='sj-logo-img' src='' alt='Logo Toko' />
  <i class='fa-solid fa-store text-xl text-white' id='sj-logo-icon'></i>
  </div>
  <div>
  <h1 class='text-xl font-black text-slate-900 tracking-tight leading-tight' id='sj-store-name'>NAMA TOKO</h1>
- <p class='text-[9px] font-bold uppercase tracking-widest' id='sj-store-slogan' style='color: var(--clr-p, #0284c7);'>SURAT PENGANTAR RESMI</p>
+ <p class='text-[9px] font-bold uppercase tracking-widest text-sky-600' id='sj-store-slogan'>SURAT PENGANTAR RESMI</p>
  </div>
  </div>
  <p class='text-[11px] text-slate-600 mt-2 leading-relaxed' id='sj-store-address'>Alamat Toko</p>
@@ -1030,7 +1030,7 @@ html.dark .badge-counter {
  </div>
  <div class='text-right'>
  <div class='bg-slate-900 text-white px-5 py-3 rounded-xl border border-slate-800 shadow-sm'>
- <h2 class='text-base font-black tracking-widest uppercase' id='sj-doc-title' style='color: var(--clr-p, #38bdf8);'>SURAT JALAN</h2>
+ <h2 class='text-base font-black tracking-widest uppercase text-sky-400' id='sj-doc-title'>SURAT JALAN</h2>
  <p class='text-xs font-bold text-white mt-1' id='sj-id'>#SJ-ORD123456</p>
  <p class='text-[10px] text-slate-300 mt-0.5' id='sj-date'>Tgl: 29/08/2026</p>
  </div>
@@ -4395,6 +4395,16 @@ window.executeDownloadImage = () => {
  closePreviewModal();
 };
 
+// Helper konversi warna hex ke RGBA standar agar 100% kompatibel dengan html2canvas
+const _hexToRgba = (hex, alpha = 0.12) => {
+  if (!hex || typeof hex !== 'string') return `rgba(5, 150, 105, ${alpha})`;
+  let c = hex.trim().replace('#', '');
+  if (c.length === 3) c = c.split('').map(x => x + x).join('');
+  if (c.length !== 6) return `rgba(5, 150, 105, ${alpha})`;
+  const num = parseInt(c, 16);
+  return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
+};
+
 window.generateA4Document = async (type) => {
  if (isSaving) return;
  const o = gOrds.find(x => x.orderId === cVOrd);
@@ -4411,7 +4421,9 @@ window.generateA4Document = async (type) => {
  const formattedDate = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
  
  // Ambil tema dan logo aktif toko
- const themeClr = getComputedStyle(document.documentElement).getPropertyValue('--clr-p').trim() || '#059669';
+ const rawTheme = getComputedStyle(document.documentElement).getPropertyValue('--clr-p').trim() || '#059669';
+ const themeClr = rawTheme.startsWith('#') ? rawTheme : (rawTheme.startsWith('rgb') ? rawTheme : '#059669');
+ const themeSoftBg = themeClr.startsWith('#') ? _hexToRgba(themeClr, 0.12) : 'rgba(5, 150, 105, 0.12)';
  const logoVal = appData.store?.logo || 'fa-store';
  const isLogoUrl = /^(https?:\/\/|data:image\/)/i.test(logoVal);
  
@@ -4439,7 +4451,7 @@ window.generateA4Document = async (type) => {
  if (invLogoBox) invLogoBox.style.backgroundColor = themeClr;
  if (invSlogan) invSlogan.style.color = themeClr;
  if (invDocTitle) invDocTitle.style.color = themeClr;
- if (invGrandtotalBox) invGrandtotalBox.style.backgroundColor = `color-mix(in srgb, ${themeClr} 12%, #ffffff)`;
+ if (invGrandtotalBox) invGrandtotalBox.style.backgroundColor = themeSoftBg;
  if (invGrandtotalText) invGrandtotalText.style.color = themeClr;
 
  if (isLogoUrl) {

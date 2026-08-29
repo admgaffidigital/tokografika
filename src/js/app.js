@@ -2928,6 +2928,16 @@ window.executeDownloadImage = () => {
  closePreviewModal();
 };
 
+// Helper konversi warna hex ke RGBA standar agar 100% kompatibel dengan html2canvas
+const _hexToRgba = (hex, alpha = 0.12) => {
+  if (!hex || typeof hex !== 'string') return `rgba(5, 150, 105, ${alpha})`;
+  let c = hex.trim().replace('#', '');
+  if (c.length === 3) c = c.split('').map(x => x + x).join('');
+  if (c.length !== 6) return `rgba(5, 150, 105, ${alpha})`;
+  const num = parseInt(c, 16);
+  return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
+};
+
 window.generateA4Document = async (type) => {
  if (isSaving) return;
  const o = gOrds.find(x => x.orderId === cVOrd);
@@ -2944,7 +2954,9 @@ window.generateA4Document = async (type) => {
  const formattedDate = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
  
  // Ambil tema dan logo aktif toko
- const themeClr = getComputedStyle(document.documentElement).getPropertyValue('--clr-p').trim() || '#059669';
+ const rawTheme = getComputedStyle(document.documentElement).getPropertyValue('--clr-p').trim() || '#059669';
+ const themeClr = rawTheme.startsWith('#') ? rawTheme : (rawTheme.startsWith('rgb') ? rawTheme : '#059669');
+ const themeSoftBg = themeClr.startsWith('#') ? _hexToRgba(themeClr, 0.12) : 'rgba(5, 150, 105, 0.12)';
  const logoVal = appData.store?.logo || 'fa-store';
  const isLogoUrl = /^(https?:\/\/|data:image\/)/i.test(logoVal);
  
@@ -2972,7 +2984,7 @@ window.generateA4Document = async (type) => {
  if (invLogoBox) invLogoBox.style.backgroundColor = themeClr;
  if (invSlogan) invSlogan.style.color = themeClr;
  if (invDocTitle) invDocTitle.style.color = themeClr;
- if (invGrandtotalBox) invGrandtotalBox.style.backgroundColor = `color-mix(in srgb, ${themeClr} 12%, #ffffff)`;
+ if (invGrandtotalBox) invGrandtotalBox.style.backgroundColor = themeSoftBg;
  if (invGrandtotalText) invGrandtotalText.style.color = themeClr;
 
  if (isLogoUrl) {
