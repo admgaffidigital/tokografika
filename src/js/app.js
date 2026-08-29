@@ -734,31 +734,38 @@ const rDyn = () => {
     }
     setH('footer-social-links', socHtml);
     
-    if (appData.store.logo) {
-        const i = el('dyn-store-logo-img'), c = el('dyn-store-logo-icon');
-        const fi = el('footer-logo-img'), fc = el('footer-logo-icon');
-        if (appData.store.logo.includes('http') || appData.store.logo.includes('data:')) {
-            i.src = appData.store.logo;
-            i.onerror = () => { i.onerror = null; i.src = 'https://placehold.co/100?text=Logo'; };
-            show('dyn-store-logo-img');
-            hide('dyn-store-logo-icon');
-            if (fi) {
-                fi.src = appData.store.logo;
-                fi.onerror = () => { fi.onerror = null; fi.src = 'https://placehold.co/100?text=Logo'; };
-                show('footer-logo-img');
-                hide('footer-logo-icon');
-            }
+    // ---- RENDER LOGO HEADER & FOOTER ----
+    const _logoImg  = el('dyn-store-logo-img');
+    const _logoIcon = el('dyn-store-logo-icon');
+    const _fLogoImg  = el('footer-logo-img');
+    const _fLogoIcon = el('footer-logo-icon');
+
+    const _showLogo = (img, icon, fImg, fIcon, isUrl, logoVal) => {
+        if (isUrl) {
+            // Tampilkan gambar, sembunyikan icon
+            if (img)  { img.src = logoVal; img.onerror = () => { img.onerror = null; img.src = ''; hide('dyn-store-logo-img'); show('dyn-store-logo-icon'); }; show('dyn-store-logo-img'); }
+            if (icon) hide('dyn-store-logo-icon');
+            if (fImg) { fImg.src = logoVal; fImg.onerror = () => { fImg.onerror = null; fImg.src = ''; hide('footer-logo-img'); show('footer-logo-icon'); }; show('footer-logo-img'); }
+            if (fIcon) hide('footer-logo-icon');
+        } else if (logoVal) {
+            // Tampilkan FA icon class, sembunyikan img
+            if (icon) { icon.className = `fa-solid ${esc(logoVal)} text-xl text-emerald-600 dark:text-emerald-400`; show('dyn-store-logo-icon'); }
+            if (img)  hide('dyn-store-logo-img');
+            if (fIcon) { fIcon.className = `fa-solid ${esc(logoVal)} text-2xl text-emerald-600`; show('footer-logo-icon'); }
+            if (fImg)  hide('footer-logo-img');
         } else {
-            c.className = `fa-solid ${esc(appData.store.logo)} text-xl text-emerald-600 dark:text-emerald-400`;
-            show('dyn-store-logo-icon');
-            hide('dyn-store-logo-img');
-            if (fc) {
-                fc.className = `fa-solid ${esc(appData.store.logo)} text-2xl text-emerald-600`;
-                show('footer-logo-icon');
-                hide('footer-logo-img');
-            }
+            // Tidak ada logo — tampilkan icon fa-store default
+            if (icon) { icon.className = 'fa-solid fa-store text-xl text-emerald-600 dark:text-emerald-400'; show('dyn-store-logo-icon'); }
+            if (img)  hide('dyn-store-logo-img');
+            if (fIcon) { fIcon.className = 'fa-solid fa-store text-2xl text-emerald-600'; show('footer-logo-icon'); }
+            if (fImg)  hide('footer-logo-img');
         }
-    }
+    };
+
+    const _logoVal = appData.store.logo || '';
+    const _isUrl   = _logoVal.includes('http') || _logoVal.includes('data:');
+    _showLogo(_logoImg, _logoIcon, _fLogoImg, _fLogoIcon, _isUrl, _logoVal);
+
 
 setH('dynamic-banners-container', `
         <div class="flex overflow-x-auto gap-4 pb-2 snap-x hide-scrollbar">
