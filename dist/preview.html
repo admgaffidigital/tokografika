@@ -86,8 +86,8 @@ body {
 
 @media (min-width: 1280px) {
     #app-container {
-        max-width: 1280px;
-        box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+        max-width: 1440px;
+        box-shadow: 0 20px 60px -15px rgba(15, 23, 42, 0.12);
         border-left: 1px solid #e2e8f0;
         border-right: 1px solid #e2e8f0;
     }
@@ -831,7 +831,7 @@ html.dark .badge-counter {
  </div>
 
     <div class='fixed inset-0 z-[70] bg-slate-900/70 hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-5' id='product-modal' onclick='if(event.target===this) closeProductModal()'>
-        <div class='w-full max-w-md bg-white dark:bg-slate-800 rounded-t-[1.5rem] sm:rounded-[1.5rem] max-h-[90dvh] sm:max-h-[88dvh] overflow-y-auto transform translate-y-full sm:translate-y-5 transition-transform duration-300 hide-scrollbar shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col relative' id='product-modal-content'>
+        <div class='w-full max-w-md sm:max-w-lg md:max-w-xl bg-white dark:bg-slate-800 rounded-t-[1.5rem] sm:rounded-[1.5rem] max-h-[90dvh] sm:max-h-[88dvh] overflow-y-auto transform translate-y-full sm:translate-y-0 transition-transform duration-300 hide-scrollbar shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col relative' id='product-modal-content'>
             <div class='sticky top-0 right-0 left-0 z-30 flex justify-end gap-2 p-3 pointer-events-none'>
                 <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-emerald-500 hover:text-white transition-all border border-slate-200 dark:border-slate-700 shadow-md pointer-events-auto' onclick='shareProduct()' title='Bagikan'><i class='fa-solid fa-share-nodes text-sm'></i></button>
                 <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-rose-500 hover:text-white transition-all border border-slate-200 dark:border-slate-700 shadow-md pointer-events-auto' onclick='closeProductModal()' title='Tutup'><i class='fa-solid fa-xmark text-sm'></i></button>
@@ -856,16 +856,16 @@ html.dark .badge-counter {
         </div>
     </div>
 
- <div class='fixed inset-0 z-[80] bg-slate-900 hidden flex items-center justify-center p-3 opacity-0 transition-opacity duration-300' id='admin-modal' onclick='if(event.target===this) closeAdminModal()'>
- <div class='bg-white dark:bg-slate-800 rounded-[1.5rem] w-full max-w-md max-h-[92dvh] flex flex-col hide-scrollbar shadow-2xl border-2 border-slate-200 dark:border-slate-700 relative transform scale-95 transition-transform duration-300' id='admin-modal-box'>
+ <div class='fixed inset-0 z-[80] bg-slate-900/70 hidden flex items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300' id='admin-modal' onclick='if(event.target===this) closeAdminModal()'>
+ <div class='bg-white dark:bg-slate-800 rounded-[1.5rem] w-full max-w-md sm:max-w-xl md:max-w-2xl max-h-[92dvh] flex flex-col hide-scrollbar shadow-2xl border-2 border-slate-200 dark:border-slate-700 relative transform scale-95 transition-transform duration-300' id='admin-modal-box'>
  <div class='sticky top-0 bg-white dark:bg-slate-800 px-5 py-4 border-b-2 border-slate-200 dark:border-slate-700 flex justify-between items-center z-20 rounded-t-[1.5rem]'><h3 class='font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2' id='admin-modal-title'>Form Data</h3><button class='w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-500 dark:hover:text-rose-400 transition-all border-2 border-slate-200 dark:border-slate-600' onclick='closeAdminModal()'><i class='fa-solid fa-xmark'></i></button></div>
  <div class='p-5 space-y-4 overflow-y-auto flex-1 bg-slate-50 dark:bg-slate-900' id='admin-modal-form'></div>
  <div class='p-4 sticky bottom-0 bg-white dark:bg-slate-800 border-t-2 border-slate-200 dark:border-slate-700 z-20 rounded-b-[1.5rem] shrink-0'><button class='btn-primary w-full py-3.5 text-sm' onclick='submitAdminForm()'><i class='fa-solid fa-save mr-1.5'></i> Simpan Data</button></div>
  </div>
  </div>
 
- <div class='fixed inset-0 z-[100] bg-slate-900 hidden flex items-center justify-center p-3 opacity-0 transition-opacity duration-300' id='admin-order-modal' onclick='if(event.target===this) closeOrderDetailModal()'>
- <div class='bg-white dark:bg-slate-800 rounded-[1.5rem] w-full max-w-md max-h-[92dvh] overflow-y-auto hide-scrollbar shadow-2xl border-2 border-slate-200 dark:border-slate-700 relative transform scale-95 transition-transform duration-300 flex flex-col' id='admin-order-modal-box'>
+ <div class='fixed inset-0 z-[100] bg-slate-900/70 hidden flex items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300' id='admin-order-modal' onclick='if(event.target===this) closeOrderDetailModal()'>
+ <div class='bg-white dark:bg-slate-800 rounded-[1.5rem] w-full max-w-md sm:max-w-lg md:max-w-xl max-h-[92dvh] overflow-y-auto hide-scrollbar shadow-2xl border-2 border-slate-200 dark:border-slate-700 relative transform scale-95 transition-transform duration-300 flex flex-col' id='admin-order-modal-box'>
  <div class='sticky top-0 bg-white dark:bg-slate-800 px-5 py-4 border-b-2 border-slate-200 dark:border-slate-700 flex justify-between items-center z-20 rounded-t-[1.5rem]'><h3 class='font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2'><i class='fa-solid fa-file-invoice text-emerald-600 dark:text-emerald-400'></i> Detail Pesanan</h3><button class='w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-600 dark:hover:text-rose-400 transition-all' onclick='closeOrderDetailModal()'><i class='fa-solid fa-xmark'></i></button></div>
  
  <div class='p-5 space-y-4 flex-1 bg-slate-50 dark:bg-slate-900' id='admin-order-modal-content'></div>
@@ -1046,8 +1046,8 @@ html.dark .badge-counter {
  <!-- VIEW: CATALOG / HOME -->
  <!-- ====================================================================- -->
  <div class='view-section flex flex-col fade-in' id='view-catalog'>
- <div class='glass-header shrink-0 px-4 py-3 flex items-center justify-center sticky top-0'>
- <div class='flex items-center justify-between w-full max-w-5xl'>
+ <div class='glass-header shrink-0 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-center sticky top-0'>
+ <div class='flex items-center justify-between w-full max-w-7xl'>
  <div class='flex items-center gap-3'>
  <div class='w-12 h-12 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.08)] border-2 border-slate-200 dark:border-slate-700 overflow-hidden shrink-0'><img class='w-full h-full object-contain hidden' id='dyn-store-logo-img' src=''/><i class='fa-solid fa-store text-xl text-emerald-600 dark:text-emerald-400 hidden' id='dyn-store-logo-icon'></i></div>
  <div><h1 class='text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight leading-none mb-1' id='dyn-store-name'>Memuat...</h1><p class='text-[9px] sm:text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest' id='dyn-store-slogan'>Slogan</p></div>
@@ -1065,7 +1065,7 @@ html.dark .badge-counter {
  <!-- ============================================================ -->
  <!-- BANNER INSTALL PWA &#8212; Muncul otomatis jika belum diinstall -->
  <!-- ============================================================ -->
-    <div class='hidden w-full max-w-5xl mx-auto px-4 mt-4' id='pwa-install-banner'>
+    <div class='hidden w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4' id='pwa-install-banner'>
         <div class='relative flex items-center gap-3 rounded-2xl px-4 py-3 shadow-md overflow-hidden bg-emerald-600 dark:bg-emerald-700 border border-emerald-500' id='pwa-banner-inner'>
             <div class='w-10 h-10 shrink-0 bg-white/20 rounded-xl flex items-center justify-center border border-white/30 text-white'>
                 <i class='fa-solid fa-mobile-screen-button text-lg' id='pwa-banner-icon'></i>
@@ -1079,11 +1079,11 @@ html.dark .badge-counter {
         </div>
     </div><!-- ============================================================ -->
 
- <div class='w-full max-w-5xl mx-auto px-4 mt-5' id='dynamic-banners-container'></div>
+ <div class='w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5' id='dynamic-banners-container'></div>
  
- <div class='w-full max-w-5xl mx-auto px-4 mt-5'><div class='bg-white dark:bg-slate-800 rounded-[1.25rem] p-4 sm:p-5 shadow-sm border-2 border-slate-200 dark:border-slate-700'><div class='flex items-center gap-2 mb-3'><i class='fa-solid fa-layer-group text-emerald-500 dark:text-emerald-400 text-xs'></i><h3 class='font-bold text-slate-800 dark:text-white text-xs tracking-widest uppercase'>Kategori</h3></div><div class='flex gap-2 overflow-x-auto hide-scrollbar snap-x pb-1' id='dynamic-categories-container'></div></div></div>
+ <div class='w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5'><div class='bg-white dark:bg-slate-800 rounded-[1.25rem] p-4 sm:p-5 shadow-sm border-2 border-slate-200 dark:border-slate-700'><div class='flex items-center gap-2 mb-3'><i class='fa-solid fa-layer-group text-emerald-500 dark:text-emerald-400 text-xs'></i><h3 class='font-bold text-slate-800 dark:text-white text-xs tracking-widest uppercase'>Kategori</h3></div><div class='flex gap-3 overflow-x-auto hide-scrollbar snap-x pb-1' id='dynamic-categories-container'></div></div></div>
  
- <div class='w-full max-w-5xl mx-auto px-4 mt-5 hidden' id='voucher-section'>
+ <div class='w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5 hidden' id='voucher-section'>
  <div class='flex items-center gap-2 mb-3 px-1'>
  <i class='fa-solid fa-ticket-simple text-amber-500 dark:text-amber-400 text-sm'></i>
  <h3 class='font-bold text-slate-800 dark:text-white text-xs tracking-widest uppercase'>Voucher Spesial</h3>
@@ -1091,15 +1091,15 @@ html.dark .badge-counter {
  <div class='flex gap-3 overflow-x-auto hide-scrollbar snap-x pb-2' id='dynamic-vouchers-container'></div>
 </div>
  
- <div class='px-4 pt-5 w-full max-w-5xl mx-auto'>
- <div class='flex flex-col sm:flex-row gap-3 mb-5 items-center justify-between bg-white dark:bg-slate-800 p-3 rounded-[1.25rem] border border-slate-200 dark:border-slate-700 shadow-sm'>
- <div class='relative w-full sm:w-80 flex items-center'><i class='fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs'></i><input class='w-full pl-10 pr-[5rem] py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:border-emerald-500 transition-all text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500' id='search-input' name='q' type='search' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' oninput='handleSearch(this.value)' placeholder='Cari nama atau scan...'/><button class='absolute right-10 top-1/2 -translate-y-1/2 w-7 h-7 hidden items-center justify-center text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 rounded-lg transition-all' id='btn-search-clear' onclick='clearSearch()' title='Hapus pencarian'><i class='fa-solid fa-xmark text-sm'></i></button><button class='absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-lg transition-all' onclick='openCameraScanner()'><i class='fa-solid fa-qrcode text-sm'></i></button></div>
- <div class='flex gap-2 w-full sm:w-auto'><div class='relative flex-1 sm:w-40'><select class='w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-700 dark:text-slate-300 appearance-none focus:outline-none focus:border-emerald-400 cursor-pointer' id='sort-input' onchange='handleSort(this.value)'><option value='newest'>Terbaru</option><option value='cheapest'>Termurah</option><option value='expensive'>Termahal</option><option value='az'>Nama A-Z</option></select><i class='fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none text-[10px]'></i></div><div class='flex bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shrink-0 p-0.5'><button class='w-8 h-8 rounded-lg flex items-center justify-center text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-800 shadow-sm transition-all' id='btn-view-grid' onclick='toggleView(&quot;grid&quot;)'><i class='fa-solid fa-border-all text-[11px]'></i></button><button class='w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-all' id='btn-view-list' onclick='toggleView(&quot;list&quot;)'><i class='fa-solid fa-list text-[11px]'></i></button></div></div>
+ <div class='px-4 sm:px-6 lg:px-8 pt-5 w-full max-w-7xl mx-auto'>
+ <div class='flex flex-col sm:flex-row gap-3 mb-5 items-center justify-between bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-[1.25rem] border border-slate-200 dark:border-slate-700 shadow-sm'>
+ <div class='relative w-full sm:w-80 md:w-96 flex items-center'><i class='fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs'></i><input class='w-full pl-10 pr-[5rem] py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:border-emerald-500 transition-all text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500' id='search-input' name='q' type='search' autocomplete='off' autocorrect='off' autocapitalize='off' spellcheck='false' oninput='handleSearch(this.value)' placeholder='Cari nama atau scan...'/><button class='absolute right-10 top-1/2 -translate-y-1/2 w-7 h-7 hidden items-center justify-center text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 rounded-lg transition-all' id='btn-search-clear' onclick='clearSearch()' title='Hapus pencarian'><i class='fa-solid fa-xmark text-sm'></i></button><button class='absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-lg transition-all' onclick='openCameraScanner()'><i class='fa-solid fa-qrcode text-sm'></i></button></div>
+ <div class='flex gap-2 w-full sm:w-auto'><div class='relative flex-1 sm:w-44'><select class='w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-700 dark:text-slate-300 appearance-none focus:outline-none focus:border-emerald-400 cursor-pointer' id='sort-input' onchange='handleSort(this.value)'><option value='newest'>Terbaru</option><option value='cheapest'>Termurah</option><option value='expensive'>Termahal</option><option value='az'>Nama A-Z</option></select><i class='fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none text-[10px]'></i></div><div class='flex bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shrink-0 p-0.5'><button class='w-8 h-8 rounded-lg flex items-center justify-center text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-800 shadow-sm transition-all' id='btn-view-grid' onclick='toggleView(&quot;grid&quot;)'><i class='fa-solid fa-border-all text-[11px]'></i></button><button class='w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-all' id='btn-view-list' onclick='toggleView(&quot;list&quot;)'><i class='fa-solid fa-list text-[11px]'></i></button></div></div>
  </div>
- <div class='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4' id='product-container'></div>
+ <div class='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5' id='product-container'></div>
  <div class='mt-8 mb-4 text-center hidden' id='load-more-container'><button class='bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs px-6 py-2.5 rounded-full shadow-sm hover:border-emerald-400 dark:hover:border-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-400 transition-all' onclick='loadMoreProducts()'>Muat Lebih Banyak <i class='fa-solid fa-chevron-down ml-1 text-[9px]'></i></button></div>
  </div>
-  <div class='mt-12 px-4 w-full max-w-5xl mx-auto'>
+  <div class='mt-12 px-4 sm:px-6 lg:px-8 w-full max-w-7xl mx-auto'>
   <footer class='bg-white dark:bg-slate-800/90 rounded-3xl p-6 sm:p-8 text-slate-800 dark:text-white relative overflow-hidden shadow-sm border-2 border-slate-200 dark:border-slate-700/80 mb-6'>
   <div class='relative z-10 flex flex-col md:flex-row items-center md:items-start justify-between gap-8'>
   <div class='flex flex-col items-center md:items-start text-center md:text-left'>
@@ -2342,7 +2342,7 @@ setH('dynamic-banners-container', `
     
     if (hasImg) {
         return `
-        <div class="w-[88%] sm:w-[520px] md:w-[640px] aspect-[16/7] sm:aspect-[21/9] snap-center shrink-0 rounded-2xl overflow-hidden shadow-md relative border border-slate-200 dark:border-slate-700 group cursor-pointer" style="background:${bgTheme}">
+        <div class="w-[88%] sm:w-[460px] md:w-[560px] lg:w-[640px] aspect-[16/7] sm:aspect-[21/9] snap-center shrink-0 rounded-2xl overflow-hidden shadow-md relative border border-slate-200 dark:border-slate-700 group cursor-pointer" style="background:${bgTheme}">
             <img src="${esc(fixedImg)}" loading="eager" onerror="this.style.display='none'" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"/>
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4 sm:p-5 text-white pointer-events-none ${hasTitle ? '' : 'opacity-0'}">
                 <span class="badge badge-xs w-fit mb-1.5" style="background:var(--clr-p);color:#fff;border-color:transparent">Promo</span>
@@ -2483,7 +2483,7 @@ const rCat = () => {
  });
 
  const c = el('product-container');
- c.className = cView === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4' : 'flex flex-col gap-3';
+ c.className = cView === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5' : 'flex flex-col gap-3 max-w-4xl mx-auto';
  
  if (!f.length) {
  c.innerHTML = `

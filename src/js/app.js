@@ -857,7 +857,7 @@ setH('dynamic-banners-container', `
     
     if (hasImg) {
         return `
-        <div class="w-[88%] sm:w-[520px] md:w-[640px] aspect-[16/7] sm:aspect-[21/9] snap-center shrink-0 rounded-2xl overflow-hidden shadow-md relative border border-slate-200 dark:border-slate-700 group cursor-pointer" style="background:${bgTheme}">
+        <div class="w-[88%] sm:w-[460px] md:w-[560px] lg:w-[640px] aspect-[16/7] sm:aspect-[21/9] snap-center shrink-0 rounded-2xl overflow-hidden shadow-md relative border border-slate-200 dark:border-slate-700 group cursor-pointer" style="background:${bgTheme}">
             <img src="${esc(fixedImg)}" loading="eager" onerror="this.style.display='none'" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"/>
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4 sm:p-5 text-white pointer-events-none ${hasTitle ? '' : 'opacity-0'}">
                 <span class="badge badge-xs w-fit mb-1.5" style="background:var(--clr-p);color:#fff;border-color:transparent">Promo</span>
@@ -998,7 +998,7 @@ const rCat = () => {
  });
 
  const c = el('product-container');
- c.className = cView === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4' : 'flex flex-col gap-3';
+ c.className = cView === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5' : 'flex flex-col gap-3 max-w-4xl mx-auto';
  
  if (!f.length) {
  c.innerHTML = `
