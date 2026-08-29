@@ -2960,6 +2960,21 @@ window.generateA4Document = async (type) => {
  const logoVal = appData.store?.logo || 'fa-store';
  const isLogoUrl = /^(https?:\/\/|data:image\/)/i.test(logoVal);
  
+ // Pre-validasi gambar logo eksternal secara asinkron agar tidak memicu 429 / hang di html2canvas
+ let validLogoUrl = null;
+ if (isLogoUrl) {
+   try {
+     validLogoUrl = await new Promise((resolve) => {
+       const testImg = new Image();
+       let finished = false;
+       testImg.onload = () => { if (!finished) { finished = true; resolve(logoVal); } };
+       testImg.onerror = () => { if (!finished) { finished = true; resolve(null); } };
+       setTimeout(() => { if (!finished) { finished = true; resolve(null); } }, 800);
+       testImg.src = logoVal;
+     });
+   } catch(e) { validLogoUrl = null; }
+ }
+
  if (type === 'invoice') {
  setIn('inv-store-name', appData.store.name || 'TOKO GRAFIKA');
  setIn('inv-store-address', appData.store.address || 'Alamat Toko');
@@ -2977,19 +2992,17 @@ window.generateA4Document = async (type) => {
 
  if (invLogoBox) invLogoBox.style.backgroundColor = themeClr;
 
- if (isLogoUrl) {
+ if (validLogoUrl) {
    if (invLogoImg) {
-     invLogoImg.crossOrigin = 'anonymous';
-     invLogoImg.src = logoVal;
-     invLogoImg.onerror = () => {
-       invLogoImg.classList.add('hidden');
-       if (invLogoIcon) invLogoIcon.classList.remove('hidden');
-     };
+     invLogoImg.src = validLogoUrl;
      invLogoImg.classList.remove('hidden');
    }
    if (invLogoIcon) invLogoIcon.classList.add('hidden');
  } else {
-   if (invLogoImg) invLogoImg.classList.add('hidden');
+   if (invLogoImg) {
+     invLogoImg.removeAttribute('src');
+     invLogoImg.classList.add('hidden');
+   }
    if (invLogoIcon) {
      invLogoIcon.className = `text-xl text-white ${logoVal.startsWith('fa-') ? (logoVal.includes('fa-solid') || logoVal.includes('fa-brands') ? logoVal : 'fa-solid ' + logoVal) : 'fa-solid fa-store'}`;
      invLogoIcon.classList.remove('hidden');
@@ -3056,19 +3069,17 @@ window.generateA4Document = async (type) => {
 
  if (sjLogoBox) sjLogoBox.style.backgroundColor = themeClr;
 
- if (isLogoUrl) {
+ if (validLogoUrl) {
    if (sjLogoImg) {
-     sjLogoImg.crossOrigin = 'anonymous';
-     sjLogoImg.src = logoVal;
-     sjLogoImg.onerror = () => {
-       sjLogoImg.classList.add('hidden');
-       if (sjLogoIcon) sjLogoIcon.classList.remove('hidden');
-     };
+     sjLogoImg.src = validLogoUrl;
      sjLogoImg.classList.remove('hidden');
    }
    if (sjLogoIcon) sjLogoIcon.classList.add('hidden');
  } else {
-   if (sjLogoImg) sjLogoImg.classList.add('hidden');
+   if (sjLogoImg) {
+     sjLogoImg.removeAttribute('src');
+     sjLogoImg.classList.add('hidden');
+   }
    if (sjLogoIcon) {
      sjLogoIcon.className = `text-xl text-white ${logoVal.startsWith('fa-') ? (logoVal.includes('fa-solid') || logoVal.includes('fa-brands') ? logoVal : 'fa-solid ' + logoVal) : 'fa-solid fa-store'}`;
      sjLogoIcon.classList.remove('hidden');
