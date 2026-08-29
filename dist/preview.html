@@ -89,6 +89,10 @@ body {
     }
 }
 
+.hidden, [hidden] {
+    display: none !important;
+}
+
 .hide-scrollbar::-webkit-scrollbar {
     display: none;
 }
@@ -1292,8 +1296,8 @@ html.dark .badge-counter {
 // UTILITIES
 // -----------------------------------------------------------------------------
 const el = id => document.getElementById(id);
-const show = id => { const e = el(id); if (e) e.classList.remove('hidden'); };
-const hide = id => { const e = el(id); if (e) e.classList.add('hidden'); };
+const show = id => { const e = el(id); if (e) { e.classList.remove('hidden'); e.style.display = ''; } };
+const hide = id => { const e = el(id); if (e) { e.classList.add('hidden'); e.style.display = 'none'; } };
 const toggleCls = (id, c, f) => { const e = el(id); if (e) e.classList.toggle(c, f); };
 const setIn = (id, t) => { const e = el(id); if (e) e.innerText = t; };
 
@@ -2041,30 +2045,66 @@ const rDyn = () => {
  const _fLogoIcon = el('footer-logo-icon');
 
  const _showLogo = (img, icon, fImg, fIcon, isUrl, logoVal) => {
- if (isUrl) {
- // Tampilkan gambar, sembunyikan icon
- if (img) { img.src = logoVal; img.onerror = () => { img.onerror = null; img.src = ''; hide('dyn-store-logo-img'); show('dyn-store-logo-icon'); }; show('dyn-store-logo-img'); }
- if (icon) hide('dyn-store-logo-icon');
- if (fImg) { fImg.src = logoVal; fImg.onerror = () => { fImg.onerror = null; fImg.src = ''; hide('footer-logo-img'); show('footer-logo-icon'); }; show('footer-logo-img'); }
- if (fIcon) hide('footer-logo-icon');
- } else if (logoVal) {
- // Tampilkan FA icon class, sembunyikan img
- if (icon) { icon.className = `fa-solid ${esc(logoVal)} text-xl text-emerald-600 dark:text-emerald-400`; show('dyn-store-logo-icon'); }
- if (img) hide('dyn-store-logo-img');
- if (fIcon) { fIcon.className = `fa-solid ${esc(logoVal)} text-2xl text-emerald-600`; show('footer-logo-icon'); }
- if (fImg) hide('footer-logo-img');
- } else {
- // Tidak ada logo — tampilkan icon fa-store default
- if (icon) { icon.className = 'fa-solid fa-store text-xl text-emerald-600 dark:text-emerald-400'; show('dyn-store-logo-icon'); }
- if (img) hide('dyn-store-logo-img');
- if (fIcon) { fIcon.className = 'fa-solid fa-store text-2xl text-emerald-600'; show('footer-logo-icon'); }
- if (fImg) hide('footer-logo-img');
- }
- };
+        if (isUrl) {
+            // Tampilkan gambar, sembunyikan icon
+            if (img) {
+                img.src = logoVal;
+                img.style.display = 'block';
+                img.classList.remove('hidden');
+                img.onerror = () => {
+                    img.onerror = null;
+                    img.style.display = 'none';
+                    img.classList.add('hidden');
+                    if (icon) { icon.style.display = 'inline-block'; icon.classList.remove('hidden'); }
+                };
+            }
+            if (icon) { icon.style.display = 'none'; icon.classList.add('hidden'); }
+            if (fImg) {
+                fImg.src = logoVal;
+                fImg.style.display = 'block';
+                fImg.classList.remove('hidden');
+                fImg.onerror = () => {
+                    fImg.onerror = null;
+                    fImg.style.display = 'none';
+                    fImg.classList.add('hidden');
+                    if (fIcon) { fIcon.style.display = 'inline-block'; fIcon.classList.remove('hidden'); }
+                };
+            }
+            if (fIcon) { fIcon.style.display = 'none'; fIcon.classList.add('hidden'); }
+        } else if (logoVal) {
+            // Tampilkan FA icon class, sembunyikan img
+            if (icon) {
+                icon.className = `fa-solid ${esc(logoVal)} text-xl text-emerald-600 dark:text-emerald-400`;
+                icon.style.display = 'inline-block';
+                icon.classList.remove('hidden');
+            }
+            if (img) { img.style.display = 'none'; img.classList.add('hidden'); }
+            if (fIcon) {
+                fIcon.className = `fa-solid ${esc(logoVal)} text-2xl text-emerald-600`;
+                fIcon.style.display = 'inline-block';
+                fIcon.classList.remove('hidden');
+            }
+            if (fImg) { fImg.style.display = 'none'; fImg.classList.add('hidden'); }
+        } else {
+            // Tidak ada logo — tampilkan icon fa-store default
+            if (icon) {
+                icon.className = 'fa-solid fa-store text-xl text-emerald-600 dark:text-emerald-400';
+                icon.style.display = 'inline-block';
+                icon.classList.remove('hidden');
+            }
+            if (img) { img.style.display = 'none'; img.classList.add('hidden'); }
+            if (fIcon) {
+                fIcon.className = 'fa-solid fa-store text-2xl text-emerald-600';
+                fIcon.style.display = 'inline-block';
+                fIcon.classList.remove('hidden');
+            }
+            if (fImg) { fImg.style.display = 'none'; fImg.classList.add('hidden'); }
+        }
+    };
 
- const _logoVal = appData.store.logo || '';
- const _isUrl = _logoVal.includes('http') || _logoVal.includes('data:');
- _showLogo(_logoImg, _logoIcon, _fLogoImg, _fLogoIcon, _isUrl, _logoVal);
+    const _logoVal = appData.store.logo || '';
+    const _isUrl = _logoVal.includes('http') || _logoVal.includes('data:');
+    _showLogo(_logoImg, _logoIcon, _fLogoImg, _fLogoIcon, _isUrl, _logoVal);
 
 
 setH('dynamic-banners-container', `

@@ -38,6 +38,10 @@ body {
     }
 }
 
+.hidden, [hidden] {
+    display: none !important;
+}
+
 .hide-scrollbar::-webkit-scrollbar {
     display: none;
 }
