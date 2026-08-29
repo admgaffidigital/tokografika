@@ -253,7 +253,6 @@
                         <button class='w-9 h-9 sm:w-10 sm:h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-600 dark:text-slate-300 rounded-full flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all' onclick='checkAdminAccess()' title='Akun / Admin'><i class='fa-solid fa-user text-sm'></i></button>
                         <button class='w-9 h-9 sm:w-10 sm:h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-600 dark:text-slate-300 rounded-full flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all' id='btn-theme-toggle' onclick='toggleTheme()' title='Ganti Tema'><i class='fa-solid fa-moon text-sm' id='icon-theme'></i></button>
                         <button class='w-9 h-9 sm:w-10 sm:h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-600 dark:text-slate-300 rounded-full flex items-center justify-center hover:bg-rose-50 dark:hover:bg-rose-900/40 hover:text-rose-500 dark:hover:text-rose-400 relative transition-all' onclick='changeView(&apos;view-wishlist&apos;)' title='Favorit'><i class='fa-solid fa-heart text-sm'></i><span class='badge-counter -top-1 -right-1 transform scale-0 transition-transform duration-300' id='wishlist-badge'>0</span></button>
-                        <button class='w-9 h-9 sm:w-10 sm:h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-600 dark:text-slate-300 rounded-full flex items-center justify-center hover:bg-emerald-50 dark:hover:bg-emerald-950/40 hover:text-emerald-600 dark:hover:text-emerald-400 relative transition-all' onclick='changeView(&apos;view-cart&apos;)' title='Keranjang Belanja'><i class='fa-solid fa-cart-shopping text-sm'></i><span class='badge-counter -top-1 -right-1 transform scale-0 transition-transform duration-300' id='header-cart-badge'>0</span></button>
  </div>
  </div>
  </div>
@@ -344,17 +343,10 @@
  
   <!-- Floating Cart Action Button (FAB) Bottom-Right -->
   <div class='fixed bottom-6 right-6 z-50 pointer-events-auto transition-all duration-300' id='fab-cart-btn-container'>
-      <button class='w-14 h-14 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full shadow-[0_8px_30px_rgba(5,150,105,0.45)] flex items-center justify-center relative hover:scale-110 active:scale-95 transition-all border-2 border-white dark:border-slate-800' onclick='changeView(&apos;view-cart&apos;)' title='Buka Keranjang Belanja'>
+      <button class='w-14 h-14 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full shadow-[0_8px_30px_rgba(5,150,105,0.45)] flex items-center justify-center relative hover:scale-110 active:scale-95 transition-all border-2 border-white dark:border-slate-800 cursor-pointer' onclick='changeView(&apos;view-cart&apos;)' title='Buka Keranjang Belanja'>
           <i class='fa-solid fa-cart-shopping text-xl'></i>
-          <span class='badge-counter -top-1.5 -right-1.5 border-2 border-white dark:border-slate-800 transform scale-0 transition-transform duration-300' id='fab-cart-badge'>0</span>
+          <span class='badge-counter -top-1.5 -right-1.5 border-2 border-white dark:border-slate-800 transform scale-0 transition-transform duration-300' id='cart-badge'>0</span>
       </button>
-  </div>
-
-  <div class='absolute bottom-5 sm:bottom-6 left-1/2 transform -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm z-40 transition-all duration-300 pointer-events-auto' id='floating-cart-bar'>
-  <button class='w-full bg-slate-900 dark:bg-slate-950 text-white p-3 rounded-2xl shadow-[0_12px_32px_rgba(15,23,42,0.35)] flex justify-between items-center transition-all border border-slate-700/80 hover:bg-slate-800 hover:scale-[1.02] active:scale-[0.99] group' onclick='changeView(&apos;view-cart&apos;)'>
-  <div class='flex items-center gap-3'><div class='relative bg-emerald-600 w-10 h-10 rounded-xl border border-emerald-500 flex items-center justify-center shadow-inner'><i class='fa-solid fa-bag-shopping text-white text-sm'></i><span class='badge-counter -top-1.5 -right-1.5 border-2 border-slate-900 transform scale-0 transition-transform duration-300' id='cart-badge'>0</span></div><div class='text-left'><p class='text-[9px] text-emerald-300 font-bold uppercase tracking-widest mb-0.5'>Keranjang Belanja</p><span class='font-bold text-sm text-white' id='cart-total-preview'>Rp 0</span></div></div>
-  <div class='w-8 h-8 rounded-full border border-slate-700 bg-slate-800 flex items-center justify-center text-xs text-slate-400 group-hover:text-white group-hover:bg-emerald-600 group-hover:border-emerald-500 transition-all'><i class='fa-solid fa-arrow-right'></i></div>
-  </button>
   </div>
  </div>
 
