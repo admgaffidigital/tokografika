@@ -1066,15 +1066,15 @@ html.dark .badge-counter {
  <!-- BANNER INSTALL PWA &#8212; Muncul otomatis jika belum diinstall -->
  <!-- ============================================================ -->
     <div class='hidden w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4' id='pwa-install-banner'>
-        <div class='relative flex items-center gap-3 rounded-2xl px-4 py-3 shadow-md overflow-hidden bg-emerald-600 dark:bg-emerald-700 border border-emerald-500' id='pwa-banner-inner'>
+        <div class='relative flex items-center gap-3 rounded-2xl px-4 py-3 shadow-md overflow-hidden border' id='pwa-banner-inner' style='background-color: var(--clr-p); border-color: var(--clr-p-dark);'>
             <div class='w-10 h-10 shrink-0 bg-white/20 rounded-xl flex items-center justify-center border border-white/30 text-white'>
                 <i class='fa-solid fa-mobile-screen-button text-lg' id='pwa-banner-icon'></i>
             </div>
             <div class='flex-1 min-w-0'>
                 <p class='text-white font-bold text-xs leading-tight' id='pwa-banner-title'>Tambahkan ke Layar Utama</p>
-                <p class='text-emerald-100 text-[10px] font-medium mt-0.5 leading-tight' id='pwa-banner-desc'>Akses lebih cepat tanpa buka browser</p>
+                <p class='text-white/90 text-[10px] font-medium mt-0.5 leading-tight' id='pwa-banner-desc'>Akses lebih cepat tanpa buka browser</p>
             </div>
-            <button class='shrink-0 bg-white text-emerald-700 font-bold text-[11px] px-3.5 py-2 rounded-xl shadow-sm active:scale-95 transition-all uppercase tracking-wide border border-white' id='pwa-install-btn' onclick='triggerPwaInstall()'>Install</button>
+            <button class='shrink-0 bg-white font-bold text-[11px] px-3.5 py-2 rounded-xl shadow-sm active:scale-95 transition-all uppercase tracking-wide border border-white' id='pwa-install-btn' style='color: var(--clr-p);' onclick='triggerPwaInstall()'>Install</button>
             <button class='shrink-0 w-7 h-7 flex items-center justify-center text-white/80 hover:text-white transition-colors' onclick='dismissPwaBanner()' title='Tutup'><i class='fa-solid fa-xmark text-sm'></i></button>
         </div>
     </div><!-- ============================================================ -->
@@ -3983,6 +3983,7 @@ window.setTempTheme = (t) => {
     try { localStorage.setItem('freshmart_theme_color', t); } catch(e) {}
     updateThemeVars();
     applyGlobalTheme();
+    try { buildAndInjectManifest(); } catch(e) {}
 };
 
 const rAdmSet = () => {
@@ -5577,12 +5578,7 @@ const buildAndInjectManifest = async () => {
  const storeSlogan = appData?.store?.slogan || '';
  const logo = appData?.store?.logo || '';
  const tc = appData?.store?.themeColor || 'emerald';
- const colorMap = {
- emerald:'#059669', teal:'#0d9488', blue:'#2563eb', violet:'#7c3aed',
- rose:'#e11d48', amber:'#d97706', orange:'#ea580c', sky:'#0284c7',
- indigo:'#4f46e5', pink:'#db2777', cyan:'#0891b2', lime:'#65a30d'
- };
- const themeHex = colorMap[tc] || '#059669';
+ const themeHex = THEME_COLORS[tc]?.p || '#059669';
 
  // Update meta tags
  const metaTheme = document.getElementById('pwa-theme-color');

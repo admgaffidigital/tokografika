@@ -2498,6 +2498,7 @@ window.setTempTheme = (t) => {
     try { localStorage.setItem('freshmart_theme_color', t); } catch(e) {}
     updateThemeVars();
     applyGlobalTheme();
+    try { buildAndInjectManifest(); } catch(e) {}
 };
 
 const rAdmSet = () => {
@@ -4092,12 +4093,7 @@ const buildAndInjectManifest = async () => {
  const storeSlogan = appData?.store?.slogan || '';
  const logo = appData?.store?.logo || '';
  const tc = appData?.store?.themeColor || 'emerald';
- const colorMap = {
- emerald:'#059669', teal:'#0d9488', blue:'#2563eb', violet:'#7c3aed',
- rose:'#e11d48', amber:'#d97706', orange:'#ea580c', sky:'#0284c7',
- indigo:'#4f46e5', pink:'#db2777', cyan:'#0891b2', lime:'#65a30d'
- };
- const themeHex = colorMap[tc] || '#059669';
+ const themeHex = THEME_COLORS[tc]?.p || '#059669';
 
  // Update meta tags
  const metaTheme = document.getElementById('pwa-theme-color');
