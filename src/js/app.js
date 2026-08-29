@@ -2408,9 +2408,9 @@ window.downloadReceiptPDF = async () => {
  const imgData = canvas.toDataURL('image/png');
  const { jsPDF } = window.jspdf;
  
- // Sesuaikan ukuran PDF dengan proporsi struk (lebar 58mm)
- const pdfWidth = 58;
- const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+  // Sesuaikan ukuran PDF dengan proporsi struk (lebar 58mm)
+  const pdfWidth = 58;
+  const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
  
  const pdf = new jsPDF({
  orientation: 'portrait',
@@ -2419,6 +2419,17 @@ window.downloadReceiptPDF = async () => {
  });
  
  pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+ pdf.save(`Struk_Pesanan_${cVOrd}.pdf`);
+ 
+ showToast("PDF berhasil disimpan!");
+ } catch (error) {
+ console.error(error);
+ showToast("Gagal menyimpan PDF!");
+ }
+ isSaving = false;
+ hLoad();
+};
+ 
 window.setTempTheme = (t) => {
     setV('set-theme-color', t);
     document.querySelectorAll('[id^="btn-theme-"]').forEach(b => {
