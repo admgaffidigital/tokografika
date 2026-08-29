@@ -303,48 +303,48 @@
  <div class='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4' id='product-container'></div>
  <div class='mt-8 mb-4 text-center hidden' id='load-more-container'><button class='bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs px-6 py-2.5 rounded-full shadow-sm hover:border-emerald-400 dark:hover:border-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-400 transition-all' onclick='loadMoreProducts()'>Muat Lebih Banyak <i class='fa-solid fa-chevron-down ml-1 text-[9px]'></i></button></div>
  </div>
- <div class='mt-10 px-4 w-full max-w-5xl mx-auto'>
- <div class='bg-[#0f172a] rounded-[1.5rem] p-6 sm:p-8 text-white relative overflow-hidden shadow-xl mb-4 border-2 border-slate-800'>
- <div class='absolute inset-0 bg-[#1e293b] opacity-50 pointer-events-none'></div><div class='absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none'></div>
- <div class='relative z-10 flex flex-col md:flex-row items-center md:items-start justify-between gap-8'>
- <div class='flex flex-col items-center md:items-start text-center md:text-left'>
- <div class='w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 overflow-hidden border-2 border-white shadow-lg shrink-0'><img class='w-full h-full object-contain hidden' id='footer-logo-img' src=''/><i class='fa-solid fa-store text-2xl text-emerald-600 hidden' id='footer-logo-icon'></i></div>
- <h3 class='text-2xl font-black mb-1.5 tracking-tight text-white' id='footer-name'>TokoKu</h3>
- <div class='inline-block bg-emerald-900/50 border-2 border-emerald-700/50 px-3 py-1 rounded-full mb-4'><p class='text-emerald-400 text-[9px] font-bold uppercase tracking-widest' id='footer-slogan'>RITEL &amp; GROSIR</p></div>
- <p class='text-xs text-slate-400 font-medium max-w-xs' id='footer-desc'>Terima kasih telah berbelanja.</p>
- 
- <div class='flex justify-center md:justify-start gap-3 mt-5' id='footer-social-links'>
- </div>
- </div>
- 
- <!-- BAGIAN FOOTER LINK -->
- <div class='flex flex-col w-full md:w-auto gap-3'>
- <a class='w-full md:w-[280px] bg-[#1e293b]/80 border-2 border-[#334155] p-3.5 rounded-xl flex items-center gap-3.5 hover:bg-[#334155] hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer group' id='footer-address-link' target='_blank'>
- <div class='w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 border-2 border-emerald-500/20 flex items-center justify-center shrink-0 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300'>
- <i class='fa-solid fa-map-location-dot text-sm'></i>
- </div>
- <div class='min-w-0 flex-1'>
- <p class='text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-0.5 group-hover:text-emerald-300 transition-colors'>LOKASI TOKO</p>
- <p class='text-xs text-slate-200 font-bold line-clamp-1 truncate' id='footer-address'>Alamat Toko</p>
- </div>
- <i class='fa-solid fa-chevron-right text-[10px] text-slate-500 group-hover:text-emerald-400 transition-colors shrink-0'></i>
- </a>
- 
- <a class='w-full md:w-[280px] bg-[#1e293b]/80 border-2 border-[#334155] p-3.5 rounded-xl flex items-center gap-3.5 hover:bg-[#334155] hover:-translate-y-1 hover:shadow-lg transition-all cursor-pointer group' id='footer-wa-link' target='_blank'>
- <div class='w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 border-2 border-emerald-500/20 flex items-center justify-center shrink-0 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300'>
- <i class='fa-brands fa-whatsapp text-lg'></i>
- </div>
- <div class='min-w-0 flex-1'>
- <p class='text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-0.5 group-hover:text-emerald-300 transition-colors'>LAYANAN PELANGGAN</p>
- <p class='text-xs text-slate-200 font-bold tracking-wide' id='footer-wa'>08123456789</p>
- </div>
- <i class='fa-solid fa-chevron-right text-[10px] text-slate-500 group-hover:text-emerald-400 transition-colors shrink-0'></i>
- </a>
- </div>
- 
- </div>
- <div class='relative z-10 mt-8 pt-5 border-t-2 border-slate-700/50 flex flex-col sm:flex-row items-center justify-between gap-4'><p class='text-[10px] text-slate-500 font-bold tracking-widest uppercase text-center sm:text-left'>&#169; <span id='footer-year'></span> <span class='text-slate-300 font-bold' id='footer-copy-name'></span>. ALL RIGHTS RESERVED.</p></div>
- </div>
+  <div class='mt-12 px-4 w-full max-w-5xl mx-auto'>
+  <footer class='bg-white dark:bg-slate-800/90 rounded-3xl p-6 sm:p-8 text-slate-800 dark:text-white relative overflow-hidden shadow-sm border-2 border-slate-200 dark:border-slate-700/80 mb-6'>
+  <div class='relative z-10 flex flex-col md:flex-row items-center md:items-start justify-between gap-8'>
+  <div class='flex flex-col items-center md:items-start text-center md:text-left'>
+  <div class='w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-full flex items-center justify-center mb-4 overflow-hidden border-2 border-slate-200 dark:border-slate-600 shadow-sm shrink-0'><img class='w-full h-full object-contain hidden' id='footer-logo-img' src=''/><i class='fa-solid fa-store text-2xl text-theme-primary hidden' id='footer-logo-icon'></i></div>
+  <h3 class='text-xl sm:text-2xl font-black mb-1 tracking-tight text-slate-900 dark:text-white' id='footer-name'>TokoKu</h3>
+  <div class='inline-block bg-theme-bg border border-theme-primary px-3 py-0.5 rounded-full mb-3'><p class='text-theme-primary text-[9px] font-bold uppercase tracking-widest' id='footer-slogan'>RITEL &amp; GROSIR</p></div>
+  <p class='text-xs text-slate-500 dark:text-slate-400 font-medium max-w-xs' id='footer-desc'>Terima kasih telah berbelanja di toko kami.</p>
+  
+  <div class='flex justify-center md:justify-start gap-2.5 mt-5' id='footer-social-links'>
+  </div>
+  </div>
+  
+  <!-- BAGIAN FOOTER LINK / KONTAK -->
+  <div class='flex flex-col w-full md:w-auto gap-3'>
+  <a class='w-full md:w-[290px] bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 p-3.5 rounded-2xl flex items-center gap-3.5 hover:border-theme-primary hover:shadow-md transition-all cursor-pointer group' id='footer-address-link' target='_blank'>
+  <div class='w-10 h-10 rounded-xl bg-theme-bg text-theme-primary flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200'>
+  <i class='fa-solid fa-map-location-dot text-sm'></i>
+  </div>
+  <div class='min-w-0 flex-1'>
+  <p class='text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mb-0.5 group-hover:text-theme-primary transition-colors'>LOKASI TOKO</p>
+  <p class='text-xs text-slate-700 dark:text-slate-200 font-bold line-clamp-1 truncate' id='footer-address'>Alamat Toko</p>
+  </div>
+  <i class='fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:text-theme-primary transition-colors shrink-0'></i>
+  </a>
+  
+  <a class='w-full md:w-[290px] bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 p-3.5 rounded-2xl flex items-center gap-3.5 hover:border-theme-primary hover:shadow-md transition-all cursor-pointer group' id='footer-wa-link' target='_blank'>
+  <div class='w-10 h-10 rounded-xl bg-theme-bg text-theme-primary flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200'>
+  <i class='fa-brands fa-whatsapp text-lg'></i>
+  </div>
+  <div class='min-w-0 flex-1'>
+  <p class='text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mb-0.5 group-hover:text-theme-primary transition-colors'>LAYANAN PELANGGAN</p>
+  <p class='text-xs text-slate-700 dark:text-slate-200 font-bold tracking-wide' id='footer-wa'>08123456789</p>
+  </div>
+  <i class='fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:text-theme-primary transition-colors shrink-0'></i>
+  </a>
+  </div>
+  
+  </div>
+  <div class='relative z-10 mt-8 pt-5 border-t border-slate-100 dark:border-slate-700/60 flex flex-col sm:flex-row items-center justify-between gap-4'><p class='text-[10px] text-slate-400 dark:text-slate-500 font-bold tracking-widest uppercase text-center sm:text-left'>&#169; <span id='footer-year'></span> <span class='text-slate-700 dark:text-slate-300 font-bold' id='footer-copy-name'></span>. ALL RIGHTS RESERVED.</p></div>
+  </footer>
+  </div></div>
  </div>
  </div>
  
