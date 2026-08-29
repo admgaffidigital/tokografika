@@ -163,7 +163,7 @@ body {
 
 .admin-input::placeholder {
     color: #94a3b8;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .card-modern {
@@ -197,7 +197,7 @@ body {
     color: #fff;
     padding: 0.875rem 1.5rem;
     border-radius: 1rem;
-    font-weight: 800;
+    font-weight: 600;
     font-size: 0.875rem;
     transition: all 0.25s ease;
     box-shadow: 0 6px 20px var(--clr-p-25);
@@ -294,8 +294,8 @@ html.dark .custom-radio:checked + div {
     align-items: center;
     gap: .28em;
     line-height: 1;
-    font-weight: 800;
-    letter-spacing: .03em;
+    font-weight: 700;
+    letter-spacing: .02em;
     text-transform: uppercase;
     white-space: nowrap;
     border-radius: .5rem;
@@ -484,7 +484,7 @@ html.dark .badge-solid-slate {
     padding: 0 .25rem;
     background: #f43f5e;
     color: #fff;
-    font-weight: 800;
+    font-weight: 700;
     font-size: .6rem;
     border-radius: 9999px;
     border: 2px solid #fff;

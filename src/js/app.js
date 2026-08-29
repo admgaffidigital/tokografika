@@ -780,7 +780,7 @@ setH('dynamic-banners-container', `
                 <div class="w-[85%] sm:w-[320px] snap-center shrink-0 rounded-2xl p-5 text-white shadow-md relative overflow-hidden flex items-center justify-between border-2 border-transparent" style="background: ${i % 2 === 0 ? '#1e293b' : '#0f766e'};">
                     <div class="flex-1 pr-2 relative z-10">
                         <span class="badge badge-xs" style="background:rgba(255,255,255,.2);color:#fff;border-color:rgba(255,255,255,.3)">Promo</span>
-                        <h2 class="font-black text-base sm:text-lg mt-2 mb-0.5 leading-tight">${esc(b.title)}</h2>
+                        <h2 class="font-bold text-base sm:text-lg mt-2 mb-0.5 leading-tight">${esc(b.title)}</h2>
                         <p class="text-[10px] text-white/80 font-medium">${esc(b.subtitle)}</p>
                     </div>
                     ${b.img ? `<img data-src="${esc(b.img)}" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==" onerror="this.onerror=null;this.src='https://placehold.co/400?text=Promo'" class="lazy-load opacity-0 transition-all duration-700 w-16 h-16 object-contain relative z-10"/>` : ''}
@@ -813,11 +813,11 @@ setH('dynamic-banners-container', `
                         <div class="p-3 flex-1 flex flex-col justify-between min-w-0 relative">
                             <div class="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-slate-50 dark:bg-slate-900 rounded-full border-l-2 border-emerald-200 dark:border-emerald-800/50"></div>
                             <div class="mb-2 pr-2">
-                                <p class="text-xs font-black text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug">${desc}</p>
+                                <p class="text-xs font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug">${desc}</p>
                             </div>
                             <div class="flex items-center justify-between gap-2 mt-auto pr-2">
-                                <span class="text-[10px] font-mono font-black text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded border border-slate-200 dark:border-slate-700 truncate">${esc(v.code)}</span>
-                                <button class="bg-emerald-100 dark:bg-emerald-900/50 group-hover:bg-emerald-500 text-emerald-700 dark:text-emerald-300 group-hover:text-white border border-emerald-200 dark:border-emerald-700 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-colors shrink-0 shadow-sm"><i class="fa-regular fa-copy"></i> Salin</button>
+                                <span class="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded border border-slate-200 dark:border-slate-700 truncate">${esc(v.code)}</span>
+                                <button class="bg-emerald-100 dark:bg-emerald-900/50 group-hover:bg-emerald-500 text-emerald-700 dark:text-emerald-300 group-hover:text-white border border-emerald-200 dark:border-emerald-700 px-3 py-1.5 rounded-lg text-[9px] font-medium uppercase tracking-widest transition-colors shrink-0 shadow-sm"><i class="fa-regular fa-copy"></i> Salin</button>
                             </div>
                         </div>
                     </div>
@@ -845,7 +845,7 @@ setH('dynamic-banners-container', `
                 <div class="relative w-12 h-12 rounded-xl bg-white dark:bg-slate-800 transition-transform group-hover:-translate-y-1 ${aCat === c.name ? 'border-2 border-emerald-500 shadow-md' : 'border-2 border-slate-200 dark:border-slate-700 shadow-sm'}">
                     <img data-src="${esc(c.img)}" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==" onerror="this.onerror=null;this.src='https://placehold.co/150/10b981/ffffff?text=Cat'" class="lazy-load opacity-0 transition-all duration-700 absolute inset-0 w-full h-full object-cover rounded-xl"/>
                 </div>
-                <span class="text-[9px] text-center w-full line-clamp-2 leading-tight px-1 ${aCat === c.name ? 'font-black text-emerald-700 dark:text-emerald-400' : 'font-bold text-slate-500 dark:text-slate-400'} uppercase">
+                <span class="text-[9px] text-center w-full line-clamp-2 leading-tight px-1 ${aCat === c.name ? 'font-bold text-emerald-700 dark:text-emerald-400' : 'font-bold text-slate-500 dark:text-slate-400'} uppercase">
                     ${esc(c.name)}
                 </span>
             </div>
@@ -907,14 +907,14 @@ const rCat = () => {
     const v = f.slice(0, cPage * iPP);
     c.innerHTML = v.map(p => {
         let a = p.isActive !== 'false' && p.isActive !== false;
-        let tH = p.tag ? `<div class="absolute top-1 left-1 bg-slate-900/80 backdrop-blur text-white text-[7px] font-black px-1.5 py-0.5 rounded border border-white/10 z-10 shadow-sm max-w-[80%] truncate uppercase tracking-wider">${esc(p.tag)}</div>` : '';
+        let tH = p.tag ? `<div class="absolute top-1 left-1 bg-slate-900/80 backdrop-blur text-white text-[7px] font-bold px-1.5 py-0.5 rounded border border-white/10 z-10 shadow-sm max-w-[80%] truncate uppercase tracking-wider">${esc(p.tag)}</div>` : '';
         let nH = !a ? `<div class="absolute inset-0 bg-white/60 backdrop-blur-[1px] z-20 flex items-center justify-center"><span class="badge badge-solid-rose">KOSONG</span></div>` : '';
         let bH = `
             <div class="mb-1 flex flex-wrap gap-1 items-center overflow-hidden shrink-0">
-                <span class="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 px-1 py-0.5 rounded text-[7px] font-black truncate max-w-full">
+                <span class="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 px-1 py-0.5 rounded text-[7px] font-bold truncate max-w-full">
                     <i class="fa-solid fa-check"></i> Official
                 </span>
-                ${p.wholesale?.length ? `<span class="bg-amber-50 dark:bg-amber-900/30 border border-amber-100 dark:border-amber-800 text-amber-600 dark:text-amber-400 px-1 py-0.5 rounded text-[7px] font-black truncate max-w-full"><i class="fa-solid fa-tags"></i> Grosir</span>` : ''}
+                ${p.wholesale?.length ? `<span class="bg-amber-50 dark:bg-amber-900/30 border border-amber-100 dark:border-amber-800 text-amber-600 dark:text-amber-400 px-1 py-0.5 rounded text-[7px] font-bold truncate max-w-full"><i class="fa-solid fa-tags"></i> Grosir</span>` : ''}
             </div>
         `;
 
@@ -928,9 +928,9 @@ const rCat = () => {
                     <div class="flex-1 flex flex-col justify-between min-w-0 px-1 pb-1">
                         <div class="flex flex-col min-w-0">
                             ${bH}
-                            <h4 class="text-[11px] sm:text-xs font-black text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1.5">${esc(p.name)}</h4>
+                            <h4 class="text-[11px] sm:text-xs font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1.5">${esc(p.name)}</h4>
                         </div>
-                        <p class="text-emerald-600 dark:text-emerald-400 font-black text-sm mt-auto drop-shadow-sm">${fCur(p.price)}${p.unit ? `<span class="text-slate-400 dark:text-slate-500 font-bold text-[10px] ml-1">/ ${esc(p.unit)}</span>` : ''}</p>
+                        <p class="text-emerald-600 dark:text-emerald-400 font-semibold text-sm mt-auto drop-shadow-sm">${fCur(p.price)}${p.unit ? `<span class="text-slate-400 dark:text-slate-500 font-bold text-[10px] ml-1">/ ${esc(p.unit)}</span>` : ''}</p>
                     </div>
                 </div>
             `;
@@ -944,9 +944,9 @@ const rCat = () => {
                     <div class="flex-1 min-w-0 pr-1 flex flex-col justify-between py-1 h-full">
                         <div>
                             ${bH}
-                            <h4 class="text-xs sm:text-sm font-black text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1">${esc(p.name)}</h4>
+                            <h4 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1">${esc(p.name)}</h4>
                         </div>
-                        <p class="text-emerald-600 dark:text-emerald-400 font-black text-sm drop-shadow-sm">${fCur(p.price)}${p.unit ? `<span class="text-slate-400 dark:text-slate-500 font-bold text-[10px] ml-1">/ ${esc(p.unit)}</span>` : ''}</p>
+                        <p class="text-emerald-600 dark:text-emerald-400 font-semibold text-sm drop-shadow-sm">${fCur(p.price)}${p.unit ? `<span class="text-slate-400 dark:text-slate-500 font-bold text-[10px] ml-1">/ ${esc(p.unit)}</span>` : ''}</p>
                     </div>
                 </div>
             `;
@@ -1059,7 +1059,7 @@ const rProdMod = () => {
                 ${p.wholesale.slice().sort((a, b) => a.minQty - b.minQty).map(w => `
                     <div class="flex justify-between text-xs bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700">
                         <span class="font-bold text-slate-600 dark:text-slate-300">&gt;= ${w.minQty}${p.unit ? ' '+p.unit : ''}</span>
-                        <span class="font-black text-emerald-600 dark:text-emerald-400">${fCur(w.price)}</span>
+                        <span class="font-bold text-emerald-600 dark:text-emerald-400">${fCur(w.price)}</span>
                     </div>
                 `).join('')}
             </div>
@@ -1192,9 +1192,9 @@ const renderWish = () => {
         <div class="card-modern p-4 flex gap-3 shadow-sm min-w-0 border border-slate-200 dark:border-slate-700">
             <img src="${esc(i.img)}" class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'"/>
             <div class="flex-1 flex flex-col min-w-0">
-                <h4 class="text-sm font-black text-slate-800 dark:text-white mb-1 truncate">${esc(i.name)}</h4>
+                <h4 class="text-sm font-semibold text-slate-800 dark:text-white mb-1 truncate">${esc(i.name)}</h4>
                 ${i.variantName ? `<span class="mb-1.5 inline-flex"><span class="badge badge-xs badge-slate badge-normal-case">${esc(i.variantName)}</span></span>` : ''}
-                <p class="text-emerald-600 dark:text-emerald-400 font-black mb-2 text-sm drop-shadow-sm">${fCur(i.price)}</p>
+                <p class="text-emerald-600 dark:text-emerald-400 font-bold mb-2 text-sm drop-shadow-sm">${fCur(i.price)}</p>
                 <div class="flex gap-2 mt-auto">
                     <button onclick="moveWish(${x})" class="flex-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 text-[10px] font-bold py-2 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/50 active:scale-95 transition-all">Ke Keranjang</button>
                     <button onclick="rmWish(${x})" class="w-8 h-8 shrink-0 rounded-lg bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-500 dark:text-rose-400 flex items-center justify-center hover:bg-rose-100 dark:hover:bg-rose-900/50 active:scale-90 transition-all"><i class="fa-solid fa-trash text-[10px]"></i></button>
@@ -1220,19 +1220,19 @@ const renderCart = () => {
                 ${w ? `<div class="badge badge-ribbon badge-solid-amber">GROSIR</div>` : ''}
                 <img src="${esc(i.img)}" class="w-20 h-20 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'"/>
                 <div class="flex-1 flex flex-col min-w-0">
-                    <h4 class="text-xs sm:text-sm font-black text-slate-800 dark:text-white pr-6 truncate">${esc(i.name)}</h4>
+                    <h4 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-white pr-6 truncate">${esc(i.name)}</h4>
                     ${i.variantName ? `<span class="mt-1 inline-flex items-center gap-1"><span class="badge badge-xs badge-slate badge-normal-case">${esc(i.variantName)}</span>${i.unit ? ` <span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold">· ${esc(i.unit)}</span>` : ''}</span>` : (i.unit ? `<span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">${esc(i.unit)}</span>` : '')}
                     <div class="flex justify-between items-end mt-auto pt-2 min-w-0">
                         <div>
                             ${w ? `<p class="text-[9px] line-through text-slate-400 font-bold">${fCur(i.price)}</p>` : ''}
-                            <p class="text-emerald-600 dark:text-emerald-400 font-black text-sm drop-shadow-sm">${fCur(e)}</p>
+                            <p class="text-emerald-600 dark:text-emerald-400 font-semibold text-sm drop-shadow-sm">${fCur(e)}</p>
                         </div>
                         <div class="flex flex-col items-end gap-1.5">
                             <button onclick="rmCart(${x})" class="text-slate-400 hover:text-rose-500 absolute top-3 right-3 bg-white dark:bg-slate-800 w-6 h-6 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all"><i class="fa-solid fa-xmark text-[10px]"></i></button>
                             <div class="flex bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg h-7 overflow-hidden shrink-0">
-                                <button onclick="updCQty(${x},-1)" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-black"><i class="fa-solid fa-minus text-[8px]"></i></button>
-                                <span class="w-6 flex items-center justify-center text-xs font-black bg-white dark:bg-slate-800 text-slate-800 dark:text-white">${i.qty}</span>
-                                <button onclick="updCQty(${x},1)" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-black"><i class="fa-solid fa-plus text-[8px]"></i></button>
+                                <button onclick="updCQty(${x},-1)" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold"><i class="fa-solid fa-minus text-[8px]"></i></button>
+                                <span class="w-6 flex items-center justify-center text-xs font-semibold bg-white dark:bg-slate-800 text-slate-800 dark:text-white">${i.qty}</span>
+                                <button onclick="updCQty(${x},1)" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold"><i class="fa-solid fa-plus text-[8px]"></i></button>
                             </div>
                         </div>
                     </div>
@@ -1495,11 +1495,11 @@ const rPay = () => {
             <div class="flex items-center gap-2.5 min-w-0">
                 <img src="${esc(i.img)}" class="w-10 h-10 rounded object-cover border border-slate-200 dark:border-slate-700 shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'"/>
                 <div class="min-w-0">
-                    <p class="text-xs font-black text-slate-800 dark:text-white truncate">${esc(i.name)}${i.variantName ? ` (${i.variantName})` : ''}</p>
+                    <p class="text-xs font-semibold text-slate-800 dark:text-white truncate">${esc(i.name)}${i.variantName ? ` (${i.variantName})` : ''}</p>
                     <p class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5">${i.qty}${i.unit ? ' '+esc(i.unit) : ''} × ${fCur(getEffP(i))}</p>
                 </div>
             </div>
-            <div class="text-xs font-black text-slate-900 dark:text-white whitespace-nowrap ml-2 shrink-0">${fCur(getEffP(i) * i.qty)}</div>
+            <div class="text-xs font-semibold text-slate-900 dark:text-white whitespace-nowrap ml-2 shrink-0">${fCur(getEffP(i) * i.qty)}</div>
         </div>
     `).join(''));
     
@@ -1512,7 +1512,7 @@ const rPay = () => {
     setH('dynamic-banks-container', appData.banks?.length ? appData.banks.map(b => `
         <div class="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
             <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Bank ${esc(b.bankName)}</p>
-            <p class="text-sm font-black text-emerald-600 dark:text-emerald-400 tracking-wide">${esc(b.bankAccount)}</p>
+            <p class="text-sm font-semibold text-emerald-600 dark:text-emerald-400 tracking-wide">${esc(b.bankAccount)}</p>
             <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-1">a.n <span class="font-bold text-slate-700 dark:text-white">${esc(b.bankOwner)}</span></p>
         </div>
     `).join('') : '<div class="bg-rose-50 border border-rose-200 p-3 rounded-xl text-center"><p class="text-xs text-rose-500 font-bold">Rekening belum diatur.</p></div>');
@@ -1785,7 +1785,7 @@ window.openAdminTab = (t, fH = !1) => {
         if (isSensitive || !cPerms.includes(t)) {
             hide('admin-dashboard-view'); show('admin-content-view'); show('btn-admin-back'); hide('admin-logo-box'); 
             setIn('admin-header-title', 'Akses Ditolak');
-            setH('admin-content', `<div class="text-center py-10 bg-rose-50 dark:bg-rose-900/10 rounded-2xl border border-rose-200 dark:border-rose-900/30 shadow-sm px-6 max-w-lg mx-auto mt-4"><div class="w-16 h-16 bg-white dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-hand text-3xl"></i></div><h2 class="text-base font-black text-slate-900 dark:text-white mb-2">Akses Dibatasi</h2><p class="text-xs text-slate-500 dark:text-slate-400 font-bold mb-6">Akun Anda tidak diizinkan membuka fitur <b>${t.toUpperCase()}</b>.</p></div>`);
+            setH('admin-content', `<div class="text-center py-10 bg-rose-50 dark:bg-rose-900/10 rounded-2xl border border-rose-200 dark:border-rose-900/30 shadow-sm px-6 max-w-lg mx-auto mt-4"><div class="w-16 h-16 bg-white dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4"><i class="fa-solid fa-hand text-3xl"></i></div><h2 class="text-base font-bold text-slate-900 dark:text-white mb-2">Akses Dibatasi</h2><p class="text-xs text-slate-500 dark:text-slate-400 font-bold mb-6">Akun Anda tidak diizinkan membuka fitur <b>${t.toUpperCase()}</b>.</p></div>`);
             return;
         }
     }
@@ -1801,11 +1801,11 @@ window.openAdminTab = (t, fH = !1) => {
                 <div class="w-16 h-16 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fa-solid fa-lock text-3xl"></i>
                 </div>
-                <h2 class="text-base font-black text-slate-900 dark:text-white mb-2">Fitur Terkunci (Versi PRO)</h2>
+                <h2 class="text-base font-bold text-slate-900 dark:text-white mb-2">Fitur Terkunci (Versi PRO)</h2>
                 <p class="text-xs text-slate-500 dark:text-slate-400 font-bold mb-6">Menu <b>${t.toUpperCase()}</b> hanya untuk pengguna PRO. Masukkan kode lisensi Anda.</p>
                 <div class="max-w-xs mx-auto flex flex-col gap-3">
-                    <input id="pro-license-input" type="text" placeholder="KODE LISENSI..." class="admin-input !py-3 text-center uppercase tracking-widest font-black text-xs"/>
-                    <button onclick="activatePro()" class="w-full bg-amber-400 hover:bg-amber-500 text-amber-950 font-black py-3 rounded-xl shadow-sm transition-all text-xs border border-amber-500">
+                    <input id="pro-license-input" type="text" placeholder="KODE LISENSI..." class="admin-input !py-3 text-center uppercase tracking-widest font-semibold text-xs"/>
+                    <button onclick="activatePro()" class="w-full bg-amber-400 hover:bg-amber-500 text-amber-950 font-bold py-3 rounded-xl shadow-sm transition-all text-xs border border-amber-500">
                         <i class="fa-solid fa-key mr-1.5"></i> Aktivasi Sekarang
                     </button>
                 </div>
@@ -1827,23 +1827,23 @@ window.openAdminTab = (t, fH = !1) => {
                     <div class="w-20 h-20 bg-purple-50 dark:bg-purple-500/10 border-2 border-purple-200 dark:border-purple-500/30 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
                         <i class="fa-solid fa-wand-magic-sparkles text-4xl"></i>
                     </div>
-                    <h2 class="text-xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">Fitur Eksklusif PRO MAX</h2>
+                    <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">Fitur Eksklusif PRO MAX</h2>
                     <p class="text-xs text-slate-500 dark:text-slate-400 font-bold mb-6 leading-relaxed">Akses dasbor analitik lanjutan, manajemen multi-cabang, dan laporan performa kasir. Fitur ini memerlukan langganan aktif.</p>
                     
                     <div class="flex gap-3 mb-8 justify-center">
                         <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-3 rounded-xl w-32">
-                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Bulanan</p>
-                            <p class="text-sm font-black text-purple-600">Rp 50.000</p>
+                            <p class="text-[9px] font-medium text-slate-400 uppercase tracking-widest mb-1">Bulanan</p>
+                            <p class="text-sm font-semibold text-purple-600">Rp 50.000</p>
                         </div>
                         <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 p-3 rounded-xl w-32 ring-2 ring-purple-500 ring-offset-2 dark:ring-offset-slate-800">
-                            <p class="text-[9px] font-black text-purple-400 uppercase tracking-widest mb-1">Tahunan <span class="badge badge-xs badge-solid-rose ml-1">HEMAT</span></p>
-                            <p class="text-sm font-black text-purple-600">Rp 540.000</p>
+                            <p class="text-[9px] font-medium text-purple-400 uppercase tracking-widest mb-1">Tahunan <span class="badge badge-xs badge-solid-rose ml-1">HEMAT</span></p>
+                            <p class="text-sm font-semibold text-purple-600">Rp 540.000</p>
                         </div>
                     </div>
 
                     <div class="max-w-xs mx-auto flex flex-col gap-3">
-                        <input id="promax-license-input" type="text" placeholder="KODE LISENSI LANGGANAN..." class="admin-input !py-3 text-center uppercase tracking-widest font-black text-xs border-purple-200 focus:border-purple-500"/>
-                        <button onclick="activateProMax()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black py-3 rounded-xl shadow-lg shadow-purple-500/30 transition-all text-xs border border-purple-500">
+                        <input id="promax-license-input" type="text" placeholder="KODE LISENSI LANGGANAN..." class="admin-input !py-3 text-center uppercase tracking-widest font-semibold text-xs border-purple-200 focus:border-purple-500"/>
+                        <button onclick="activateProMax()" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-purple-500/30 transition-all text-xs border border-purple-500">
                             <i class="fa-solid fa-key mr-1.5"></i> Aktifkan Langganan
                         </button>
                         <a href="https://wa.me/6285733242474?text=Halo%20Admin,%20saya%20ingin%20berlangganan%20PRO%20MAX" target="_blank" class="text-[10px] font-bold text-slate-400 hover:text-purple-500 underline underline-offset-2 mt-2">Beli Kode Lisensi via WhatsApp</a>
@@ -1862,7 +1862,7 @@ window.openAdminTab = (t, fH = !1) => {
                             <i class="fa-solid fa-arrow-left"></i>
                         </button>
                         <div>
-                            <h3 class="font-black text-lg mb-1" id="promax-header-title"><i class="fa-solid fa-crown mr-2"></i> PRO MAX Dashboard</h3>
+                            <h3 class="font-bold text-lg mb-1" id="promax-header-title"><i class="fa-solid fa-crown mr-2"></i> PRO MAX Dashboard</h3>
                             <p class="text-xs text-purple-200 font-medium opacity-90" id="promax-header-desc">Pusat kendali fitur eksklusif.</p>
                         </div>
                     </div>
@@ -1897,7 +1897,7 @@ window.openAdminTab = (t, fH = !1) => {
                         <div class="bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-[1.5rem] border-2 border-slate-200 dark:border-slate-700 shadow-sm">
                             <div class="space-y-4 max-w-2xl mx-auto">
                                 <div>
-                                    <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Status Fitur Ekspedisi (Kurir)</label>
+                                    <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Status Fitur Ekspedisi (Kurir)</label>
                                     <div class="relative">
                                         <select id="jastip-status" class="admin-input !py-3.5 w-full cursor-pointer appearance-none font-bold text-sm">
                                             <option value="true" ${(appData.jastip?.isActive) ? 'selected' : ''}>🚀 ON - Buka Ekspedisi</option>
@@ -1908,26 +1908,26 @@ window.openAdminTab = (t, fH = !1) => {
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Jam Buka</label>
+                                        <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Jam Buka</label>
                                         <input type="time" id="jastip-start" value="${appData.jastip?.startHour || '08:00'}" class="admin-input !py-3.5 w-full text-sm">
                                     </div>
                                     <div>
-                                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Jam Tutup</label>
+                                        <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Jam Tutup</label>
                                         <input type="time" id="jastip-end" value="${appData.jastip?.endHour || '21:00'}" class="admin-input !py-3.5 w-full text-sm">
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Tarif Ongkir per Paket (Rp)</label>
+                                        <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Tarif Ongkir per Paket (Rp)</label>
                                         <input type="number" id="jastip-tarif" value="${appData.jastip?.tarifPerKm || 10000}" class="admin-input !py-3.5 w-full text-sm">
                                     </div>
                                     <div>
-                                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Upah Kurir per Paket (Rp)</label>
+                                        <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Upah Kurir per Paket (Rp)</label>
                                         <input type="number" id="jastip-komisi" value="${appData.jastip?.komisiDriver || 8000}" class="admin-input !py-3.5 w-full text-sm">
                                     </div>
                                 </div>
                                 <div class="pt-3">
-                                    <button onclick="saveJastipSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 rounded-xl transition-all text-sm shadow-md shadow-emerald-500/30 flex items-center justify-center gap-2"><i class="fa-solid fa-save"></i> Simpan Aturan Ekspedisi</button>
+                                    <button onclick="saveJastipSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl transition-all text-sm shadow-md shadow-emerald-500/30 flex items-center justify-center gap-2"><i class="fa-solid fa-save"></i> Simpan Aturan Ekspedisi</button>
                                 </div>
                             </div>
                         </div>
@@ -1936,8 +1936,8 @@ window.openAdminTab = (t, fH = !1) => {
                     <div id="promax-sub-mitra" class="hidden">
                         <div class="bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border-2 border-slate-200 dark:border-slate-700 shadow-sm flex flex-col min-h-[400px]">
                             <div class="flex justify-between items-center mb-4 border-b-2 border-slate-100 dark:border-slate-700 pb-4">
-                                <h4 class="font-black text-slate-800 dark:text-white text-base"><i class="fa-solid fa-users text-emerald-500 mr-2"></i> Daftar Mitra Driver</h4>
-                                <button onclick="oAEd('drivers', null)" class="bg-emerald-500 border border-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-black hover:bg-emerald-600 transition-all shadow-sm flex items-center gap-1.5"><i class="fa-solid fa-plus"></i> Tambah Mitra</button>
+                                <h4 class="font-bold text-slate-800 dark:text-white text-base"><i class="fa-solid fa-users text-emerald-500 mr-2"></i> Daftar Mitra Driver</h4>
+                                <button onclick="oAEd('drivers', null)" class="bg-emerald-500 border border-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-emerald-600 transition-all shadow-sm flex items-center gap-1.5"><i class="fa-solid fa-plus"></i> Tambah Mitra</button>
                             </div>
                             <div id="list-drivers-container" class="flex-1 overflow-y-auto space-y-3 hide-scrollbar">
                                 </div>
@@ -1947,7 +1947,7 @@ window.openAdminTab = (t, fH = !1) => {
                     <div id="promax-sub-withdraw" class="hidden">
                         <div class="bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border-2 border-slate-200 dark:border-slate-700 shadow-sm min-h-[400px]">
                             <div class="mb-4 border-b-2 border-slate-100 dark:border-slate-700 pb-4">
-                                <h4 class="font-black text-slate-800 dark:text-white text-base"><i class="fa-solid fa-money-bill-transfer text-amber-500 mr-2"></i> Antrean Tarik Dana</h4>
+                                <h4 class="font-bold text-slate-800 dark:text-white text-base"><i class="fa-solid fa-money-bill-transfer text-amber-500 mr-2"></i> Antrean Tarik Dana</h4>
                             </div>
                             <div id="admin-wd-container" class="space-y-3 max-h-[500px] overflow-y-auto hide-scrollbar">
                                 <div class="text-center py-10 text-slate-500 font-bold text-xs"><i class="fa-solid fa-spinner fa-spin text-2xl mb-3 block"></i> Memuat antrean...</div>
@@ -2025,7 +2025,7 @@ const rAdmOrd = () => {
     // 1. Render Kontainer Grid untuk Daftar Pesanan (Tanpa Analytics)
     setH('admin-content', `
         <div class="mb-4 flex justify-between items-center px-1">
-            <h2 class="font-black text-sm text-slate-800 dark:text-slate-200">Daftar Pesanan <i class="fa-solid fa-satellite-dish animate-pulse text-emerald-500 ml-1"></i></h2>
+            <h2 class="font-semibold text-sm text-slate-800 dark:text-slate-200">Daftar Pesanan <i class="fa-solid fa-satellite-dish animate-pulse text-emerald-500 ml-1"></i></h2>
         </div>
         
         <div id="admin-orders-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4 pb-12">
@@ -2077,7 +2077,7 @@ const rAdmOrd = () => {
                                     <div class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-100 dark:border-emerald-800 shrink-0">
                                         <i class="fa-solid fa-receipt text-sm"></i>
                                     </div>
-                                    <h3 class="font-black text-slate-900 dark:text-white text-lg tracking-tight leading-none">#${o.orderId}</h3>
+                                    <h3 class="font-bold text-slate-900 dark:text-white text-lg tracking-tight leading-none">#${o.orderId}</h3>
                                 </div>
                                 <p class="text-[10px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5 ml-10">
                                     <i class="fa-regular fa-clock"></i> ${dStr}
@@ -2113,7 +2113,7 @@ const rAdmOrd = () => {
                         </div>
                         <div class="flex items-end justify-between mt-auto relative z-10 pt-1">
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Belanja</span>
-                            <span class="font-black text-emerald-600 dark:text-emerald-400 text-xl leading-none drop-shadow-sm">${fCur(o.payment?.grandTotal)}</span>
+                            <span class="font-bold text-emerald-600 dark:text-emerald-400 text-xl leading-none drop-shadow-sm">${fCur(o.payment?.grandTotal)}</span>
                         </div>
                     </div>
                 `;
@@ -2134,7 +2134,7 @@ window.openOrderDetail = i => {
     
     let sSel = `
         <div class="relative w-full">
-            <select onchange="updateOrderStatus('${o.orderId}', this.value)" class="w-full text-xs font-black ${o.status === 'Baru' ? 'text-rose-600 bg-rose-50 border-rose-300' : o.status === 'Diproses' ? 'text-amber-600 bg-amber-50 border-amber-300' : o.status === 'Selesai' ? 'text-emerald-600 bg-emerald-50 border-emerald-300' : 'text-slate-500 bg-slate-50 border-slate-300'} border-2 px-3 py-2.5 rounded-xl focus:border-emerald-500 outline-none appearance-none cursor-pointer transition-colors">
+            <select onchange="updateOrderStatus('${o.orderId}', this.value)" class="w-full text-xs font-semibold ${o.status === 'Baru' ? 'text-rose-600 bg-rose-50 border-rose-300' : o.status === 'Diproses' ? 'text-amber-600 bg-amber-50 border-amber-300' : o.status === 'Selesai' ? 'text-emerald-600 bg-emerald-50 border-emerald-300' : 'text-slate-500 bg-slate-50 border-slate-300'} border-2 px-3 py-2.5 rounded-xl focus:border-emerald-500 outline-none appearance-none cursor-pointer transition-colors">
                 <option value="Baru" ${o.status === 'Baru' ? 'selected' : ''} class="text-slate-800 font-bold">Baru (Pending)</option>
                 <option value="Diproses" ${o.status === 'Diproses' ? 'selected' : ''} class="text-slate-800 font-bold">Diproses</option>
                 <option value="Selesai" ${o.status === 'Selesai' ? 'selected' : ''} class="text-slate-800 font-bold">Selesai</option>
@@ -2154,12 +2154,12 @@ window.openOrderDetail = i => {
 
         jastipHtml = `
         <div class="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-xl border-2 border-indigo-200 dark:border-indigo-800 shadow-sm relative overflow-hidden">
-            <h4 class="font-black text-indigo-800 dark:text-indigo-400 text-xs border-b border-indigo-200 dark:border-indigo-800 pb-2 mb-3 flex items-center gap-2">
+            <h4 class="font-bold text-indigo-800 dark:text-indigo-400 text-xs border-b border-indigo-200 dark:border-indigo-800 pb-2 mb-3 flex items-center gap-2">
                 <i class="fa-solid fa-motorcycle"></i> Penugasan Driver Jastip
             </h4>
             <div class="space-y-3">
                 <div>
-                    <label class="block text-[10px] font-black text-indigo-600/70 dark:text-indigo-400/70 mb-1 uppercase">Pilih Mitra Driver</label>
+                    <label class="block text-[10px] font-medium text-indigo-600/70 dark:text-indigo-400/70 mb-1 uppercase">Pilih Mitra Driver</label>
                     <div class="relative w-full">
                         <select onchange="assignDriver('${o.orderId}', this.value)" class="w-full text-xs font-bold text-slate-700 bg-white border-2 border-indigo-300 px-3 py-2 rounded-lg focus:border-indigo-500 outline-none appearance-none cursor-pointer">
                             ${driverOptions}
@@ -2169,7 +2169,7 @@ window.openOrderDetail = i => {
                 </div>
                 <div class="flex justify-between items-center bg-white dark:bg-slate-800 p-2 rounded border border-indigo-100 dark:border-indigo-800">
                     <span class="text-[10px] font-bold text-slate-500">Estimasi Fee Driver:</span>
-                    <span class="font-black text-indigo-600 text-xs">${fCur(o.jastip.komisiDriver)}</span>
+                    <span class="font-bold text-indigo-600 text-xs">${fCur(o.jastip.komisiDriver)}</span>
                 </div>
                 ${o.jastip.driverId ? `
                 <button onclick="notifyDriver('${o.orderId}')" class="w-full py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg text-xs transition-all flex items-center justify-center gap-2 shadow-sm">
@@ -2186,12 +2186,12 @@ window.openOrderDetail = i => {
         <div class="flex flex-col gap-3 text-xs">
             <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 shadow-sm grid grid-cols-2 gap-3">
                 <div>
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1"><i class="fa-solid fa-spinner fa-spin-pulse text-emerald-500"></i> Status</p>
+                    <p class="text-[9px] font-medium text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1"><i class="fa-solid fa-spinner fa-spin-pulse text-emerald-500"></i> Status</p>
                     ${sSel}
                 </div>
                 <div class="text-right flex flex-col justify-center">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">ID Pesanan</p>
-                    <p class="text-xs sm:text-sm font-black text-slate-800 dark:text-white break-all">#${o.orderId}</p>
+                    <p class="text-[9px] font-medium text-slate-400 uppercase tracking-widest mb-0.5">ID Pesanan</p>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-white break-all">#${o.orderId}</p>
                     <p class="text-[9px] font-bold text-slate-400 mt-0.5">${o.dateString ? new Date(o.dateString).toLocaleString('id-ID') : ''}</p>
                 </div>
             </div>
@@ -2200,22 +2200,22 @@ window.openOrderDetail = i => {
             
             <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-bl-full -z-10"></div>
-                <h4 class="font-black text-slate-800 dark:text-white text-xs border-b border-slate-100 dark:border-slate-700 pb-2 mb-3 flex items-center gap-2">
+                <h4 class="font-bold text-slate-800 dark:text-white text-xs border-b border-slate-100 dark:border-slate-700 pb-2 mb-3 flex items-center gap-2">
                     <div class="w-6 h-6 rounded bg-emerald-50 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-100 dark:border-emerald-500/30"><i class="fa-solid fa-user"></i></div> Data Pemesan
                 </h4>
                 <div class="space-y-2">
-                    <div class="flex justify-between items-center"><span class="text-slate-500 dark:text-slate-400 font-bold">Nama</span><span class="font-black text-slate-800 dark:text-white">${esc(o.customer?.name || '-')}</span></div>
+                    <div class="flex justify-between items-center"><span class="text-slate-500 dark:text-slate-400 font-bold">Nama</span><span class="font-bold text-slate-800 dark:text-white">${esc(o.customer?.name || '-')}</span></div>
                     <div class="mt-3 pt-2 border-t border-dashed border-slate-200 dark:border-slate-700">
                         <span class="text-slate-500 dark:text-slate-400 font-bold flex items-center gap-1 mb-1.5"><i class="fa-solid fa-map-location-dot"></i> Alamat Pengiriman</span>
                         <div class="bg-slate-50 dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 font-bold text-slate-700 dark:text-slate-300 leading-relaxed">${esc(o.customer?.address || '-')}</div>
                     </div>
-                    ${o.customer?.note ? `<div class="bg-amber-50 dark:bg-amber-900/20 p-2.5 rounded-lg border border-amber-200 dark:border-amber-800 mt-2"><p class="text-[8px] font-black text-amber-600 uppercase tracking-widest mb-0.5"><i class="fa-solid fa-note-sticky"></i> Catatan</p><p class="text-xs text-amber-900 dark:text-amber-100 font-bold">${esc(o.customer.note)}</p></div>` : ''}
+                    ${o.customer?.note ? `<div class="bg-amber-50 dark:bg-amber-900/20 p-2.5 rounded-lg border border-amber-200 dark:border-amber-800 mt-2"><p class="text-[8px] font-medium text-amber-600 uppercase tracking-widest mb-0.5"><i class="fa-solid fa-note-sticky"></i> Catatan</p><p class="text-xs text-amber-900 dark:text-amber-100 font-bold">${esc(o.customer.note)}</p></div>` : ''}
                 </div>
             </div>
             
             <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-bl-full -z-10"></div>
-                <h4 class="font-black text-slate-800 dark:text-white text-xs border-b border-slate-100 dark:border-slate-700 pb-2 mb-3 flex items-center gap-2">
+                <h4 class="font-bold text-slate-800 dark:text-white text-xs border-b border-slate-100 dark:border-slate-700 pb-2 mb-3 flex items-center gap-2">
                     <div class="w-6 h-6 rounded bg-emerald-50 dark:bg-emerald-500/20 text-emerald-500 flex items-center justify-center border border-emerald-100 dark:border-emerald-500/30"><i class="fa-solid fa-box-open"></i></div> Rincian Item
                 </h4>
                 <div class="space-y-2.5">
@@ -2224,11 +2224,11 @@ window.openOrderDetail = i => {
                             <div class="flex items-center gap-2.5">
                                 <div class="w-8 h-8 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 flex items-center justify-center text-slate-300 dark:text-slate-500 shrink-0"><i class="fa-solid fa-tag text-xs"></i></div>
                                 <div>
-                                    <p class="font-black text-xs text-slate-800 dark:text-white">${esc(t.name)} ${t.variantName ? `<span class="badge badge-xs badge-slate badge-normal-case ml-1">${esc(t.variantName)}</span>` : ''}</p>
+                                    <p class="font-semibold text-xs text-slate-800 dark:text-white">${esc(t.name)} ${t.variantName ? `<span class="badge badge-xs badge-slate badge-normal-case ml-1">${esc(t.variantName)}</span>` : ''}</p>
                                     <p class="text-[9px] text-slate-500 dark:text-slate-400 font-bold mt-0.5">${t.qty}${t.unit ? ' '+t.unit : ''} × ${fCur(t.effectivePrice)}</p>
                                 </div>
                             </div>
-                            <div class="font-black text-xs text-slate-900 dark:text-white ml-2">${fCur(t.effectivePrice * t.qty)}</div>
+                            <div class="font-semibold text-xs text-slate-900 dark:text-white ml-2">${fCur(t.effectivePrice * t.qty)}</div>
                         </div>
                     `).join('')}
                 </div>
@@ -2236,7 +2236,7 @@ window.openOrderDetail = i => {
             
             <div class="bg-slate-900 dark:bg-[#020617] p-5 rounded-xl text-white shadow-lg border border-slate-800 relative overflow-hidden">
                 <div class="absolute -bottom-8 -right-8 w-24 h-24 bg-emerald-500/20 rounded-full blur-2xl"></div>
-                <h4 class="font-black text-[10px] uppercase tracking-widest border-b border-slate-700 pb-2 mb-3 text-slate-300 flex items-center gap-1.5">
+                <h4 class="font-medium text-[10px] uppercase tracking-widest border-b border-slate-700 pb-2 mb-3 text-slate-300 flex items-center gap-1.5">
                     <i class="fa-solid fa-wallet text-emerald-400"></i> Pembayaran 
                     <span class="badge badge-xs ml-auto" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.15)">${esc(o.payment?.method || '').toUpperCase()}</span>
                 </h4>
@@ -2250,8 +2250,8 @@ window.openOrderDetail = i => {
                     ${o.payment?.shippingDiscount ? `<div class="flex justify-between text-emerald-400"><span>Diskon Ongkir</span><span>-${fCur(o.payment.shippingDiscount)}</span></div>` : ''}
                 </div>
                 <div class="flex justify-between items-center mt-3 pt-3 border-t border-dashed border-slate-700">
-                    <span class="text-xs font-black text-slate-200">Total Tagihan</span>
-                    <span class="text-lg font-black text-emerald-400">${fCur(o.payment?.grandTotal)}</span>
+                    <span class="text-xs font-semibold text-slate-200">Total Tagihan</span>
+                    <span class="text-lg font-bold text-emerald-400">${fCur(o.payment?.grandTotal)}</span>
                 </div>
             </div>
         </div>
@@ -2394,7 +2394,7 @@ const rAdmSet = () => {
             <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 dark:bg-emerald-900/20 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
                 
-                <h3 class="font-black text-slate-800 dark:text-white mb-6 border-b-2 border-slate-100 dark:border-slate-700 pb-4 flex items-center gap-3 text-base sm:text-lg">
+                <h3 class="font-bold text-slate-800 dark:text-white mb-6 border-b-2 border-slate-100 dark:border-slate-700 pb-4 flex items-center gap-3 text-base sm:text-lg">
                     <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-store"></i></div>
                     Informasi Dasar Toko
                 </h3>
@@ -2402,28 +2402,28 @@ const rAdmSet = () => {
                 <div class="space-y-5">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-tag text-emerald-500 mr-1"></i> Nama Toko</label>
+                            <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-tag text-emerald-500 mr-1"></i> Nama Toko</label>
                             <input id="set-name" value="${esc(appData.store.name)}" class="admin-input !py-3 w-full" placeholder="Contoh: Toko Maju Jaya"/>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-bullhorn text-emerald-500 mr-1"></i> Slogan</label>
+                            <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-bullhorn text-emerald-500 mr-1"></i> Slogan</label>
                             <input id="set-slogan" value="${esc(appData.store.slogan)}" class="admin-input !py-3 w-full" placeholder="Contoh: Murah dan Lengkap"/>
                         </div>
                     </div>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-brands fa-whatsapp text-emerald-500 mr-1"></i> WhatsApp Admin</label>
+                            <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-brands fa-whatsapp text-emerald-500 mr-1"></i> WhatsApp Admin</label>
                             <input id="set-wa" value="${esc(appData.store.wa)}" class="admin-input !py-3 w-full" placeholder="Contoh: 08123456789"/>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-shoe-prints text-emerald-500 mr-1"></i> Teks Footer Struk/Web</label>
+                            <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-shoe-prints text-emerald-500 mr-1"></i> Teks Footer Struk/Web</label>
                             <input id="set-footer-text" value="${esc(appData.store.footerText || '')}" class="admin-input !py-3 w-full" placeholder="Terima kasih telah berbelanja..."/>
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-image text-emerald-500 mr-1"></i> Logo Toko (URL / Icon Class)</label>
+                        <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-image text-emerald-500 mr-1"></i> Logo Toko (URL / Icon Class)</label>
                         <div class="flex gap-2">
                             <input id="set-logo" value="${esc(appData.store.logo)}" class="admin-input flex-1 !py-3" placeholder="https://... atau fa-store" />
                             <label onclick="if(window.AppInventor){ event.preventDefault(); window.AppInventor.setWebViewString('BUKA_GALERI|||set-logo|||null'); }" class="bg-slate-100 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl px-5 flex items-center justify-center cursor-pointer hover:border-emerald-500 hover:text-emerald-500 transition-all shrink-0 font-bold text-xs gap-2 shadow-sm">
@@ -2434,17 +2434,17 @@ const rAdmSet = () => {
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-map-location-dot text-emerald-500 mr-1"></i> Alamat Lengkap Toko</label>
+                        <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-map-location-dot text-emerald-500 mr-1"></i> Alamat Lengkap Toko</label>
                         <textarea id="set-address" class="admin-input resize-none !py-3 w-full leading-relaxed" rows="2" placeholder="Jl. Raya No 1...">${esc(appData.store.address)}</textarea>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-4 border-t border-slate-100 dark:border-slate-700">
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-coins text-emerald-500 mr-1"></i> Ongkir per KM (Rp)</label>
+                            <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-coins text-emerald-500 mr-1"></i> Ongkir per KM (Rp)</label>
                             <input type="number" id="set-cost" value="${appData.store.costPerKm || 0}" class="admin-input !py-3 w-full" />
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-motorcycle text-emerald-500 mr-1"></i> Layanan Kurir</label>
+                            <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-motorcycle text-emerald-500 mr-1"></i> Layanan Kurir</label>
                             <div class="relative">
                                 <select id="set-delivery-enabled" class="admin-input cursor-pointer !py-3 appearance-none w-full font-bold">
                                     <option value="true" ${appData.store.isDeliveryEnabled !== !1 ? 'selected' : ''}>✅ Aktif</option>
@@ -2454,7 +2454,7 @@ const rAdmSet = () => {
                             </div>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-person-walking text-emerald-500 mr-1"></i> Ambil di Toko</label>
+                            <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-person-walking text-emerald-500 mr-1"></i> Ambil di Toko</label>
                             <div class="relative">
                                 <select id="set-pickup-enabled" class="admin-input cursor-pointer !py-3 appearance-none w-full font-bold">
                                     <option value="true" ${appData.store.isPickupEnabled !== !1 ? 'selected' : ''}>✅ Aktif</option>
@@ -2467,7 +2467,7 @@ const rAdmSet = () => {
 
                     <div class="bg-amber-50 dark:bg-amber-900/10 p-5 sm:p-6 rounded-2xl border-2 border-amber-200 dark:border-amber-800/30 mt-6 relative overflow-hidden">
                         <i class="fa-solid fa-map-pin absolute -bottom-5 -right-5 text-8xl text-amber-500/10 rotate-[20deg] pointer-events-none"></i>
-                        <h4 class="font-black text-amber-700 dark:text-amber-500 mb-4 uppercase tracking-widest flex items-center gap-2 text-xs">
+                        <h4 class="font-bold text-amber-700 dark:text-amber-500 mb-4 uppercase tracking-widest flex items-center gap-2 text-xs">
                             <i class="fa-solid fa-location-crosshairs text-amber-500"></i> Koordinat GPS (Titik Toko)
                         </h4>
                         <div class="space-y-4 relative z-10">
@@ -2484,14 +2484,14 @@ const rAdmSet = () => {
             <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 dark:bg-emerald-900/20 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
                 
-                <h3 class="font-black text-slate-800 dark:text-white mb-6 border-b-2 border-slate-100 dark:border-slate-700 pb-4 flex items-center gap-3 text-base sm:text-lg">
+                <h3 class="font-bold text-slate-800 dark:text-white mb-6 border-b-2 border-slate-100 dark:border-slate-700 pb-4 flex items-center gap-3 text-base sm:text-lg">
                     <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center"><i class="fa-solid fa-palette"></i></div>
                     Tema & Visual Aplikasi
                 </h3>
                 
                 <div class="space-y-6">
                     <div class="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-100 dark:border-slate-700">
-                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-widest text-center">Pilih Warna Utama (Branding)</label>
+                        <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-widest text-center">Pilih Warna Utama (Branding)</label>
                         <div class="flex flex-wrap justify-center gap-4">
                             ${[
                                 { id: 'emerald', hex: '#10b981', name: 'Emerald' },
@@ -2511,7 +2511,7 @@ const rAdmSet = () => {
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-list-ul text-emerald-600 mr-1"></i> Desain Menu Kategori</label>
+                            <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-list-ul text-emerald-600 mr-1"></i> Desain Menu Kategori</label>
                             <div class="relative">
                                 <select id="set-category-style" class="admin-input cursor-pointer !py-3 appearance-none w-full font-bold">
                                     <option value="image" ${appData.store.categoryStyle !== 'text' ? 'selected' : ''}>Kartu Gambar (Visual)</option>
@@ -2521,7 +2521,7 @@ const rAdmSet = () => {
                             </div>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-icons text-emerald-600 mr-1"></i> Ikon "Semua Produk"</label>
+                            <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-icons text-emerald-600 mr-1"></i> Ikon "Semua Produk"</label>
                             <div class="flex gap-2">
                                 <input id="set-all-cat-icon" value="${esc(appData.store.allProductsIcon || '')}" class="admin-input flex-1 !py-3" placeholder="URL Gambar Ikon" />
                                 <label onclick="if(window.AppInventor){ event.preventDefault(); window.AppInventor.setWebViewString('BUKA_GALERI|||set-all-cat-icon|||null'); }" class="bg-slate-100 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl px-5 flex items-center justify-center cursor-pointer hover:border-emerald-500 hover:text-emerald-600 transition-all shrink-0 font-bold text-xs gap-2 shadow-sm">
@@ -2537,7 +2537,7 @@ const rAdmSet = () => {
             <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-purple-50 dark:bg-purple-900/20 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
                 
-                <h3 class="font-black text-slate-800 dark:text-white mb-2 border-b-2 border-slate-100 dark:border-slate-700 pb-4 flex items-center gap-3 text-base sm:text-lg">
+                <h3 class="font-bold text-slate-800 dark:text-white mb-2 border-b-2 border-slate-100 dark:border-slate-700 pb-4 flex items-center gap-3 text-base sm:text-lg">
                     <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/40 text-purple-600 flex items-center justify-center"><i class="fa-solid fa-share-nodes"></i></div>
                     Tautan Media Sosial
                 </h3>
@@ -2546,22 +2546,22 @@ const rAdmSet = () => {
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div class="relative">
                         <i class="fa-brands fa-facebook absolute left-4 top-[38px] text-[#1877f2] text-lg"></i>
-                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Facebook</label>
+                        <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Facebook</label>
                         <input type="text" id="set-soc-fb" value="${esc(appData.store.social?.fb || '')}" class="admin-input !py-3 !pl-12 w-full" placeholder="https://facebook.com/..." />
                     </div>
                     <div class="relative">
                         <i class="fa-brands fa-instagram absolute left-4 top-[38px] text-[#e1306c] text-lg"></i>
-                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Instagram</label>
+                        <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Instagram</label>
                         <input type="text" id="set-soc-ig" value="${esc(appData.store.social?.ig || '')}" class="admin-input !py-3 !pl-12 w-full" placeholder="https://instagram.com/..." />
                     </div>
                     <div class="relative">
                         <i class="fa-brands fa-tiktok absolute left-4 top-[38px] text-slate-800 dark:text-white text-lg"></i>
-                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">TikTok</label>
+                        <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">TikTok</label>
                         <input type="text" id="set-soc-tt" value="${esc(appData.store.social?.tt || '')}" class="admin-input !py-3 !pl-12 w-full" placeholder="https://tiktok.com/@..." />
                     </div>
                     <div class="relative">
                         <i class="fa-brands fa-youtube absolute left-4 top-[38px] text-[#ff0000] text-lg"></i>
-                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">YouTube</label>
+                        <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">YouTube</label>
                         <input type="text" id="set-soc-yt" value="${esc(appData.store.social?.yt || '')}" class="admin-input !py-3 !pl-12 w-full" placeholder="https://youtube.com/..." />
                     </div>
                 </div>
@@ -2570,12 +2570,12 @@ const rAdmSet = () => {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-24 h-24 bg-indigo-50 dark:bg-indigo-900/20 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
-                    <h3 class="font-black text-slate-800 dark:text-white mb-6 border-b-2 border-slate-100 dark:border-slate-700 pb-4 flex items-center gap-3 text-base">
+                    <h3 class="font-bold text-slate-800 dark:text-white mb-6 border-b-2 border-slate-100 dark:border-slate-700 pb-4 flex items-center gap-3 text-base">
                         <div class="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-qrcode"></i></div>
                         QRIS Payment
                     </h3>
                     <div>
-                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Gambar Barcode QRIS</label>
+                        <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Gambar Barcode QRIS</label>
                         <div class="flex gap-2">
                             <input id="set-qris-url" value="${esc(appData.payment.qrisUrl)}" class="admin-input flex-1 !py-3" placeholder="URL Gambar" />
                             <label onclick="if(window.AppInventor){ event.preventDefault(); window.AppInventor.setWebViewString('BUKA_GALERI|||set-qris-url|||null'); }" class="bg-slate-100 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl px-4 flex items-center justify-center cursor-pointer hover:border-indigo-500 hover:text-indigo-500 transition-all shrink-0 font-bold shadow-sm">
@@ -2588,17 +2588,17 @@ const rAdmSet = () => {
 
                 <div class="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-[1.5rem] border-2 border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-24 h-24 bg-rose-50 dark:bg-rose-900/20 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
-                    <h3 class="font-black text-slate-800 dark:text-white mb-6 border-b-2 border-slate-100 dark:border-slate-700 pb-4 flex items-center gap-3 text-base">
+                    <h3 class="font-bold text-slate-800 dark:text-white mb-6 border-b-2 border-slate-100 dark:border-slate-700 pb-4 flex items-center gap-3 text-base">
                         <div class="w-8 h-8 rounded-lg bg-rose-100 dark:bg-rose-900/40 text-rose-600 flex items-center justify-center"><i class="fa-solid fa-shield-halved"></i></div>
                         Akses Admin Panel
                     </h3>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Username Baru</label>
+                            <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Username Baru</label>
                             <input type="text" id="set-auth-user" value="${esc(appData.auth.username)}" class="admin-input !py-3 w-full" placeholder="Admin123"/>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Password Baru</label>
+                            <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Password Baru</label>
                             <input type="text" id="set-auth-pass" value="${esc(appData.auth.password)}" class="admin-input !py-3 w-full" placeholder="Rahasia123" />
                         </div>
                     </div>
@@ -2607,14 +2607,14 @@ const rAdmSet = () => {
 
             <div class="pt-6 mt-4 border-t-2 border-slate-200 dark:border-slate-800">
                 <div class="flex flex-col sm:flex-row gap-4 mb-4">
-                    <button onclick="backupData()" class="flex-1 bg-slate-800 dark:bg-slate-700 text-white font-black py-4 rounded-2xl hover:bg-slate-900 dark:hover:bg-slate-600 transition-all text-sm flex items-center justify-center gap-2 border-2 border-slate-900 dark:border-slate-600 shadow-md">
+                    <button onclick="backupData()" class="flex-1 bg-slate-800 dark:bg-slate-700 text-white font-bold py-4 rounded-2xl hover:bg-slate-900 dark:hover:bg-slate-600 transition-all text-sm flex items-center justify-center gap-2 border-2 border-slate-900 dark:border-slate-600 shadow-md">
                         <i class="fa-solid fa-download text-emerald-400"></i> Backup Data (JSON)
                     </button>
-                    <button onclick="el('restore-file').click()" class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-black py-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-sm flex items-center justify-center gap-2 shadow-sm">
+                    <button onclick="el('restore-file').click()" class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-bold py-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-sm flex items-center justify-center gap-2 shadow-sm">
                         <i class="fa-solid fa-upload text-blue-500"></i> Restore Data
                     </button>
                 </div>
-                <button onclick="saveAdminSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white border-2 border-emerald-700 py-4 rounded-2xl text-sm font-black tracking-wide shadow-lg shadow-emerald-500/30 transition-all flex items-center justify-center gap-2">
+                <button onclick="saveAdminSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white border-2 border-emerald-700 py-4 rounded-2xl text-sm font-semibold tracking-wide shadow-lg shadow-emerald-500/30 transition-all flex items-center justify-center gap-2">
                     <i class="fa-solid fa-save text-lg"></i> SIMPAN SEMUA PENGATURAN
                 </button>
             </div>
@@ -2700,11 +2700,11 @@ window.rAdmItms = t => {
                 <div class="grid grid-cols-2 gap-3">
                     <div onclick="window.aPrtSort=window.aPrtSort==='active'?'all':'active';rAdmItms('products')" class="cursor-pointer bg-emerald-50 dark:bg-emerald-900/20 border-2 border-emerald-200 dark:border-emerald-800 rounded-[1.25rem] p-3 sm:p-4 flex items-center gap-3 transition-all ${acSt}">
                         <div class="w-10 h-10 rounded-xl bg-emerald-200/50 dark:bg-emerald-800/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0"><i class="fa-solid fa-box-open text-lg"></i></div>
-                        <div><p class="text-[9px] sm:text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-0.5">Produk Aktif</p><h4 class="text-lg sm:text-xl font-black text-emerald-700 dark:text-emerald-300 leading-none">${a}</h4></div>
+                        <div><p class="text-[9px] sm:text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-0.5">Produk Aktif</p><h4 class="text-lg sm:text-xl font-bold text-emerald-700 dark:text-emerald-300 leading-none">${a}</h4></div>
                     </div>
                     <div onclick="window.aPrtSort=window.aPrtSort==='inactive'?'all':'inactive';rAdmItms('products')" class="cursor-pointer bg-rose-50 dark:bg-rose-900/20 border-2 border-rose-200 dark:border-rose-800 rounded-[1.25rem] p-3 sm:p-4 flex items-center gap-3 transition-all ${inSt}">
                         <div class="w-10 h-10 rounded-xl bg-rose-200/50 dark:bg-rose-800/50 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0"><i class="fa-solid fa-ban text-lg"></i></div>
-                        <div><p class="text-[9px] sm:text-[10px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-widest mb-0.5">Kosong / Nonaktif</p><h4 class="text-lg sm:text-xl font-black text-rose-700 dark:text-rose-300 leading-none">${i}</h4></div>
+                        <div><p class="text-[9px] sm:text-[10px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-widest mb-0.5">Kosong / Nonaktif</p><h4 class="text-lg sm:text-xl font-bold text-rose-700 dark:text-rose-300 leading-none">${i}</h4></div>
                     </div>
                 </div>`;
         }
@@ -2762,11 +2762,11 @@ window.rAdmItms = t => {
             <div class="flex items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto min-w-0 flex-1">
                 ${img}
                 <div class="min-w-0 flex flex-col justify-center">
-                    <p class="text-sm sm:text-base font-black ${tC} truncate mb-1">${esc(x.name||x.title||x.bankName||x.code||'Item')}</p>
+                    <p class="text-sm sm:text-base font-bold ${tC} truncate mb-1">${esc(x.name||x.title||x.bankName||x.code||'Item')}</p>
                     
                     ${isP ? `
                     <div class="flex flex-wrap items-center gap-1.5 mb-1.5">
-                        <span class="font-black text-emerald-600 dark:text-emerald-400 text-sm drop-shadow-sm">${fCur(x.price)}</span>
+                        <span class="font-bold text-emerald-600 dark:text-emerald-400 text-sm drop-shadow-sm">${fCur(x.price)}</span>
                         ${skuBadge}
                     </div>
                     <div class="flex flex-wrap gap-1.5">
@@ -2825,7 +2825,7 @@ window.oAEd = (t, id) => {
         let iconClass = getIcon(k.key);
         
         h += `<div class="mb-4">
-                <label class="flex items-center gap-2 text-[10px] font-black text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">
+                <label class="flex items-center gap-2 text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">
                     <i class="fa-solid ${iconClass} text-emerald-500 text-sm"></i> ${k.label}
                 </label>`;
         
@@ -2876,7 +2876,7 @@ window.oAEd = (t, id) => {
         } else if (k.key === 'img') {
             h += `<div class="flex flex-col sm:flex-row gap-2">
                     <input type="text" id="af-${k.key}" value="${esc(v)}" class="admin-input flex-1 !py-3 bg-slate-50 dark:bg-slate-900/80 border-2 border-slate-200 dark:border-slate-700 text-xs focus:bg-white dark:focus:bg-slate-800 transition-all" placeholder="https://URL Gambar" />
-                    <label onclick="if(window.AppInventor){ event.preventDefault(); window.AppInventor.setWebViewString('BUKA_GALERI|||af-${k.key}|||null'); }" class="bg-white dark:bg-slate-800 border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 rounded-xl py-3 px-5 flex items-center justify-center cursor-pointer hover:bg-emerald-500 hover:text-white dark:hover:text-white transition-all shrink-0 shadow-sm font-black text-xs gap-2">
+                    <label onclick="if(window.AppInventor){ event.preventDefault(); window.AppInventor.setWebViewString('BUKA_GALERI|||af-${k.key}|||null'); }" class="bg-white dark:bg-slate-800 border-2 border-emerald-500 text-emerald-600 dark:text-emerald-400 rounded-xl py-3 px-5 flex items-center justify-center cursor-pointer hover:bg-emerald-500 hover:text-white dark:hover:text-white transition-all shrink-0 shadow-sm font-semibold text-xs gap-2">
                         <i class="fa-solid fa-cloud-arrow-up"></i> Upload Foto
                         <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'af-${k.key}')" />
                     </label>
@@ -2901,7 +2901,7 @@ window.rVarsB = () => {
             <div class="absolute top-0 right-0 w-10 h-10 bg-indigo-50 dark:bg-indigo-900/20 rounded-bl-full -z-10"></div>
             
             <div class="flex items-center justify-between mb-3 border-b-2 border-slate-50 dark:border-slate-700 pb-2">
-                <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-1.5"><i class="fa-solid fa-sitemap"></i> Varian ${i+1}</span>
+                <span class="text-[10px] font-medium text-indigo-600 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-1.5"><i class="fa-solid fa-sitemap"></i> Varian ${i+1}</span>
                 <button onclick="rmVar(${i})" class="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center" title="Hapus Varian"><i class="fa-solid fa-xmark text-sm"></i></button>
             </div>
             
@@ -2909,7 +2909,7 @@ window.rVarsB = () => {
                 <div class="grid grid-cols-2 gap-2">
                     <input placeholder="Nama Varian (Cth: XL / Merah)" class="admin-input !py-2.5 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700" value="${esc(v.name)}" onchange="uVar(${i},'name',this.value)"/>
                     <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400">Rp</span>
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-medium text-slate-400">Rp</span>
                         <input placeholder="Harga" type="number" class="admin-input !py-2.5 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700" value="${v.price}" onchange="uVar(${i},'price',this.value)"/>
                     </div>
                 </div>
@@ -2925,7 +2925,7 @@ window.rVarsB = () => {
                 </div>
             </div>
         </div>`).join('') + `</div>
-        <button onclick="addVar()" class="w-full py-3.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 font-black rounded-xl text-[10px] uppercase tracking-widest border-2 border-emerald-200 dark:border-emerald-800 border-dashed hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center justify-center gap-2"><i class="fa-solid fa-plus text-sm"></i> Tambah Varian Produk</button>`;
+        <button onclick="addVar()" class="w-full py-3.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 font-bold rounded-xl text-[10px] uppercase tracking-widest border-2 border-emerald-200 dark:border-emerald-800 border-dashed hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center justify-center gap-2"><i class="fa-solid fa-plus text-sm"></i> Tambah Varian Produk</button>`;
     setH('variants-builder-container', h);
 };
 
@@ -2941,17 +2941,17 @@ window.rWholB = () => {
         <div class="flex gap-2 items-center bg-white dark:bg-slate-800 p-3 rounded-2xl border-2 border-amber-100 dark:border-amber-800/40 shadow-sm relative overflow-hidden">
             <div class="flex-1 flex gap-2 items-center relative z-10">
                 <div class="relative w-1/3">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-amber-500">>=</span>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-medium text-amber-500">>=</span>
                     <input type="number" placeholder="Min. Qty" class="admin-input !py-2.5 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700" value="${w.minQty}" onchange="uWhol(${i},'minQty',this.value)"/>
                 </div>
                 <div class="relative flex-1">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-amber-500">Rp</span>
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-medium text-amber-500">Rp</span>
                     <input type="number" placeholder="Harga Satuan Grosir" class="admin-input !py-2.5 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700" value="${w.price}" onchange="uWhol(${i},'price',this.value)"/>
                 </div>
             </div>
             <button onclick="rmWhol(${i})" class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shrink-0 relative z-10 flex items-center justify-center shadow-sm"><i class="fa-solid fa-trash text-[11px]"></i></button>
         </div>`).join('') + `</div>
-        <button onclick="addWhol()" class="w-full py-3.5 bg-amber-50 dark:bg-amber-900/20 text-amber-600 font-black rounded-xl text-[10px] uppercase tracking-widest border-2 border-amber-300 dark:border-amber-800 border-dashed hover:bg-amber-500 hover:text-white transition-all shadow-sm flex items-center justify-center gap-2"><i class="fa-solid fa-plus text-sm"></i> Tambah Harga Grosir</button>`;
+        <button onclick="addWhol()" class="w-full py-3.5 bg-amber-50 dark:bg-amber-900/20 text-amber-600 font-bold rounded-xl text-[10px] uppercase tracking-widest border-2 border-amber-300 dark:border-amber-800 border-dashed hover:bg-amber-500 hover:text-white transition-all shadow-sm flex items-center justify-center gap-2"><i class="fa-solid fa-plus text-sm"></i> Tambah Harga Grosir</button>`;
     setH('wholesale-builder-container', h);
 };
 
@@ -3325,7 +3325,7 @@ window.renderDriverList = () => {
                     <i class="fa-solid fa-helmet-safety"></i>
                 </div>
                 <div>
-                    <p class="font-black text-xs text-slate-800 dark:text-white">${esc(d.name)}</p>
+                    <p class="font-semibold text-xs text-slate-800 dark:text-white">${esc(d.name)}</p>
                     <p class="text-[9px] font-bold text-slate-500 dark:text-slate-400 mt-0.5"><i class="fa-solid fa-motorcycle"></i> ${esc(d.vehicle)}</p>
                 </div>
             </div>
@@ -3425,7 +3425,7 @@ window.listenDriverOrders = () => {
                 container.innerHTML = `
                     <div class='text-center py-16 bg-white dark:bg-slate-800 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700'>
                         <i class='fa-solid fa-mug-hot text-5xl text-slate-300 dark:text-slate-600 mb-4 block'></i>
-                        <h3 class='font-black text-slate-700 dark:text-slate-300'>Belum Ada Tugas</h3>
+                        <h3 class='font-bold text-slate-700 dark:text-slate-300'>Belum Ada Tugas</h3>
                         <p class='text-xs font-bold text-slate-400 mt-1'>Silakan bersantai sejenak.</p>
                     </div>`;
                 hLoad();
@@ -3457,30 +3457,30 @@ activeOrders.forEach(o => {
                     </div>
 
                     <div class='pr-28 mb-4'>
-                        <p class='text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1'>ID: #${o.orderId}</p>
-                        <h3 class='font-black text-slate-800 dark:text-white text-lg leading-tight truncate'>${esc(o.customer.name)}</h3>
+                        <p class='text-[10px] font-medium text-slate-400 uppercase tracking-widest mb-1'>ID: #${o.orderId}</p>
+                        <h3 class='font-bold text-slate-800 dark:text-white text-lg leading-tight truncate'>${esc(o.customer.name)}</h3>
                     </div>
                     
                     <div class='bg-indigo-50 dark:bg-indigo-900/10 p-3 rounded-xl border border-indigo-100 dark:border-indigo-800/30 mb-4'>
-                        <p class='text-[9px] font-black text-indigo-500 uppercase mb-1.5'><i class='fa-solid fa-map-location-dot'></i> Tujuan Antar</p>
+                        <p class='text-[9px] font-medium text-indigo-500 uppercase mb-1.5'><i class='fa-solid fa-map-location-dot'></i> Tujuan Antar</p>
                         <p class='text-xs font-bold text-slate-700 dark:text-slate-300 leading-relaxed'>${esc(o.customer.address)}</p>
                         ${o.customer.lat ? `
-                            <button onclick='window.open("https://maps.google.com/?q=${o.customer.lat},${o.customer.lng}", "_blank")' class='mt-2 text-[10px] bg-white border border-indigo-200 text-indigo-600 px-3 py-1.5 rounded-lg font-black hover:bg-indigo-500 hover:text-white transition-colors shadow-sm'>
+                            <button onclick='window.open("https://maps.google.com/?q=${o.customer.lat},${o.customer.lng}", "_blank")' class='mt-2 text-[10px] bg-white border border-indigo-200 text-indigo-600 px-3 py-1.5 rounded-lg font-bold hover:bg-indigo-500 hover:text-white transition-colors shadow-sm'>
                                 <i class='fa-solid fa-location-arrow'></i> Buka Navigasi GPS
                             </button>
                         ` : ''}
                     </div>
                     
                     <div class='mb-4'>
-                        <p class='text-[9px] font-black text-slate-400 uppercase mb-1.5'><i class='fa-solid fa-box-open'></i> Barang yang harus diambil di toko:</p>
+                        <p class='text-[9px] font-medium text-slate-400 uppercase mb-1.5'><i class='fa-solid fa-box-open'></i> Barang yang harus diambil di toko:</p>
                         <ul class='bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200 dark:border-slate-700'>
                             ${itemsList}
                         </ul>
                     </div>
                     
                     <div class='flex items-center justify-between bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-xl border border-emerald-100 dark:border-emerald-800/30 mb-4'>
-                        <span class='text-[10px] font-black text-emerald-600 uppercase'>Fee Anda</span>
-                        <span class='font-black text-emerald-600 text-sm'>${fCur(o.jastip.komisiDriver)}</span>
+                        <span class='text-[10px] font-medium text-emerald-600 uppercase'>Fee Anda</span>
+                        <span class='font-bold text-emerald-600 text-sm'>${fCur(o.jastip.komisiDriver)}</span>
                     </div>
                     
                     ${btnAction}
@@ -3500,16 +3500,16 @@ const getDriverActionButton = (o) => {
     const ds = o.jastip.driverStatus || 'TUGAS BARU';
     
     if (ds === 'TUGAS BARU') {
-        return `<button onclick="updateDriverStatus('${o.orderId}', 'MENUJU TOKO')" class='w-full py-3.5 bg-slate-800 hover:bg-slate-900 text-white font-black rounded-xl text-xs transition-all shadow-md'><i class='fa-solid fa-person-walking-arrow-right'></i> Konfirmasi & Menuju Toko</button>`;
+        return `<button onclick="updateDriverStatus('${o.orderId}', 'MENUJU TOKO')" class='w-full py-3.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition-all shadow-md'><i class='fa-solid fa-person-walking-arrow-right'></i> Konfirmasi & Menuju Toko</button>`;
     } 
     else if (ds === 'MENUJU TOKO') {
-        return `<button onclick="updateDriverStatus('${o.orderId}', 'AMBIL BARANG')" class='w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl text-xs transition-all shadow-md shadow-emerald-500/20'><i class='fa-solid fa-box'></i> Saya Sudah Ambil Barang</button>`;
+        return `<button onclick="updateDriverStatus('${o.orderId}', 'AMBIL BARANG')" class='w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-all shadow-md shadow-emerald-500/20'><i class='fa-solid fa-box'></i> Saya Sudah Ambil Barang</button>`;
     } 
     else if (ds === 'AMBIL BARANG') {
-        return `<button onclick="updateDriverStatus('${o.orderId}', 'MENUJU PEMBELI')" class='w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-black rounded-xl text-xs transition-all shadow-md'><i class='fa-solid fa-motorcycle'></i> Mulai Perjalanan ke Pembeli</button>`;
+        return `<button onclick="updateDriverStatus('${o.orderId}', 'MENUJU PEMBELI')" class='w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition-all shadow-md'><i class='fa-solid fa-motorcycle'></i> Mulai Perjalanan ke Pembeli</button>`;
     } 
     else if (ds === 'MENUJU PEMBELI') {
-        return `<button onclick="updateDriverStatus('${o.orderId}', 'SELESAI')" class='w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-xl text-xs transition-all shadow-md shadow-emerald-500/30'><i class='fa-solid fa-check-double'></i> Selesaikan Pesanan</button>`;
+        return `<button onclick="updateDriverStatus('${o.orderId}', 'SELESAI')" class='w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs transition-all shadow-md shadow-emerald-500/30'><i class='fa-solid fa-check-double'></i> Selesaikan Pesanan</button>`;
     }
     return '';
 };
@@ -3569,13 +3569,13 @@ window.updateDriverStatus = async (orderId, newDriverStatus) => {
 let currentSaldo = 0;
 
 window.switchDriverTab = (t) => {
-    if(t==='tugas'){ show('driver-tugas-section'); hide('driver-riwayat-section'); el('btn-tab-tugas').className='flex-1 py-2 text-xs font-black rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all'; el('btn-tab-riwayat').className='flex-1 py-2 text-xs font-bold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-all'; }
-    else { hide('driver-tugas-section'); show('driver-riwayat-section'); el('btn-tab-riwayat').className='flex-1 py-2 text-xs font-black rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all'; el('btn-tab-tugas').className='flex-1 py-2 text-xs font-bold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-all'; if(!window.unsubDriverWD) listenDriverHistory(); }
+    if(t==='tugas'){ show('driver-tugas-section'); hide('driver-riwayat-section'); el('btn-tab-tugas').className='flex-1 py-2 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all'; el('btn-tab-riwayat').className='flex-1 py-2 text-xs font-bold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-all'; }
+    else { hide('driver-tugas-section'); show('driver-riwayat-section'); el('btn-tab-riwayat').className='flex-1 py-2 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all'; el('btn-tab-tugas').className='flex-1 py-2 text-xs font-bold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-all'; if(!window.unsubDriverWD) listenDriverHistory(); }
 };
 
 window.switchDriverSubTab = (t) => {
-    if(t==='order'){ show('driver-history-order-container'); hide('driver-history-wd-container'); el('btn-subtab-order').className='flex-1 py-1.5 text-[10px] font-black rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all'; el('btn-subtab-wd').className='flex-1 py-1.5 text-[10px] font-bold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-all'; }
-    else { hide('driver-history-order-container'); show('driver-history-wd-container'); el('btn-subtab-wd').className='flex-1 py-1.5 text-[10px] font-black rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all'; el('btn-subtab-order').className='flex-1 py-1.5 text-[10px] font-bold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-all'; }
+    if(t==='order'){ show('driver-history-order-container'); hide('driver-history-wd-container'); el('btn-subtab-order').className='flex-1 py-1.5 text-[10px] font-medium rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all'; el('btn-subtab-wd').className='flex-1 py-1.5 text-[10px] font-bold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-all'; }
+    else { hide('driver-history-order-container'); show('driver-history-wd-container'); el('btn-subtab-wd').className='flex-1 py-1.5 text-[10px] font-medium rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all'; el('btn-subtab-order').className='flex-1 py-1.5 text-[10px] font-bold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-all'; }
 };
 
 window.openWithdrawModal = () => {
@@ -3619,12 +3619,12 @@ window.listenDriverHistory = () => {
         setIn('driver-total-saldo', fCur(currentSaldo));
         
         const cOrd = el('driver-history-order-container');
-        cOrd.innerHTML = ordList.length ? ordList.map(o => `<div class='bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex justify-between items-center'><div><p class='font-black text-xs'>#${o.orderId}</p><p class='text-[9px] font-bold text-slate-500'>${new Date(o.dateString).toLocaleString('id-ID')}</p></div><p class='font-black text-emerald-600 text-sm'>+${fCur(o.jastip.komisiDriver)}</p></div>`).join('') : `<div class='text-center py-4'><p class='text-[10px] font-bold text-slate-500'>Belum ada order selesai.</p></div>`;
+        cOrd.innerHTML = ordList.length ? ordList.map(o => `<div class='bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex justify-between items-center'><div><p class='font-semibold text-xs'>#${o.orderId}</p><p class='text-[9px] font-bold text-slate-500'>${new Date(o.dateString).toLocaleString('id-ID')}</p></div><p class='font-bold text-emerald-600 text-sm'>+${fCur(o.jastip.komisiDriver)}</p></div>`).join('') : `<div class='text-center py-4'><p class='text-[10px] font-bold text-slate-500'>Belum ada order selesai.</p></div>`;
         
         const cWd = el('driver-history-wd-container');
         cWd.innerHTML = wdList.length ? wdList.map(w => {
             const sc = w.status === 'Selesai' ? 'text-emerald-500 border-emerald-200 bg-emerald-50' : (w.status === 'Ditolak' ? 'text-rose-500 border-rose-200 bg-rose-50' : 'text-amber-500 border-amber-200 bg-amber-50');
-            return `<div class='bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex justify-between items-center'><div><p class='font-black text-xs text-rose-500'>-${fCur(w.amount)}</p><p class='text-[9px] font-bold text-slate-500'>${new Date(w.timestamp).toLocaleString('id-ID')}</p></div><span class='badge badge-xs ${sc}'>${w.status}</span></div>`;
+            return `<div class='bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex justify-between items-center'><div><p class='font-semibold text-xs text-rose-500'>-${fCur(w.amount)}</p><p class='text-[9px] font-bold text-slate-500'>${new Date(w.timestamp).toLocaleString('id-ID')}</p></div><span class='badge badge-xs ${sc}'>${w.status}</span></div>`;
         }).join('') : `<div class='text-center py-4'><p class='text-[10px] font-bold text-slate-500'>Belum ada penarikan dana.</p></div>`;
     };
 
@@ -3661,23 +3661,23 @@ window.listenAdminWithdrawals = () => {
 
                 <div class="flex justify-between items-center pr-8">
                     <div>
-                        <p class="font-black text-xs text-slate-800 dark:text-white">${esc(w.driverName)}</p>
+                        <p class="font-semibold text-xs text-slate-800 dark:text-white">${esc(w.driverName)}</p>
                         <p class="text-[9px] font-bold text-slate-500 mt-0.5">${new Date(w.timestamp).toLocaleString('id-ID')}</p>
                     </div>
                     <div class="text-right">
-                        <p class="font-black text-rose-600 text-sm">${fCur(w.amount)}</p>
+                        <p class="font-bold text-rose-600 text-sm">${fCur(w.amount)}</p>
                         <span class="badge badge-xs ${w.status === 'Menunggu Admin' ? 'badge-amber' : (w.status === 'Selesai' ? 'badge-emerald' : 'badge-rose')}">${w.status}</span>
                     </div>
                 </div>
                 <div class="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-600 dark:text-slate-400 flex flex-col gap-1 relative z-0">
                     <div class="flex justify-between"><span>Bank:</span> <span class="text-slate-800 dark:text-white">${esc(w.bankName || '-')}</span></div>
-                    <div class="flex justify-between"><span>Rekening:</span> <span class="font-black text-emerald-600 dark:text-emerald-400">${esc(w.bankAccount || '-')}</span></div>
+                    <div class="flex justify-between"><span>Rekening:</span> <span class="font-bold text-emerald-600 dark:text-emerald-400">${esc(w.bankAccount || '-')}</span></div>
                     <div class="flex justify-between"><span>A.n:</span> <span class="text-slate-800 dark:text-white">${esc(w.bankOwner || '-')}</span></div>
                 </div>
                 ${w.status === 'Menunggu Admin' ? `
                 <div class="flex gap-2 mt-1">
-                    <button onclick="updateWdStatus('${w.id}', 'Selesai')" class="flex-1 bg-emerald-500 text-white font-black py-2 rounded-lg text-[10px] hover:bg-emerald-600 transition-all shadow-sm"><i class="fa-solid fa-check"></i> Sudah Ditransfer</button>
-                    <button onclick="updateWdStatus('${w.id}', 'Ditolak')" class="bg-rose-100 text-rose-600 border border-rose-200 font-black py-2 px-3 rounded-lg text-[10px] hover:bg-rose-200 transition-all"><i class="fa-solid fa-xmark"></i> Tolak</button>
+                    <button onclick="updateWdStatus('${w.id}', 'Selesai')" class="flex-1 bg-emerald-500 text-white font-bold py-2 rounded-lg text-[10px] hover:bg-emerald-600 transition-all shadow-sm"><i class="fa-solid fa-check"></i> Sudah Ditransfer</button>
+                    <button onclick="updateWdStatus('${w.id}', 'Ditolak')" class="bg-rose-100 text-rose-600 border border-rose-200 font-bold py-2 px-3 rounded-lg text-[10px] hover:bg-rose-200 transition-all"><i class="fa-solid fa-xmark"></i> Tolak</button>
                 </div>
                 ` : ''}
             </div>`;
