@@ -161,13 +161,43 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   3. Header & Navigation
+   3. Header & Navigation (Dynamic Store Theme Color)
    -------------------------------------------------------------------------- */
 .glass-header {
-    background: #ffffff;
+    background-color: var(--clr-p) !important;
     z-index: 30;
-    border-bottom: 1px solid #e2e8f0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    color: #ffffff;
+    transition: background-color 0.3s ease;
+}
+
+.glass-header h1,
+.glass-header h2,
+.glass-header h3,
+.glass-header span,
+.glass-header p {
+    color: #ffffff !important;
+}
+
+.glass-header p#dyn-store-slogan {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.glass-header button {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
+    color: #ffffff !important;
+    transition: all 0.2s ease;
+}
+
+.glass-header button:hover {
+    background-color: rgba(255, 255, 255, 0.35) !important;
+    color: #ffffff !important;
+}
+
+.glass-header button i {
+    color: #ffffff !important;
 }
 
 .glass-nav {
@@ -306,8 +336,18 @@ html.dark #app-container {
 }
 
 html.dark .glass-header {
-    background: #1e293b !important;
-    border-bottom-color: #334155 !important;
+    background-color: var(--clr-p-dark) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+#fab-cart-btn-container button {
+    background-color: var(--clr-p) !important;
+    box-shadow: 0 8px 25px var(--clr-p-35) !important;
+}
+
+#fab-cart-btn-container button:hover {
+    background-color: var(--clr-p-dark) !important;
 }
 
 html.dark .glass-nav {
@@ -3715,28 +3755,21 @@ window.downloadReceiptPDF = async () => {
  });
  
  pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
- pdf.save(`Struk_Pesanan_${cVOrd}.pdf`);
- 
- showToast("PDF berhasil disimpan!");
- } catch (error) {
- console.error(error);
- showToast("Gagal menyimpan PDF!");
- }
- isSaving = false;
- hLoad();
-};
-
 window.setTempTheme = (t) => {
- setV('set-theme-color', t);
- document.querySelectorAll('[id^="btn-theme-"]').forEach(b => {
- b.classList.remove('border-slate-800', 'dark:border-white', 'scale-125', 'shadow-md');
- b.classList.add('border-transparent');
- });
- const active = el('btn-theme-' + t);
- if(active) {
- active.classList.remove('border-transparent');
- active.classList.add('border-slate-800', 'dark:border-white', 'scale-125', 'shadow-md');
- }
+    setV('set-theme-color', t);
+    document.querySelectorAll('[id^="btn-theme-"]').forEach(b => {
+        b.classList.remove('border-slate-800', 'dark:border-white', 'scale-125', 'shadow-md');
+        b.classList.add('border-transparent');
+    });
+    const active = el('btn-theme-' + t);
+    if(active) {
+        active.classList.remove('border-transparent');
+        active.classList.add('border-slate-800', 'dark:border-white', 'scale-125', 'shadow-md');
+    }
+    if (appData && appData.store) {
+        appData.store.themeColor = t;
+        updateThemeVars();
+    }
 };
 
 const rAdmSet = () => {

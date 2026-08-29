@@ -2419,28 +2419,21 @@ window.downloadReceiptPDF = async () => {
  });
  
  pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
- pdf.save(`Struk_Pesanan_${cVOrd}.pdf`);
- 
- showToast("PDF berhasil disimpan!");
- } catch (error) {
- console.error(error);
- showToast("Gagal menyimpan PDF!");
- }
- isSaving = false;
- hLoad();
-};
-
 window.setTempTheme = (t) => {
- setV('set-theme-color', t);
- document.querySelectorAll('[id^="btn-theme-"]').forEach(b => {
- b.classList.remove('border-slate-800', 'dark:border-white', 'scale-125', 'shadow-md');
- b.classList.add('border-transparent');
- });
- const active = el('btn-theme-' + t);
- if(active) {
- active.classList.remove('border-transparent');
- active.classList.add('border-slate-800', 'dark:border-white', 'scale-125', 'shadow-md');
- }
+    setV('set-theme-color', t);
+    document.querySelectorAll('[id^="btn-theme-"]').forEach(b => {
+        b.classList.remove('border-slate-800', 'dark:border-white', 'scale-125', 'shadow-md');
+        b.classList.add('border-transparent');
+    });
+    const active = el('btn-theme-' + t);
+    if(active) {
+        active.classList.remove('border-transparent');
+        active.classList.add('border-slate-800', 'dark:border-white', 'scale-125', 'shadow-md');
+    }
+    if (appData && appData.store) {
+        appData.store.themeColor = t;
+        updateThemeVars();
+    }
 };
 
 const rAdmSet = () => {
