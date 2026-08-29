@@ -21,15 +21,17 @@ const setH = (id, h) => {
 const THEME_COLORS = {
  emerald: { p:'#059669', dark:'#047857', bg:'#ecfdf5', r:5, g:150, b:105 },
  teal: { p:'#0d9488', dark:'#0f766e', bg:'#f0fdfa', r:13, g:148, b:136 },
- blue: { p:'#2563eb', dark:'#1d4ed8', bg:'#eff6ff', r:37, g:99, b:235 },
- violet: { p:'#7c3aed', dark:'#6d28d9', bg:'#f5f3ff', r:124, g:58, b:237 },
- rose: { p:'#e11d48', dark:'#be123c', bg:'#fff1f2', r:225, g:29, b:72 },
- amber: { p:'#d97706', dark:'#b45309', bg:'#fffbeb', r:217, g:119, b:6 },
- orange: { p:'#ea580c', dark:'#c2410c', bg:'#fff7ed', r:234, g:88, b:12 },
- sky: { p:'#0284c7', dark:'#0369a1', bg:'#f0f9ff', r:2, g:132, b:199 },
- indigo: { p:'#4f46e5', dark:'#4338ca', bg:'#eef2ff', r:79, g:70, b:229 },
- pink: { p:'#db2777', dark:'#be185d', bg:'#fdf2f8', r:219, g:39, b:119 },
  cyan: { p:'#0891b2', dark:'#0e7490', bg:'#ecfeff', r:8, g:145, b:178 },
+ sky: { p:'#0284c7', dark:'#0369a1', bg:'#f0f9ff', r:2, g:132, b:199 },
+ blue: { p:'#2563eb', dark:'#1d4ed8', bg:'#eff6ff', r:37, g:99, b:235 },
+ indigo: { p:'#4f46e5', dark:'#4338ca', bg:'#eef2ff', r:79, g:70, b:229 },
+ violet: { p:'#7c3aed', dark:'#6d28d9', bg:'#f5f3ff', r:124, g:58, b:237 },
+ purple: { p:'#9333ea', dark:'#7e22ce', bg:'#faf5ff', r:147, g:51, b:234 },
+ pink: { p:'#db2777', dark:'#be185d', bg:'#fdf2f8', r:219, g:39, b:119 },
+ rose: { p:'#e11d48', dark:'#be123c', bg:'#fff1f2', r:225, g:29, b:72 },
+ red: { p:'#dc2626', dark:'#b91c1c', bg:'#fef2f2', r:220, g:38, b:38 },
+ orange: { p:'#ea580c', dark:'#c2410c', bg:'#fff7ed', r:234, g:88, b:12 },
+ amber: { p:'#d97706', dark:'#b45309', bg:'#fffbeb', r:217, g:119, b:6 },
  lime: { p:'#65a30d', dark:'#4d7c0f', bg:'#f7fee7', r:101, g:163, b:13 },
 };
 
@@ -534,6 +536,11 @@ window.executeConfirm = () => {
 (function initThemeEarly() {
  // Cek cache tema dari localStorage
  try {
+ const directTheme = localStorage.getItem('freshmart_theme_color');
+ if (directTheme) {
+ appData.store = appData.store || {};
+ appData.store.themeColor = directTheme;
+ } else {
  const cached = sessionStorage.getItem('freshmart_cms_data') || localStorage.getItem('freshmart_cms_data');
  if (cached) {
  const d = JSON.parse(cached);
@@ -542,19 +549,22 @@ window.executeConfirm = () => {
  appData.store.themeColor = d.store.themeColor;
  }
  }
+ }
  } catch(e) { console.warn('[FreshMart] Gagal parse theme cache:', e); }
  const THEME_COLORS_EARLY = {
  emerald:'#059669,#047857,#ecfdf5,5,150,105',
  teal:'#0d9488,#0f766e,#f0fdfa,13,148,136',
- blue:'#2563eb,#1d4ed8,#eff6ff,37,99,235',
- violet:'#7c3aed,#6d28d9,#f5f3ff,124,58,237',
- rose:'#e11d48,#be123c,#fff1f2,225,29,72',
- amber:'#d97706,#b45309,#fffbeb,217,119,6',
- orange:'#ea580c,#c2410c,#fff7ed,234,88,12',
- sky:'#0284c7,#0369a1,#f0f9ff,2,132,199',
- indigo:'#4f46e5,#4338ca,#eef2ff,79,70,229',
- pink:'#db2777,#be185d,#fdf2f8,219,39,119',
  cyan:'#0891b2,#0e7490,#ecfeff,8,145,178',
+ sky:'#0284c7,#0369a1,#f0f9ff,2,132,199',
+ blue:'#2563eb,#1d4ed8,#eff6ff,37,99,235',
+ indigo:'#4f46e5,#4338ca,#eef2ff,79,70,229',
+ violet:'#7c3aed,#6d28d9,#f5f3ff,124,58,237',
+ purple:'#9333ea,#7e22ce,#faf5ff,147,51,234',
+ pink:'#db2777,#be185d,#fdf2f8,219,39,119',
+ rose:'#e11d48,#be123c,#fff1f2,225,29,72',
+ red:'#dc2626,#b91c1c,#fef2f2,220,38,38',
+ orange:'#ea580c,#c2410c,#fff7ed,234,88,12',
+ amber:'#d97706,#b45309,#fffbeb,217,119,6',
  lime:'#65a30d,#4d7c0f,#f7fee7,101,163,13',
  };
  const tc = (appData.store && appData.store.themeColor) || 'emerald';
@@ -699,11 +709,16 @@ const saveApp = async () => {
  appData.lastUpdate = Date.now(); 
  const copyData = { ...appData }; 
  delete copyData.products; 
- await db.collection("freshmart").doc("cms_data").set(copyData); 
+ // Always persist to local cache first so it is never lost on refresh or offline
  ssL('freshmart_cms_data', JSON.stringify(copyData)); 
  ssL('freshmart_last_update', appData.lastUpdate.toString()); 
  ssL('freshmart_products', JSON.stringify(appData.products)); 
+ if (appData.store && appData.store.themeColor) {
+   try { localStorage.setItem('freshmart_theme_color', appData.store.themeColor); } catch(e) {}
+ }
+ await db.collection("freshmart").doc("cms_data").set(copyData); 
  } catch (e) { 
+ console.warn('[FreshMart] Firestore save notice:', e);
  showToast("Tersimpan Lokal"); 
  } 
 };
@@ -2470,17 +2485,19 @@ window.setTempTheme = (t) => {
     setV('set-theme-color', t);
     document.querySelectorAll('[id^="btn-theme-"]').forEach(b => {
         b.classList.remove('border-slate-800', 'dark:border-white', 'scale-125', 'shadow-md');
-        b.classList.add('border-transparent');
+        b.classList.add('border-white', 'dark:border-slate-800');
     });
     const active = el('btn-theme-' + t);
     if(active) {
-        active.classList.remove('border-transparent');
+        active.classList.remove('border-white', 'dark:border-slate-800');
         active.classList.add('border-slate-800', 'dark:border-white', 'scale-125', 'shadow-md');
     }
     if (appData && appData.store) {
         appData.store.themeColor = t;
-        updateThemeVars();
     }
+    try { localStorage.setItem('freshmart_theme_color', t); } catch(e) {}
+    updateThemeVars();
+    applyGlobalTheme();
 };
 
 const rAdmSet = () => {
@@ -2588,18 +2605,24 @@ const rAdmSet = () => {
  <div class="space-y-6">
  <div class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-700">
  <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-widest text-center">Pilih Warna Utama (Branding)</label>
- <div class="flex flex-wrap justify-center gap-4">
+ <div class="flex flex-wrap justify-center gap-3.5">
  ${[
  { id: 'emerald', hex: '#10b981', name: 'Emerald' },
- { id: 'blue', hex: '#3b82f6', name: 'Blue' },
+ { id: 'teal', hex: '#14b8a6', name: 'Teal' },
+ { id: 'cyan', hex: '#06b6d4', name: 'Cyan' },
+ { id: 'sky', hex: '#0ea5e9', name: 'Sky Blue' },
+ { id: 'blue', hex: '#3b82f6', name: 'Royal Blue' },
  { id: 'indigo', hex: '#6366f1', name: 'Indigo' },
  { id: 'violet', hex: '#8b5cf6', name: 'Violet' },
+ { id: 'purple', hex: '#a855f7', name: 'Purple' },
+ { id: 'pink', hex: '#ec4899', name: 'Pink' },
  { id: 'rose', hex: '#f43f5e', name: 'Rose' },
- { id: 'red', hex: '#ef4444', name: 'Red' },
+ { id: 'red', hex: '#ef4444', name: 'Ruby Red' },
  { id: 'orange', hex: '#f97316', name: 'Orange' },
- { id: 'amber', hex: '#f59e0b', name: 'Amber' }
+ { id: 'amber', hex: '#f59e0b', name: 'Amber Gold' },
+ { id: 'lime', hex: '#84cc16', name: 'Lime' }
  ].map(t => `
- <button type="button" onclick="setTempTheme('${t.id}')" title="${t.name}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-4 transition-all hover:scale-110 focus:outline-none ${appData.store.themeColor === t.id || (!appData.store.themeColor && t.id === 'emerald') ? 'border-slate-800 dark:border-white scale-110 shadow-lg' : 'border-white dark:border-slate-800 shadow-sm'}" style="background-color: ${t.hex};" id="btn-theme-${t.id}"></button>
+ <button type="button" onclick="setTempTheme('${t.id}')" title="${t.name}" class="w-10 h-10 sm:w-11 sm:h-11 rounded-full border-4 transition-all hover:scale-110 focus:outline-none ${appData.store.themeColor === t.id || (!appData.store.themeColor && t.id === 'emerald') ? 'border-slate-800 dark:border-white scale-125 shadow-lg' : 'border-white dark:border-slate-800 shadow-sm'}" style="background-color: ${t.hex};" id="btn-theme-${t.id}"></button>
  `).join('')}
  </div>
  <input type="hidden" id="set-theme-color" value="${esc(appData.store.themeColor || 'emerald')}" />

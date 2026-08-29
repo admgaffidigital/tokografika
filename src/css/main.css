@@ -252,29 +252,37 @@ html.dark .shape-blob-3 {
     box-shadow: 0 6px 16px var(--clr-p-35);
 }
 
-.btn-theme-primary {
+.btn-theme-primary,
+.bg-emerald-500,
+.bg-emerald-600,
+.bg-emerald-700 {
     background-color: var(--clr-p) !important;
-    color: #ffffff !important;
 }
 
-.btn-theme-primary:hover {
+.btn-theme-primary:hover,
+.hover\:bg-emerald-600:hover,
+.hover\:bg-emerald-700:hover {
     background-color: var(--clr-p-dark) !important;
 }
 
 .text-theme-primary,
+.text-emerald-500,
 .text-emerald-600,
-.text-emerald-500 {
+.text-emerald-700 {
     color: var(--clr-p) !important;
 }
 
 html.dark .text-emerald-400,
-html.dark .text-emerald-500 {
+html.dark .text-emerald-500,
+html.dark .text-emerald-600 {
     color: var(--clr-p) !important;
 }
 
 .border-theme-primary,
+.border-emerald-400,
 .border-emerald-500,
-.border-emerald-600 {
+.border-emerald-600,
+.border-emerald-700 {
     border-color: var(--clr-p) !important;
 }
 
