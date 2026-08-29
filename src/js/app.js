@@ -446,6 +446,13 @@ window.changeView = (v, fH = !1) => {
                 target.style.transform = 'translateY(0)';
             });
         });
+        // Bersihkan kolom pencarian saat kembali ke katalog
+        if (v === 'view-catalog') {
+            const si = el('search-input');
+            if (si && si.value) { si.value = ''; sQ = ''; cPage = 1; rCat(); }
+            const cb = el('btn-search-clear');
+            if (cb) cb.classList.add('hidden');
+        }
         setTimeout(() => {
             target.style.opacity = '';
             target.style.transform = '';
@@ -852,7 +859,8 @@ setH('dynamic-banners-container', `
 };
 
 window.filterCategory = c => { aCat = c; cPage = 1; rDyn(); const s = el('catalog-scroll'); if (s) s.scrollTo({ top: 0, behavior: 'smooth' }); };
-window.handleSearch = v => { clearTimeout(window._catST); window._catST = setTimeout(() => { sQ = v; cPage = 1; rCat(); const s = el('catalog-scroll'); if (s) s.scrollTo({ top: 0, behavior: 'smooth' }); }, 250); };
+window.handleSearch = v => { clearTimeout(window._catST); const cb = el('btn-search-clear'); if (cb) cb.classList.toggle('hidden', !v); window._catST = setTimeout(() => { sQ = v; cPage = 1; rCat(); const s = el('catalog-scroll'); if (s) s.scrollTo({ top: 0, behavior: 'smooth' }); }, 250); };
+window.clearSearch = () => { const si = el('search-input'); if (si) { si.value = ''; si.focus(); } const cb = el('btn-search-clear'); if (cb) cb.classList.add('hidden'); sQ = ''; cPage = 1; rCat(); };
 window.handleSort = v => { cSort = v; cPage = 1; rCat(); };
 
 window.toggleView = v => {
