@@ -49,89 +49,571 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'/>
 
     <style type='text/css'>/*<![CDATA[*/
-body{font-family:'Plus Jakarta Sans',sans-serif;background-color:#f1f5f9;margin:0;padding:0;color:#0f172a;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;transition:background-color 0.25s,color 0.25s;overflow:hidden}
-        #app-container{width:100%;height:100vh;height:100dvh;background-color:#f8fafc;position:relative;overflow:hidden;margin:0 auto;overscroll-behavior-y:none;transition:background-color 0.3s}
-        @media (min-width:1280px){#app-container{max-width:1280px;box-shadow:0 25px 80px rgba(15,23,42,0.15);border-left:2px solid #e2e8f0;border-right:2px solid #e2e8f0;border-radius:0}}
-        .hide-scrollbar::-webkit-scrollbar{display:none} .hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
-        .view-section{width:100%;height:100%;position:absolute;top:0;left:0;overflow:hidden}
-        .scroll-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-behavior:smooth}
-        .scroll-content::-webkit-scrollbar{display:none}
-        .fade-in{animation:fadeIn 0.3s cubic-bezier(0.16,1,0.3,1) forwards}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)}}
-        .fade-in-scale{animation:fadeInScale 0.3s cubic-bezier(0.16,1,0.3,1) forwards}
-        @keyframes fadeInScale{from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)}}
-        .glass-header{background:rgba(255,255,255,0.95);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);z-index:30;border-bottom:2px solid rgba(226,232,240,0.8);box-shadow:0 4px 20px rgba(0,0,0,0.02)}
-        .glass-nav{background:rgba(255,255,255,0.98);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border-top:2px solid rgba(226,232,240,0.8);box-shadow:0 -4px 25px rgba(0,0,0,0.03)}
-        /* CSS Variables — diupdate dinamis oleh updateThemeVars() saat tema berubah */
-        :root{--clr-p:#059669;--clr-p-dark:#047857;--clr-p-10:rgba(5,150,105,0.10);--clr-p-25:rgba(5,150,105,0.25);--clr-p-35:rgba(5,150,105,0.35);--clr-p-bg:#ecfdf5}
-        .admin-input{width:100%;background-color:#fff;border:2px solid #cbd5e1;border-radius:1rem;padding:0.75rem 1rem;font-size:13px;font-weight:700;color:#0f172a;transition:all 0.2s ease;box-shadow:0 2px 8px rgba(0,0,0,0.01);box-sizing:border-box}
-        .admin-input:hover{border-color:#94a3b8}
-        .admin-input:focus{outline:none;border-color:var(--clr-p);box-shadow:0 0 0 4px var(--clr-p-10)}
-        .admin-input::placeholder{color:#94a3b8;font-weight:600}
-        .card-modern{background:#fff;border-radius:1.25rem;border:2px solid #e2e8f0;box-shadow:0 4px 15px rgba(15,23,42,0.02);transition:all 0.2s ease;box-sizing:border-box}
-        .card-modern:hover{box-shadow:0 8px 25px rgba(15,23,42,0.05);border-color:#cbd5e1}
-        .custom-radio:checked + div{border-color:var(--clr-p)!important;background-color:var(--clr-p-bg)!important;box-shadow:0 8px 25px var(--clr-p-25);transform:translateY(-1px)}
-        .custom-radio:checked + div .radio-icon{color:var(--clr-p)!important;transform:scale(1.1)}
-        .btn-primary{background:linear-gradient(135deg,var(--clr-p) 0%,var(--clr-p-dark) 100%);color:#fff;padding:0.875rem 1.5rem;border-radius:1rem;font-weight:800;font-size:0.875rem;transition:all 0.25s ease;box-shadow:0 6px 20px var(--clr-p-25);display:flex;align-items:center;justify-content:center;gap:0.5rem;cursor:pointer;width:100%;border:none;box-sizing:border-box}
-        .btn-primary:hover{box-shadow:0 8px 25px var(--clr-p-35);transform:translateY(-2px)}
-        .btn-primary:active{transform:translateY(0) scale(0.98);box-shadow:0 4px 15px var(--clr-p-25)}
-        .btn-disabled{background:#cbd5e1!important;color:#64748b!important;box-shadow:none!important;pointer-events:none}
-        
-        #toast{position:fixed;top:-100px;left:50%;transform:translateX(-50%);transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);z-index:99999;box-shadow:0 10px 40px rgba(0,0,0,0.2)}
-        
-        html.dark body{background-color:#0f172a;color:#f8fafc}
-        html.dark #app-container{background-color:#0f172a;border-color:#1e293b}
-        html.dark .glass-header{background:rgba(30,41,59,0.95)!important;border-bottom-color:#334155!important}
-        html.dark .glass-nav{background:rgba(30,41,59,0.98)!important;border-top-color:#334155!important}
-        html.dark .card-modern{background-color:#1e293b!important;border-color:#334155!important}
-        html.dark .card-modern:hover{border-color:#475569!important}
-        html.dark .admin-input{background-color:#0f172a!important;border-color:#334155!important;color:#f8fafc!important}
-        html.dark .admin-input:focus{border-color:var(--clr-p)!important;box-shadow:0 0 0 4px var(--clr-p-10)!important}
-        html.dark .custom-radio:checked + div{background-color:var(--clr-p-10)!important;border-color:var(--clr-p)!important}
-        /* ============================================================ */
-        /* SISTEM BADGE TERPADU — satu sumber gaya untuk semua badge     */
-        /* ============================================================ */
-        .badge{display:inline-flex;align-items:center;gap:.28em;line-height:1;font-weight:800;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap;border-radius:.5rem;border:1px solid transparent;padding:.3rem .55rem;font-size:.62rem;box-shadow:0 1px 3px rgba(15,23,42,.06);transition:transform .15s ease,box-shadow .15s ease}
-        .badge i,.badge svg{font-size:.9em;line-height:1}
-        .badge-xs{padding:.22rem .45rem;font-size:.56rem;border-radius:.4rem;box-shadow:none}
-        .badge-pill{border-radius:9999px}
-        .badge-normal-case{text-transform:none;letter-spacing:.01em}
-        /* Varian lembut (soft) — latar tipis + teks berwarna + border tipis */
-        .badge-slate{background:#f1f5f9;color:#64748b;border-color:#e2e8f0}
-        .badge-emerald{background:#ecfdf5;color:#059669;border-color:#a7f3d0}
-        .badge-rose{background:#fff1f2;color:#e11d48;border-color:#fecdd3}
-        .badge-amber{background:#fffbeb;color:#d97706;border-color:#fde68a}
-        .badge-indigo{background:#eef2ff;color:#4f46e5;border-color:#e0e7ff}
-        .badge-purple{background:#faf5ff;color:#9333ea;border-color:#f3e8ff}
-        .badge-blue{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
-        html.dark .badge-slate{background:rgba(51,65,85,.5);color:#cbd5e1;border-color:#475569}
-        html.dark .badge-emerald{background:rgba(6,78,59,.3);color:#34d399;border-color:#065f46}
-        html.dark .badge-rose{background:rgba(136,19,55,.3);color:#fb7185;border-color:#9f1239}
-        html.dark .badge-amber{background:rgba(120,53,15,.3);color:#fbbf24;border-color:#92400e}
-        html.dark .badge-indigo{background:rgba(49,46,129,.3);color:#a5b4fc;border-color:#3730a3}
-        html.dark .badge-purple{background:rgba(88,28,135,.3);color:#d8b4fe;border-color:#6b21a8}
-        html.dark .badge-blue{background:rgba(30,58,138,.3);color:#93c5fd;border-color:#1e40af}
-        /* Varian solid — latar warna penuh + teks putih, untuk badge yang butuh perhatian lebih */
-        .badge-solid-rose{background:#f43f5e;color:#fff;border-color:rgba(255,255,255,.25)}
-        .badge-solid-amber{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#fff;border-color:rgba(255,255,255,.25)}
-        .badge-solid-blue{background:#3b82f6;color:#fff;border-color:rgba(255,255,255,.25)}
-        .badge-solid-emerald{background:#059669;color:#fff;border-color:rgba(255,255,255,.25)}
-        .badge-solid-slate{background:#e2e8f0;color:#64748b;border-color:#cbd5e1}
-        html.dark .badge-solid-slate{background:#334155;color:#94a3b8;border-color:#475569}
-        /* Ribbon — badge sudut pada gambar/kartu (mis. KOSONG, GROSIR, PRO MAX) */
-        .badge-ribbon{position:absolute;top:0;right:0;border-radius:0 .9rem 0 .75rem;padding:.3rem .65rem;font-size:.58rem;box-shadow:0 2px 6px rgba(15,23,42,.12);z-index:10}
-        .badge-ribbon-inset{position:absolute;top:-.4rem;right:-.4rem;border-radius:9999px;padding:.18rem .5rem;font-size:.55rem;z-index:10}
-        /* Counter — bulatan angka kecil pada ikon (wishlist, keranjang) */
-        .badge-counter{position:absolute;display:flex;align-items:center;justify-content:center;min-width:1.1rem;height:1.1rem;padding:0 .25rem;background:#f43f5e;color:#fff;font-weight:800;font-size:.6rem;border-radius:9999px;border:2px solid #fff;box-shadow:0 2px 5px rgba(244,63,94,.4);transition:transform .3s cubic-bezier(0.34,1.56,0.64,1)}
-        html.dark .badge-counter{border-color:#1e293b}
-        #thermal-print-section{display:none}
-        @media print{ @page{margin:0;size:58mm auto} html,body{background-color:#fff!important;color:#000!important;margin:0!important;padding:0!important;width:58mm!important} #app-container,#global-loader,#toast,.fixed,.absolute{display:none!important;height:0!important;opacity:0!important;overflow:hidden!important} #thermal-print-section{display:block!important;width:58mm!important;max-width:58mm!important;margin:0!important;padding:2mm!important;background-color:#fff!important;color:#000!important;opacity:1!important;visibility:visible!important} #thermal-print-section *{font-family:'Courier New',Courier,monospace!important;font-size:11px!important;font-weight:bold!important;color:#000!important;line-height:1.2!important;box-sizing:border-box!important} *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important} }
+/* ==========================================================================
+   GRAFIKA PWA STORE - STYLESHEET
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Base & Layout
+   -------------------------------------------------------------------------- */
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #f1f5f9;
+    margin: 0;
+    padding: 0;
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.25s, color 0.25s;
+    overflow: hidden;
+}
+
+#app-container {
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    background-color: #f8fafc;
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto;
+    overscroll-behavior-y: none;
+    transition: background-color 0.3s;
+}
+
+@media (min-width: 1280px) {
+    #app-container {
+        max-width: 1280px;
+        box-shadow: 0 25px 80px rgba(15, 23, 42, 0.15);
+        border-left: 2px solid #e2e8f0;
+        border-right: 2px solid #e2e8f0;
+        border-radius: 0;
+    }
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.view-section {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.scroll-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+}
+
+.scroll-content::-webkit-scrollbar {
+    display: none;
+}
+
+/* --------------------------------------------------------------------------
+   2. Animations
+   -------------------------------------------------------------------------- */
+.fade-in {
+    animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-scale {
+    animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   3. Glassmorphism & Header/Nav
+   -------------------------------------------------------------------------- */
+.glass-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 30;
+    border-bottom: 2px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.glass-nav {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-top: 2px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.03);
+}
+
+/* --------------------------------------------------------------------------
+   4. CSS Variables (Dynamic Theme)
+   -------------------------------------------------------------------------- */
+:root {
+    --clr-p: #059669;
+    --clr-p-dark: #047857;
+    --clr-p-10: rgba(5, 150, 105, 0.10);
+    --clr-p-25: rgba(5, 150, 105, 0.25);
+    --clr-p-35: rgba(5, 150, 105, 0.35);
+    --clr-p-bg: #ecfdf5;
+}
+
+/* --------------------------------------------------------------------------
+   5. Components & Forms
+   -------------------------------------------------------------------------- */
+.admin-input {
+    width: 100%;
+    background-color: #fff;
+    border: 2px solid #cbd5e1;
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01);
+    box-sizing: border-box;
+}
+
+.admin-input:hover {
+    border-color: #94a3b8;
+}
+
+.admin-input:focus {
+    outline: none;
+    border-color: var(--clr-p);
+    box-shadow: 0 0 0 4px var(--clr-p-10);
+}
+
+.admin-input::placeholder {
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.card-modern {
+    background: #fff;
+    border-radius: 1.25rem;
+    border: 2px solid #e2e8f0;
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.card-modern:hover {
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.05);
+    border-color: #cbd5e1;
+}
+
+.custom-radio:checked + div {
+    border-color: var(--clr-p) !important;
+    background-color: var(--clr-p-bg) !important;
+    box-shadow: 0 8px 25px var(--clr-p-25);
+    transform: translateY(-1px);
+}
+
+.custom-radio:checked + div .radio-icon {
+    color: var(--clr-p) !important;
+    transform: scale(1.1);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--clr-p) 0%, var(--clr-p-dark) 100%);
+    color: #fff;
+    padding: 0.875rem 1.5rem;
+    border-radius: 1rem;
+    font-weight: 800;
+    font-size: 0.875rem;
+    transition: all 0.25s ease;
+    box-shadow: 0 6px 20px var(--clr-p-25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    width: 100%;
+    border: none;
+    box-sizing: border-box;
+}
+
+.btn-primary:hover {
+    box-shadow: 0 8px 25px var(--clr-p-35);
+    transform: translateY(-2px);
+}
+
+.btn-primary:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 4px 15px var(--clr-p-25);
+}
+
+.btn-disabled {
+    background: #cbd5e1 !important;
+    color: #64748b !important;
+    box-shadow: none !important;
+    pointer-events: none;
+}
+
+#toast {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 99999;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* --------------------------------------------------------------------------
+   6. Dark Mode
+   -------------------------------------------------------------------------- */
+html.dark body {
+    background-color: #0f172a;
+    color: #f8fafc;
+}
+
+html.dark #app-container {
+    background-color: #0f172a;
+    border-color: #1e293b;
+}
+
+html.dark .glass-header {
+    background: rgba(30, 41, 59, 0.95) !important;
+    border-bottom-color: #334155 !important;
+}
+
+html.dark .glass-nav {
+    background: rgba(30, 41, 59, 0.98) !important;
+    border-top-color: #334155 !important;
+}
+
+html.dark .card-modern {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+html.dark .card-modern:hover {
+    border-color: #475569 !important;
+}
+
+html.dark .admin-input {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+html.dark .admin-input:focus {
+    border-color: var(--clr-p) !important;
+    box-shadow: 0 0 0 4px var(--clr-p-10) !important;
+}
+
+html.dark .custom-radio:checked + div {
+    background-color: var(--clr-p-10) !important;
+    border-color: var(--clr-p) !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. Unified Badge System
+   -------------------------------------------------------------------------- */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .28em;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    border-radius: .5rem;
+    border: 1px solid transparent;
+    padding: .3rem .55rem;
+    font-size: .62rem;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .06);
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.badge i,
+.badge svg {
+    font-size: .9em;
+    line-height: 1;
+}
+
+.badge-xs {
+    padding: .22rem .45rem;
+    font-size: .56rem;
+    border-radius: .4rem;
+    box-shadow: none;
+}
+
+.badge-pill {
+    border-radius: 9999px;
+}
+
+.badge-normal-case {
+    text-transform: none;
+    letter-spacing: .01em;
+}
+
+/* Soft Badges */
+.badge-slate {
+    background: #f1f5f9;
+    color: #64748b;
+    border-color: #e2e8f0;
+}
+
+.badge-emerald {
+    background: #ecfdf5;
+    color: #059669;
+    border-color: #a7f3d0;
+}
+
+.badge-rose {
+    background: #fff1f2;
+    color: #e11d48;
+    border-color: #fecdd3;
+}
+
+.badge-amber {
+    background: #fffbeb;
+    color: #d97706;
+    border-color: #fde68a;
+}
+
+.badge-indigo {
+    background: #eef2ff;
+    color: #4f46e5;
+    border-color: #e0e7ff;
+}
+
+.badge-purple {
+    background: #faf5ff;
+    color: #9333ea;
+    border-color: #f3e8ff;
+}
+
+.badge-blue {
+    background: #eff6ff;
+    color: #2563eb;
+    border-color: #bfdbfe;
+}
+
+/* Soft Badges (Dark Mode) */
+html.dark .badge-slate {
+    background: rgba(51, 65, 85, .5);
+    color: #cbd5e1;
+    border-color: #475569;
+}
+
+html.dark .badge-emerald {
+    background: rgba(6, 78, 59, .3);
+    color: #34d399;
+    border-color: #065f46;
+}
+
+html.dark .badge-rose {
+    background: rgba(136, 19, 55, .3);
+    color: #fb7185;
+    border-color: #9f1239;
+}
+
+html.dark .badge-amber {
+    background: rgba(120, 53, 15, .3);
+    color: #fbbf24;
+    border-color: #92400e;
+}
+
+html.dark .badge-indigo {
+    background: rgba(49, 46, 129, .3);
+    color: #a5b4fc;
+    border-color: #3730a3;
+}
+
+html.dark .badge-purple {
+    background: rgba(88, 28, 135, .3);
+    color: #d8b4fe;
+    border-color: #6b21a8;
+}
+
+html.dark .badge-blue {
+    background: rgba(30, 58, 138, .3);
+    color: #93c5fd;
+    border-color: #1e40af;
+}
+
+/* Solid Badges */
+.badge-solid-rose {
+    background: #f43f5e;
+    color: #fff;
+    border-color: rgba(255, 255, 255, .25);
+}
+
+.badge-solid-amber {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #fff;
+    border-color: rgba(255, 255, 255, .25);
+}
+
+.badge-solid-blue {
+    background: #3b82f6;
+    color: #fff;
+    border-color: rgba(255, 255, 255, .25);
+}
+
+.badge-solid-emerald {
+    background: #059669;
+    color: #fff;
+    border-color: rgba(255, 255, 255, .25);
+}
+
+.badge-solid-slate {
+    background: #e2e8f0;
+    color: #64748b;
+    border-color: #cbd5e1;
+}
+
+html.dark .badge-solid-slate {
+    background: #334155;
+    color: #94a3b8;
+    border-color: #475569;
+}
+
+/* Ribbon Badges */
+.badge-ribbon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 0 .9rem 0 .75rem;
+    padding: .3rem .65rem;
+    font-size: .58rem;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, .12);
+    z-index: 10;
+}
+
+.badge-ribbon-inset {
+    position: absolute;
+    top: -.4rem;
+    right: -.4rem;
+    border-radius: 9999px;
+    padding: .18rem .5rem;
+    font-size: .55rem;
+    z-index: 10;
+}
+
+/* Counter Badges */
+.badge-counter {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.1rem;
+    height: 1.1rem;
+    padding: 0 .25rem;
+    background: #f43f5e;
+    color: #fff;
+    font-weight: 800;
+    font-size: .6rem;
+    border-radius: 9999px;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(244, 63, 94, .4);
+    transition: transform .3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html.dark .badge-counter {
+    border-color: #1e293b;
+}
+
+/* --------------------------------------------------------------------------
+   8. Thermal Print (58mm) Section
+   -------------------------------------------------------------------------- */
+#thermal-print-section {
+    display: none;
+}
+
+@media print {
+    @page {
+        margin: 0;
+        size: 58mm auto;
+    }
+    
+    html, body {
+        background-color: #fff !important;
+        color: #000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 58mm !important;
+    }
+    
+    #app-container,
+    #global-loader,
+    #toast,
+    .fixed,
+    .absolute {
+        display: none !important;
+        height: 0 !important;
+        opacity: 0 !important;
+        overflow: hidden !important;
+    }
+    
+    #thermal-print-section {
+        display: block !important;
+        width: 58mm !important;
+        max-width: 58mm !important;
+        margin: 0 !important;
+        padding: 2mm !important;
+        background-color: #fff !important;
+        color: #000 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    
+    #thermal-print-section * {
+        font-family: 'Courier New', Courier, monospace !important;
+        font-size: 11px !important;
+        font-weight: bold !important;
+        color: #000 !important;
+        line-height: 1.2 !important;
+        box-sizing: border-box !important;
+    }
+    
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
     /*]]>*/</style>
 
 </head>
 <body>
     <div style='display:none;'><b:section id='hidden-blogger-section' showaddelement='no'/></div>
     
+        <!-- ========================================================================= -->
+    <!-- 1. NOTIFICATIONS & GLOBAL LOADERS                                         -->
+    <!-- ========================================================================= -->
     <div class='bg-slate-900/95 backdrop-blur-md text-white px-6 py-3 rounded-full border-2 border-slate-700 flex items-center gap-3' id='toast'>
         <i class='fa-solid fa-bell text-emerald-400'/>
         <span class='font-bold text-sm tracking-wide' id='toast-message'>Notifikasi</span>
@@ -142,6 +624,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background-color:#f1f5f9;margin:
         <p class='font-black tracking-widest animate-pulse text-xs uppercase text-white bg-slate-800 px-5 py-2.5 rounded-full shadow-lg border-2 border-slate-700' id='loader-text'>Memuat Data...</p>
     </div>
 
+        <!-- ========================================================================= -->
+    <!-- 2. POPUP MODALS & DIALOGS                                                 -->
+    <!-- ========================================================================= -->
     <div class='fixed inset-0 z-[120] bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300' id='custom-confirm-modal' onclick='if(event.target===this) closeConfirm()'>
         <div class='bg-white dark:bg-slate-800 rounded-[1.5rem] w-full max-w-[320px] p-6 shadow-2xl border-2 border-slate-200 dark:border-slate-700 relative transform scale-95 transition-transform duration-300 flex flex-col text-center' id='custom-confirm-box'>
             <div class='w-14 h-14 bg-rose-50 dark:bg-rose-900/30 text-rose-500 dark:text-rose-400 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 border-2 border-rose-100 dark:border-rose-800' id='confirm-icon-box'><i class='fa-solid fa-triangle-exclamation' id='confirm-icon'/></div>
@@ -353,7 +838,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background-color:#f1f5f9;margin:
   
     <div id='thermal-print-section'/>
 
+        <!-- ========================================================================= -->
+    <!-- 4. MAIN APP CONTAINER                                                     -->
+    <!-- ========================================================================= -->
     <div class='w-full relative bg-slate-50 dark:bg-slate-900' id='app-container'>
+                <!-- --------------------------------------------------------------------- -->
+        <!-- VIEW: CATALOG / HOME                                                  -->
+        <!-- --------------------------------------------------------------------- -->
         <div class='view-section flex flex-col fade-in' id='view-catalog'>
             <div class='glass-header shrink-0 px-4 py-3 flex items-center justify-center sticky top-0'>
                 <div class='flex items-center justify-between w-full max-w-5xl'>
@@ -463,12 +954,18 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background-color:#f1f5f9;margin:
             </div>
         </div>
 
+                <!-- --------------------------------------------------------------------- -->
+        <!-- VIEW: CART                                                            -->
+        <!-- --------------------------------------------------------------------- -->
         <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 hidden' id='view-cart'>
             <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'><div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'><button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-catalog&apos;)'><i class='fa-solid fa-arrow-left text-sm'/></button><h1 class='text-sm font-black text-slate-900 dark:text-white tracking-tight'>Keranjang Belanja</h1><button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-50 dark:bg-rose-900/30 border-2 border-rose-200 dark:border-rose-800 text-rose-500 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-all shadow-sm hidden' id='btn-clear-cart' onclick='clearCart()'><i class='fa-solid fa-trash-can text-xs'/></button><div class='w-9 hidden' id='spacer-cart'/></div></div>
             <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-[calc(7rem+env(safe-area-inset-bottom))]'><div class='flex flex-col items-center justify-center h-[50vh] hidden px-5 text-center max-w-xs mx-auto' id='cart-empty-state'><div class='w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 text-slate-300 dark:text-slate-600 border-2 border-slate-200 dark:border-slate-700'><i class='fa-solid fa-cart-arrow-down text-4xl'/></div><h3 class='font-black text-slate-800 dark:text-white text-base mb-1'>Keranjang Kosong</h3><p class='text-slate-500 dark:text-slate-400 text-xs mb-6 font-medium'>Belum ada produk yang dipilih.</p><button class='btn-primary px-8 py-3 text-xs' onclick='changeView(&apos;view-catalog&apos;)'>Belanja Sekarang</button></div><div class='px-4 space-y-3 max-w-3xl lg:max-w-4xl mx-auto w-full' id='cart-items-container'/></div>
             <div class='absolute bottom-0 left-0 w-full glass-nav p-4 shadow-[0_-5px_20px_rgba(0,0,0,0.03)] z-30' id='cart-bottom-bar'><div class='max-w-3xl lg:max-w-4xl mx-auto flex items-center justify-between gap-4'><div><p class='text-slate-500 dark:text-slate-400 text-[9px] font-bold uppercase tracking-widest mb-0.5'>Subtotal</p><p class='font-black text-slate-900 dark:text-white text-lg' id='cart-subtotal'>Rp 0</p></div><button class='btn-primary w-auto px-8 py-3.5 text-sm' onclick='validateCartToCheckout()'>Checkout <i class='fa-solid fa-arrow-right ml-1 text-xs'/></button></div></div>
         </div>
 
+                <!-- --------------------------------------------------------------------- -->
+        <!-- VIEW: CHECKOUT                                                        -->
+        <!-- --------------------------------------------------------------------- -->
         <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 hidden' id='view-checkout'>
             <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'><div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'><button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-cart&apos;)'><i class='fa-solid fa-arrow-left text-sm'/></button><h1 class='text-sm font-black text-slate-900 dark:text-white tracking-tight'>Pengiriman</h1><div class='w-9'/></div></div>
             <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-[calc(7rem+env(safe-area-inset-bottom))]'>
@@ -482,6 +979,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background-color:#f1f5f9;margin:
             <div class='absolute bottom-0 left-0 w-full glass-nav p-4 z-30'><div class='max-w-3xl lg:max-w-4xl mx-auto flex justify-end'><button class='btn-primary w-full py-3.5 text-sm' id='btn-checkout-next' onclick='validateAndGoToPayment()'>Lanjut Pembayaran</button></div></div>
         </div>
 
+                <!-- --------------------------------------------------------------------- -->
+        <!-- VIEW: PAYMENT                                                         -->
+        <!-- --------------------------------------------------------------------- -->
         <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 hidden' id='view-payment'>
             <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'><div class='flex items-center justify-between w-full max-w-4xl lg:max-w-6xl'><button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-checkout&apos;)'><i class='fa-solid fa-arrow-left text-sm'/></button><h1 class='text-sm font-black text-slate-900 dark:text-white tracking-tight'>Pembayaran</h1><div class='w-9'/></div></div>
             <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-[calc(11rem+env(safe-area-inset-bottom))]'>
@@ -514,6 +1014,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background-color:#f1f5f9;margin:
             <div class='absolute bottom-0 left-0 w-full glass-nav p-4 z-30'><div class='max-w-4xl mx-auto flex flex-col gap-3'><label class='flex items-center gap-3 cursor-pointer bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700'><input class='peer sr-only' id='tnc-checkbox' onchange='toggleOrderButton()' type='checkbox'/><div class='w-5 h-5 border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded flex items-center justify-center peer-checked:bg-emerald-500 peer-checked:border-emerald-500 transition-all shrink-0'><i class='fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100'/></div><span class='text-[11px] font-bold text-slate-600 dark:text-slate-300'>Saya setuju dan data sudah benar.</span></label><button class='btn-primary btn-disabled py-3.5 text-sm' id='btn-process-order' onclick='processOrder()'><i class='fa-brands fa-whatsapp text-lg'/> Kirim Pesanan ke WA</button></div></div>
         </div>
 
+                <!-- --------------------------------------------------------------------- -->
+        <!-- VIEW: WISHLIST                                                        -->
+        <!-- --------------------------------------------------------------------- -->
         <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 hidden' id='view-wishlist'>
             <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'><div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'><button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-catalog&apos;)'><i class='fa-solid fa-arrow-left text-sm'/></button><h1 class='text-sm font-black text-slate-900 dark:text-white tracking-tight'>Favorit Saya</h1><button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-50 dark:bg-rose-900/30 border-2 border-rose-200 dark:border-rose-800 text-rose-500 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-all shadow-sm hidden' id='btn-clear-wishlist' onclick='clearWishlist()'><i class='fa-solid fa-trash-can text-xs'/></button><div class='w-9 hidden' id='spacer-wishlist'/></div></div>
             <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-12'><div class='flex flex-col items-center justify-center h-[50vh] hidden px-5 text-center max-w-xs mx-auto' id='wishlist-empty-state'><div class='w-20 h-20 bg-rose-50 dark:bg-rose-900/20 border-2 border-rose-100 dark:border-rose-800/50 rounded-full flex items-center justify-center mb-4 text-rose-300 dark:text-rose-600'><i class='fa-solid fa-heart text-4xl'/></div><h3 class='font-black text-slate-800 dark:text-white text-base mb-1'>Belum Ada Favorit</h3><p class='text-slate-500 dark:text-slate-400 text-xs font-medium'>Kumpulkan produk impianmu di sini.</p></div><div class='px-4 space-y-3 max-w-3xl lg:max-w-4xl mx-auto w-full' id='wishlist-items-container'/></div>
@@ -563,7 +1066,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background-color:#f1f5f9;margin:
     </div>
 </div>
 
-<div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-[#0b1120] z-50 hidden min-h-screen' id='view-admin'>
+        <!-- --------------------------------------------------------------------- -->
+        <!-- VIEW: ADMIN DASHBOARD & POS                                            -->
+        <!-- --------------------------------------------------------------------- -->
+        <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-[#0b1120] z-50 hidden min-h-screen' id='view-admin'>
     
     <div class='bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shrink-0 px-4 py-3 flex items-center justify-center z-30 border-b border-slate-200/80 dark:border-slate-800 shadow-sm sticky top-0'>
         <div class='flex items-center justify-between w-full max-w-5xl'>
@@ -678,7 +1184,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background-color:#f1f5f9;margin:
             </div>
 
         </div> </div> </div> 
-      <div class='view-section flex flex-col items-center justify-center fade-in bg-slate-900 z-50 min-h-screen hidden' id='view-driver-login'>
+              <!-- --------------------------------------------------------------------- -->
+        <!-- VIEW: DRIVER LOGIN                                                    -->
+        <!-- --------------------------------------------------------------------- -->
+        <div class='view-section flex flex-col items-center justify-center fade-in bg-slate-900 z-50 min-h-screen hidden' id='view-driver-login'>
     <div class='w-full max-w-[360px] p-6 bg-white dark:bg-slate-800 rounded-[2rem] shadow-2xl relative flex flex-col items-center text-center'>
         <div class='w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-5 text-3xl shadow-inner'>
             <i class='fa-solid fa-motorcycle'/>
@@ -700,7 +1209,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background-color:#f1f5f9;margin:
 <!-- ========================================== -->
 <!-- VIEW: DASHBOARD DRIVER -->
 <!-- ========================================== -->
-<div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 z-50 hidden min-h-screen' id='view-driver'>
+        <!-- --------------------------------------------------------------------- -->
+        <!-- VIEW: DRIVER PORTAL                                                   -->
+        <!-- --------------------------------------------------------------------- -->
+        <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 z-50 hidden min-h-screen' id='view-driver'>
     <div class='glass-header shrink-0 px-4 py-3 flex items-center justify-between z-30 sticky top-0 border-b-2 border-slate-200 dark:border-slate-800'>
         <div class='flex items-center gap-3'>
             <div class='w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md'>
