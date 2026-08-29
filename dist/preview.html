@@ -207,7 +207,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   4. CSS Variables (Dynamic Theme)
+   4. CSS Variables (Dynamic Theme Engine - Zero Hardcoding)
    -------------------------------------------------------------------------- */
 :root {
     --clr-p: #059669;
@@ -219,8 +219,91 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   5. Components & Forms
+   5. Components & Forms (Theme-Driven)
    -------------------------------------------------------------------------- */
+.btn-primary {
+    background-color: var(--clr-p) !important;
+    color: #ffffff !important;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.875rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px var(--clr-p-25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-primary:hover {
+    background-color: var(--clr-p-dark) !important;
+    box-shadow: 0 6px 16px var(--clr-p-35);
+}
+
+.btn-theme-primary {
+    background-color: var(--clr-p) !important;
+    color: #ffffff !important;
+}
+
+.btn-theme-primary:hover {
+    background-color: var(--clr-p-dark) !important;
+}
+
+.text-theme-primary,
+.text-emerald-600,
+.text-emerald-500 {
+    color: var(--clr-p) !important;
+}
+
+html.dark .text-emerald-400,
+html.dark .text-emerald-500 {
+    color: var(--clr-p) !important;
+}
+
+.border-theme-primary,
+.border-emerald-500,
+.border-emerald-600 {
+    border-color: var(--clr-p) !important;
+}
+
+.bg-theme-bg,
+.bg-emerald-50,
+.bg-emerald-100 {
+    background-color: var(--clr-p-bg) !important;
+}
+
+/* Category pills active state */
+.cat-pill.active,
+#cat-container button.bg-emerald-600,
+#cat-container button.bg-emerald-500 {
+    background-color: var(--clr-p) !important;
+    border-color: var(--clr-p) !important;
+    color: #ffffff !important;
+}
+
+/* PWA banner */
+#pwa-banner-inner {
+    background-color: var(--clr-p) !important;
+    border-color: var(--clr-p-dark) !important;
+}
+
+#pwa-install-btn {
+    color: var(--clr-p) !important;
+}
+
+/* Modal Add To Cart / Action Buttons */
+#btn-modal-add-cart,
+.btn-add-cart-main {
+    background-color: var(--clr-p) !important;
+    color: #ffffff !important;
+}
+
+#btn-modal-add-cart:hover,
+.btn-add-cart-main:hover {
+    background-color: var(--clr-p-dark) !important;
+}
+
 .admin-input {
     width: 100%;
     background-color: #ffffff;
@@ -238,10 +321,13 @@ body {
     border-color: #94a3b8;
 }
 
-.admin-input:focus {
-    outline: none;
-    border-color: var(--clr-p);
-    box-shadow: 0 0 0 3px var(--clr-p-10);
+.admin-input:focus,
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none !important;
+    border-color: var(--clr-p) !important;
+    box-shadow: 0 0 0 3px var(--clr-p-10) !important;
 }
 
 .admin-input::placeholder {
@@ -263,36 +349,20 @@ body {
     border-color: #cbd5e1;
 }
 
-.custom-radio:checked + div {
+.custom-radio:checked + div,
+[type="radio"]:checked + div {
     border-color: var(--clr-p) !important;
     background-color: var(--clr-p-bg) !important;
     box-shadow: 0 4px 12px var(--clr-p-25);
     transform: translateY(-1px);
 }
 
-.custom-radio:checked + div .radio-icon {
+.custom-radio:checked + div .radio-icon,
+[type="radio"]:checked + div .radio-icon {
     color: var(--clr-p) !important;
     transform: scale(1.08);
 }
 
-.btn-primary {
-    background: var(--clr-p);
-    color: #ffffff;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.875rem;
-    font-weight: 700;
-    font-size: 0.875rem;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 12px var(--clr-p-25);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    width: 100%;
-    border: none;
-    box-sizing: border-box;
-}
 
 .btn-primary:hover {
     box-shadow: 0 6px 16px var(--clr-p-35);
