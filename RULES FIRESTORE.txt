@@ -2,26 +2,30 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // 1. ATURAN LISENSI (Kunci Rapat 🔒)
-    // Hanya izinkan aplikasi mencocokkan 1 kode spesifik. Dilarang melihat semua daftar.
+    // 1. ATURAN LISENSI APLIKASI (Kunci Rapat 🔒)
+    // Hanya mengizinkan aplikasi memverifikasi 1 kode lisensi spesifik. Dilarang melihat daftar seluruh lisensi / mengubah lisensi.
     match /freshmart_licenses/{licenseId} {
       allow get: if true; 
       allow list, write: if false;
     }
     
-    // 2. DATA TOKO & PRODUK (Buka Akses 🔓)
+    // 2. DATA CMS, PENGATURAN TOKO & KATEGORI (Buka Akses 🔓)
+    // Digunakan untuk sinkronisasi data toko, banner, voucher, rekening, dan pengaturan sistem
     match /freshmart/{document=**} {
       allow read, write: if true; 
     }
 
-    // 3. DATA PESANAN (Buka Akses 🔓)
+    // 3. DATA PESANAN & TRANSAKSI (Buka Akses 🔓)
+    // Digunakan untuk pembuatan pesanan pelanggan baru dan manajemen pesanan di dashboard admin
     match /freshmart_orders/{document=**} {
       allow read, write: if true; 
     }
 
-    // 4. DATA PENARIKAN DANA DRIVER (Buka Akses 🔓)
-    match /freshmart_withdrawals/{document=**} {
+    // 4. DATA KATALOG PRODUK & STOK (Buka Akses 🔓)
+    // Digunakan untuk sinkronisasi real-time katalog produk dan varian
+    match /freshmart_products/{document=**} {
       allow read, write: if true; 
     }
+
   }
 }
