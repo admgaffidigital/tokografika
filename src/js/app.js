@@ -124,6 +124,14 @@ const auth = firebase.auth();
 // [BUG 3 FIXED] Opsi 'merge' tidak valid di db.settings(). Hanya ignoreUndefinedProperties yang valid.
 db.settings({ ignoreUndefinedProperties: true });
 
+// Helper timeout untuk panggilan Firestore agar tidak hang jika offline / internet lambat
+const withTimeout = (promise, timeoutMs = 3500) => {
+    return Promise.race([
+        promise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Firestore connection timeout")), timeoutMs))
+    ]);
+};
+
 const defApp = {
     store: { 
         name: "TOKO GRAFIKA", slogan: "RITEL & GROSIR", logo: "fa-store", wa: "", address: "", lat: "", lng: "", costPerKm: 0, 
@@ -137,12 +145,58 @@ const defApp = {
         isActive: false,
         startHour: "08:00",
         endHour: "21:00",
-        tarifPerKm: 10000, // Sekarang ini adalah Tarif Ekspedisi
-        komisiDriver: 8000 // Sekarang ini adalah Upah Flat Driver
+        tarifPerKm: 10000,
+        komisiDriver: 8000
     },
     drivers: [],
     // -----------------------------
-    banks: [], banners: [], categories: [], vouchers: [], products: [], licenseKey: "", promaxLicenseKey: "",
+    banks: [], banners: [], 
+    categories: [
+        { id: 1, name: "Makanan & Minuman", icon: "fa-utensils" },
+        { id: 2, name: "Sembako", icon: "fa-basket-shopping" },
+        { id: 3, name: "Kebutuhan Rumah", icon: "fa-house" }
+    ], 
+    vouchers: [], 
+    products: [
+        {
+            id: 1,
+            name: "Beras Premium Pulen 5kg",
+            price: 68000,
+            originalPrice: 75000,
+            category: "Sembako",
+            desc: "Beras pulen berkualitas super, bersih, tanpa pemutih dan pengawet.",
+            stock: 25,
+            img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=60",
+            sku: "BRS-001",
+            variants: [],
+            wholesale: [{ min: 5, price: 65000 }]
+        },
+        {
+            id: 2,
+            name: "Minyak Goreng Pouch 2L",
+            price: 34000,
+            originalPrice: 38000,
+            category: "Sembako",
+            desc: "Minyak goreng kelapa sawit berkualitas jernih dan higienis.",
+            stock: 40,
+            img: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&auto=format&fit=crop&q=60",
+            sku: "MYK-002",
+            variants: []
+        },
+        {
+            id: 3,
+            name: "Kopi Arabika Nusantara 250g",
+            price: 45000,
+            originalPrice: 50000,
+            category: "Makanan & Minuman",
+            desc: "Biji kopi pilihan dengan aroma harum dan cita rasa nikmat khas nusantara.",
+            stock: 15,
+            img: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&auto=format&fit=crop&q=60",
+            sku: "KPI-003",
+            variants: []
+        }
+    ], 
+    licenseKey: "", promaxLicenseKey: "",
     accounts: [] 
 };
 
@@ -164,8 +218,8 @@ window.verifyLicenseInDb = async (keyCode, expectedType) => {
     if (!codeToCheck) return false;
 
     try {
-        // 2. Coba tanya ke server Firebase
-        const doc = await db.collection("freshmart_licenses").doc(codeToCheck).get();
+        // 2. Coba tanya ke server Firebase dengan timeout
+        const doc = await withTimeout(db.collection("freshmart_licenses").doc(codeToCheck).get(), 3000);
         const isValid = doc.exists && doc.data().isActive === true && doc.data().type === expectedType;
         
         // 3. Jika valid, simpan ke brankas permanen browser sebagai cadangan
@@ -490,23 +544,26 @@ window.executeConfirm = () => {
 })();
 
 const loadAppData = async () => {
+    console.log('[FreshMart] 1. loadAppData started');
     if (document.documentElement.classList.contains('dark')) { 
         const icon = el('icon-theme'); 
         if (icon) icon.className = 'fa-solid fa-sun text-sm text-amber-500'; 
     }
     sLoad('Sinkron Data...');
     try {
-        const d = await db.collection("freshmart").doc("cms_data").get();
+        console.log('[FreshMart] 2. Fetching cms_data from Firestore...');
+        const d = await withTimeout(db.collection("freshmart").doc("cms_data").get(), 3000);
         let localProducts = JSON.parse(sL('freshmart_products') || 'null');
         let localUpdate = parseInt(sL('freshmart_last_update') || '0');
         
         if (d.exists) {
+            console.log('[FreshMart] 2a. cms_data document exists');
             const f = d.data(); 
             let oldLic = appData.licenseKey; 
-            let oldProMaxLic = appData.promaxLicenseKey; // Cek key lama
+            let oldProMaxLic = appData.promaxLicenseKey;
             appData = { ...defApp, ...f }; 
             appData.licenseKey = f.licenseKey || oldLic || ""; 
-            appData.promaxLicenseKey = f.promaxLicenseKey || oldProMaxLic || ""; // Sinkronisasi key PRO MAX
+            appData.promaxLicenseKey = f.promaxLicenseKey || oldProMaxLic || "";
             
             appData.store = { ...defApp.store, ...(f.store || {}) }; 
             if(!appData.store.social) appData.store.social = defApp.store.social;
@@ -525,15 +582,17 @@ const loadAppData = async () => {
                 if (localProducts && localUpdate >= serverUpdate) {
                     appData.products = localProducts;
                 } else { 
-                    const pSnap = await db.collection("freshmart").doc("cms_data").collection("products").get(); 
+                    const pSnap = await withTimeout(db.collection("freshmart").doc("cms_data").collection("products").get(), 3000); 
                     appData.products = pSnap.docs.map(doc => doc.data()).sort((a, b) => (b.id || 0) - (a.id || 0)); 
                     ssL('freshmart_products', JSON.stringify(appData.products)); 
                     ssL('freshmart_last_update', serverUpdate.toString()); 
                 }
             }
+        } else {
+            console.log('[FreshMart] 2b. cms_data does not exist, using default data');
         }
     } catch (e) {
-        console.error(e); 
+        console.warn('[FreshMart] 2c. Firestore offline or failed:', e.message); 
         const l = JSON.parse(sL('freshmart_cms_data') || 'null'); 
         const lp = JSON.parse(sL('freshmart_products') || 'null');
         if (l) { 
@@ -543,60 +602,68 @@ const loadAppData = async () => {
         }
         if (lp) { appData.products = lp; } 
         showToast("Mode Offline (Data Lokal)");
+    } finally {
+        // ============================================================
+        // CRITICAL: Seluruh rendering & hLoad() ada di finally block
+        // agar loading overlay SELALU hilang, bahkan jika ada error.
+        // ============================================================
+        try {
+            appData.products = appData.products || []; 
+            appData.categories = appData.categories || [];
+            appData.accounts = appData.accounts || []; 
+            
+            appData.products.forEach(p => { 
+                if(p.img) p.img = fixD(p.img); 
+                if (p.variants) p.variants.forEach(v => { if(v.img) v.img = fixD(v.img); }); 
+            });
+            
+            if (appData.banners) appData.banners.forEach(b => { if(b.img) b.img = fixD(b.img); }); 
+            if (appData.categories) appData.categories.forEach(c => { if(c.img) c.img = fixD(c.img); });
+            
+            if(appData.store.logo) appData.store.logo = fixD(appData.store.logo); 
+            if(appData.store.allProductsIcon) appData.store.allProductsIcon = fixD(appData.store.allProductsIcon); 
+            if(appData.payment.qrisUrl) appData.payment.qrisUrl = fixD(appData.payment.qrisUrl);
+            
+            cart.forEach(i => { if(i.img) i.img = fixD(i.img); }); 
+            wishlist.forEach(i => { if(i.img) i.img = fixD(i.img); });
+            
+            console.log('[FreshMart] 3. Rendering catalog & themes...');
+            updWish();
+            updCart();
+            rDyn();
+            applyGlobalTheme();
+            
+            console.log('[FreshMart] 4. Verifying license keys...');
+            try {
+                let savedProKey = (appData.licenseKey || localStorage.getItem('freshmart_cache_PRO') || '').trim().toUpperCase();
+                let savedProMaxKey = (appData.promaxLicenseKey || localStorage.getItem('freshmart_cache_PROMAX') || '').trim().toUpperCase();
+
+                isPro = await verifyLicenseInDb(savedProKey, 'PRO');
+                isProMax = await verifyLicenseInDb(savedProMaxKey, 'PROMAX');
+
+                if (isPro) appData.licenseKey = savedProKey;
+                if (isProMax) appData.promaxLicenseKey = savedProMaxKey;
+            } catch (licErr) {
+                console.warn("[FreshMart] Gagal verifikasi lisensi saat startup:", licErr);
+                isPro = !!localStorage.getItem('freshmart_cache_PRO');
+                isProMax = !!localStorage.getItem('freshmart_cache_PROMAX');
+            }
+            
+            const pid = new URLSearchParams(window.location.search).get('p'); 
+            if (pid && appData.products.find(x => x.id == parseInt(pid))) {
+                setTimeout(() => openProductModal(parseInt(pid)), 600);
+            }
+            
+            buildAndInjectManifest();
+            startPriceWatcher();
+        } catch (renderErr) {
+            console.error('[FreshMart] Render error in finally block:', renderErr);
+        } finally {
+            // ABSOLUTE GUARANTEE: loader selalu hilang
+            hLoad();
+            console.log('[FreshMart] 6. App initialization complete!');
+        }
     }
-    
-    appData.products = appData.products || []; 
-    appData.categories = appData.categories || [];
-    appData.accounts = appData.accounts || []; 
-    
-    appData.products.forEach(p => { 
-        if(p.img) p.img = fixD(p.img); 
-        if (p.variants) p.variants.forEach(v => { if(v.img) v.img = fixD(v.img); }); 
-    });
-    
-    if (appData.banners) appData.banners.forEach(b => { if(b.img) b.img = fixD(b.img); }); 
-    if (appData.categories) appData.categories.forEach(c => { if(c.img) c.img = fixD(c.img); });
-    
-    if(appData.store.logo) appData.store.logo = fixD(appData.store.logo); 
-    if(appData.store.allProductsIcon) appData.store.allProductsIcon = fixD(appData.store.allProductsIcon); 
-    if(appData.payment.qrisUrl) appData.payment.qrisUrl = fixD(appData.payment.qrisUrl);
-    
-    cart.forEach(i => { if(i.img) i.img = fixD(i.img); }); 
-    wishlist.forEach(i => { if(i.img) i.img = fixD(i.img); });
-    
-    updWish();
-    updCart();
-    rDyn();
-    applyGlobalTheme();
-    
-// [BUG 11 FIXED] Bungkus verifyLicenseInDb dengan try/catch agar loader tidak hang jika network error
-try {
-    let savedProKey = (appData.licenseKey || localStorage.getItem('freshmart_cache_PRO') || '').trim().toUpperCase();
-    let savedProMaxKey = (appData.promaxLicenseKey || localStorage.getItem('freshmart_cache_PROMAX') || '').trim().toUpperCase();
-
-    isPro = await verifyLicenseInDb(savedProKey, 'PRO');
-    isProMax = await verifyLicenseInDb(savedProMaxKey, 'PROMAX');
-
-    if (isPro) appData.licenseKey = savedProKey;
-    if (isProMax) appData.promaxLicenseKey = savedProMaxKey;
-} catch (licErr) {
-    console.warn("Gagal verifikasi lisensi saat startup:", licErr);
-    // Fallback: cek cache lokal saja
-    isPro = !!localStorage.getItem('freshmart_cache_PRO');
-    isProMax = !!localStorage.getItem('freshmart_cache_PROMAX');
-}
-    
-    const pid = new URLSearchParams(window.location.search).get('p'); 
-    if (pid && appData.products.find(x => x.id == parseInt(pid))) {
-        setTimeout(() => openProductModal(parseInt(pid)), 600);
-    }
-    hLoad();
-
-    // === PWA: Inject manifest dinamis setelah data toko dimuat ===
-    buildAndInjectManifest();
-
-    // === Sinkronisasi harga real-time untuk cart & wishlist ===
-    startPriceWatcher();
 };
 
 const saveApp = async () => { 
@@ -2962,7 +3029,6 @@ window.addEventListener('popstate',e=>{if(oMods.length){const m=oMods.pop();if(m
 window.terimaBarcodeDariKodular=(targetId,hasilScan)=>{let tEl=el(targetId);if(tEl){tEl.value=hasilScan;if(targetId==='search-input')handleSearch(hasilScan);else{tEl.dispatchEvent(new Event('input',{bubbles:true}));tEl.dispatchEvent(new Event('change',{bubbles:true}));}showToast("Barcode discan!");}};
 window.terimaGPSDariKodular=(lat,lng)=>{cust.lat=parseFloat(lat);cust.lng=parseFloat(lng);hide('btn-location');show('location-status');el('location-status').classList.add('flex');showToast("GPS Didapat dari HP!");};
 window.terimaGambarDariKodular=(targetInputId,base64Url,varIndex)=>{const targetInput=el(targetInputId);if(targetInput){targetInput.value=base64Url;targetInput.dispatchEvent(new Event('input',{bubbles:true}));targetInput.dispatchEvent(new Event('change',{bubbles:true}));if(varIndex!==null&&varIndex!=='null')uVar(parseInt(varIndex),'img',base64Url);showToast("Gambar diatur dari HP!");}};
-loadAppData();
 
 // ========================================================
 // FITUR CETAK A4 & PREVIEW MODAL (DESAIN ELEGAN PRESISI)
@@ -4201,4 +4267,14 @@ window.stopPriceWatcher = () => {
     clearTimeout(_priceDebounceTimer);
 };
 
+// ============================================================
+// APP INITIALIZATION
+// ============================================================
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAppData();
+    });
+} else {
+    loadAppData();
+}
 // ============================================================
