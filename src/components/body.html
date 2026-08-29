@@ -239,9 +239,9 @@
  <!-- 4. MAIN APP CONTAINER -->
  <!-- ========================================================================= -->
  <div class='w-full relative bg-slate-50 dark:bg-slate-900' id='app-container'>
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <!-- VIEW: CATALOG / HOME -->
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <div class='view-section flex flex-col fade-in' id='view-catalog'>
  <div class='glass-header shrink-0 px-4 py-3 flex items-center justify-center sticky top-0'>
  <div class='flex items-center justify-between w-full max-w-5xl'>
@@ -351,18 +351,18 @@
  </div>
  </div>
 
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <!-- VIEW: CART -->
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 hidden' id='view-cart'>
  <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'><div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'><button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-catalog&apos;)'><i class='fa-solid fa-arrow-left text-sm'></i></button><h1 class='text-sm font-semibold text-slate-900 dark:text-white tracking-tight'>Keranjang Belanja</h1><button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-50 dark:bg-rose-900/30 border-2 border-rose-200 dark:border-rose-800 text-rose-500 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-all shadow-sm hidden' id='btn-clear-cart' onclick='clearCart()'><i class='fa-solid fa-trash-can text-xs'></i></button><div class='w-9 hidden' id='spacer-cart'></div></div></div>
  <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-[calc(7rem+env(safe-area-inset-bottom))]'><div class='flex flex-col items-center justify-center h-[50vh] hidden px-5 text-center max-w-xs mx-auto' id='cart-empty-state'><div class='w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 text-slate-300 dark:text-slate-600 border-2 border-slate-200 dark:border-slate-700'><i class='fa-solid fa-cart-arrow-down text-4xl'></i></div><h3 class='font-bold text-slate-800 dark:text-white text-base mb-1'>Keranjang Kosong</h3><p class='text-slate-500 dark:text-slate-400 text-xs mb-6 font-medium'>Belum ada produk yang dipilih.</p><button class='btn-primary px-8 py-3 text-xs' onclick='changeView(&apos;view-catalog&apos;)'>Belanja Sekarang</button></div><div class='px-4 space-y-3 max-w-3xl lg:max-w-4xl mx-auto w-full' id='cart-items-container'></div></div>
  <div class='absolute bottom-0 left-0 w-full glass-nav p-4 shadow-[0_-5px_20px_rgba(0,0,0,0.03)] z-30' id='cart-bottom-bar'><div class='max-w-3xl lg:max-w-4xl mx-auto flex items-center justify-between gap-4'><div><p class='text-slate-500 dark:text-slate-400 text-[9px] font-bold uppercase tracking-widest mb-0.5'>Subtotal</p><p class='font-bold text-slate-900 dark:text-white text-lg' id='cart-subtotal'>Rp 0</p></div><button class='btn-primary w-auto px-8 py-3.5 text-sm' onclick='validateCartToCheckout()'>Checkout <i class='fa-solid fa-arrow-right ml-1 text-xs'></i></button></div></div>
  </div>
 
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <!-- VIEW: CHECKOUT -->
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 hidden' id='view-checkout'>
  <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'><div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'><button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-cart&apos;)'><i class='fa-solid fa-arrow-left text-sm'></i></button><h1 class='text-sm font-semibold text-slate-900 dark:text-white tracking-tight'>Pengiriman</h1><div class='w-9'></div></div></div>
  <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-[calc(7rem+env(safe-area-inset-bottom))]'>
@@ -376,9 +376,9 @@
  <div class='absolute bottom-0 left-0 w-full glass-nav p-4 z-30'><div class='max-w-3xl lg:max-w-4xl mx-auto flex justify-end'><button class='btn-primary w-full py-3.5 text-sm' id='btn-checkout-next' onclick='validateAndGoToPayment()'>Lanjut Pembayaran</button></div></div>
  </div>
 
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <!-- VIEW: PAYMENT -->
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 hidden' id='view-payment'>
  <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'><div class='flex items-center justify-between w-full max-w-4xl lg:max-w-6xl'><button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-checkout&apos;)'><i class='fa-solid fa-arrow-left text-sm'></i></button><h1 class='text-sm font-semibold text-slate-900 dark:text-white tracking-tight'>Pembayaran</h1><div class='w-9'></div></div></div>
  <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-[calc(11rem+env(safe-area-inset-bottom))]'>
@@ -411,9 +411,9 @@
  <div class='absolute bottom-0 left-0 w-full glass-nav p-4 z-30'><div class='max-w-4xl mx-auto flex flex-col gap-3'><label class='flex items-center gap-3 cursor-pointer bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700'><input class='peer sr-only' id='tnc-checkbox' onchange='toggleOrderButton()' type='checkbox'/><div class='w-5 h-5 border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded flex items-center justify-center peer-checked:bg-emerald-500 peer-checked:border-emerald-500 transition-all shrink-0'><i class='fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100'></i></div><span class='text-[11px] font-bold text-slate-600 dark:text-slate-300'>Saya setuju dan data sudah benar.</span></label><button class='btn-primary btn-disabled py-3.5 text-sm' id='btn-process-order' onclick='processOrder()'><i class='fa-brands fa-whatsapp text-lg'></i> Kirim Pesanan ke WA</button></div></div>
  </div>
 
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <!-- VIEW: WISHLIST -->
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 hidden' id='view-wishlist'>
  <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'><div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'><button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-catalog&apos;)'><i class='fa-solid fa-arrow-left text-sm'></i></button><h1 class='text-sm font-semibold text-slate-900 dark:text-white tracking-tight'>Favorit Saya</h1><button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-50 dark:bg-rose-900/30 border-2 border-rose-200 dark:border-rose-800 text-rose-500 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-all shadow-sm hidden' id='btn-clear-wishlist' onclick='clearWishlist()'><i class='fa-solid fa-trash-can text-xs'></i></button><div class='w-9 hidden' id='spacer-wishlist'></div></div></div>
  <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-12'><div class='flex flex-col items-center justify-center h-[50vh] hidden px-5 text-center max-w-xs mx-auto' id='wishlist-empty-state'><div class='w-20 h-20 bg-rose-50 dark:bg-rose-900/20 border-2 border-rose-100 dark:border-rose-800/50 rounded-full flex items-center justify-center mb-4 text-rose-300 dark:text-rose-600'><i class='fa-solid fa-heart text-4xl'></i></div><h3 class='font-bold text-slate-800 dark:text-white text-base mb-1'>Belum Ada Favorit</h3><p class='text-slate-500 dark:text-slate-400 text-xs font-medium'>Kumpulkan produk impianmu di sini.</p></div><div class='px-4 space-y-3 max-w-3xl lg:max-w-4xl mx-auto w-full' id='wishlist-items-container'></div></div>
@@ -463,9 +463,9 @@
  </div>
 </div>
 
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <!-- VIEW: ADMIN DASHBOARD & POS -->
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-[#0b1120] z-50 hidden min-h-screen' id='view-admin'>
  
  <div class='bg-white dark:bg-slate-900 shrink-0 px-4 py-3 flex items-center justify-center z-30 border-b border-slate-200/80 dark:border-slate-800 shadow-sm sticky top-0'>
@@ -581,9 +581,9 @@
  </div>
 
  </div> </div> </div> 
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <!-- VIEW: DRIVER LOGIN -->
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <div class='view-section flex flex-col items-center justify-center fade-in bg-slate-900 z-50 min-h-screen hidden' id='view-driver-login'>
  <div class='w-full max-w-[360px] p-6 bg-white dark:bg-slate-800 rounded-[2rem] shadow-2xl relative flex flex-col items-center text-center'>
  <div class='w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-5 text-3xl shadow-inner'>
@@ -606,9 +606,9 @@
 <!-- ========================================== -->
 <!-- VIEW: DASHBOARD DRIVER -->
 <!-- ========================================== -->
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <!-- VIEW: DRIVER PORTAL -->
- <!-- --------------------------------------------------------------------- -->
+ <!-- ====================================================================- -->
  <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 z-50 hidden min-h-screen' id='view-driver'>
  <div class='glass-header shrink-0 px-4 py-3 flex items-center justify-between z-30 sticky top-0 border-b-2 border-slate-200 dark:border-slate-800'>
  <div class='flex items-center gap-3'>

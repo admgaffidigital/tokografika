@@ -61,3 +61,13 @@ if (bSectionOpen !== bSectionClose) {
 } else {
   console.log(`✅ <b:section> tags balanced (${bSectionOpen} pairs)`);
 }
+
+// Check 6: XML comments must not contain '--'
+const commentMatches = themeXml.match(/<!--([\s\S]*?)-->/g) || [];
+const invalidComments = commentMatches.filter(c => c.slice(4, -3).includes('--'));
+if (invalidComments.length > 0) {
+  console.error(`❌ ERROR: Found ${invalidComments.length} XML comments containing '--'!`);
+  process.exit(1);
+} else {
+  console.log(`✅ All ${commentMatches.length} XML comments are valid (no '--' inside)`);
+}

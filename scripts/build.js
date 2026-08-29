@@ -51,7 +51,17 @@ function build() {
   }
 
   // 1. Build production XML
-  const finalXml = resolveIncludes('template.xml', srcDir);
+  let finalXml = resolveIncludes('template.xml', srcDir);
+  
+  // XML 1.0 Compliance: Double hyphen (--) is strictly forbidden inside comments
+  finalXml = finalXml.replace(/<!--([\s\S]*?)-->/g, (match, commentBody) => {
+    let clean = commentBody;
+    while (clean.includes('--')) {
+      clean = clean.replace(/--/g, '==');
+    }
+    return `<!--${clean}-->`;
+  });
+
   const themeXmlPath = path.join(distDir, 'theme.xml');
   fs.writeFileSync(themeXmlPath, finalXml, 'utf8');
 
