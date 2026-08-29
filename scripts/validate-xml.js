@@ -71,3 +71,51 @@ if (invalidComments.length > 0) {
 } else {
   console.log(`✅ All ${commentMatches.length} XML comments are valid (no '--' inside)`);
 }
+
+// Check 7: Full XML tag balance (hierarchy, no unclosed/mismatched tags)
+const tagValidationXml = themeXml
+  .replace(/<!\[CDATA\[[\s\S]*?\]\]>/g, m => ' '.repeat(m.length))
+  .replace(/<!--[\s\S]*?-->/g, m => ' '.repeat(m.length));
+
+const tagRegex = /<\/?([a-zA-Z0-9:_-]+)(?:\s+[^>]*?)?(\/?)>/g;
+let stack = [];
+let matchTag;
+let line = 1;
+let lastIdx = 0;
+let tagErrors = [];
+
+while ((matchTag = tagRegex.exec(tagValidationXml)) !== null) {
+  const fullTag = matchTag[0];
+  const tagName = matchTag[1];
+  const isSelfClosing = matchTag[2] === '/' || fullTag.endsWith('/>');
+  const isClosing = fullTag.startsWith('</');
+  
+  const textBefore = tagValidationXml.substring(lastIdx, matchTag.index);
+  line += (textBefore.match(/\n/g) || []).length;
+  lastIdx = matchTag.index;
+
+  if (fullTag.startsWith('<?') || fullTag.startsWith('<!')) continue;
+
+  if (isClosing) {
+    if (stack.length === 0) {
+      tagErrors.push(`Unexpected closing </${tagName}> at line ${line}`);
+    } else {
+      const top = stack.pop();
+      if (top.tagName !== tagName) {
+        tagErrors.push(`Tag mismatch at line ${line}: expected </${top.tagName}> (from line ${top.line}) but found </${tagName}>`);
+      }
+    }
+  } else if (!isSelfClosing) {
+    stack.push({ tagName, line, fullTag: fullTag.substring(0, 50) });
+  }
+}
+
+if (tagErrors.length > 0 || stack.length > 0) {
+  console.error(`❌ ERROR: XML Tag Structure is invalid!`);
+  tagErrors.forEach(e => console.error('  ->', e));
+  stack.forEach(s => console.error(`  -> Unclosed <${s.tagName}> from line ${s.line}`));
+  process.exit(1);
+} else {
+  console.log('✅ Full XML Tag Structure & Hierarchy is 100% balanced (0 unclosed tags, 0 mismatches)!');
+}
+
