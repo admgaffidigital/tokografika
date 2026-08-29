@@ -3814,151 +3814,142 @@ const _drawTextFallback = (ctx, size, storeName) => {
  ctx.fillText(initials, size / 2, size / 2);
 };
 
-const renderLogoToCanvas = (logo, themeHex, storeName, size) => {
- return new Promise(resolve => {
- const canvas = document.createElement('canvas');
- canvas.width = size;
- canvas.height = size;
- const ctx = canvas.getContext('2d');
+const renderLogoToCanvas = async (logo, themeHex, storeName, size) => {
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
 
- // Latar gradien warna tema
- const grad = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
- grad.addColorStop(0, themeHex);
- grad.addColorStop(1, _darkenHex(themeHex, 0.15));
- ctx.fillStyle = grad;
- ctx.fillRect(0, 0, size, size);
+    // Latar solid warna tema
+    ctx.fillStyle = themeHex;
+    ctx.fillRect(0, 0, size, size);
 
- const isImageUrl = logo && (logo.startsWith('http') || logo.startsWith('https') || logo.startsWith('data:'));
- const isFaIcon = logo && !isImageUrl && logo.trim().length > 0;
- const pad = size * 0.12;
+    const isImageUrl = logo && (logo.startsWith('http') || logo.startsWith('https') || logo.startsWith('data:'));
+    const isFaIcon = logo && !isImageUrl && logo.trim().length > 0;
+    const pad = size * 0.12;
 
- if (isImageUrl) {
- const img = new Image();
- img.crossOrigin = 'anonymous';
- img.onload = () => {
- const draw = size - pad * 2;
- let dw = draw, dh = draw;
- if (img.width > img.height) dh = draw * (img.height / img.width);
- else if (img.height > img.width) dw = draw * (img.width / img.height);
- ctx.drawImage(img, (size-dw)/2, (size-dh)/2, dw, dh);
- resolve(canvas.toDataURL('image/png'));
- };
- img.onerror = () => { _drawTextFallback(ctx, size, storeName); resolve(canvas.toDataURL('image/png')); };
- img.src = logo;
-
- } else if (isFaIcon) {
- const faMap = {
- 'fa-store':'\uf54e','fa-shop':'\uf54f','fa-shopping-cart':'\uf07a','fa-shopping-bag':'\uf290',
- 'fa-basket-shopping':'\uf291','fa-cart-shopping':'\uf07a','fa-tag':'\uf02b','fa-tags':'\uf02c',
- 'fa-box':'\uf466','fa-box-open':'\uf49e','fa-boxes-stacked':'\uf468','fa-building':'\uf1ad',
- 'fa-house':'\uf015','fa-home':'\uf015','fa-utensils':'\uf2e7','fa-burger':'\uf805',
- 'fa-pizza-slice':'\uf818','fa-leaf':'\uf06c','fa-seedling':'\uf4d8','fa-tree':'\uf1bb',
- 'fa-star':'\uf005','fa-heart':'\uf004','fa-gem':'\uf3a5','fa-crown':'\uf521',
- 'fa-bolt':'\uf0e7','fa-fire':'\uf06d','fa-truck':'\uf0d1','fa-motorcycle':'\uf21c',
- 'fa-bicycle':'\uf206','fa-tshirt':'\uf553','fa-shirt':'\uf553','fa-glasses':'\uf530',
- 'fa-mobile':'\uf10b','fa-laptop':'\uf109','fa-camera':'\uf030','fa-music':'\uf001',
- 'fa-book':'\uf02d','fa-gamepad':'\uf11b','fa-paw':'\uf1b0','fa-fish':'\uf578',
- 'fa-apple-whole':'\uf5d1','fa-carrot':'\uf787','fa-bread-slice':'\uf7ec',
- 'fa-coffee':'\uf0f4','fa-mug-hot':'\uf7b6','fa-wine-glass':'\uf4e3',
- 'fa-pills':'\uf484','fa-spa':'\uf5bb','fa-scissors':'\uf0c4',
- 'fa-wrench':'\uf0ad','fa-hammer':'\uf6e3','fa-paint-roller':'\uf5aa',
- 'fa-palette':'\uf53f','fa-pen':'\uf304','fa-pencil':'\uf303'
- };
- const cleanClass = logo.replace(/^fa-(solid|regular|brands|light|thin|duotone)\s+/, '').trim();
- const unicode = faMap[cleanClass] || null;
- const iconSize = size * 0.52;
- const tryRender = () => {
- ctx.font = '900 ' + iconSize + 'px "Font Awesome 6 Free"';
- ctx.fillStyle = 'rgba(255,255,255,0.95)';
- ctx.textAlign = 'center';
- ctx.textBaseline = 'middle';
- ctx.fillText(unicode || '\uf54e', size/2, size/2 + iconSize*0.04);
- resolve(canvas.toDataURL('image/png'));
- };
- if (document.fonts && document.fonts.ready) document.fonts.ready.then(tryRender);
- else setTimeout(tryRender, 500);
-
- } else {
- _drawTextFallback(ctx, size, storeName);
- resolve(canvas.toDataURL('image/png'));
- }
- });
+    if (isImageUrl) {
+        try {
+            const img = await _loadImgOnce(logo);
+            const draw = size - pad * 2;
+            let dw = draw, dh = draw;
+            if (img.width > img.height) dh = draw * (img.height / img.width);
+            else if (img.height > img.width) dw = draw * (img.width / img.height);
+            ctx.drawImage(img, (size-dw)/2, (size-dh)/2, dw, dh);
+            return canvas.toDataURL('image/png');
+        } catch (e) {
+            _drawTextFallback(ctx, size, storeName);
+            return canvas.toDataURL('image/png');
+        }
+    } else if (isFaIcon) {
+        const faMap = {
+            'fa-store':'\uf54e','fa-shop':'\uf54f','fa-shopping-cart':'\uf07a','fa-shopping-bag':'\uf290',
+            'fa-basket-shopping':'\uf291','fa-cart-shopping':'\uf07a','fa-tag':'\uf02b','fa-tags':'\uf02c',
+            'fa-box':'\uf466','fa-box-open':'\uf49e','fa-boxes-stacked':'\uf468','fa-building':'\uf1ad',
+            'fa-house':'\uf015','fa-home':'\uf015','fa-utensils':'\uf2e7','fa-burger':'\uf805',
+            'fa-pizza-slice':'\uf818','fa-leaf':'\uf06c','fa-seedling':'\uf4d8','fa-tree':'\uf1bb',
+            'fa-star':'\uf005','fa-heart':'\uf004','fa-gem':'\uf3a5','fa-crown':'\uf521',
+            'fa-bolt':'\uf0e7','fa-fire':'\uf06d','fa-truck':'\uf0d1','fa-motorcycle':'\uf21c',
+            'fa-bicycle':'\uf206','fa-tshirt':'\uf553','fa-shirt':'\uf553','fa-glasses':'\uf530',
+            'fa-mobile':'\uf10b','fa-laptop':'\uf109','fa-camera':'\uf030','fa-music':'\uf001',
+            'fa-book':'\uf02d','fa-gamepad':'\uf11b','fa-paw':'\uf1b0','fa-fish':'\uf578',
+            'fa-apple-whole':'\uf5d1','fa-carrot':'\uf787','fa-bread-slice':'\uf7ec',
+            'fa-coffee':'\uf0f4','fa-mug-hot':'\uf7b6','fa-wine-glass':'\uf4e3',
+            'fa-pills':'\uf484','fa-spa':'\uf5bb','fa-scissors':'\uf0c4',
+            'fa-wrench':'\uf0ad','fa-hammer':'\uf6e3','fa-paint-roller':'\uf5aa',
+            'fa-palette':'\uf53f','fa-pen':'\uf304','fa-pencil':'\uf303'
+        };
+        const cleanClass = logo.replace(/^fa-(solid|regular|brands|light|thin|duotone)\s+/, '').trim();
+        const unicode = faMap[cleanClass] || null;
+        const iconSize = size * 0.52;
+        return new Promise(resolve => {
+            const tryRender = () => {
+                ctx.font = '900 ' + iconSize + 'px "Font Awesome 6 Free"';
+                ctx.fillStyle = 'rgba(255,255,255,0.95)';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(unicode || '\uf54e', size/2, size/2 + iconSize*0.04);
+                resolve(canvas.toDataURL('image/png'));
+            };
+            if (document.fonts && document.fonts.ready) document.fonts.ready.then(tryRender);
+            else setTimeout(tryRender, 500);
+        });
+    } else {
+        _drawTextFallback(ctx, size, storeName);
+        return canvas.toDataURL('image/png');
+    }
 };
 
 // ============================================================
 // SPLASH SCREEN iOS — render canvas full-screen per device
 // ============================================================
 const _injectIosSplashScreen = async (logo, themeHex, storeName) => {
- document.querySelectorAll('link[rel="apple-touch-startup-image"]').forEach(el => el.remove());
- const splashSizes = [
- { w:1125, h:2436, media:'(device-width:375px) and (device-height:812px) and (-webkit-device-pixel-ratio:3)' },
- { w:1170, h:2532, media:'(device-width:390px) and (device-height:844px) and (-webkit-device-pixel-ratio:3)' },
- { w:1290, h:2796, media:'(device-width:430px) and (device-height:932px) and (-webkit-device-pixel-ratio:3)' },
- { w:828, h:1792, media:'(device-width:414px) and (device-height:896px) and (-webkit-device-pixel-ratio:2)' },
- { w:750, h:1334, media:'(device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2)' },
- { w:1536, h:2048, media:'(device-width:768px) and (device-height:1024px) and (-webkit-device-pixel-ratio:2)' },
- { w:2048, h:2732, media:'(device-width:1024px) and (device-height:1366px) and (-webkit-device-pixel-ratio:2)' }
- ];
- const renderSplash = async (w, h) => {
- const canvas = document.createElement('canvas');
- canvas.width = w; canvas.height = h;
- const ctx = canvas.getContext('2d');
- const grad = ctx.createLinearGradient(0, 0, 0, h);
- grad.addColorStop(0, themeHex);
- grad.addColorStop(1, _darkenHex(themeHex, 0.22));
- ctx.fillStyle = grad;
- ctx.fillRect(0, 0, w, h);
- const logoSize = Math.round(w * 0.24);
- const logoX = (w - logoSize) / 2;
- const logoY = (h - logoSize) / 2 - h * 0.05;
- // Lingkaran latar logo
- ctx.save();
- ctx.beginPath();
- ctx.arc(w/2, logoY + logoSize/2, logoSize * 0.68, 0, Math.PI*2);
- ctx.fillStyle = 'rgba(255,255,255,0.15)';
- ctx.fill();
- ctx.restore();
- // Gambar logo di tengah splash
- const isImgUrl = logo && (logo.startsWith('http') || logo.startsWith('https') || logo.startsWith('data:'));
- if (isImgUrl) {
- await new Promise(res => {
- const img = new Image();
- img.crossOrigin = 'anonymous';
- img.onload = () => {
- let dw=logoSize, dh=logoSize;
- if (img.width>img.height) dh=logoSize*(img.height/img.width);
- else if (img.height>img.width) dw=logoSize*(img.width/img.height);
- ctx.drawImage(img, logoX+(logoSize-dw)/2, logoY+(logoSize-dh)/2, dw, dh);
- res();
- };
- img.onerror = () => { ctx.save(); ctx.translate(logoX,logoY); _drawTextFallback(ctx,logoSize,storeName); ctx.restore(); res(); };
- img.src = logo;
- });
- } else {
- ctx.save();
- ctx.translate(logoX, logoY);
- _drawTextFallback(ctx, logoSize, storeName);
- ctx.restore();
- }
- // Nama toko
- const nameFz = Math.round(w * 0.052);
- ctx.font = '900 ' + nameFz + 'px "Plus Jakarta Sans", sans-serif';
- ctx.fillStyle = 'rgba(255,255,255,0.92)';
- ctx.textAlign = 'center';
- ctx.textBaseline = 'top';
- ctx.fillText(storeName, w/2, logoY + logoSize + h*0.032);
- return canvas.toDataURL('image/png');
- };
- for (const s of splashSizes) {
- try {
- const dataUrl = await renderSplash(s.w, s.h);
- const linkEl = document.createElement('link');
- linkEl.rel = 'apple-touch-startup-image';
- linkEl.href = dataUrl;
- linkEl.media = s.media;
- document.head.appendChild(linkEl);
- } catch(e) { /* skip ukuran yang gagal */ }
- }
+    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    if (!isIos) return; // Hanya jalankan di perangkat iOS untuk hemat request
+
+    document.querySelectorAll('link[rel="apple-touch-startup-image"]').forEach(el => el.remove());
+    const splashSizes = [
+        { w:1125, h:2436, media:'(device-width:375px) and (device-height:812px) and (-webkit-device-pixel-ratio:3)' },
+        { w:1170, h:2532, media:'(device-width:390px) and (device-height:844px) and (-webkit-device-pixel-ratio:3)' },
+        { w:1290, h:2796, media:'(device-width:430px) and (device-height:932px) and (-webkit-device-pixel-ratio:3)' },
+        { w:828,  h:1792, media:'(device-width:414px) and (device-height:896px) and (-webkit-device-pixel-ratio:2)' },
+        { w:750,  h:1334, media:'(device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2)' },
+        { w:1536, h:2048, media:'(device-width:768px) and (device-height:1024px) and (-webkit-device-pixel-ratio:2)' },
+        { w:2048, h:2732, media:'(device-width:1024px) and (device-height:1366px) and (-webkit-device-pixel-ratio:2)' }
+    ];
+    const renderSplash = async (w, h) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = themeHex;
+        ctx.fillRect(0, 0, w, h);
+        const logoSize = Math.round(w * 0.24);
+        const logoX = (w - logoSize) / 2;
+        const logoY = (h - logoSize) / 2 - h * 0.05;
+        // Lingkaran latar logo
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(w/2, logoY + logoSize/2, logoSize * 0.68, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(255,255,255,0.15)';
+        ctx.fill();
+        ctx.restore();
+        // Gambar logo di tengah splash
+        const isImgUrl = logo && (logo.startsWith('http') || logo.startsWith('https') || logo.startsWith('data:'));
+        if (isImgUrl) {
+            try {
+                const img = await _loadImgOnce(logo);
+                let dw=logoSize, dh=logoSize;
+                if (img.width>img.height) dh=logoSize*(img.height/img.width);
+                else if (img.height>img.width) dw=logoSize*(img.width/img.height);
+                ctx.drawImage(img, logoX+(logoSize-dw)/2, logoY+(logoSize-dh)/2, dw, dh);
+            } catch (e) {
+                ctx.save(); ctx.translate(logoX,logoY); _drawTextFallback(ctx,logoSize,storeName); ctx.restore();
+            }
+        } else {
+            ctx.save();
+            ctx.translate(logoX, logoY);
+            _drawTextFallback(ctx, logoSize, storeName);
+            ctx.restore();
+        }
+        // Nama toko
+        const nameFz = Math.round(w * 0.052);
+        ctx.font = '700 ' + nameFz + 'px "Plus Jakarta Sans", sans-serif';
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillText(storeName, w/2, logoY + logoSize + h*0.032);
+        return canvas.toDataURL('image/png');
+    };
+    for (const s of splashSizes) {
+        try {
+            const dataUrl = await renderSplash(s.w, s.h);
+            const linkEl = document.createElement('link');
+            linkEl.rel = 'apple-touch-startup-image';
+            linkEl.href = dataUrl;
+            linkEl.media = s.media;
+            document.head.appendChild(linkEl);
+        } catch(e) { /* skip ukuran yang gagal */ }
+    }
 };
 
 // ============================================================
