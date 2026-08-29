@@ -160,16 +160,6 @@ const defApp = {
  },
  auth: { username: "", password: "" },
  payment: { qrisUrl: "" },
- // --- TAMBAHAN UNTUK JASTIP ---
- jastip: {
- isActive: false,
- startHour: "08:00",
- endHour: "21:00",
- tarifPerKm: 10000,
- komisiDriver: 8000
- },
- drivers: [],
- // -----------------------------
  banks: [], banners: [], 
  categories: [
  { id: 1, name: "Makanan & Minuman", icon: "fa-utensils" },
@@ -186,7 +176,7 @@ const defApp = {
  category: "Sembako",
  desc: "Beras pulen berkualitas super, bersih, tanpa pemutih dan pengawet.",
  stock: 25,
- img: "https://images.unsplash.com/pho e31c?w=500&auto=format&fit=crop&q=60",
+ img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500&auto=format&fit=crop&q=60",
  sku: "BRS-001",
  variants: [],
  wholesale: [{ min: 5, price: 65000 }]
@@ -199,7 +189,7 @@ const defApp = {
  category: "Sembako",
  desc: "Minyak goreng kelapa sawit berkualitas jernih dan higienis.",
  stock: 40,
- img: "https://images.unsplash.com/pho eaacbcd87c5?w=500&auto=format&fit=crop&q=60",
+ img: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=500&auto=format&fit=crop&q=60",
  sku: "MYK-002",
  variants: []
  },
@@ -211,12 +201,12 @@ const defApp = {
  category: "Makanan & Minuman",
  desc: "Biji kopi pilihan dengan aroma harum dan cita rasa nikmat khas nusantara.",
  stock: 15,
- img: "https://images.unsplash.com/pho a09d9b4aefdd?w=500&auto=format&fit=crop&q=60",
+ img: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&auto=format&fit=crop&q=60",
  sku: "KPI-003",
  variants: []
  }
  ], 
- licenseKey: "", promaxLicenseKey: "",
+ licenseKey: "",
  accounts: [] 
 };
 
@@ -226,8 +216,7 @@ let cart = [], wishlist = [];
 let cust = { name: '', address: '', lat: null, lng: null, deliveryMethod: 'delivery', distance: 0, note: '' };
 let vouch = null, aCat = 'Semua Produk', sQ = '', cSort = 'newest', cView = 'grid', cPage = 1, iPP = 12, cTab = 'orders', aSq = '';
 
-// Tambahan: cRole & cPerms untuk RBAC
-let eId = null, isAdm = !1, isPro = !1, isProMax = !1, cRole = 'admin', cPerms = [];
+let eId = null, isAdm = !1, isPro = !1, cRole = 'admin', cPerms = [];
 let cProd = null, cVar = 0, tVars = [], tWhol = [], cQty = 1;
 let oMods = [], aOrdLst = null, gOrds = [], cVOrd = null;
 let toastT, isSaving = !1;
@@ -624,10 +613,8 @@ const loadAppData = async () => {
      console.log('[FreshMart] 2a. cms_data document exists');
      const f = d.data(); 
      let oldLic = appData.licenseKey; 
-     let oldProMaxLic = appData.promaxLicenseKey;
      appData = { ...defApp, ...f }; 
      appData.licenseKey = f.licenseKey || oldLic || ""; 
-     appData.promaxLicenseKey = f.promaxLicenseKey || oldProMaxLic || "";
      
      appData.store = { ...defApp.store, ...(f.store || {}) }; 
      if(!appData.store.social) appData.store.social = defApp.store.social;
@@ -697,11 +684,8 @@ const loadAppData = async () => {
      
      try {
        let savedProKey = (appData.licenseKey || localStorage.getItem('freshmart_cache_PRO') || '').trim().toUpperCase();
-       let savedProMaxKey = (appData.promaxLicenseKey || localStorage.getItem('freshmart_cache_PROMAX') || '').trim().toUpperCase();
        isPro = await verifyLicenseInDb(savedProKey, 'PRO');
-       isProMax = await verifyLicenseInDb(savedProMaxKey, 'PROMAX');
        if (isPro) updateProBadges(true);
-       if (isProMax) updateProMaxBadges(true);
      } catch (e) {}
      
      const pid = new URLSearchParams(window.location.search).get('p'); 
@@ -1434,42 +1418,17 @@ window.applyVoucher = () => {
  if (el('view-payment').classList.contains('flex')) rPay();
 };
 
-// --- HELPER JASTIP & PENGIRIMAN ---
-window.isJastipOpen = () => {
- if (!appData.jastip || !appData.jastip.isActive) return false;
- const now = new Date();
- const currentHour = now.getHours() * 60 + now.getMinutes(); 
- 
- const startArr = (appData.jastip.startHour || '08:00').split(':');
- const endArr = (appData.jastip.endHour || '21:00').split(':');
- 
- // [BUG 13 FIXED] Tambah || 0 agar parseInt(undefined) tidak menghasilkan NaN
- const startMin = (parseInt(startArr[0]) || 0) * 60 + (parseInt(startArr[1]) || 0);
- const endMin = (parseInt(endArr[0]) || 21) * 60 + (parseInt(endArr[1]) || 0);
- 
- return currentHour >= startMin && currentHour <= endMin;
-};
-
 window.getShippingCost = (distance, method) => {
  if (method === 'pickup') return 0;
- 
- let tarif = 0;
- if (method === 'jastip') {
- // Kurir Ekspedisi: Tarif flat per paket, abaikan jarak
- return parseFloat(appData.jastip?.tarifPerKm || 0); 
- } else if (method === 'delivery') {
- // Kurir Toko: Tetap menggunakan jarak (opsional jika masih dipakai)
- tarif = parseFloat(appData.store.costPerKm || 0);
- return Math.ceil((parseFloat(distance) || 0) * tarif / 500) * 500; 
+ if (method === 'delivery') {
+   const tarif = parseFloat(appData.store.costPerKm || 0);
+   return Math.ceil((parseFloat(distance) || 0) * tarif / 500) * 500;
  }
- 
  return 0;
 };
-// ----------------------------------
 
 window.toggleDeliveryMethod = () => {
  const m = (document.querySelector('input[name="delivery-method"]:checked') || {}).value;
- // Tampilkan kolom alamat jika yang dipilih Kurir Toko ATAU Jastip
  toggleCls('address-container', 'hidden', m === 'pickup');
 };
 
@@ -1484,85 +1443,65 @@ window.validateAndGoToPayment = () => {
  cust.note = getV('cust-note');
  
  if (m === 'delivery') {
- cust.address = getV('cust-address');
- if (!cust.address || !cust.lat || !cust.lng) return showToast("Alamat & GPS wajib diisi!");
- cust.distance = getDist(parseFloat(appData.store.lat || 0), parseFloat(appData.store.lng || 0), cust.lat, cust.lng) || 0;
- } else if (m === 'jastip') {
- cust.address = getV('cust-address');
- if (!cust.address) return showToast("Alamat tujuan wajib diisi!");
- cust.lat = null; cust.lng = null; cust.distance = 0;
+   cust.address = getV('cust-address');
+   if (!cust.address || !cust.lat || !cust.lng) return showToast("Alamat & GPS wajib diisi!");
+   cust.distance = getDist(parseFloat(appData.store.lat || 0), parseFloat(appData.store.lng || 0), cust.lat, cust.lng) || 0;
  } else {
- cust.address = "Ambil di Toko";
- cust.distance = 0;
+   cust.address = "Ambil di Toko";
+   cust.distance = 0;
  }
  changeView('view-payment');
 };
 
 const rChck = () => {
- let d = appData.store.isDeliveryEnabled !== false; // Kurir Toko
- let p = appData.store.isPickupEnabled !== false; // Ambil di Toko
- let jOpen = isJastipOpen(); // Mitra Pengiriman
+ let d = appData.store.isDeliveryEnabled !== false;
+ let p = appData.store.isPickupEnabled !== false;
  
  let gridHtml = '';
- 
  if (d) {
- gridHtml += `<label class='cursor-pointer relative'>
- <input class='peer sr-only custom-radio' name='delivery-method' onchange='toggleDeliveryMethod()' type='radio' value='delivery' checked>
- <div class='border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl transition-all flex flex-col items-center text-center gap-2 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/20'>
- <i class='fa-solid fa-truck text-xl text-slate-400 dark:text-slate-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 radio-icon transition-transform'></i>
- <span class='font-bold text-xs text-slate-800 dark:text-slate-200'>Pengiriman Toko</span>
- </div>
- </label>`;
+   gridHtml += `<label class='cursor-pointer relative'>
+     <input class='peer sr-only custom-radio' name='delivery-method' onchange='toggleDeliveryMethod()' type='radio' value='delivery' checked>
+     <div class='border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl transition-all flex flex-col items-center text-center gap-2 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/20'>
+       <i class='fa-solid fa-truck text-xl text-slate-400 dark:text-slate-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 radio-icon transition-transform'></i>
+       <span class='font-bold text-xs text-slate-800 dark:text-slate-200'>Pengiriman Toko</span>
+     </div>
+   </label>`;
  }
- 
- if (jOpen) {
- gridHtml += `<label class='cursor-pointer relative'>
- <input class='peer sr-only custom-radio' name='delivery-method' onchange='toggleDeliveryMethod()' type='radio' value='jastip' ${!d ? 'checked' : ''}>
- <div class='border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl transition-all flex flex-col items-center text-center gap-2 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/20'>
- <i class='fa-solid fa-motorcycle text-xl text-slate-400 dark:text-slate-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 radio-icon transition-transform'></i>
- <span class='font-bold text-xs text-slate-800 dark:text-slate-200'>Pengiriman (Mitra)</span>
- </div>
- </label>`;
- }
- 
  if (p) {
- gridHtml += `<label class='cursor-pointer relative'>
- <input class='peer sr-only custom-radio' name='delivery-method' onchange='toggleDeliveryMethod()' type='radio' value='pickup' ${!d && !jOpen ? 'checked' : ''}>
- <div class='border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl transition-all flex flex-col items-center text-center gap-2 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/20'>
- <i class='fa-solid fa-store text-xl text-slate-400 dark:text-slate-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 radio-icon transition-transform'></i>
- <span class='font-bold text-xs text-slate-800 dark:text-slate-200'>Ambil di Toko</span>
- </div>
- </label>`;
+   gridHtml += `<label class='cursor-pointer relative'>
+     <input class='peer sr-only custom-radio' name='delivery-method' onchange='toggleDeliveryMethod()' type='radio' value='pickup' ${!d ? 'checked' : ''}>
+     <div class='border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl transition-all flex flex-col items-center text-center gap-2 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/20'>
+       <i class='fa-solid fa-store text-xl text-slate-400 dark:text-slate-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 radio-icon transition-transform'></i>
+       <span class='font-bold text-xs text-slate-800 dark:text-slate-200'>Ambil di Toko</span>
+     </div>
+   </label>`;
  }
- 
  const grid = el('delivery-methods-grid');
  if (grid) grid.innerHTML = gridHtml;
-
+ 
  const warnEl = el('no-delivery-warning');
  const b = el('btn-checkout-next');
 
- // Jika ketiga metode tutup/mati
- if (!(d || p || jOpen)) {
- if(warnEl) {
- warnEl.innerText = "Mohon maaf, toko tidak melayani pemesanan online saat ini (Kurir, Jastip & Ambil Sendiri Tutup).";
- show('no-delivery-warning');
- }
- if(grid) hide('delivery-methods-grid');
- if(b) {
- b.setAttribute('disabled', 'true');
- b.classList.add('opacity-50');
- }
+ if (!(d || p)) {
+   if(warnEl) {
+     warnEl.innerText = "Mohon maaf, toko tidak melayani pemesanan online saat ini.";
+     show('no-delivery-warning');
+   }
+   if(grid) hide('delivery-methods-grid');
+   if(b) {
+     b.setAttribute('disabled', 'true');
+     b.classList.add('opacity-50');
+   }
  } else {
- if(warnEl) hide('no-delivery-warning');
- if(grid) {
- show('delivery-methods-grid');
- // Jika ada 3 opsi, ubah grid jadi 3 kolom
- grid.className = `grid gap-3 ${d && jOpen && p ? 'grid-cols-3' : 'grid-cols-2'}`;
- }
- if(b) {
- b.removeAttribute('disabled');
- b.classList.remove('opacity-50');
- }
+   if(warnEl) hide('no-delivery-warning');
+   if(grid) {
+     show('delivery-methods-grid');
+     grid.className = `grid gap-3 grid-cols-2`;
+   }
+   if(b) {
+     b.removeAttribute('disabled');
+     b.classList.remove('opacity-50');
+   }
  }
  toggleDeliveryMethod();
 };
@@ -1594,10 +1533,9 @@ const rPay = () => {
  toggleCls('summary-shipping-row', 'hidden', cust.deliveryMethod === 'pickup');
  
  if (cust.deliveryMethod !== 'pickup') {
- const label = cust.deliveryMethod === 'jastip' ? 'Ongkir Ekspedisi' : 'Ongkos Kirim';
  const shippingSpan = document.querySelector('#summary-shipping-row span');
- if (shippingSpan) shippingSpan.innerText = label;
- setIn('summary-distance', cust.deliveryMethod === 'jastip' ? '' : `(${cust.distance.toFixed(1)}km)`);
+ if (shippingSpan) shippingSpan.innerText = 'Ongkos Kirim';
+ setIn('summary-distance', `(${cust.distance.toFixed(1)}km)`);
  setIn('summary-shipping', fCur(sC));
  }
  
@@ -1607,9 +1545,7 @@ const rPay = () => {
  
  setIn('payment-cust-name', cust.name || '-');
  
- let methodStr = 'Ambil di Toko';
- if (cust.deliveryMethod === 'jastip') methodStr = `Kurir Ekspedisi (Reguler)`;
- else if (cust.deliveryMethod === 'delivery') methodStr = `Kurir Toko (${cust.distance.toFixed(1)}km)`;
+ let methodStr = cust.deliveryMethod === 'delivery' ? `Kurir Toko (${cust.distance.toFixed(1)}km)` : 'Ambil di Toko';
  
  setIn('payment-cust-method', methodStr);
  setIn('payment-cust-address', cust.address || '-');
@@ -1687,26 +1623,11 @@ window.processOrder = async () => {
  if (!m) { isSaving = !1; return showToast('Pilih metode pembayaran!'); }
  const oI = 'ORD' + Date.now();
  
- const isJastipOrder = (cust.deliveryMethod === 'jastip');
- const persenDriver = appData.jastip?.komisiDriver || 8000;
- 
- const feeDriver = isJastipOrder ? parseFloat(persenDriver) : 0;
- 
- // [BUG 5 FIXED] feeToko bisa negatif jika feeDriver > sC. Gunakan Math.max(0, ...)
- const feeToko = Math.max(0, sC - feeDriver);
-
  const oD = {
  orderId: oI, timestamp: firebase.firestore.FieldValue.serverTimestamp(), dateString: new Date().toISOString(),
  customer: cust, items: cart.map(i => ({ ...i, effectivePrice: getEffP(i) })),
  payment: { method: m, subtotal: sub, shippingCost: sC, productDiscount: pD, shippingDiscount: sD, grandTotal: tot },
- status: 'Baru',
- jastip: isJastipOrder ? {
- isJastip: true,
- driverId: null,
- driverName: null,
- komisiDriver: feeDriver,
- komisiToko: feeToko
- } : null
+ status: 'Baru'
  };
  
  sLoad('Proses Pesanan...');
@@ -1718,24 +1639,19 @@ window.processOrder = async () => {
  w = w.replace(/\D/g, '');
  if (w.startsWith('0')) w = '62' + w.substring(1);
  
- let x = isJastipOrder ? `*Order Pengiriman Baru!* 📦\n` : `*Order ${appData.store.name}* 🛒\n`;
+ let x = `*Order ${appData.store.name}* 🛒\n`;
  x += `_ID: ${oI}_\n\n*👤 PEMESAN*\nNama: ${cust.name}\nAlamat: ${cust.address}\n`;
- if ((cust.deliveryMethod === 'delivery' || cust.deliveryMethod === 'jastip') && cust.lat) x += `GPS: https://www.google.com/maps?q=${cust.lat},${cust.lng}\n`;
+ if (cust.deliveryMethod === 'delivery' && cust.lat) x += `GPS: https://www.google.com/maps?q=${cust.lat},${cust.lng}\n`;
  if (cust.note) x += `\n*📝 CATATAN:*\n_${cust.note}_\n`;
  
  x += `\n*🛍️ DETAIL*\n`;
  cart.forEach(i => { x += `▫️ ${i.qty}${i.unit ? ' '+i.unit : ''} ${i.name}${i.variantName ? ` (${i.variantName})` : ''} - ${fCur(getEffP(i) * i.qty)}\n`; });
  x += `\nSubtotal: ${fCur(sub)}\n`;
  if (pD) x += `Diskon Produk: -${fCur(pD)}\n`;
- 
  if (cust.deliveryMethod === 'delivery') x += `Ongkir Toko: ${fCur(sC)}\n`;
- if (cust.deliveryMethod === 'jastip') x += `Ongkir Ekspedisi: ${fCur(sC)}\n`;
- 
  if (sD) x += `Diskon Ongkir: -${fCur(sD)}\n`;
  x += `*TOTAL: ${fCur(tot)}*\nBayar: ${m.toUpperCase()}\n`;
  if (m === 'cod') x += `_*(Siapkan Uang Pas!)*_\n`;
- 
- if (isJastipOrder) x += `\n_Silakan login ke panel admin untuk Assign Driver._`;
  
  hLoad();
  try { window.open(`https://wa.me/${w}?text=${encodeURIComponent(x)}`, '_blank'); } catch(waErr) { console.warn('[FreshMart] WA popup diblokir browser:', waErr); }
@@ -1769,22 +1685,6 @@ const aF = {
  vouchers: [{ key: 'code', label: 'Kode', type: 'text' }, { key: 'type', label: 'Jenis', type: 'select', options: [{ val: 'product_percent', text: 'Diskon Produk (%)' }, { val: 'shipping_percent', text: 'Diskon Ongkir (%)' }, { val: 'shipping_flat', text: 'Potongan Ongkir (Rp)' }] }, { key: 'value', label: 'Nilai', type: 'number' }, { key: 'expiredAt', label: 'Berlaku Sampai (kosongkan = tidak ada batas)', type: 'text' }],
  banks: [{ key: 'bankName', label: 'Nama Bank', type: 'text' }, { key: 'bankAccount', label: 'No. Rekening', type: 'text' }, { key: 'bankOwner', label: 'Atas Nama', type: 'text' }],
  banners: [{ key: 'title', label: 'Judul', type: 'text' }, { key: 'subtitle', label: 'Sub-judul', type: 'text' }, { key: 'img', label: 'URL Gambar', type: 'text' }],
- 
- // --- PENAMBAHAN DATA DRIVER JASTIP ---
- drivers: [
- { key: 'name', label: 'Nama Lengkap Driver', type: 'text' },
- { key: 'vehicle', label: 'Nomor Kendaraan (Plat)', type: 'text' },
- { key: 'username', label: 'Nomor WA (Untuk Login)', type: 'text' },
- { key: 'password', label: 'Password Driver', type: 'text' },
- // --- TAMBAHAN DATA REKENING ---
- { key: 'bankName', label: 'Nama Bank (Cth: BCA, DANA)', type: 'text' },
- { key: 'bankAccount', label: 'Nomor Rekening / E-Wallet', type: 'text' },
- { key: 'bankOwner', label: 'Atas Nama Rekening', type: 'text' },
- // ------------------------------
- { key: 'status', label: 'Status Driver', type: 'select', options: [{ val: 'Aktif', text: 'Aktif' }, { val: 'Nonaktif', text: 'Nonaktif' }] }
- ],
- // -------------------------------------
-
  accounts: [
  { key: 'name', label: 'Nama Pegawai/Kasir', type: 'text' }, 
  { key: 'username', label: 'Username Login', type: 'text' }, 
@@ -1836,7 +1736,7 @@ window.processAdminLogin = () => {
  firebase.auth().signInWithEmailAndPassword(u, p)
  .then((userCredential) => {
  hLoad(); 
- isAdm = !0; isPro = !0; isProMax = !0; cRole = 'admin'; cPerms = ['all'];
+ isAdm = !0; isPro = !0; cRole = 'admin'; cPerms = ['all'];
  setH('admin-pro-badge', '<span class="badge badge-xs badge-solid-amber"><i class="fa-solid fa-crown"></i> PRO DEV</span>');
  changeView('view-admin'); 
  openAdminMenu(); 
@@ -1863,7 +1763,6 @@ window.processAdminLogin = () => {
  if (u === appData.auth.username && p === appData.auth.password) {
  ssL('_fm_la', '0');
  isAdm = !0; 
- // isPro & isProMax sudah otomatis diset di loadAppData dari database
  cRole = 'admin'; cPerms = ['all'];
  setH('admin-pro-badge', isPro ? '<span class="badge badge-xs badge-solid-amber"><i class="fa-solid fa-crown"></i> PRO</span>' : '<span class="badge badge-xs badge-solid-slate">FREE</span>');
  changeView('view-admin'); openAdminMenu();
@@ -1876,27 +1775,14 @@ window.processAdminLogin = () => {
  setH('admin-pro-badge', '<span class="badge badge-xs badge-solid-blue"><i class="fa-solid fa-user-tie"></i> KASIR</span>');
  changeView('view-admin'); openAdminMenu(); showToast(`Selamat bertugas, ${kasir.name}!`);
  } else {
- // 4. JALUR MITRA DRIVER JASTIP
- const driver = (appData.drivers || []).find(d => d.username === u && d.password === p && d.status === 'Aktif');
- if (driver) {
- currentDriver = driver;
- setIn('driver-name-display', driver.name);
- changeView('view-driver'); 
- showToast(`Selamat bekerja, ${driver.name}!`);
- if (typeof listenDriverOrders === 'function') listenDriverOrders();
- } else {
  const fa = parseInt(sL('_fm_la') || '0') + 1;
  ssL('_fm_la', fa.toString()); ssL('_fm_lf', Date.now().toString());
  showToast("Data Tidak Ditemukan / Akun Nonaktif!");
  }
  }
- }
 };
 
-window.logoutAdmin = () => { isAdm = !1; isPro = !1; isProMax = !1; if (aOrdLst) { aOrdLst(); aOrdLst = null; } changeView('view-catalog'); };
-
-// Alias: form login driver punya tombol sendiri tapi alur auth sama via processAdminLogin
-window.processDriverLogin = window.processAdminLogin;
+window.logoutAdmin = () => { isAdm = !1; isPro = !1; if (aOrdLst) { aOrdLst(); aOrdLst = null; } changeView('view-catalog'); };
 
 window.checkProPrint = () => { openReceiptPreview(); };
 
@@ -1937,156 +1823,6 @@ window.openAdminTab = (t, fH = !1) => {
  `);
  return;
  }
-
- // 3. Logika Kunci PRO MAX (Langganan)
- if (t === 'promax') {
- hide('admin-dashboard-view'); show('admin-content-view'); show('btn-admin-back'); hide('admin-logo-box');
- setIn('admin-header-title', 'PRO MAX Dashboard');
- 
- if (!isProMax) {
- // TAMPILAN PAYWALL JIKA BELUM BERLANGGANAN
- setH('admin-content', `
- <div class="text-center py-10 bg-white dark:bg-slate-800 rounded-2xl border border-purple-200 dark:border-purple-900/50 shadow-2xl px-6 max-w-lg mx-auto mt-4 relative overflow-hidden">
- <div class="absolute -top-10 -right-10 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl"></div>
- <div class="w-20 h-20 bg-purple-50 dark:bg-purple-500/10 border-2 border-purple-200 dark:border-purple-500/30 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
- <i class="fa-solid fa-wand-magic-sparkles text-4xl"></i>
- </div>
- <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">Fitur Eksklusif PRO MAX</h2>
- <p class="text-xs text-slate-500 dark:text-slate-400 font-bold mb-6 leading-relaxed">Akses dasbor analitik lanjutan, manajemen multi-cabang, dan laporan performa kasir. Fitur ini memerlukan langganan aktif.</p>
- 
- <div class="flex gap-3 mb-8 justify-center">
- <div class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 p-3 rounded-xl w-32">
- <p class="text-[9px] font-medium text-slate-400 uppercase tracking-widest mb-1">Bulanan</p>
- <p class="text-sm font-semibold text-purple-600">Rp 50.000</p>
- </div>
- <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 p-3 rounded-xl w-32 ring-2 ring-purple-500 ring-offset-2 dark:ring-offset-slate-800">
- <p class="text-[9px] font-medium text-purple-400 uppercase tracking-widest mb-1">Tahunan <span class="badge badge-xs badge-solid-rose ml-1">HEMAT</span></p>
- <p class="text-sm font-semibold text-purple-600">Rp 540.000</p>
- </div>
- </div>
-
- <div class="max-w-xs mx-auto flex flex-col gap-3">
- <input id="promax-license-input" type="text" placeholder="KODE LISENSI LANGGANAN..." class="admin-input !py-3 text-center uppercase tracking-widest font-semibold text-xs border-purple-200 focus:border-purple-500"/>
- <button onclick="activateProMax()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl shadow-lg transition-all text-xs border border-purple-700">
- <i class="fa-solid fa-key mr-1.5"></i> Aktifkan Langganan
- </button>
- <a href="https://wa.me/6285733242474?text=Halo%20Admin,%20saya%20ingin%20berlangganan%20PRO%20MAX" target="_blank" class="text-[10px] font-bold text-slate-400 hover:text-purple-500 underline underline-offset-2 mt-2">Beli Kode Lisensi via WhatsApp</a>
- </div>
- </div>
- `);
- return;
-
-} else {
- // TAMPILAN DASHBOARD PRO MAX AKTIF (MENU GRID)
- setH('admin-content', `
- <div class="mb-6 bg-indigo-950 p-6 rounded-2xl text-white shadow-lg flex justify-between items-center relative overflow-hidden">
- <div class="relative z-10 flex items-center gap-4">
- <button id="btn-promax-back" onclick="closeProMaxSub()" class="hidden w-10 h-10 rounded-full bg-white hover:bg-white flex items-center justify-center transition-all shadow-sm border border-white/20">
- <i class="fa-solid fa-arrow-left"></i>
- </button>
- <div>
- <h3 class="font-bold text-lg mb-1" id="promax-header-title"><i class="fa-solid fa-crown mr-2"></i> PRO MAX Dashboard</h3>
- <p class="text-xs text-purple-200 font-medium opacity-90" id="promax-header-desc">Pusat kendali fitur eksklusif.</p>
- </div>
- </div>
- </div>
-
- <div id="promax-menu-view" class="grid grid-cols-2 md:grid-cols-3 gap-4 pb-8 fade-in">
- <button class="bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:border-purple-200 dark:hover:border-purple-500/30 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group" onclick="openProMaxSub('jastip')">
- <div class="w-14 h-14 rounded-2xl bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-purple-100 dark:group-hover:bg-purple-500/20 transition-all duration-300">
- <i class="fa-solid fa-motorcycle text-2xl"></i>
- </div>
- <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-center">Atur Ekspedisi</span>
- </button>
-
- <button class="bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-500/30 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group" onclick="openProMaxSub('mitra')">
- <div class="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-500/20 transition-all duration-300">
- <i class="fa-solid fa-users text-2xl"></i>
- </div>
- <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-center">Mitra Driver</span>
- </button>
-
- <button class="bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:border-amber-200 dark:hover:border-amber-500/30 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group" onclick="openProMaxSub('withdraw')">
- <div class="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-500/10 text-amber-500 dark:text-amber-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-amber-100 dark:group-hover:bg-amber-500/20 transition-all duration-300">
- <i class="fa-solid fa-money-bill-transfer text-2xl"></i>
- </div>
- <span class="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-center">Tarik Dana</span>
- </button>
- </div>
-
- <div id="promax-content-view" class="hidden fade-in">
- 
- <div id="promax-sub-jastip" class="hidden">
- <div class="bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-[1.5rem] border-2 border-slate-200 dark:border-slate-700 shadow-sm">
- <div class="space-y-4 max-w-2xl mx-auto">
- <div>
- <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Status Fitur Ekspedisi (Kurir)</label>
- <div class="relative">
- <select id="jastip-status" class="admin-input !py-3.5 w-full cursor-pointer appearance-none font-bold text-sm">
- <option value="true" ${(appData.jastip?.isActive) ? 'selected' : ''}>🚀 ON - Buka Ekspedisi</option>
- <option value="false" ${(!appData.jastip?.isActive) ? 'selected' : ''}>⛔ OFF - Tutup Ekspedisi</option>
- </select>
- <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
- </div>
- </div>
- <div class="grid grid-cols-2 gap-4">
- <div>
- <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Jam Buka</label>
- <input type="time" id="jastip-start" value="${appData.jastip?.startHour || '08:00'}" class="admin-input !py-3.5 w-full text-sm">
- </div>
- <div>
- <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Jam Tutup</label>
- <input type="time" id="jastip-end" value="${appData.jastip?.endHour || '21:00'}" class="admin-input !py-3.5 w-full text-sm">
- </div>
- </div>
- <div class="grid grid-cols-2 gap-4">
- <div>
- <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Tarif Ongkir per Paket (Rp)</label>
- <input type="number" id="jastip-tarif" value="${appData.jastip?.tarifPerKm || 10000}" class="admin-input !py-3.5 w-full text-sm">
- </div>
- <div>
- <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">Upah Kurir per Paket (Rp)</label>
- <input type="number" id="jastip-komisi" value="${appData.jastip?.komisiDriver || 8000}" class="admin-input !py-3.5 w-full text-sm">
- </div>
- </div>
- <div class="pt-3">
- <button onclick="saveJastipSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 rounded-xl transition-all text-sm shadow-md shadow-emerald-500/30 flex items-center justify-center gap-2"><i class="fa-solid fa-save"></i> Simpan Aturan Ekspedisi</button>
- </div>
- </div>
- </div>
- </div>
-
- <div id="promax-sub-mitra" class="hidden">
- <div class="bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border-2 border-slate-200 dark:border-slate-700 shadow-sm flex flex-col min-h-[400px]">
- <div class="flex justify-between items-center mb-4 border-b-2 border-slate-100 dark:border-slate-700 pb-4">
- <h4 class="font-bold text-slate-800 dark:text-white text-base"><i class="fa-solid fa-users text-emerald-500 mr-2"></i> Daftar Mitra Driver</h4>
- <button onclick="oAEd('drivers', null)" class="bg-emerald-500 border border-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-emerald-600 transition-all shadow-sm flex items-center gap-1.5"><i class="fa-solid fa-plus"></i> Tambah Mitra</button>
- </div>
- <div id="list-drivers-container" class="flex-1 overflow-y-auto space-y-3 hide-scrollbar">
- </div>
- </div>
- </div>
-
- <div id="promax-sub-withdraw" class="hidden">
- <div class="bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border-2 border-slate-200 dark:border-slate-700 shadow-sm min-h-[400px]">
- <div class="mb-4 border-b-2 border-slate-100 dark:border-slate-700 pb-4">
- <h4 class="font-bold text-slate-800 dark:text-white text-base"><i class="fa-solid fa-money-bill-transfer text-amber-500 mr-2"></i> Antrean Tarik Dana</h4>
- </div>
- <div id="admin-wd-container" class="space-y-3 max-h-[500px] overflow-y-auto hide-scrollbar">
- <div class="text-center py-10 text-slate-500 font-bold text-xs"><i class="fa-solid fa-spinner fa-spin text-2xl mb-3 block"></i> Memuat antrean...</div>
- </div>
- </div>
- </div>
-
- </div>
- `);
- 
- // Render list driver dan withdraw di latar belakang
- renderDriverList();
- listenAdminWithdrawals();
- return;
- }
- }
  
  // 4. Logika Buka Tab Normal 
  hide('admin-dashboard-view'); show('admin-content-view'); show('btn-admin-back'); hide('admin-logo-box');
@@ -2116,30 +1852,6 @@ window.activatePro = async () => {
  openAdminTab(cTab);
  } else {
  showToast("Kode Lisensi Tidak Valid / Nonaktif!");
- }
- hLoad();
-};
-
-window.activateProMax = async () => {
- if (isSaving) return;
- const c = getV('promax-license-input').trim().toUpperCase();
- 
- sLoad('Memverifikasi Langganan...');
- const isValid = await verifyLicenseInDb(c, 'PROMAX');
- 
- if (isValid) {
- appData.promaxLicenseKey = c; 
- localStorage.setItem('freshmart_cache_PROMAX', c); // SIMPAN KE BRANKAS PERMANEN
- isProMax = !0;
- try {
- await saveApp();
- showToast("Berhasil! Fitur PRO MAX Terbuka."); 
- openAdminTab('promax'); 
- } catch (e) {
- showToast("Gagal menyimpan lisensi ke server.");
- }
- } else {
- showToast("Kode Langganan Tidak Valid / Kedaluwarsa!");
  }
  hLoad();
 };
@@ -2267,44 +1979,6 @@ window.openOrderDetail = i => {
  </div>
  `;
 
- // --- TAMBAHAN KHUSUS JASTIP ---
- let jastipHtml = '';
- if (o.jastip && o.jastip.isJastip) {
- let driverOptions = `<option value="">-- Pilih Driver --</option>`;
- (appData.drivers || []).filter(d => d.status === 'Aktif').forEach(d => {
- driverOptions += `<option value="${d.id}" ${o.jastip.driverId == d.id ? 'selected' : ''}>${esc(d.name)} (${esc(d.vehicle)})</option>`;
- });
-
- jastipHtml = `
- <div class="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-xl border-2 border-indigo-200 dark:border-indigo-800 shadow-sm relative overflow-hidden">
- <h4 class="font-bold text-indigo-800 dark:text-indigo-400 text-xs border-b border-indigo-200 dark:border-indigo-800 pb-2 mb-3 flex items-center gap-2">
- <i class="fa-solid fa-motorcycle"></i> Penugasan Driver Jastip
- </h4>
- <div class="space-y-3">
- <div>
- <label class="block text-[10px] font-medium text-indigo-600/70 dark:text-indigo-400/70 mb-1 uppercase">Pilih Mitra Driver</label>
- <div class="relative w-full">
- <select onchange="assignDriver('${o.orderId}', this.value)" class="w-full text-xs font-bold text-slate-700 bg-white border-2 border-indigo-300 px-3 py-2 rounded-lg focus:border-indigo-500 outline-none appearance-none cursor-pointer">
- ${driverOptions}
- </select>
- <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-indigo-400 pointer-events-none text-[10px]"></i>
- </div>
- </div>
- <div class="flex justify-between items-center bg-white dark:bg-slate-800 p-2 rounded border border-indigo-100 dark:border-indigo-800">
- <span class="text-[10px] font-bold text-slate-500">Estimasi Fee Driver:</span>
- <span class="font-bold text-indigo-600 text-xs">${fCur(o.jastip.komisiDriver)}</span>
- </div>
- ${o.jastip.driverId ? `
- <button onclick="notifyDriver('${o.orderId}')" class="w-full py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg text-xs transition-all flex items-center justify-center gap-2 shadow-sm">
- <i class="fa-brands fa-whatsapp text-sm"></i> Kabari Driver via WA
- </button>
- ` : ''}
- </div>
- </div>
- `;
- }
- // ------------------------------
- 
  setH('admin-order-modal-content', `
  <div class="flex flex-col gap-3 text-xs">
  <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 shadow-sm grid grid-cols-2 gap-3">
@@ -2318,8 +1992,6 @@ window.openOrderDetail = i => {
  <p class="text-[9px] font-bold text-slate-400 mt-0.5">${o.dateString ? new Date(o.dateString).toLocaleString('id-ID') : ''}</p>
  </div>
  </div>
- 
- ${jastipHtml}
  
  <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
  <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-bl-full -z-10"></div>
@@ -2368,7 +2040,6 @@ window.openOrderDetail = i => {
  ${o.payment?.productDiscount ? `<div class="flex justify-between text-emerald-400"><span>Diskon Produk</span><span>-${fCur(o.payment.productDiscount)}</span></div>` : ''}
  
  ${o.customer?.deliveryMethod === 'delivery' ? `<div class="flex justify-between text-slate-300"><span>Ongkos Kirim</span><span>${fCur(o.payment?.shippingCost)}</span></div>` : ''}
- ${o.customer?.deliveryMethod === 'jastip' ? `<div class="flex justify-between text-slate-300"><span>Ongkir Ekspedisi</span><span>${fCur(o.payment?.shippingCost)}</span></div>` : ''}
  
  ${o.payment?.shippingDiscount ? `<div class="flex justify-between text-emerald-400"><span>Diskon Ongkir</span><span>-${fCur(o.payment.shippingDiscount)}</span></div>` : ''}
  </div>
@@ -2392,13 +2063,11 @@ window.closeOrderDetailModal=()=>{ const menu = el('print-options-menu'); if(men
 window.updateOrderStatus=async(i,s)=>{if(isSaving)return;isSaving=!0;sLoad('Update Status...');try{await db.collection("freshmart_orders").doc(i).update({status:s});showToast("Status diupdate!")}catch(e){showToast("Gagal update!")}isSaving=!1;hLoad()};
 window.deleteOrder=i=>{showConfirm("Hapus Pesanan","Yakin ingin menghapus pesanan ini?",async()=>{if(isSaving)return;isSaving=!0;sLoad('Menghapus...');try{await db.collection("freshmart_orders").doc(i).delete();showToast("Pesanan dihapus!");if(cVOrd===i)closeOrderDetailModal()}catch(e){showToast("Gagal menghapus!")}isSaving=!1;hLoad()})};
 window.openReceiptPreview=()=>{const o=gOrds.find(x=>x.orderId===cVOrd);if(!o)return;const d=o.dateString?new Date(o.dateString).toLocaleString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'',sN=appData.store.name||"Toko",sW=appData.store.wa||"",pL=(l,r,len=32)=>{const p=len-l.length-r.length;return l+(p>0?' '.repeat(p):' ')+r};let h=`<div class="text-center font-bold" style="font-size:13px;margin-bottom:2px;">${esc(sN)}</div>${sW?`<div class="text-center" style="margin-bottom:4px;">WA: ${esc(sW)}</div>`:''}<div class="border-b border-dashed border-black my-2"></div><div style="white-space:pre;">Order: #${o.orderId}</div><div style="white-space:pre;">Tgl : ${d}</div><div style="white-space:pre;">Plg : ${esc(o.customer.name||'Guest').substring(0,20)}</div><div style="white-space:pre;">Tipe : ${o.customer.deliveryMethod==='delivery'?'Kurir':'Toko'}</div><div class="border-b border-dashed border-black my-2"></div>${o.customer.note?`<div style="white-space:pre-wrap;word-break:break-all;">Cat: ${esc(o.customer.note)}</div><div class="border-b border-dashed border-black my-2"></div>`:''}`;o.items.forEach(i=>{const n=(esc(i.name)+(i.variantName?` (${esc(i.variantName)})`:'')).substring(0,32),q=`${i.qty}${i.unit?' '+i.unit:''} x ${i.effectivePrice.toLocaleString('id-ID')}`,t=(i.qty*i.effectivePrice).toLocaleString('id-ID');h+=`<div style="white-space:pre-wrap;font-weight:bold;word-break:break-all;">${n}</div><div style="white-space:pre;font-size:11px;">${pL(q,t)}</div>`});h+=`<div class="border-b border-dashed border-black my-2"></div><div style="white-space:pre;">${pL('Subtotal',(o.payment?.subtotal||0).toLocaleString('id-ID'))}</div>`;if(o.payment?.productDiscount)h+=`<div style="white-space:pre;">${pL('Diskon',`-${o.payment.productDiscount.toLocaleString('id-ID')}`)}</div>`;if(o.customer?.deliveryMethod!=='pickup') {
- const labelOngkir = o.customer?.deliveryMethod === 'jastip' ? 'Ongkir Eksp.' : 'Ongkir';
- h+=`<div style="white-space:pre;">${pL(labelOngkir,(o.payment?.shippingCost||0).toLocaleString('id-ID'))}</div>`;
+ h+=`<div style="white-space:pre;">${pL('Ongkir',(o.payment?.shippingCost||0).toLocaleString('id-ID'))}</div>`;
 }if(o.payment?.shippingDiscount)h+=`<div style="white-space:pre;">${pL('Pot.Ongkir',`-${o.payment.shippingDiscount.toLocaleString('id-ID')}`)}</div>`;h+=`<div class="border-b border-dashed border-black my-2"></div><div style="white-space:pre;font-weight:bold;font-size:12px;">${pL('TOTAL','Rp '+(o.payment?.grandTotal||0).toLocaleString('id-ID'))}</div><div style="white-space:pre;">${pL('Bayar:',String(o.payment?.method||'').toUpperCase())}</div><div class="border-b border-dashed border-black my-2"></div><div class="text-center my-2" style="font-size:10px;">Terima Kasih</div><div class="border-b border-dashed border-black my-2"></div><div style="height:15px;"></div>`;setH('receipt-paper-content',h);show('receipt-preview-modal');setTimeout(()=>{el('receipt-preview-modal').classList.remove('opacity-0');el('receipt-preview-modal-box').classList.remove('scale-95')},10)};
 window.closeReceiptPreviewModal=()=>{el('receipt-preview-modal').classList.add('opacity-0');el('receipt-preview-modal-box').classList.add('scale-95');setTimeout(()=>hide('receipt-preview-modal'),300)};
 window.executePrintReceipt=()=>{const o=gOrds.find(x=>x.orderId===cVOrd);if(!o)return;if(window.AppInventor){try{const len=32;const pC=t=>{let s=String(t).substring(0,len);let sp=Math.max(0,Math.floor((len-s.length)/2));return " ".repeat(sp)+s;};const pLR=(l,r)=>{let ls=String(l);let rs=String(r);let ll=ls.substring(0,len-rs.length-1);return ll+" ".repeat(Math.max(0,len-ll.length-rs.length))+rs;};let sT=pC(appData.store.name||"Toko")+"\n";if(appData.store.slogan)sT+=pC(appData.store.slogan)+"\n";sT+="-".repeat(len)+"\n";sT+=pLR("ID: "+o.orderId,"")+"\n";let ds=o.dateString?new Date(o.dateString).toLocaleString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):new Date().toLocaleString('id-ID');sT+=pLR("Tgl: "+ds,"")+"\n";sT+=pLR("Plg: "+(o.customer?.name||"Guest").substring(0,18),"")+"\n";sT+=pLR("Tipe: "+(o.customer?.deliveryMethod==='delivery'?'Kurir':'Toko'),"")+"\n";sT+="-".repeat(len)+"\n";(o.items||[]).forEach(i=>{let n=String(i.name);if(i.variantName)n+=` (${i.variantName})`;n=n.substring(0,len);sT+=n+"\n";let q=`${i.qty}${i.unit?' '+i.unit:''} x ${(i.effectivePrice||0).toLocaleString('id-ID')}`;let t=((i.effectivePrice||0)*(i.qty||0)).toLocaleString('id-ID');sT+=pLR(" "+q,t)+"\n";});sT+="-".repeat(len)+"\n";sT+=pLR("Subtotal",(o.payment?.subtotal||0).toLocaleString('id-ID'))+"\n";if(o.payment?.productDiscount)sT+=pLR("Diskon Brg","-"+o.payment.productDiscount.toLocaleString('id-ID'))+"\n";if(o.customer?.deliveryMethod!=='pickup') {
- const labelOngkir = o.customer?.deliveryMethod === 'jastip' ? "Ongkir Eksp." : "Ongkir";
- sT+=pLR(labelOngkir,(o.payment?.shippingCost||0).toLocaleString('id-ID'))+"\n";
+ sT+=pLR("Ongkir",(o.payment?.shippingCost||0).toLocaleString('id-ID'))+"\n";
 }sT+="-".repeat(len)+"\n";sT+=pLR("TOTAL","Rp "+(o.payment?.grandTotal||0).toLocaleString('id-ID'))+"\n";sT+=pLR("BAYAR",String(o.payment?.method||"").toUpperCase())+"\n";sT+="-".repeat(len)+"\n";sT+=pC("Terima Kasih")+"\n";sT+=pC("Barang yg sudah dibeli")+"\n";sT+=pC("tidak dpt dikembalikan")+"\n\n\n\n";let b64=btoa(unescape(encodeURIComponent(sT)));window.AppInventor.setWebViewString("PRINT_THERMAL|||base64,"+b64);showToast("Mengirim ke printer...");}catch(err){showToast('Gagal memuat struk: error encode');}}else{const p=el('receipt-paper-content').innerHTML,t=el('thermal-print-section');if(t){t.innerHTML=p;window.print()}}};
 
 window.downloadReceiptImage = async () => {
@@ -2814,7 +2483,7 @@ window.saveAdminSettings = async () => {
 };
 
 window.backupData=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(appData)],{type:"application/json"}));a.download=`Backup.json`;a.click();showToast("Terunduh")};
-window.restoreData=e=>{const r=new FileReader();r.onload=v=>{try{let currLic=appData.licenseKey;let currProMaxLic=appData.promaxLicenseKey;const parsed=JSON.parse(v.target.result);if(!parsed||typeof parsed!=='object'||!Array.isArray(parsed.products)||typeof parsed.store!=='object'||typeof parsed.auth!=='object'){return showToast('File bukan backup FreshMart yang valid!');}appData=parsed;if(currLic&&!appData.licenseKey)appData.licenseKey=currLic;if(currProMaxLic&&!appData.promaxLicenseKey)appData.promaxLicenseKey=currProMaxLic;saveApp();setTimeout(()=>location.reload(),1000)}catch(x){showToast('Gagal! File tidak valid atau rusak.')}};r.readAsText(e.target.files[0])};
+window.restoreData=e=>{const r=new FileReader();r.onload=v=>{try{let currLic=appData.licenseKey;const parsed=JSON.parse(v.target.result);if(!parsed||typeof parsed!=='object'||!Array.isArray(parsed.products)||typeof parsed.store!=='object'||typeof parsed.auth!=='object'){return showToast('File bukan backup FreshMart yang valid!');}appData=parsed;if(currLic&&!appData.licenseKey)appData.licenseKey=currLic;saveApp();setTimeout(()=>location.reload(),1000)}catch(x){showToast('Gagal! File tidak valid atau rusak.')}};r.readAsText(e.target.files[0])};
 
 const rAdmL = t => {
     let stats = '';
@@ -3167,7 +2836,7 @@ window.submitAdminForm = async () => {
  
  if (activeTab === 'products' && !d.sku) d.sku = 'SKU' + Date.now().toString().slice(-6);
  
- // Pastikan array sudah tersedia (Penting untuk data driver yang baru pertama dibuat)
+ // Pastikan array koleksi sudah tersedia
  if (!appData[activeTab]) appData[activeTab] = [];
  
  if (eId) {
@@ -3187,14 +2856,7 @@ window.submitAdminForm = async () => {
  }
  await saveApp();
  closeAdminModal();
- 
- // Refresh layar: Jika sedang di PRO MAX, update list driver saja
- if (cTab === 'promax' && activeTab === 'drivers') {
- if (typeof renderDriverList === 'function') renderDriverList();
- } else {
  rAdmItms(cTab);
- }
- 
  showToast("Tersimpan!");
  } catch (e) {
  showToast("Gagal menyimpan!");
@@ -3433,487 +3095,25 @@ window.generateA4Document = async (type) => {
  const imgData = canvas.toDataURL('image/png');
  
  tempPdfData = {
- imgData: imgData,
- width: canvas.width,
- height: canvas.height,
- type: type,
- fileName: type === 'invoice' ? `Invoice_${o.orderId}.pdf` : `Surat_Jalan_${o.orderId}.pdf`
- };
+  imgData: imgData,
+  width: canvas.width,
+  height: canvas.height,
+  type: type,
+  fileName: type === 'invoice' ? `Invoice_${o.orderId}.pdf` : `Surat_Jalan_${o.orderId}.pdf`
+  };
 
- document.getElementById('preview-img-result').src = imgData;
- document.getElementById('pdf-preview-modal').classList.remove('hidden');
- 
- } catch (error) {
- console.error(error);
- showToast('Gagal memproses dokumen A4!');
- } finally {
- const hackStyle = document.getElementById('anti-crop-hack');
- if (hackStyle) hackStyle.remove();
- isSaving = false;
- hLoad(); 
- }
-};
-
-// --- FUNGSI MANAJEMEN JASTIP PRO MAX ---
-
-// Fungsi menyimpan pengaturan tarif dan jadwal jastip
-window.saveJastipSettings = async () => {
- if (isSaving) return;
- isSaving = true;
- sLoad('Menyimpan Pengaturan Jastip...');
- try {
- if (!appData.jastip) appData.jastip = {};
- appData.jastip.isActive = getV('jastip-status') === 'true';
- appData.jastip.startHour = getV('jastip-start');
- appData.jastip.endHour = getV('jastip-end');
- appData.jastip.tarifPerKm = parseFloat(getV('jastip-tarif')) || 0;
- appData.jastip.komisiDriver = parseFloat(getV('jastip-komisi')) || 0;
- 
- await saveApp();
- showToast("Pengaturan Jastip Tersimpan!");
- } catch (e) {
- showToast("Gagal menyimpan pengaturan.");
- }
- isSaving = false;
- hLoad();
-};
-
-// Fungsi merender daftar mitra driver di menu PRO MAX
-window.renderDriverList = () => {
- if (!appData.drivers) appData.drivers = [];
- const container = el('list-drivers-container');
- if (!container) return;
- 
- if (appData.drivers.length === 0) {
- container.innerHTML = `<div class="text-center py-6"><i class="fa-solid fa-id-card text-3xl text-slate-300 dark:text-slate-600 mb-2"></i><p class="text-xs text-slate-500 font-bold">Belum ada mitra driver terdaftar.</p></div>`;
- return;
- }
-
- container.innerHTML = appData.drivers.map(d => `
- <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-purple-400 transition-colors" onclick="oAEd('drivers', ${d.id})">
- <div class="flex items-center gap-3">
- <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-500 shrink-0 border border-slate-300 dark:border-slate-600">
- <i class="fa-solid fa-helmet-safety"></i>
- </div>
- <div>
- <p class="font-semibold text-xs text-slate-800 dark:text-white">${esc(d.name)}</p>
- <p class="text-[9px] font-bold text-slate-500 dark:text-slate-400 mt-0.5"><i class="fa-solid fa-motorcycle"></i> ${esc(d.vehicle)}</p>
- </div>
- </div>
- <div class="flex flex-col items-end gap-1">
- <span class="badge badge-xs ${d.status === 'Aktif' ? 'badge-emerald' : 'badge-rose'}">${esc(d.status)}</span>
- <button onclick="event.stopPropagation(); oADel('drivers', ${d.id}); setTimeout(renderDriverList, 500)" class="text-slate-400 hover:text-rose-500 text-[10px] mt-1"><i class="fa-solid fa-trash"></i> Hapus</button>
- </div>
- </div>
- `).join('');
-};
-
-// --- LOGIKA PENUGASAN & NOTIFIKASI DRIVER ---
-window.assignDriver = async (orderId, driverId) => {
- if (isSaving) return;
- 
- const driver = (appData.drivers || []).find(d => d.id == driverId);
- const driverName = driver ? driver.name : null;
-
- isSaving = true;
- sLoad('Menugaskan Driver...');
- try {
- await db.collection("freshmart_orders").doc(orderId).update({
- "jastip.driverId": driverId ? parseInt(driverId) : null,
- "jastip.driverName": driverName,
- "status": "Diproses" // Otomatis ubah status pesanan
- });
- showToast("Driver berhasil ditugaskan!");
- 
- // Render ulang modal detail order agar tombol WA muncul
- setTimeout(() => openOrderDetail(orderId), 500);
- } catch (e) {
- console.error(e);
- showToast("Gagal menugaskan driver.");
- }
- isSaving = false;
- hLoad();
-};
-
-window.notifyDriver = (orderId) => {
- const o = gOrds.find(x => x.orderId === orderId);
- if (!o || !o.jastip || !o.jastip.driverId) return;
-
- const driver = (appData.drivers || []).find(d => d.id == o.jastip.driverId);
- if (!driver || !driver.username) return showToast("Nomor WA Driver tidak valid!");
-
- let w = driver.username.replace(/\D/g, '');
- if (w.startsWith('0')) w = '62' + w.substring(1);
-
- let x = `*TUGAS PENGIRIMAN BARU!* 📦\n\n`;
- x += `Halo *${driver.name}*, ada pesanan baru untuk Anda!\n\n`;
- x += `*ID Order:* ${o.orderId}\n`;
- x += `*Nama Pembeli:* ${o.customer?.name}\n`;
- x += `*Alamat:* ${o.customer?.address}\n`;
- if (o.customer?.lat) x += `*GPS:* https://www.google.com/maps?q=${o.customer.lat},${o.customer.lng}\n`;
- 
- x += `\n*Fee Komisi Anda:* ${fCur(o.jastip.komisiDriver)}\n`;
- x += `*Tagihan Pembeli:* ${fCur(o.payment?.grandTotal)} (${(o.payment?.method || '').toUpperCase()})\n\n`;
- 
- x += `Silakan login ke *Panel Driver* untuk mengupdate status perjalanan Anda:\n`;
- x += `🌐 ${window.location.origin}`; // [BUG 12 FIXED] Gunakan domain dinamis, bukan hardcode
-
- window.open(`https://wa.me/${w}?text=${encodeURIComponent(x)}`, '_blank');
-};
-
-// ========================================================
-// LOGIKA PANEL DRIVER JASTIP
-// ========================================================
-let currentDriver = null;
-let unsubDriverOrders = null;
-
-window.logoutDriver = () => {
- currentDriver = null;
- if (unsubDriverOrders) { unsubDriverOrders(); unsubDriverOrders = null; }
- changeView('view-admin-login'); // Kembalikan ke halaman login utama
-};
-
-window.listenDriverOrders = () => {
- if (!currentDriver) return;
- 
- sLoad('Memuat Tugas...');
- if (unsubDriverOrders) unsubDriverOrders();
- 
- unsubDriverOrders = db.collection("freshmart_orders")
- .where("jastip.driverId", "==", parseInt(currentDriver.id))
- .onSnapshot(snap => {
- const container = el('driver-orders-container');
- 
- // Filter status dilakukan di lokal agar tidak terkena error Index Firebase
- const activeOrders = [];
- snap.forEach(doc => {
- const o = doc.data();
- if (o.status === 'Diproses') activeOrders.push(o);
- });
-
- if (activeOrders.length === 0) {
- setIn('driver-task-count', '0 Tugas');
- container.innerHTML = `
- <div class='text-center py-16 bg-white dark:bg-slate-800 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700'>
- <i class='fa-solid fa-mug-hot text-5xl text-slate-300 dark:text-slate-600 mb-4 block'></i>
- <h3 class='font-bold text-slate-700 dark:text-slate-300'>Belum Ada Tugas</h3>
- <p class='text-xs font-bold text-slate-400 mt-1'>Silakan bersantai sejenak.</p>
- </div>`;
- hLoad();
- return;
- }
-
- setIn('driver-task-count', `${activeOrders.length} Tugas`);
- let html = '';
- 
-activeOrders.forEach(o => {
- const btnAction = getDriverActionButton(o);
- let itemsList = o.items.map(i => `<li class='text-[10px] text-slate-600 dark:text-slate-400 font-bold flex justify-between border-b border-slate-100 dark:border-slate-700/50 pb-1 mb-1 last:border-0 last:pb-0 last:mb-0'><span>${i.qty}${i.unit?' '+i.unit:''} ${esc(i.name)} ${i.variantName ? `(${i.variantName})` : ''}</span></li>`).join('');
-
- // --- LOGIKA WARNA BADGE DINAMIS ---
- const dStatus = o.jastip.driverStatus || 'TUGAS BARU';
- // Badge warna driver: amber=baru, sky=menuju toko, violet=ambil, emerald=menuju pembeli
- let bColor = 'bg-amber-100 text-amber-600 border-amber-200 dark:bg-amber-900/40 dark:text-amber-400 dark:border-amber-800';
- let bIcon = 'fa-bell fa-shake'; // Efek lonceng bergetar untuk order baru
- 
- if (dStatus === 'MENUJU TOKO') { bColor = 'bg-sky-100 text-sky-600 border-sky-200 dark:bg-sky-900/40 dark:text-sky-400 dark:border-sky-800'; bIcon = 'fa-person-walking-arrow-right'; }
- else if (dStatus === 'AMBIL BARANG') { bColor = 'bg-violet-100 text-violet-600 border-violet-200 dark:bg-violet-900/40 dark:text-violet-400 dark:border-violet-800'; bIcon = 'fa-box'; }
- else if (dStatus === 'MENUJU PEMBELI') { bColor = 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-400 dark:border-emerald-800'; bIcon = 'fa-motorcycle'; }
-
- html += `
- <div class='bg-white dark:bg-slate-800 rounded-[1.5rem] p-5 shadow-lg border-2 border-slate-100 dark:border-slate-700 relative overflow-hidden group hover:border-emerald-400 transition-colors'>
- 
- <div class='absolute top-4 right-4 badge badge-pill ${bColor} transition-colors'>
- <i class='fa-solid ${bIcon}'></i> ${dStatus === 'TUGAS BARU' ? 'BARU MASUK' : dStatus}
- </div>
-
- <div class='pr-28 mb-4'>
- <p class='text-[10px] font-medium text-slate-400 uppercase tracking-widest mb-1'>ID: #${o.orderId}</p>
- <h3 class='font-bold text-slate-800 dark:text-white text-lg leading-tight truncate'>${esc(o.customer.name)}</h3>
- </div>
- 
- <div class='bg-indigo-50 dark:bg-indigo-900/10 p-3 rounded-xl border border-indigo-100 dark:border-indigo-800/30 mb-4'>
- <p class='text-[9px] font-medium text-indigo-500 uppercase mb-1.5'><i class='fa-solid fa-map-location-dot'></i> Tujuan Antar</p>
- <p class='text-xs font-bold text-slate-700 dark:text-slate-300 leading-relaxed'>${esc(o.customer.address)}</p>
- ${o.customer.lat ? `
- <button onclick='window.open("https://maps.google.com/?q=${o.customer.lat},${o.customer.lng}", "_blank")' class='mt-2 text-[10px] bg-white border border-indigo-200 text-indigo-600 px-3 py-1.5 rounded-lg font-bold hover:bg-indigo-500 hover:text-white transition-colors shadow-sm'>
- <i class='fa-solid fa-location-arrow'></i> Buka Navigasi GPS
- </button>
- ` : ''}
- </div>
- 
- <div class='mb-4'>
- <p class='text-[9px] font-medium text-slate-400 uppercase mb-1.5'><i class='fa-solid fa-box-open'></i> Barang yang harus diambil di toko:</p>
- <ul class='bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700'>
- ${itemsList}
- </ul>
- </div>
- 
- <div class='flex items-center justify-between bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-xl border border-emerald-100 dark:border-emerald-800/30 mb-4'>
- <span class='text-[10px] font-medium text-emerald-600 uppercase'>Fee Anda</span>
- <span class='font-bold text-emerald-600 text-sm'>${fCur(o.jastip.komisiDriver)}</span>
- </div>
- 
- ${btnAction}
- </div>
- `;
- });
- 
- container.innerHTML = html;
- hLoad();
- });
-};
-
-// [BUG 1 FIXED] Fungsi switchDriverTab & listenDriverHistory duplikat dihapus di sini.
-// Versi lengkap (dengan saldo, WD, dan sub-tab) ada di bawah.
-
-const getDriverActionButton = (o) => {
- const ds = o.jastip.driverStatus || 'TUGAS BARU';
- 
- if (ds === 'TUGAS BARU') {
- return `<button onclick="updateDriverStatus('${o.orderId}', 'MENUJU TOKO')" class='w-full py-3.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition-all shadow-md'><i class='fa-solid fa-person-walking-arrow-right'></i> Konfirmasi & Menuju Toko</button>`;
- } 
- else if (ds === 'MENUJU TOKO') {
- return `<button onclick="updateDriverStatus('${o.orderId}', 'AMBIL BARANG')" class='w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-all shadow-md shadow-emerald-500/20'><i class='fa-solid fa-box'></i> Saya Sudah Ambil Barang</button>`;
- } 
- else if (ds === 'AMBIL BARANG') {
- return `<button onclick="updateDriverStatus('${o.orderId}', 'MENUJU PEMBELI')" class='w-full py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition-all shadow-md'><i class='fa-solid fa-motorcycle'></i> Mulai Perjalanan ke Pembeli</button>`;
- } 
- else if (ds === 'MENUJU PEMBELI') {
- return `<button onclick="updateDriverStatus('${o.orderId}', 'SELESAI')" class='w-full py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs transition-all shadow-md shadow-emerald-500/30'><i class='fa-solid fa-check-double'></i> Selesaikan Pesanan</button>`;
- }
- return '';
-};
-
-// [BUG 4 FIXED] isSaving tidak direset saat error — tambahkan guard & finally block
-window.updateDriverStatus = async (orderId, newDriverStatus) => {
- if (isSaving) return;
- isSaving = true;
- sLoad('Memperbarui Status...');
- try {
- let updateData = { "jastip.driverStatus": newDriverStatus };
- 
- if (newDriverStatus === 'SELESAI') {
- updateData["status"] = "Selesai";
- }
-
- await db.collection("freshmart_orders").doc(orderId).update(updateData);
- 
- const doc = await db.collection("freshmart_orders").doc(orderId).get();
- const o = doc.data();
- let waText = "";
-
- if (newDriverStatus === 'MENUJU PEMBELI') {
- waText = `Halo *${o.customer.name}*! 👋\n\nPesanan JASTIP Anda (ID: ${o.orderId}) sedang dalam perjalanan.\n\n*Driver:* ${currentDriver.name}\n*Kendaraan:* ${currentDriver.vehicle}\n\nDriver sedang menuju lokasi Anda. Mohon pastikan nomor telepon Anda aktif. Terima kasih sudah belanja di *${appData.store.name}*!`;
- } else if (newDriverStatus === 'SELESAI') {
- waText = `Halo *${o.customer.name}*! 🎉\n\nPesanan JASTIP Anda (ID: ${o.orderId}) sudah TERKIRIM.\n\nTerima kasih telah menggunakan layanan kami. Semoga puas dengan layanan *${appData.store.name}*!`;
- }
-
- // [BUG 2 FIXED] Sebelumnya mencari nomor HP dari customer.name (salah).
- // Nomor pelanggan tidak tersimpan di name. Sekarang notifikasi dikirim ke
- // nomor WA toko (admin), karena nomor WA pelanggan memang tidak dikumpulkan.
- if (waText !== "") {
- showToast("Status Diperbarui!");
- let storeWa = (appData.store.wa || '').replace(/\D/g, '');
- if (storeWa.startsWith('0')) storeWa = '62' + storeWa.substring(1);
- if (storeWa) {
- setTimeout(() => {
- window.open(`https://wa.me/${storeWa}?text=${encodeURIComponent(waText)}`, '_blank');
- }, 1000);
- }
- } else {
- showToast("Status Diperbarui!");
- }
-
- } catch (e) {
- showToast("Gagal memperbarui status.");
- } finally {
- // [BUG 4 FIXED] isSaving & hLoad sekarang selalu direset di finally
- isSaving = false;
- hLoad();
- }
-};
-
-// ========================================================
-// LOGIKA SALDO & WITHDRAW DRIVER
-// ========================================================
-let currentSaldo = 0;
-
-window.switchDriverTab = (t) => {
- if(t==='tugas'){ show('driver-tugas-section'); hide('driver-riwayat-section'); el('btn-tab-tugas').className='flex-1 py-2 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all'; el('btn-tab-riwayat').className='flex-1 py-2 text-xs font-bold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-all'; }
- else { hide('driver-tugas-section'); show('driver-riwayat-section'); el('btn-tab-riwayat').className='flex-1 py-2 text-xs font-semibold rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all'; el('btn-tab-tugas').className='flex-1 py-2 text-xs font-bold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-all'; if(!window.unsubDriverWD) listenDriverHistory(); }
-};
-
-window.switchDriverSubTab = (t) => {
- if(t==='order'){ show('driver-history-order-container'); hide('driver-history-wd-container'); el('btn-subtab-order').className='flex-1 py-1.5 text-[10px] font-medium rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all'; el('btn-subtab-wd').className='flex-1 py-1.5 text-[10px] font-bold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-all'; }
- else { hide('driver-history-order-container'); show('driver-history-wd-container'); el('btn-subtab-wd').className='flex-1 py-1.5 text-[10px] font-medium rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all'; el('btn-subtab-order').className='flex-1 py-1.5 text-[10px] font-bold rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-all'; }
-};
-
-window.openWithdrawModal = () => {
- if(currentSaldo < 10000) return showToast("Saldo belum mencapai Rp 10.000");
- setIn('wd-max-saldo', fCur(currentSaldo)); setV('wd-amount-input', '');
- show('wd-modal'); setTimeout(() => { el('wd-modal').classList.remove('opacity-0'); el('wd-modal-box').classList.remove('scale-95'); }, 10);
-};
-
-window.closeWithdrawModal = () => { el('wd-modal').classList.add('opacity-0'); el('wd-modal-box').classList.add('scale-95'); setTimeout(() => hide('wd-modal'), 300); };
-
-window.submitWithdraw = async () => {
- if(isSaving) return;
- const amt = parseFloat(getV('wd-amount-input')) || 0;
- if(amt < 10000) return showToast("Minimal penarikan Rp 10.000!");
- if(amt > currentSaldo) return showToast("Saldo Anda tidak mencukupi!");
- 
- isSaving = true; sLoad('Meminta Penarikan...');
- try {
- const wdId = 'WD' + Date.now();
- await db.collection("freshmart_withdrawals").doc(wdId).set({
- id: wdId, driverId: currentDriver.id, driverName: currentDriver.name,
- bankName: currentDriver.bankName, bankAccount: currentDriver.bankAccount, bankOwner: currentDriver.bankOwner,
- amount: amt, status: 'Menunggu Admin', timestamp: Date.now()
- });
- showToast("Permintaan terkirim ke Admin!"); closeWithdrawModal();
- } catch(e) { showToast("Gagal mengirim permintaan."); }
- isSaving = false; hLoad();
-};
-
-window.listenDriverHistory = () => {
- if (!currentDriver) return;
- setIn('driver-bank-info', `${currentDriver.bankName||'-'} | ${currentDriver.bankAccount||'-'} | A.n ${currentDriver.bankOwner||'-'}`);
- if(window.unsubDriverHistOrd) window.unsubDriverHistOrd();
- if(window.unsubDriverWD) window.unsubDriverWD();
-
- let tIncome = 0, tWd = 0;
- let ordList = [], wdList = [];
-
- const calculateAndRender = () => {
- currentSaldo = tIncome - tWd;
- setIn('driver-total-saldo', fCur(currentSaldo));
- 
- const cOrd = el('driver-history-order-container');
- cOrd.innerHTML = ordList.length ? ordList.map(o => `<div class='bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex justify-between items-center'><div><p class='font-semibold text-xs'>#${o.orderId}</p><p class='text-[9px] font-bold text-slate-500'>${new Date(o.dateString).toLocaleString('id-ID')}</p></div><p class='font-bold text-emerald-600 text-sm'>+${fCur(o.jastip.komisiDriver)}</p></div>`).join('') : `<div class='text-center py-4'><p class='text-[10px] font-bold text-slate-500'>Belum ada order selesai.</p></div>`;
- 
- const cWd = el('driver-history-wd-container');
- cWd.innerHTML = wdList.length ? wdList.map(w => {
- const sc = w.status === 'Selesai' ? 'text-emerald-500 border-emerald-200 bg-emerald-50' : (w.status === 'Ditolak' ? 'text-rose-500 border-rose-200 bg-rose-50' : 'text-amber-500 border-amber-200 bg-amber-50');
- return `<div class='bg-white dark:bg-slate-800 p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex justify-between items-center'><div><p class='font-semibold text-xs text-rose-500'>-${fCur(w.amount)}</p><p class='text-[9px] font-bold text-slate-500'>${new Date(w.timestamp).toLocaleString('id-ID')}</p></div><span class='badge badge-xs ${sc}'>${w.status}</span></div>`;
- }).join('') : `<div class='text-center py-4'><p class='text-[10px] font-bold text-slate-500'>Belum ada penarikan dana.</p></div>`;
- };
-
- window.unsubDriverHistOrd = db.collection("freshmart_orders").where("jastip.driverId", "==", parseInt(currentDriver.id)).onSnapshot(s => {
- tIncome = 0; ordList = [];
- s.forEach(d => { const o = d.data(); if(o.status === 'Selesai'){ ordList.push(o); tIncome += (o.jastip.komisiDriver || 0); } });
- ordList.sort((a,b) => b.orderId.localeCompare(a.orderId)); calculateAndRender();
- });
-
- window.unsubDriverWD = db.collection("freshmart_withdrawals").where("driverId", "==", parseInt(currentDriver.id)).onSnapshot(s => {
- tWd = 0; wdList = [];
- s.forEach(d => { const w = d.data(); wdList.push(w); if(w.status !== 'Ditolak') tWd += w.amount; });
- wdList.sort((a,b) => b.timestamp - a.timestamp); calculateAndRender();
- });
-};
-
-// --- LOGIKA ADMIN PRO MAX ---
-window.listenAdminWithdrawals = () => {
- if(window.unsubAdminWD) window.unsubAdminWD();
- window.unsubAdminWD = db.collection("freshmart_withdrawals").orderBy("timestamp", "desc").onSnapshot(snap => {
- const cont = el('admin-wd-container'); if(!cont) return;
- if(snap.empty) { cont.innerHTML = `<div class="text-center py-6 text-slate-400 font-bold text-xs">Belum ada antrean WD.</div>`; return; }
- 
- let html = '';
- snap.forEach(doc => {
- const w = doc.data();
- const bg = w.status === 'Menunggu Admin' ? 'bg-amber-50/50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800' : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700';
- html += `
- <div class="p-3.5 rounded-xl border-2 ${bg} flex flex-col gap-2.5 relative group transition-all">
- 
- <button onclick="deleteWithdrawal('${w.id}')" class="absolute top-2 right-2 w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-500 hover:bg-rose-500 hover:text-white dark:hover:bg-rose-500 dark:hover:text-white transition-all flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 border border-rose-100 dark:border-rose-800 z-10" title="Hapus Riwayat">
- <i class="fa-solid fa-trash text-[10px]"></i>
- </button>
-
- <div class="flex justify-between items-center pr-8">
- <div>
- <p class="font-semibold text-xs text-slate-800 dark:text-white">${esc(w.driverName)}</p>
- <p class="text-[9px] font-bold text-slate-500 mt-0.5">${new Date(w.timestamp).toLocaleString('id-ID')}</p>
- </div>
- <div class="text-right">
- <p class="font-bold text-rose-600 text-sm">${fCur(w.amount)}</p>
- <span class="badge badge-xs ${w.status === 'Menunggu Admin' ? 'badge-amber' : (w.status === 'Selesai' ? 'badge-emerald' : 'badge-rose')}">${w.status}</span>
- </div>
- </div>
- <div class="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-600 dark:text-slate-400 flex flex-col gap-1 relative z-0">
- <div class="flex justify-between"><span>Bank:</span> <span class="text-slate-800 dark:text-white">${esc(w.bankName || '-')}</span></div>
- <div class="flex justify-between"><span>Rekening:</span> <span class="font-bold text-emerald-600 dark:text-emerald-400">${esc(w.bankAccount || '-')}</span></div>
- <div class="flex justify-between"><span>A.n:</span> <span class="text-slate-800 dark:text-white">${esc(w.bankOwner || '-')}</span></div>
- </div>
- ${w.status === 'Menunggu Admin' ? `
- <div class="flex gap-2 mt-1">
- <button onclick="updateWdStatus('${w.id}', 'Selesai')" class="flex-1 bg-emerald-500 text-white font-bold py-2 rounded-lg text-[10px] hover:bg-emerald-600 transition-all shadow-sm"><i class="fa-solid fa-check"></i> Sudah Ditransfer</button>
- <button onclick="updateWdStatus('${w.id}', 'Ditolak')" class="bg-rose-100 text-rose-600 border border-rose-200 font-bold py-2 px-3 rounded-lg text-[10px] hover:bg-rose-200 transition-all"><i class="fa-solid fa-xmark"></i> Tolak</button>
- </div>
- ` : ''}
- </div>`;
- });
- cont.innerHTML = html;
- });
-};
-
-window.updateWdStatus = async (id, status) => {
- if(isSaving) return;
- isSaving = true; sLoad('Memperbarui...');
- try { await db.collection("freshmart_withdrawals").doc(id).update({status: status}); showToast("Status Berhasil Diperbarui!"); } 
- catch(e) { showToast("Gagal memperbarui status!"); }
- isSaving = false; hLoad();
-};
-
-window.deleteWithdrawal = (id) => {
- showConfirm("Hapus Riwayat WD", "Yakin ingin menghapus riwayat penarikan dana ini? Data akan hilang permanen.", async () => {
- if(isSaving) return;
- isSaving = true; 
- sLoad('Menghapus data...');
- try { 
- await db.collection("freshmart_withdrawals").doc(id).delete(); 
- showToast("Riwayat berhasil dihapus!"); 
- } 
- catch(e) { 
- showToast("Gagal menghapus data!"); 
- }
- isSaving = false; 
- hLoad();
- });
-};
-
-// --- NAVIGASI MENU PRO MAX ---
-window.openProMaxSub = (sub) => {
- hide('promax-menu-view');
- show('promax-content-view');
- show('btn-promax-back');
- 
- hide('promax-sub-jastip');
- hide('promax-sub-mitra');
- hide('promax-sub-withdraw');
- 
- if (sub === 'jastip') {
- show('promax-sub-jastip');
- setIn('promax-header-title', 'Atur Aturan Ekspedisi');
-setIn('promax-header-desc', 'Atur jadwal operasional, tarif paket, dan upah kurir flat.');
- } else if (sub === 'mitra') {
- show('promax-sub-mitra');
- setIn('promax-header-title', 'Mitra Driver');
- setIn('promax-header-desc', 'Kelola akun dan data mitra driver.');
- } else if (sub === 'withdraw') {
- show('promax-sub-withdraw');
- setIn('promax-header-title', 'Tarik Dana');
- setIn('promax-header-desc', 'Konfirmasi penarikan saldo driver.');
- }
-};
-
-window.closeProMaxSub = () => {
- show('promax-menu-view');
- hide('promax-content-view');
- hide('btn-promax-back');
- 
- setH('promax-header-title', '<i class="fa-solid fa-crown mr-2"></i> PRO MAX Dashboard');
- setIn('promax-header-desc', 'Pusat kendali fitur eksklusif.');
+  document.getElementById('preview-img-result').src = imgData;
+  document.getElementById('pdf-preview-modal').classList.remove('hidden');
+  
+  } catch (error) {
+  console.error(error);
+  showToast('Gagal memproses dokumen A4!');
+  } finally {
+  const hackStyle = document.getElementById('anti-crop-hack');
+  if (hackStyle) hackStyle.remove();
+  isSaving = false;
+  hLoad();
+  }
 };
 
 // ============================================================
