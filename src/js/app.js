@@ -2962,30 +2962,20 @@ window.generateA4Document = async (type) => {
  
  if (type === 'invoice') {
  setIn('inv-store-name', appData.store.name || 'TOKO GRAFIKA');
- setIn('inv-store-slogan', appData.store.slogan || 'RITEL & GROSIR');
  setIn('inv-store-address', appData.store.address || 'Alamat Toko');
  setH('inv-store-wa', `<i class='fa-brands fa-whatsapp text-emerald-600 mr-1'></i> WA: ${esc(appData.store.wa || '-')}`);
  setIn('inv-id', '#' + o.orderId);
- setIn('inv-date', 'Tgl: ' + formattedDate);
+ setIn('inv-date', formattedDate);
  setIn('inv-cust-name', o.customer?.name || 'Pelanggan');
  setIn('inv-cust-address', o.customer?.address || '-');
  setIn('inv-method', (o.payment?.method || 'CASH').toUpperCase());
- setIn('inv-delivery-type', o.customer?.deliveryMethod === 'delivery' ? `Kurir Toko (${(o.customer?.distance || 0).toFixed(1)}km)` : 'Ambil di Toko');
  
  // Render logo Kop Surat Invoice sesuai tema
  const invLogoBox = el('inv-logo-box');
  const invLogoImg = el('inv-logo-img');
  const invLogoIcon = el('inv-logo-icon');
- const invSlogan = el('inv-store-slogan');
- const invDocTitle = el('inv-doc-title');
- const invGrandtotalBox = el('inv-grandtotal-box');
- const invGrandtotalText = el('inv-grandtotal');
 
  if (invLogoBox) invLogoBox.style.backgroundColor = themeClr;
- if (invSlogan) invSlogan.style.color = themeClr;
- if (invDocTitle) invDocTitle.style.color = themeClr;
- if (invGrandtotalBox) invGrandtotalBox.style.backgroundColor = themeSoftBg;
- if (invGrandtotalText) invGrandtotalText.style.color = themeClr;
 
  if (isLogoUrl) {
    if (invLogoImg) { invLogoImg.src = logoVal; invLogoImg.classList.remove('hidden'); }
@@ -3000,25 +2990,20 @@ window.generateA4Document = async (type) => {
  
  let itemsHtml = (o.items || []).map((item, index) => {
  const isGrosir = item.effectivePrice < item.price;
- const varKeterangan = [item.variantName, (isGrosir ? 'Harga Grosir' : '')].filter(Boolean).join(' &bull; ');
- const rowBg = index % 2 === 1 ? 'background-color: #f8fafc;' : 'background-color: #ffffff;';
+ const varKeterangan = [item.variantName, (isGrosir ? 'Grosir' : '')].filter(Boolean).join(' · ');
 
  return `
- <tr style="border-bottom: 1px solid #e2e8f0; font-size: 10.5px; color: #334155; ${rowBg}">
- <td style="padding: 8px 10px; text-align: center; font-weight: 700; color: #64748b; vertical-align: middle;">
- ${index + 1}
+ <tr style="border-bottom: 1px solid #f1f5f9; font-size: 11px; color: #334155;">
+ <td style="padding: 10px 8px 10px 0; font-weight: 800; color: #0f172a; vertical-align: middle; width: 26%; white-space: nowrap;">
+ ${item.qty}${item.unit ? ` <span style="color:${themeClr}; font-weight:700;">${esc(item.unit)}</span>` : ''}${varKeterangan ? ` <span style="font-size:9px; color:#64748b; font-weight:600;">(${esc(varKeterangan)})</span>` : ''}
  </td>
- <td style="padding: 8px 10px; vertical-align: middle; line-height: 1.35;">
- <span style="font-weight: 700; color: #0f172a;">${esc(item.name)}</span>
- ${varKeterangan ? `<div style="font-size: 9px; color: ${themeClr}; font-weight: 600; margin-top: 1px;">${varKeterangan}</div>` : ''}
+ <td style="padding: 10px 8px; font-weight: 600; vertical-align: middle; width: 34%; word-break: break-word; line-height: 1.4;">
+ ${esc(item.name)}
  </td>
- <td style="padding: 8px 10px; text-align: center; font-weight: 800; color: #0f172a; vertical-align: middle;">
- ${item.qty}${item.unit ? ` <span style="font-size: 9px; color: #64748b; font-weight: 600;">${esc(item.unit)}</span>` : ''}
- </td>
- <td style="padding: 8px 10px; text-align: right; font-weight: 600; color: #475569; vertical-align: middle;">
+ <td style="padding: 10px 8px; text-align: right; vertical-align: middle; width: 20%; word-break: break-word;">
  ${fCur(item.effectivePrice)}
  </td>
- <td style="padding: 8px 10px; text-align: right; font-weight: 800; color: #0f172a; vertical-align: middle;">
+ <td style="padding: 10px 0 10px 8px; text-align: right; font-weight: 800; color: #0f172a; vertical-align: middle; width: 20%; word-break: break-word;">
  ${fCur(item.effectivePrice * item.qty)}
  </td>
  </tr>
@@ -3043,20 +3028,16 @@ window.generateA4Document = async (type) => {
  } else hide('inv-shipping-discount-row');
  
  setIn('inv-grandtotal', fCur(o.payment?.grandTotal || 0));
- setIn('inv-footer-text', appData.store.footerText || 'Terima kasih atas kunjungan dan kepercayaan Anda.');
- 
- const bankList = (appData.banks || []).map(b => `<div><b>${esc(b.bankName)}:</b> ${esc(b.bankAccount)} a.n ${esc(b.bankOwner)}</div>`).join('');
- setH('inv-bank-info', bankList ? `<p class="font-bold text-slate-700 mb-0.5">Rekening Toko:</p>${bankList}` : '');
+ setIn('inv-footer-text', appData.store.footerText || 'Terima kasih telah berbelanja.');
  
  } else {
  setIn('sj-store-name', appData.store.name || 'TOKO GRAFIKA');
- setIn('sj-store-slogan', 'SURAT PENGANTAR RESMI');
- setIn('sj-store-address', appData.store.address || 'Alamat Toko');
- setH('sj-store-wa', `<i class='fa-brands fa-whatsapp text-emerald-600 mr-1'></i> WA: ${esc(appData.store.wa || '-')}`);
+ setIn('sj-store-address', appData.store.address || '-');
+ setIn('sj-store-wa', 'WA: ' + (appData.store.wa || '-'));
  setIn('sj-id', '#SJ-' + o.orderId);
- setIn('sj-date', 'Tgl: ' + formattedDate);
+ setIn('sj-date', formattedDate);
  setIn('sj-sender-name', appData.store.name || 'TOKO GRAFIKA');
- setIn('sj-cust-name', o.customer?.name || 'Pelanggan');
+ setIn('sj-cust-name', o.customer?.name || 'Anonim');
  setIn('sj-cust-address', o.customer?.address || '-');
  setIn('sj-sign-store', appData.store.name || 'Pihak Toko');
  
@@ -3064,12 +3045,8 @@ window.generateA4Document = async (type) => {
  const sjLogoBox = el('sj-logo-box');
  const sjLogoImg = el('sj-logo-img');
  const sjLogoIcon = el('sj-logo-icon');
- const sjSlogan = el('sj-store-slogan');
- const sjDocTitle = el('sj-doc-title');
 
  if (sjLogoBox) sjLogoBox.style.backgroundColor = themeClr;
- if (sjSlogan) sjSlogan.style.color = themeClr;
- if (sjDocTitle) sjDocTitle.style.color = themeClr;
 
  if (isLogoUrl) {
    if (sjLogoImg) { sjLogoImg.src = logoVal; sjLogoImg.classList.remove('hidden'); }
@@ -3088,25 +3065,20 @@ window.generateA4Document = async (type) => {
  } else hide('sj-cust-note');
  
  let itemsHtml = (o.items || []).map((item, index) => {
- const varKeterangan = item.variantName ? esc(item.variantName) : '-';
- const rowBg = index % 2 === 1 ? 'background-color: #f8fafc;' : 'background-color: #ffffff;';
+ const isGrosir = item.effectivePrice < item.price;
+ const varKeterangan = [item.variantName, (isGrosir ? 'Grosir' : '')].filter(Boolean).join(' · ');
+ const varHtml = varKeterangan ? `${esc(varKeterangan)}` : '-';
 
  return `
- <tr style="border-bottom: 1px solid #e2e8f0; font-size: 10.5px; color: #334155; ${rowBg}">
- <td style="padding: 8px 10px; text-align: center; font-weight: 700; color: #64748b; vertical-align: middle;">
- ${index + 1}
- </td>
- <td style="padding: 8px 10px; vertical-align: middle; line-height: 1.35; font-weight: 700; color: #0f172a;">
+ <tr style="border-bottom: 1px solid #e2e8f0; font-size: 11px; font-weight: 600; color: #334155;">
+ <td style="padding: 10px 16px; border-right: 1px solid #e2e8f0; vertical-align: top; width: 48%; word-break: break-word; line-height: 1.4;">
  ${esc(item.name)}
  </td>
- <td style="padding: 8px 10px; text-align: center; font-weight: 800; color: #0f172a; vertical-align: middle;">
- ${item.qty}${item.unit ? ` <span style="font-size: 9px; color: #64748b; font-weight: 600;">${esc(item.unit)}</span>` : ''}
+ <td style="padding: 10px 16px; border-right: 1px solid #e2e8f0; text-align: center; vertical-align: top; font-weight: 800; color: #0f172a; width: 20%; word-break: break-word;">
+ ${item.qty}${item.unit ? ' <span style="font-size:9px; color:'+themeClr+'; font-weight:700;">'+esc(item.unit)+'</span>' : ''}
  </td>
- <td style="padding: 8px 10px; text-align: center; vertical-align: middle;">
- <div style="width: 14px; height: 14px; border: 1.5px solid #94a3b8; border-radius: 3px; margin: 0 auto;"></div>
- </td>
- <td style="padding: 8px 10px; color: #64748b; font-size: 10px; vertical-align: middle;">
- ${varKeterangan}
+ <td style="padding: 10px 16px; color: #64748b; vertical-align: top; width: 32%; word-break: break-word; font-size: 10px;">
+ ${varHtml}
  </td>
  </tr>
  `;

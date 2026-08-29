@@ -107,144 +107,115 @@
 <div class='hidden' id='document-templates'>
  
  <!-- TEMPLATE STANDAR A4: INVOICE -->
- <div class='bg-white text-slate-800 box-border' id='template-invoice' style='width: 794px; min-width: 794px; max-width: 794px; min-height: 1123px; padding: 44px 50px; font-family: &apos;Plus Jakarta Sans&apos;, Arial, sans-serif; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box;'>
+ <div class='bg-white text-slate-800 box-border' id='template-invoice' style='width: 794px; min-width: 794px; max-width: 794px; min-height: 1123px; padding: 50px 56px; font-family: &apos;Plus Jakarta Sans&apos;, Arial, sans-serif; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background-color: #ffffff;'>
  <div>
  <!-- KOP SURAT / HEADER -->
- <div class='flex justify-between items-start border-b-2 border-slate-800 pb-5 mb-5'>
- <div class='max-w-[420px]'>
- <div class='flex items-center gap-3 mb-1'>
- <div class='w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-lg overflow-hidden shrink-0 shadow-sm' id='inv-logo-box' style='background-color: #059669;'>
+ <div class='flex justify-between items-start border-b border-slate-200 pb-5 mb-6'>
+ <div class='flex items-start gap-4 max-w-[440px]'>
+ <div class='w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl shadow-sm overflow-hidden shrink-0' id='inv-logo-box' style='background-color: #059669;'>
  <img class='w-full h-full object-contain hidden' id='inv-logo-img' src='' alt='Logo Toko' />
  <i class='fa-solid fa-store text-xl text-white' id='inv-logo-icon'></i>
  </div>
  <div>
- <h1 class='text-xl font-black text-slate-900 tracking-tight leading-tight' id='inv-store-name'>NAMA TOKO</h1>
- <p class='text-[9px] font-bold uppercase tracking-widest text-emerald-600' id='inv-store-slogan'>RITEL &amp; GROSIR</p>
+ <h1 class='text-xl font-bold text-slate-900 tracking-tight leading-tight' id='inv-store-name'>NAMA TOKO</h1>
+ <p class='text-[11px] text-slate-500 mt-1 leading-relaxed' id='inv-store-address'>Alamat Toko</p>
+ <p class='text-[11px] font-bold text-slate-600 mt-0.5' id='inv-store-wa'>WA: 08123456789</p>
  </div>
- </div>
- <p class='text-[11px] text-slate-600 mt-2 leading-relaxed' id='inv-store-address'>Alamat Toko</p>
- <p class='text-[11px] font-bold text-slate-700 mt-1 flex items-center gap-1.5' id='inv-store-wa'><i class='fa-brands fa-whatsapp text-emerald-600'></i> 08123456789</p>
  </div>
  <div class='text-right'>
- <div class='bg-slate-900 text-white px-5 py-3 rounded-xl border border-slate-800 shadow-sm'>
- <h2 class='text-base font-black tracking-widest uppercase text-emerald-400' id='inv-doc-title'>INVOICE PENJUALAN</h2>
- <p class='text-xs font-bold text-white mt-1' id='inv-id'>#ORD123456</p>
- <p class='text-[10px] text-slate-300 mt-0.5' id='inv-date'>Tgl: 29/08/2026</p>
- </div>
+ <h2 class='text-2xl font-black text-slate-300 uppercase tracking-widest whitespace-nowrap' id='inv-doc-title'>INVOICE</h2>
+ <p class='text-sm font-bold text-slate-800 mt-1.5 whitespace-nowrap' id='inv-id'>#ORD123456</p>
+ <p class='text-[11px] font-semibold text-slate-500 mt-0.5 whitespace-nowrap' id='inv-date'>13/06/2026</p>
  </div>
  </div>
 
- <!-- INFO PELANGGAN & PENGIRIMAN -->
- <div class='grid grid-cols-2 gap-4 mb-5'>
- <div class='bg-slate-50 border border-slate-200 rounded-xl p-3.5'>
- <p class='text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5'>DITAGIHKAN KEPADA:</p>
- <h3 class='text-sm font-bold text-slate-900' id='inv-cust-name'>Nama Pelanggan</h3>
- <p class='text-[11px] text-slate-600 mt-1 leading-snug' id='inv-cust-address'>Alamat Lengkap</p>
- </div>
- <div class='bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-col justify-between'>
- <div>
- <p class='text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5'>METODE &amp; PENGIRIMAN:</p>
- <div class='flex justify-between text-[11px] mb-1'><span class='text-slate-500 font-semibold'>Pembayaran:</span> <span class='font-bold text-slate-800' id='inv-method'>TRANSFER</span></div>
- <div class='flex justify-between text-[11px]'><span class='text-slate-500 font-semibold'>Pengiriman:</span> <span class='font-bold text-slate-800' id='inv-delivery-type'>Kurir Toko</span></div>
- </div>
+ <!-- INFO PELANGGAN -->
+ <div class='mb-6'>
+ <p class='text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5'>DITAGIHKAN KEPADA:</p>
+ <h3 class='text-sm font-semibold text-slate-800' id='inv-cust-name'>Nama Pelanggan</h3>
+ <p class='text-[11px] font-medium text-slate-500 mt-1 max-w-[340px] leading-relaxed' id='inv-cust-address'>Alamat Pelanggan</p>
+ <div class='mt-2 inline-block px-2.5 py-0.5 bg-slate-50 border border-slate-200 rounded text-[10px] font-bold text-slate-600'>
+ METODE: <span class='uppercase text-slate-800 font-extrabold' id='inv-method'>TRANSFER</span>
  </div>
  </div>
 
  <!-- TABEL PRODUK -->
- <div class='border border-slate-200 rounded-xl overflow-hidden mb-5'>
- <table class='w-full text-left border-collapse' style='table-layout: fixed; width: 100%;'>
+ <table class='w-full text-left border-collapse mb-8' style='table-layout: fixed; width: 100%;'>
  <thead>
- <tr class='bg-slate-800 text-white'>
- <th class='py-2.5 px-3 text-[10px] font-black uppercase tracking-wider text-center' style='width: 7%;'>No</th>
- <th class='py-2.5 px-3 text-[10px] font-black uppercase tracking-wider' style='width: 43%;'>Nama &amp; Varian Barang</th>
- <th class='py-2.5 px-3 text-[10px] font-black uppercase tracking-wider text-center' style='width: 16%;'>Qty &amp; Satuan</th>
- <th class='py-2.5 px-3 text-[10px] font-black uppercase tracking-wider text-right' style='width: 17%;'>Harga</th>
- <th class='py-2.5 px-3 text-[10px] font-black uppercase tracking-wider text-right' style='width: 17%;'>Total</th>
+ <tr class='border-b-2 border-slate-200'>
+ <th class='py-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest' style='width: 26%;'>Qty &amp; Satuan</th>
+ <th class='py-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest' style='width: 34%;'>Nama Barang</th>
+ <th class='py-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right' style='width: 20%;'>Harga Satuan</th>
+ <th class='py-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right' style='width: 20%;'>Total</th>
  </tr>
  </thead>
  <tbody id='inv-items'>
  </tbody>
  </table>
- </div>
 
- <!-- RINGKASAN PEMBAYARAN & REKENING -->
- <div class='flex justify-between items-start gap-6 mb-6'>
- <div class='flex-1 bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-[10px] leading-relaxed text-slate-600'>
- <p class='font-black text-slate-800 uppercase tracking-wider mb-1 flex items-center gap-1.5'><i class='fa-solid fa-circle-info text-emerald-600'></i> Catatan Pembayaran:</p>
- <p class='text-slate-600'>Harap simpan invoice ini sebagai bukti pembelian resmi yang sah.</p>
- <div class='mt-2 pt-2 border-t border-slate-200 text-slate-500 font-medium' id='inv-bank-info'>
- </div>
- </div>
- <div class='w-72 space-y-2 bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-[11px]'>
- <div class='flex justify-between text-slate-600'><span class='font-semibold'>Subtotal Produk:</span> <span class='font-bold text-slate-800' id='inv-subtotal'>Rp 0</span></div>
- <div class='flex justify-between text-rose-600 hidden' id='inv-discount-row'><span class='font-semibold'>Diskon Produk:</span> <span class='font-bold' id='inv-discount'>-Rp 0</span></div>
- <div class='flex justify-between text-slate-600' id='inv-shipping-row'><span class='font-semibold'>Ongkos Kirim:</span> <span class='font-bold text-slate-800' id='inv-shipping'>Rp 0</span></div>
- <div class='flex justify-between text-rose-600 hidden' id='inv-shipping-discount-row'><span class='font-semibold'>Diskon Ongkir:</span> <span class='font-bold' id='inv-shipping-discount'>-Rp 0</span></div>
- <div class='flex justify-between items-center text-slate-900 font-black text-sm pt-2.5 border-t-2 border-slate-300 mt-1.5 bg-emerald-50 -mx-3.5 -mb-3.5 p-3 rounded-b-xl' id='inv-grandtotal-box'><span class='uppercase tracking-wider text-xs'>TOTAL AKHIR:</span> <span class='text-base font-black text-emerald-700' id='inv-grandtotal'>Rp 0</span></div>
+ <!-- RINGKASAN PEMBAYARAN -->
+ <div class='flex justify-end mb-10'>
+ <div class='w-72 space-y-2.5 text-[11px]'>
+ <div class='flex justify-between text-slate-500'><span class='font-semibold'>Subtotal:</span> <span class='font-bold text-slate-700 whitespace-nowrap' id='inv-subtotal'>Rp 0</span></div>
+ <div class='flex justify-between text-rose-500 hidden' id='inv-discount-row'><span class='font-semibold'>Total Diskon:</span> <span class='font-bold whitespace-nowrap' id='inv-discount'>-Rp 0</span></div>
+ <div class='flex justify-between text-slate-500' id='inv-shipping-row'><span class='font-semibold'>Ongkos Kirim:</span> <span class='font-bold text-slate-700 whitespace-nowrap' id='inv-shipping'>Rp 0</span></div>
+ <div class='flex justify-between text-rose-500 hidden' id='inv-shipping-discount-row'><span class='font-semibold'>Diskon Ongkir:</span> <span class='font-bold whitespace-nowrap' id='inv-shipping-discount'>-Rp 0</span></div>
+ <div class='flex justify-between text-slate-900 font-bold text-base pt-3 border-t border-slate-200 mt-2'><span class='uppercase tracking-widest text-xs self-center'>Total:</span> <span class='whitespace-nowrap font-black' id='inv-grandtotal'>Rp 0</span></div>
  </div>
  </div>
  </div>
 
  <!-- FOOTER STANDAR A4 -->
- <div class='border-t-2 border-slate-200 pt-3 flex justify-between items-center text-[9px] text-slate-500 font-semibold'>
- <p id='inv-footer-text'>Terima kasih atas kunjungan dan kepercayaan Anda.</p>
- <p>Dokumen Sah Terverifikasi Sistem &#8226; Halaman 1/1</p>
+ <div class='border-t border-slate-100 pt-4 text-center'>
+ <p class='text-[10px] font-semibold text-slate-400' id='inv-footer-text'>Terima kasih telah berbelanja.</p>
  </div>
  </div>
 
  <!-- TEMPLATE STANDAR A4: SURAT JALAN -->
- <div class='bg-white text-slate-800 box-border' id='template-surat-jalan' style='width: 794px; min-width: 794px; max-width: 794px; min-height: 1123px; padding: 44px 50px; font-family: &apos;Plus Jakarta Sans&apos;, Arial, sans-serif; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box;'>
+ <div class='bg-white text-slate-800 box-border' id='template-surat-jalan' style='width: 794px; min-width: 794px; max-width: 794px; min-height: 1123px; padding: 50px 56px; font-family: &apos;Plus Jakarta Sans&apos;, Arial, sans-serif; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background-color: #ffffff;'>
  <div>
  <!-- KOP SURAT / HEADER -->
- <div class='flex justify-between items-start border-b-2 border-slate-800 pb-5 mb-5'>
- <div class='max-w-[420px]'>
- <div class='flex items-center gap-3 mb-1'>
- <div class='w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-lg overflow-hidden shrink-0 shadow-sm' id='sj-logo-box' style='background-color: #0284c7;'>
+ <div class='flex justify-between items-start border-b border-slate-200 pb-5 mb-6'>
+ <div class='flex items-start gap-4 max-w-[440px]'>
+ <div class='w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl shadow-sm overflow-hidden shrink-0' id='sj-logo-box' style='background-color: #0284c7;'>
  <img class='w-full h-full object-contain hidden' id='sj-logo-img' src='' alt='Logo Toko' />
  <i class='fa-solid fa-store text-xl text-white' id='sj-logo-icon'></i>
  </div>
  <div>
- <h1 class='text-xl font-black text-slate-900 tracking-tight leading-tight' id='sj-store-name'>NAMA TOKO</h1>
- <p class='text-[9px] font-bold uppercase tracking-widest text-sky-600' id='sj-store-slogan'>SURAT PENGANTAR RESMI</p>
+ <h1 class='text-xl font-bold text-slate-900 tracking-tight leading-tight' id='sj-store-name'>NAMA TOKO</h1>
+ <p class='text-[11px] text-slate-500 mt-1 leading-relaxed' id='sj-store-address'>Alamat Toko</p>
+ <p class='text-[11px] font-bold text-slate-600 mt-0.5' id='sj-store-wa'>WA: 08123456789</p>
  </div>
- </div>
- <p class='text-[11px] text-slate-600 mt-2 leading-relaxed' id='sj-store-address'>Alamat Toko</p>
- <p class='text-[11px] font-bold text-slate-700 mt-1 flex items-center gap-1.5' id='sj-store-wa'><i class='fa-brands fa-whatsapp text-emerald-600'></i> 08123456789</p>
  </div>
  <div class='text-right'>
- <div class='bg-slate-900 text-white px-5 py-3 rounded-xl border border-slate-800 shadow-sm'>
- <h2 class='text-base font-black tracking-widest uppercase text-sky-400' id='sj-doc-title'>SURAT JALAN</h2>
- <p class='text-xs font-bold text-white mt-1' id='sj-id'>#SJ-ORD123456</p>
- <p class='text-[10px] text-slate-300 mt-0.5' id='sj-date'>Tgl: 29/08/2026</p>
- </div>
+ <h2 class='text-2xl font-black text-slate-300 uppercase tracking-widest whitespace-nowrap' id='sj-doc-title'>Surat Jalan</h2>
+ <p class='text-sm font-bold text-slate-800 mt-1.5 whitespace-nowrap' id='sj-id'>#SJ-ORD123456</p>
+ <p class='text-[11px] font-semibold text-slate-500 mt-0.5 whitespace-nowrap' id='sj-date'>13/06/2026</p>
  </div>
  </div>
 
  <!-- INFO PENGIRIM & PENERIMA -->
- <div class='grid grid-cols-2 gap-4 mb-5'>
- <div class='bg-slate-50 border border-slate-200 rounded-xl p-3.5'>
- <p class='text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5'>PENGIRIM (ASAL):</p>
- <h3 class='text-sm font-bold text-slate-900' id='sj-sender-name'>Nama Toko</h3>
- <p class='text-[11px] text-slate-600 mt-1 leading-snug'>Divisi Pengiriman &amp; Logistik</p>
+ <div class='mb-8 grid grid-cols-2 gap-10'>
+ <div>
+ <p class='text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5'>Pengirim:</p>
+ <h3 class='text-sm font-semibold text-slate-800' id='sj-sender-name'>Nama Toko</h3>
  </div>
- <div class='bg-slate-50 border border-slate-200 rounded-xl p-3.5'>
- <p class='text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5'>PENERIMA (TUJUAN):</p>
- <h3 class='text-sm font-bold text-slate-900' id='sj-cust-name'>Nama Pelanggan</h3>
- <p class='text-[11px] text-slate-600 mt-1 leading-snug' id='sj-cust-address'>Alamat Lengkap</p>
- <p class='text-[10px] font-bold text-slate-700 mt-2 bg-amber-50 border border-amber-200 px-2.5 py-1.5 rounded-lg text-amber-900 hidden' id='sj-cust-note'></p>
+ <div>
+ <p class='text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5'>Penerima (Tujuan):</p>
+ <h3 class='text-sm font-semibold text-slate-800' id='sj-cust-name'>Nama Pelanggan</h3>
+ <p class='text-[11px] font-medium text-slate-500 mt-1 leading-relaxed' id='sj-cust-address'>Alamat Lengkap</p>
+ <p class='text-[10px] font-bold text-slate-700 mt-2 bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded hidden' id='sj-cust-note'></p>
  </div>
  </div>
 
  <!-- TABEL BARANG SURAT JALAN -->
- <div class='border border-slate-200 rounded-xl overflow-hidden mb-6'>
+ <div class='border border-slate-200 rounded-lg overflow-hidden mb-12'>
  <table class='w-full text-left border-collapse' style='table-layout: fixed; width: 100%;'>
  <thead>
- <tr class='bg-slate-800 text-white'>
- <th class='py-2.5 px-3 text-[10px] font-black uppercase tracking-wider text-center' style='width: 7%;'>No</th>
- <th class='py-2.5 px-3 text-[10px] font-black uppercase tracking-wider' style='width: 48%;'>Nama Barang</th>
- <th class='py-2.5 px-3 text-[10px] font-black uppercase tracking-wider text-center' style='width: 17%;'>Jumlah (Qty)</th>
- <th class='py-2.5 px-3 text-[10px] font-black uppercase tracking-wider text-center' style='width: 12%;'>Cek Fisik</th>
- <th class='py-2.5 px-3 text-[10px] font-black uppercase tracking-wider' style='width: 16%;'>Keterangan</th>
+ <tr class='bg-slate-50 border-b border-slate-200'>
+ <th class='py-2.5 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-r border-slate-200' style='width: 48%;'>Nama Barang</th>
+ <th class='py-2.5 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-r border-slate-200 text-center' style='width: 20%;'>Qty / Satuan</th>
+ <th class='py-2.5 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest' style='width: 32%;'>Varian / Ket</th>
  </tr>
  </thead>
  <tbody id='sj-items'>
@@ -252,31 +223,26 @@
  </table>
  </div>
 
- <!-- TANDA TANGAN 3 PIHAK FORMAL -->
- <div class='border border-slate-200 rounded-xl p-4 bg-slate-50/50 mb-6'>
- <p class='text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-4 text-center'>TANDA TANGAN &amp; KONFIRMASI PENERIMAAN BARANG</p>
- <div class='grid grid-cols-3 gap-6 text-center'>
+ <!-- TANDA TANGAN 3 PIHAK -->
+ <div class='grid grid-cols-3 gap-4 text-center mt-8'>
  <div>
- <p class='text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-14'>Pengirim (Toko)</p>
- <p class='text-xs font-bold text-slate-800 border-b border-slate-400 inline-block px-4 pb-1' id='sj-sign-store'>Pihak Toko</p>
+ <p class='text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-10'>Penerima</p>
+ <p class='text-xs font-bold text-slate-800 border-b border-slate-300 inline-block px-2 pb-1 whitespace-nowrap' id='sj-sign-cust'>( ........................ )</p>
  </div>
  <div>
- <p class='text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-14'>Kurir / Pengantar</p>
- <p class='text-xs font-bold text-slate-800 border-b border-slate-400 inline-block px-4 pb-1'>( ........................ )</p>
+ <p class='text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-10'>Kurir / Ekspedisi</p>
+ <p class='text-xs font-bold text-slate-800 border-b border-slate-300 inline-block px-2 pb-1 whitespace-nowrap'>( ........................ )</p>
  </div>
  <div>
- <p class='text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-14'>Penerima Barang</p>
- <p class='text-xs font-bold text-slate-800 border-b border-slate-400 inline-block px-4 pb-1' id='sj-sign-cust'>( ........................ )</p>
+ <p class='text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-10'>Hormat Kami</p>
+ <p class='text-xs font-bold text-slate-800 border-b border-slate-300 inline-block px-2 pb-1 whitespace-nowrap' id='sj-sign-store'>Toko Kita</p>
  </div>
- </div>
- <p class='text-[9px] text-slate-400 italic text-center mt-3'>*Barang telah diterima dalam keadaan baik, lengkap, dan tersegel rapi.</p>
  </div>
  </div>
 
  <!-- FOOTER STANDAR A4 -->
- <div class='border-t-2 border-slate-200 pt-3 flex justify-between items-center text-[9px] text-slate-500 font-semibold'>
- <p>Surat Jalan Pengiriman Resmi &#8226; Dokumen Sah Logistik</p>
- <p>Halaman 1/1</p>
+ <div class='border-t border-slate-100 pt-4 text-center'>
+ <p class='text-[10px] font-semibold text-slate-400'>Surat Jalan Pengiriman Resmi &#8226; Dokumen Sah Logistik</p>
  </div>
  </div>
  </div>
@@ -284,14 +250,14 @@
  <div class='fixed inset-0 z-[99999] bg-slate-900/90 hidden flex items-center justify-center p-2 sm:p-4 transition-opacity fade-in' id='pdf-preview-modal' onclick='if(event.target===this) closePreviewModal()'>
  <div class='bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl flex flex-col max-h-[92vh] mx-auto my-auto'>
  <div class='px-4 py-3.5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800 z-10 shrink-0'>
- <h3 class='font-bold text-slate-800 dark:text-white text-base flex items-center gap-2'><i class='fa-solid fa-file-lines' style='color:var(--clr-p);'></i> Preview Dokumen A4</h3>
+ <h3 class='font-bold text-slate-800 dark:text-white text-base flex items-center gap-2'><i class='fa-solid fa-file-lines text-emerald-500'></i> Preview Dokumen A4</h3>
  <button class='w-8 h-8 flex items-center justify-center bg-slate-100 dark:bg-slate-700 hover:bg-rose-100 dark:hover:bg-rose-900/30 text-slate-500 dark:text-slate-400 hover:text-rose-500 rounded-full transition-colors' onclick='closePreviewModal()'>
  <i class='fa-solid fa-xmark'></i>
  </button>
  </div>
- <div class='p-4 sm:p-6 overflow-y-auto flex-1 bg-slate-300/80 dark:bg-slate-950 flex justify-center items-center custom-scrollbar'>
- <div class='w-full max-w-[620px] mx-auto flex justify-center items-center py-2'>
- <img class='w-full h-auto shadow-[0_15px_35px_rgba(0,0,0,0.25)] rounded-sm border border-slate-300 dark:border-slate-700 bg-white block' id='preview-img-result' src='' alt='Preview A4'/>
+ <div class='p-4 sm:p-6 overflow-y-auto flex-1 bg-slate-200 dark:bg-slate-950 flex justify-center items-start custom-scrollbar'>
+ <div class='w-full max-w-[650px] mx-auto py-2'>
+ <img class='w-full h-auto shadow-[0_15px_35px_rgba(0,0,0,0.25)] rounded-sm border border-slate-300 dark:border-slate-700 bg-white block mx-auto' id='preview-img-result' src='' alt='Preview A4'/>
  </div>
  </div>
  <div class='p-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-wrap justify-end gap-2 sm:gap-3 shrink-0'>
