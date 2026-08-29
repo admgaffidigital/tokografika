@@ -95,6 +95,21 @@ const fixD = v => {
     return v;
 };
 
+// Helper retry gambar cerdas: jika gambar Google Drive/eksternal gagal, otomatis coba via wsrv.nl proxy sebelum placeholder
+window.imgErrRetry = (imgEl, fallbackText = 'No Image', w = 400) => {
+  if (!imgEl) return;
+  const original = (imgEl.dataset.src || imgEl.src || '').trim();
+  if (!imgEl.dataset.retried && original && /^https?:\/\//i.test(original) && !original.includes('placehold.co') && !original.includes('wsrv.nl')) {
+    imgEl.dataset.retried = '1';
+    imgEl.src = `https://wsrv.nl/?url=${encodeURIComponent(original)}&w=${w}`;
+    imgEl.onload = () => imgEl.classList.remove('opacity-0');
+  } else {
+    imgEl.onerror = null;
+    imgEl.classList.remove('opacity-0');
+    imgEl.src = `https://placehold.co/${w}?text=${encodeURIComponent(fallbackText)}`;
+  }
+};
+
 // --- ENGINE LAZY LOADING GAMBAR ---
 window.lazyObserver = new IntersectionObserver((entries, observer) => {
  entries.forEach(entry => {
@@ -105,6 +120,7 @@ window.lazyObserver = new IntersectionObserver((entries, observer) => {
  img.src = img.dataset.src;
  // Saat gambar selesai diunduh, hilangkan opacity-0 untuk memicu efek Fade-In
  img.onload = () => img.classList.remove('opacity-0');
+ img.onerror = () => window.imgErrRetry(img, 'No Image', 400);
  // Hentikan pantauan pada gambar ini agar hemat RAM
  observer.unobserve(img);
  }
@@ -1045,7 +1061,7 @@ const rCat = () => {
  return `
  <div class="card-modern overflow-hidden flex flex-col cursor-pointer group p-2.5 sm:p-3 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-200" onclick="openProductModal(${p.id})">
  <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 mb-2.5">
- <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${!a ? 'grayscale' : ''}"/>
+ <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${!a ? 'grayscale' : ''}"/>
  ${tH}${nH}
  </div>
  <div class="flex-1 flex flex-col justify-between min-w-0 px-0.5 pb-0.5">
@@ -1061,7 +1077,7 @@ const rCat = () => {
  return `
  <div class="card-modern flex items-center p-3 gap-3.5 cursor-pointer group border border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-200" onclick="openProductModal(${p.id})">
  <div class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60">
- <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${!a ? 'grayscale' : ''}"/>
+ <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${!a ? 'grayscale' : ''}"/>
  ${tH}${nH}
  </div>
  <div class="flex-1 min-w-0 pr-1 flex flex-col justify-between py-0.5 h-full">
