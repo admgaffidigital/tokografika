@@ -2896,12 +2896,25 @@ window.closePreviewModal = () => {
 window.executeDownloadPdf = () => {
  if(!tempPdfData) return;
  const { jsPDF } = window.jspdf;
- const pdfWidth = 210; 
- const pdfHeight = (tempPdfData.height * pdfWidth) / tempPdfData.width; 
- const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [pdfWidth, pdfHeight] });
- pdf.addImage(tempPdfData.imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+ const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+ const a4Width = 210;
+ const a4Height = 297;
+ const imgRatio = tempPdfData.width / tempPdfData.height;
+ const a4Ratio = a4Width / a4Height;
+ let renderW = a4Width;
+ let renderH = a4Height;
+ let offsetX = 0;
+ let offsetY = 0;
+ if (imgRatio > a4Ratio) {
+   renderH = a4Width / imgRatio;
+   offsetY = (a4Height - renderH) / 2;
+ } else {
+   renderW = a4Height * imgRatio;
+   offsetX = (a4Width - renderW) / 2;
+ }
+ pdf.addImage(tempPdfData.imgData, 'PNG', offsetX, offsetY, renderW, renderH, undefined, 'FAST');
  pdf.save(tempPdfData.fileName);
- showToast(tempPdfData.type === 'invoice' ? 'Invoice berhasil diunduh!' : 'Surat Jalan berhasil diunduh!');
+ showToast(tempPdfData.type === 'invoice' ? 'Invoice A4 berhasil diunduh!' : 'Surat Jalan A4 berhasil diunduh!');
  closePreviewModal();
 };
 
@@ -2911,7 +2924,7 @@ window.executeDownloadImage = () => {
  link.download = tempPdfData.fileName.replace('.pdf', '.png'); 
  link.href = tempPdfData.imgData;
  link.click();
- showToast('Gambar berhasil disimpan!');
+ showToast('Gambar A4 berhasil disimpan!');
  closePreviewModal();
 };
 
@@ -2924,57 +2937,81 @@ window.generateA4Document = async (type) => {
  const menu = el('print-options-menu');
  if (menu) menu.classList.add('hidden'); 
  
- sLoad('Memuat Preview...'); 
-
- // HACK ANTI-CROP
- const hackStyle = document.createElement('style');
- hackStyle.id = 'anti-crop-hack';
- hackStyle.innerHTML = `
- html, body, #app-container, .view-section {
- overflow: visible !important;
- width: 1000px !important;
- min-width: 1000px !important;
- max-width: none !important;
- height: auto !important;
- }
- `;
- document.head.appendChild(hackStyle);
- await new Promise(r => setTimeout(r, 200));
+ sLoad('Membuat Dokumen A4...'); 
 
  try {
  const dateObj = o.dateString ? new Date(o.dateString) : new Date();
  const formattedDate = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
  
+ // Ambil tema dan logo aktif toko
+ const themeClr = getComputedStyle(document.documentElement).getPropertyValue('--clr-p').trim() || '#059669';
+ const logoVal = appData.store?.logo || 'fa-store';
+ const isLogoUrl = /^(https?:\/\/|data:image\/)/i.test(logoVal);
+ 
  if (type === 'invoice') {
  setIn('inv-store-name', appData.store.name || 'TOKO GRAFIKA');
- setIn('inv-store-address', appData.store.address || '-');
- setIn('inv-store-wa', 'WA: ' + (appData.store.wa || '-'));
+ setIn('inv-store-slogan', appData.store.slogan || 'RITEL & GROSIR');
+ setIn('inv-store-address', appData.store.address || 'Alamat Toko');
+ setH('inv-store-wa', `<i class='fa-brands fa-whatsapp text-emerald-600 mr-1'></i> WA: ${esc(appData.store.wa || '-')}`);
  setIn('inv-id', '#' + o.orderId);
- setIn('inv-date', formattedDate);
- setIn('inv-cust-name', o.customer?.name || 'Anonim');
+ setIn('inv-date', 'Tgl: ' + formattedDate);
+ setIn('inv-cust-name', o.customer?.name || 'Pelanggan');
  setIn('inv-cust-address', o.customer?.address || '-');
  setIn('inv-method', (o.payment?.method || 'CASH').toUpperCase());
+ setIn('inv-delivery-type', o.customer?.deliveryMethod === 'delivery' ? `Kurir Toko (${(o.customer?.distance || 0).toFixed(1)}km)` : 'Ambil di Toko');
+ 
+ // Render logo Kop Surat Invoice sesuai tema
+ const invLogoBox = el('inv-logo-box');
+ const invLogoImg = el('inv-logo-img');
+ const invLogoIcon = el('inv-logo-icon');
+ const invSlogan = el('inv-store-slogan');
+ const invDocTitle = el('inv-doc-title');
+ const invGrandtotalBox = el('inv-grandtotal-box');
+ const invGrandtotalText = el('inv-grandtotal');
+
+ if (invLogoBox) invLogoBox.style.backgroundColor = themeClr;
+ if (invSlogan) invSlogan.style.color = themeClr;
+ if (invDocTitle) invDocTitle.style.color = themeClr;
+ if (invGrandtotalBox) invGrandtotalBox.style.backgroundColor = `color-mix(in srgb, ${themeClr} 12%, #ffffff)`;
+ if (invGrandtotalText) invGrandtotalText.style.color = themeClr;
+
+ if (isLogoUrl) {
+   if (invLogoImg) { invLogoImg.src = logoVal; invLogoImg.classList.remove('hidden'); }
+   if (invLogoIcon) invLogoIcon.classList.add('hidden');
+ } else {
+   if (invLogoImg) invLogoImg.classList.add('hidden');
+   if (invLogoIcon) {
+     invLogoIcon.className = `text-xl text-white ${logoVal.startsWith('fa-') ? (logoVal.includes('fa-solid') || logoVal.includes('fa-brands') ? logoVal : 'fa-solid ' + logoVal) : 'fa-solid fa-store'}`;
+     invLogoIcon.classList.remove('hidden');
+   }
+ }
  
  let itemsHtml = (o.items || []).map((item, index) => {
  const isGrosir = item.effectivePrice < item.price;
- const varKeterangan = [item.variantName, (isGrosir ? 'Grosir' : '')].filter(Boolean).join(' · ');
+ const varKeterangan = [item.variantName, (isGrosir ? 'Harga Grosir' : '')].filter(Boolean).join(' &bull; ');
+ const rowBg = index % 2 === 1 ? 'background-color: #f8fafc;' : 'background-color: #ffffff;';
 
  return `
- <tr style="border-bottom: 1px solid #f1f5f9; font-size: 11px; color: #334155;">
- <td style="padding: 10px 8px 10px 0; font-weight: 800; color: #0f172a; vertical-align: middle; width: 28%; white-space: nowrap;">
- ${item.qty}${item.unit ? ` <span style="color:#059669; font-weight:700;">${esc(item.unit)}</span>` : ''}${varKeterangan ? ` <span style="font-size:9px; color:#64748b; font-weight:600;">(${esc(varKeterangan)})</span>` : ''}
+ <tr style="border-bottom: 1px solid #e2e8f0; font-size: 10.5px; color: #334155; ${rowBg}">
+ <td style="padding: 8px 10px; text-align: center; font-weight: 700; color: #64748b; vertical-align: middle;">
+ ${index + 1}
  </td>
- <td style="padding: 10px 8px; font-weight: 600; vertical-align: middle; width: 32%; word-break: break-word; line-height: 1.4;">
- ${esc(item.name)}
+ <td style="padding: 8px 10px; vertical-align: middle; line-height: 1.35;">
+ <span style="font-weight: 700; color: #0f172a;">${esc(item.name)}</span>
+ ${varKeterangan ? `<div style="font-size: 9px; color: ${themeClr}; font-weight: 600; margin-top: 1px;">${varKeterangan}</div>` : ''}
  </td>
- <td style="padding: 10px 8px; text-align: right; vertical-align: middle; width: 20%; word-break: break-word;">
+ <td style="padding: 8px 10px; text-align: center; font-weight: 800; color: #0f172a; vertical-align: middle;">
+ ${item.qty}${item.unit ? ` <span style="font-size: 9px; color: #64748b; font-weight: 600;">${esc(item.unit)}</span>` : ''}
+ </td>
+ <td style="padding: 8px 10px; text-align: right; font-weight: 600; color: #475569; vertical-align: middle;">
  ${fCur(item.effectivePrice)}
  </td>
- <td style="padding: 10px 0 10px 8px; text-align: right; font-weight: 800; color: #0f172a; vertical-align: middle; width: 20%; word-break: break-word;">
+ <td style="padding: 8px 10px; text-align: right; font-weight: 800; color: #0f172a; vertical-align: middle;">
  ${fCur(item.effectivePrice * item.qty)}
  </td>
  </tr>
- `}).join('');
+ `;
+ }).join('');
  setH('inv-items', itemsHtml);
  
  setIn('inv-subtotal', fCur(o.payment?.subtotal || 0));
@@ -2986,45 +3023,82 @@ window.generateA4Document = async (type) => {
  if (o.customer?.deliveryMethod !== 'pickup') {
  show('inv-shipping-row');
  setIn('inv-shipping', fCur(o.payment?.shippingCost || 0));
-} else hide('inv-shipping-row');
+ } else hide('inv-shipping-row');
+
+ if (o.payment?.shippingDiscount) {
+ show('inv-shipping-discount-row');
+ setIn('inv-shipping-discount', '-' + fCur(o.payment.shippingDiscount));
+ } else hide('inv-shipping-discount-row');
  
  setIn('inv-grandtotal', fCur(o.payment?.grandTotal || 0));
- setIn('inv-footer-text', appData.store.footerText || 'Terima kasih telah berbelanja.');
+ setIn('inv-footer-text', appData.store.footerText || 'Terima kasih atas kunjungan dan kepercayaan Anda.');
+ 
+ const bankList = (appData.banks || []).map(b => `<div><b>${esc(b.bankName)}:</b> ${esc(b.bankAccount)} a.n ${esc(b.bankOwner)}</div>`).join('');
+ setH('inv-bank-info', bankList ? `<p class="font-bold text-slate-700 mb-0.5">Rekening Toko:</p>${bankList}` : '');
  
  } else {
  setIn('sj-store-name', appData.store.name || 'TOKO GRAFIKA');
- setIn('sj-store-address', appData.store.address || '-');
- setIn('sj-store-wa', 'WA: ' + (appData.store.wa || '-'));
+ setIn('sj-store-slogan', 'SURAT PENGANTAR RESMI');
+ setIn('sj-store-address', appData.store.address || 'Alamat Toko');
+ setH('sj-store-wa', `<i class='fa-brands fa-whatsapp text-emerald-600 mr-1'></i> WA: ${esc(appData.store.wa || '-')}`);
  setIn('sj-id', '#SJ-' + o.orderId);
- setIn('sj-date', formattedDate);
+ setIn('sj-date', 'Tgl: ' + formattedDate);
  setIn('sj-sender-name', appData.store.name || 'TOKO GRAFIKA');
- setIn('sj-cust-name', o.customer?.name || 'Anonim');
+ setIn('sj-cust-name', o.customer?.name || 'Pelanggan');
  setIn('sj-cust-address', o.customer?.address || '-');
  setIn('sj-sign-store', appData.store.name || 'Pihak Toko');
  
+ // Render logo Kop Surat Surat Jalan sesuai tema
+ const sjLogoBox = el('sj-logo-box');
+ const sjLogoImg = el('sj-logo-img');
+ const sjLogoIcon = el('sj-logo-icon');
+ const sjSlogan = el('sj-store-slogan');
+ const sjDocTitle = el('sj-doc-title');
+
+ if (sjLogoBox) sjLogoBox.style.backgroundColor = themeClr;
+ if (sjSlogan) sjSlogan.style.color = themeClr;
+ if (sjDocTitle) sjDocTitle.style.color = themeClr;
+
+ if (isLogoUrl) {
+   if (sjLogoImg) { sjLogoImg.src = logoVal; sjLogoImg.classList.remove('hidden'); }
+   if (sjLogoIcon) sjLogoIcon.classList.add('hidden');
+ } else {
+   if (sjLogoImg) sjLogoImg.classList.add('hidden');
+   if (sjLogoIcon) {
+     sjLogoIcon.className = `text-xl text-white ${logoVal.startsWith('fa-') ? (logoVal.includes('fa-solid') || logoVal.includes('fa-brands') ? logoVal : 'fa-solid ' + logoVal) : 'fa-solid fa-store'}`;
+     sjLogoIcon.classList.remove('hidden');
+   }
+ }
+
  if (o.customer?.note) {
  show('sj-cust-note');
  setIn('sj-cust-note', 'Catatan: ' + o.customer.note);
  } else hide('sj-cust-note');
  
  let itemsHtml = (o.items || []).map((item, index) => {
- const isGrosir = item.effectivePrice < item.price;
- const varKeterangan = [item.variantName, (isGrosir ? 'Grosir' : '')].filter(Boolean).join(' · ');
- let varHtml = varKeterangan ? `${esc(varKeterangan)}` : '-';
+ const varKeterangan = item.variantName ? esc(item.variantName) : '-';
+ const rowBg = index % 2 === 1 ? 'background-color: #f8fafc;' : 'background-color: #ffffff;';
 
  return `
- <tr style="border-bottom: 1px solid #e2e8f0; font-size: 11px; font-weight: 600; color: #334155;">
- <td style="padding: 10px 16px; border-right: 1px solid #e2e8f0; vertical-align: top; width: 48%; word-break: break-word; line-height: 1.4;">
+ <tr style="border-bottom: 1px solid #e2e8f0; font-size: 10.5px; color: #334155; ${rowBg}">
+ <td style="padding: 8px 10px; text-align: center; font-weight: 700; color: #64748b; vertical-align: middle;">
+ ${index + 1}
+ </td>
+ <td style="padding: 8px 10px; vertical-align: middle; line-height: 1.35; font-weight: 700; color: #0f172a;">
  ${esc(item.name)}
  </td>
- <td style="padding: 10px 16px; border-right: 1px solid #e2e8f0; text-align: center; vertical-align: top; font-weight: 800; color: #0f172a; width: 20%; word-break: break-word;">
- ${item.qty}${item.unit ? ' <span style="font-size:9px; color:#059669; font-weight:700;">'+esc(item.unit)+'</span>' : ''}
+ <td style="padding: 8px 10px; text-align: center; font-weight: 800; color: #0f172a; vertical-align: middle;">
+ ${item.qty}${item.unit ? ` <span style="font-size: 9px; color: #64748b; font-weight: 600;">${esc(item.unit)}</span>` : ''}
  </td>
- <td style="padding: 10px 16px; color: #64748b; vertical-align: top; width: 32%; word-break: break-word; font-size: 10px;">
- ${varHtml}
+ <td style="padding: 8px 10px; text-align: center; vertical-align: middle;">
+ <div style="width: 14px; height: 14px; border: 1.5px solid #94a3b8; border-radius: 3px; margin: 0 auto;"></div>
+ </td>
+ <td style="padding: 8px 10px; color: #64748b; font-size: 10px; vertical-align: middle;">
+ ${varKeterangan}
  </td>
  </tr>
- `}).join('');
+ `;
+ }).join('');
  setH('sj-items', itemsHtml);
  }
  
@@ -3032,50 +3106,21 @@ window.generateA4Document = async (type) => {
  const element = document.getElementById(targetId);
  
  const tempContainer = document.createElement('div');
- tempContainer.style.position = 'absolute';
- tempContainer.style.top = '0';
- tempContainer.style.left = '0'; 
+ tempContainer.style.position = 'fixed';
+ tempContainer.style.top = '-99999px';
+ tempContainer.style.left = '-99999px'; 
  tempContainer.style.width = '794px'; 
  tempContainer.style.minWidth = '794px';
  tempContainer.style.maxWidth = '794px';
  tempContainer.style.backgroundColor = '#ffffff';
- tempContainer.style.zIndex = '-9999'; 
+ tempContainer.style.zIndex = '-99999'; 
  
  const clone = element.cloneNode(true);
- clone.style.display = 'block';
+ clone.style.display = 'flex';
  clone.style.width = '794px'; 
+ clone.style.minHeight = '1123px';
  clone.style.margin = '0';
- 
- clone.querySelectorAll('*').forEach(el => {
- if(el.classList.contains('whitespace-nowrap')) el.classList.remove('whitespace-nowrap');
- el.style.setProperty('white-space', 'normal', 'important');
- el.style.setProperty('word-break', 'break-word', 'important');
- });
-
- const tables = clone.querySelectorAll('table');
- tables.forEach(t => {
- t.style.setProperty('table-layout', 'fixed', 'important');
- t.style.setProperty('width', '100%', 'important');
- t.style.setProperty('max-width', '100%', 'important');
- });
-
- if (type === 'invoice') {
- const ths = clone.querySelectorAll('thead th');
- if (ths.length >= 4) {
- // UPDATE: Melebarkan porsi Qty menjadi 25% agar varian sejajar tidak terlalu sesak
- ths[0].style.setProperty('width', '25%', 'important');
- ths[1].style.setProperty('width', '35%', 'important');
- ths[2].style.setProperty('width', '20%', 'important');
- ths[3].style.setProperty('width', '20%', 'important');
- }
- } else {
- const ths = clone.querySelectorAll('thead th');
- if (ths.length >= 3) {
- ths[0].style.setProperty('width', '50%', 'important');
- ths[1].style.setProperty('width', '15%', 'important');
- ths[2].style.setProperty('width', '35%', 'important');
- }
- }
+ clone.style.boxSizing = 'border-box';
  
  tempContainer.appendChild(clone);
  document.body.appendChild(tempContainer);
@@ -3095,25 +3140,28 @@ window.generateA4Document = async (type) => {
  const imgData = canvas.toDataURL('image/png');
  
  tempPdfData = {
-  imgData: imgData,
-  width: canvas.width,
-  height: canvas.height,
-  type: type,
-  fileName: type === 'invoice' ? `Invoice_${o.orderId}.pdf` : `Surat_Jalan_${o.orderId}.pdf`
-  };
+ imgData: imgData,
+ width: canvas.width,
+ height: canvas.height,
+ type: type,
+ fileName: type === 'invoice' ? `Invoice_${o.orderId}.pdf` : `Surat_Jalan_${o.orderId}.pdf`
+ };
 
-  document.getElementById('preview-img-result').src = imgData;
-  document.getElementById('pdf-preview-modal').classList.remove('hidden');
-  
-  } catch (error) {
-  console.error(error);
-  showToast('Gagal memproses dokumen A4!');
-  } finally {
-  const hackStyle = document.getElementById('anti-crop-hack');
-  if (hackStyle) hackStyle.remove();
-  isSaving = false;
-  hLoad();
-  }
+ document.getElementById('preview-img-result').src = imgData;
+ const previewModal = document.getElementById('pdf-preview-modal');
+ previewModal.classList.remove('hidden');
+ previewModal.classList.add('flex');
+ 
+ const btnPdf = el('btn-download-pdf-a4');
+ if (btnPdf) btnPdf.style.backgroundColor = themeClr;
+ 
+ } catch (error) {
+ console.error(error);
+ showToast('Gagal memproses dokumen A4!');
+ } finally {
+ isSaving = false;
+ hLoad();
+ }
 };
 
 // ============================================================
