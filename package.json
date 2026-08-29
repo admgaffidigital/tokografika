@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "node scripts/dev-server.js",
     "start": "node scripts/dev-server.js",
-    "build": "node scripts/build.js"
+    "build": "node scripts/build.js",
+    "test": "node scripts/validate-xml.js && node scripts/audit-bugs.js"
   },
   "keywords": [
     "blogger",
