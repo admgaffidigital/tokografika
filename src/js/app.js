@@ -1211,9 +1211,12 @@ const updCart = () => {
  const q = cart.reduce((s, i) => s + i.qty, 0);
  const a = cart.reduce((s, i) => s + getEffP(i) * i.qty, 0);
  setIn('cart-badge', q);
+ setIn('header-cart-badge', q);
  setIn('cart-total-preview', fCur(a));
  const b = el('cart-badge');
  if (b) b.classList.toggle('scale-0', !q);
+ const hb = el('header-cart-badge');
+ if (hb) hb.classList.toggle('scale-0', !q);
 };
 
 window.rmWish = i => { wishlist.splice(i, 1); ssL('freshmart_wishlist', JSON.stringify(wishlist)); updWish(); renderWish(); };
