@@ -635,10 +635,13 @@ const loadAppData = async () => {
  wishlist.forEach(i => { if(i.img) i.img = fixD(i.img); });
  
  console.log('[FreshMart] 3. Rendering catalog & themes...');
- updWish();
- updCart();
- rDyn();
- applyGlobalTheme();
+        updWish();
+        updCart();
+        const _siInit = el('search-input');
+        if (_siInit) _siInit.value = '';
+        sQ = '';
+        rDyn();
+        applyGlobalTheme();
  
  console.log('[FreshMart] 4. Verifying license keys...');
  try {
