@@ -681,6 +681,9 @@ const loadAppData = async () => {
      
      updWish();
      updCart();
+     sQ = '';
+     const _si = el('search-input');
+     if (_si) { _si.value = ''; el('btn-search-clear')?.classList.add('hidden'); }
      rDyn();
      applyGlobalTheme();
      
