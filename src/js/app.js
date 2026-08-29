@@ -2939,14 +2939,17 @@ const _hexToRgba = (hex, alpha = 0.12) => {
 };
 
 // Helper konversi URL gambar ke Base64 Data URL agar html2canvas tidak melakukan network request
-const _urlToBase64 = async (url) => {
-  if (!url || typeof url !== 'string') return null;
-  if (url.startsWith('data:image/')) return url;
+const _urlToBase64 = async (rawUrl) => {
+  if (!rawUrl || typeof rawUrl !== 'string') return null;
+  if (rawUrl.startsWith('data:image/')) return rawUrl;
   
-  // Tautan Google Drive tidak mendukung CORS Canvas dan sering memicu 429 (Rate Limit).
-  // Lewati pengambilan langsung agar tidak membebani jaringan / memunculkan error 429 di konsol.
-  if (/googleusercontent\.com|drive\.google\.com/i.test(url)) {
-    return null;
+  // Deteksi jika Google Drive / URL eksternal, gunakan wsrv.nl proxy berkecepatan tinggi dengan CORS headers
+  let targetUrl = rawUrl.trim();
+  const gIdMatch = targetUrl.match(/(?:id=|\/d\/)([a-zA-Z0-9_-]+)/);
+  if (gIdMatch) {
+    targetUrl = `https://wsrv.nl/?url=${encodeURIComponent('https://drive.google.com/thumbnail?id=' + gIdMatch[1] + '&sz=w400')}&w=300&output=png`;
+  } else if (/^https?:\/\//i.test(targetUrl) && !targetUrl.includes('wsrv.nl')) {
+    targetUrl = `https://wsrv.nl/?url=${encodeURIComponent(targetUrl)}&w=300&output=png`;
   }
 
   return new Promise((resolve) => {
@@ -2958,10 +2961,10 @@ const _urlToBase64 = async (url) => {
       done = true;
       try {
         const c = document.createElement('canvas');
-        c.width = img.naturalWidth || img.width || 100;
-        c.height = img.naturalHeight || img.height || 100;
+        c.width = img.naturalWidth || img.width || 120;
+        c.height = img.naturalHeight || img.height || 120;
         const ctx = c.getContext('2d');
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0, c.width, c.height);
         resolve(c.toDataURL('image/png'));
       } catch (err) {
         resolve(null);
@@ -2972,8 +2975,8 @@ const _urlToBase64 = async (url) => {
     };
     setTimeout(() => {
       if (!done) { done = true; resolve(null); }
-    }, 900);
-    img.src = url;
+    }, 1500);
+    img.src = targetUrl;
   });
 };
 
@@ -3018,7 +3021,7 @@ window.generateA4Document = async (type) => {
  // Render logo Kop Surat Invoice sesuai tema
  const invLogoBox = el('inv-logo-box');
  const invLogoImg = el('inv-logo-img');
- const invLogoIcon = el('inv-logo-icon');
+ const invLogoSvg = el('inv-logo-svg');
 
  if (invLogoBox) invLogoBox.style.backgroundColor = themeClr;
 
@@ -3027,16 +3030,13 @@ window.generateA4Document = async (type) => {
      invLogoImg.src = base64Logo;
      invLogoImg.classList.remove('hidden');
    }
-   if (invLogoIcon) invLogoIcon.classList.add('hidden');
+   if (invLogoSvg) invLogoSvg.classList.add('hidden');
  } else {
    if (invLogoImg) {
      invLogoImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
      invLogoImg.classList.add('hidden');
    }
-   if (invLogoIcon) {
-     invLogoIcon.className = `text-xl text-white ${logoVal.startsWith('fa-') ? (logoVal.includes('fa-solid') || logoVal.includes('fa-brands') ? logoVal : 'fa-solid ' + logoVal) : 'fa-solid fa-store'}`;
-     invLogoIcon.classList.remove('hidden');
-   }
+   if (invLogoSvg) invLogoSvg.classList.remove('hidden');
  }
  
  let itemsHtml = (o.items || []).map((item, index) => {
@@ -3095,7 +3095,7 @@ window.generateA4Document = async (type) => {
  // Render logo Kop Surat Surat Jalan sesuai tema
  const sjLogoBox = el('sj-logo-box');
  const sjLogoImg = el('sj-logo-img');
- const sjLogoIcon = el('sj-logo-icon');
+ const sjLogoSvg = el('sj-logo-svg');
 
  if (sjLogoBox) sjLogoBox.style.backgroundColor = themeClr;
 
@@ -3104,16 +3104,13 @@ window.generateA4Document = async (type) => {
      sjLogoImg.src = base64Logo;
      sjLogoImg.classList.remove('hidden');
    }
-   if (sjLogoIcon) sjLogoIcon.classList.add('hidden');
+   if (sjLogoSvg) sjLogoSvg.classList.add('hidden');
  } else {
    if (sjLogoImg) {
      sjLogoImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
      sjLogoImg.classList.add('hidden');
    }
-   if (sjLogoIcon) {
-     sjLogoIcon.className = `text-xl text-white ${logoVal.startsWith('fa-') ? (logoVal.includes('fa-solid') || logoVal.includes('fa-brands') ? logoVal : 'fa-solid ' + logoVal) : 'fa-solid fa-store'}`;
-     sjLogoIcon.classList.remove('hidden');
-   }
+   if (sjLogoSvg) sjLogoSvg.classList.remove('hidden');
  }
 
  if (o.customer?.note) {
@@ -3166,13 +3163,16 @@ window.generateA4Document = async (type) => {
  
  // Bersihkan tag img yang tidak memakai base64 dari clone agar html2canvas tidak melakukan network request
  const cloneImg = clone.querySelector(type === 'invoice' ? '#inv-logo-img' : '#sj-logo-img');
- if (cloneImg) {
-   if (base64Logo) {
+ const cloneSvg = clone.querySelector(type === 'invoice' ? '#inv-logo-svg' : '#sj-logo-svg');
+ if (base64Logo) {
+   if (cloneImg) {
      cloneImg.src = base64Logo;
      cloneImg.classList.remove('hidden');
-   } else {
-     cloneImg.remove();
    }
+   if (cloneSvg) cloneSvg.remove();
+ } else {
+   if (cloneImg) cloneImg.remove();
+   if (cloneSvg) cloneSvg.classList.remove('hidden');
  }
  
  tempContainer.appendChild(clone);
