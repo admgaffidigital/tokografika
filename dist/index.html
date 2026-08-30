@@ -79,22 +79,34 @@
    ========================================================================== */
 
 /* ==========================================================================
-   GRAFIKA PWA STORE - BASE & SYSTEM STYLES
+   GRAFIKA PWA STORE - BASE & SYSTEM STYLES (ENHANCED MODERN UI/UX)
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
    1. Base & Layout
    -------------------------------------------------------------------------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: #f1f5f9;
+    background-color: #f8fafc;
     margin: 0;
     padding: 0;
     color: #0f172a;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    text-rendering: optimizeLegibility;
+    transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
+    touch-action: pan-y;
 }
 
 #app-container {
@@ -106,15 +118,15 @@ body {
     overflow: hidden;
     margin: 0 auto;
     overscroll-behavior-y: none;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.25s ease;
 }
 
 @media (min-width: 1280px) {
     #app-container {
         max-width: 1440px;
-        box-shadow: 0 20px 60px -15px rgba(15, 23, 42, 0.12);
-        border-left: 1px solid #e2e8f0;
-        border-right: 1px solid #e2e8f0;
+        box-shadow: 0 25px 70px -20px rgba(15, 23, 42, 0.15);
+        border-left: 1px solid rgba(226, 232, 240, 0.8);
+        border-right: 1px solid rgba(226, 232, 240, 0.8);
     }
 }
 
@@ -129,6 +141,30 @@ body {
 .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+/* Custom Sleek Scrollbar for Desktop Views */
+@media (min-width: 1024px) {
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+    html.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #334155;
+    }
+    html.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #475569;
+    }
 }
 
 .view-section {
@@ -159,10 +195,16 @@ body {
     backface-visibility: hidden;
     background-color: #ffffff;
     border-radius: 1.25rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+}
+
+.card-modern:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
 }
 
 .lazy-load {
-    will-change: opacity;
+    will-change: opacity, transform;
 }
 
 /* --------------------------------------------------------------------------
@@ -239,6 +281,7 @@ body {
     border-radius: 50% 40% 60% 50% / 60% 50% 50% 60%;
     transform: rotate(20deg);
     transition: background-color 0.3s ease;
+    filter: blur(40px);
 }
 
 .shape-blob-2 {
@@ -251,6 +294,7 @@ body {
     border-radius: 40% 60% 50% 60% / 50% 40% 60% 50%;
     transform: rotate(-15deg);
     transition: background-color 0.3s ease;
+    filter: blur(40px);
 }
 
 .shape-blob-3 {
@@ -263,6 +307,7 @@ body {
     border-radius: 60% 40% 50% 50% / 40% 60% 50% 50%;
     transform: rotate(35deg);
     transition: background-color 0.3s ease;
+    filter: blur(40px);
 }
 
 html.dark .shape-grid-pattern {
@@ -276,8 +321,31 @@ html.dark .shape-blob-3 {
     border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
+/* --------------------------------------------------------------------------
+   5. Dark Mode Overrides
+   -------------------------------------------------------------------------- */
+html.dark body {
+    background-color: #0b1329;
+    color: #f1f5f9;
+}
+
+html.dark #app-container {
+    background-color: #0f172a;
+    border-color: #1e293b;
+}
+
+html.dark .card-modern {
+    background-color: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+html.dark .card-modern:hover {
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+}
+
 /* ==========================================================================
-   GRAFIKA PWA STORE - COMPONENTS, FORMS & BADGES
+   GRAFIKA PWA STORE - COMPONENTS, FORMS & BADGES (MODERNIZED UI/UX)
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -287,7 +355,7 @@ html.dark .shape-blob-3 {
     background-color: var(--clr-p) !important;
     z-index: 30;
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.12);
     color: #ffffff;
     transition: background-color 0.3s ease;
 }
@@ -301,19 +369,25 @@ html.dark .shape-blob-3 {
 }
 
 .glass-header p#dyn-store-slogan {
-    color: rgba(255, 255, 255, 0.85) !important;
+    color: rgba(255, 255, 255, 0.88) !important;
 }
 
 .glass-header button {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    border-color: rgba(255, 255, 255, 0.35) !important;
+    background-color: rgba(255, 255, 255, 0.18) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
     color: #ffffff !important;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(8px);
 }
 
 .glass-header button:hover {
-    background-color: rgba(255, 255, 255, 0.35) !important;
+    background-color: rgba(255, 255, 255, 0.32) !important;
+    transform: scale(1.05);
     color: #ffffff !important;
+}
+
+.glass-header button:active {
+    transform: scale(0.95);
 }
 
 .glass-header button i {
@@ -321,9 +395,17 @@ html.dark .shape-blob-3 {
 }
 
 .glass-nav {
-    background: #ffffff;
-    border-top: 1px solid #e2e8f0;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 -4px 20px -2px rgba(0, 0, 0, 0.04);
+}
+
+html.dark .glass-nav {
+    background: rgba(15, 23, 42, 0.94);
+    border-top: 1px solid rgba(51, 65, 85, 0.8);
+    box-shadow: 0 -4px 20px -2px rgba(0, 0, 0, 0.3);
 }
 
 /* --------------------------------------------------------------------------
@@ -336,24 +418,25 @@ html.dark .shape-blob-3 {
     border-radius: 0.875rem;
     font-weight: 700;
     font-size: 0.875rem;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 12px var(--clr-p-25);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 14px var(--clr-p-25);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    cursor: pointer;
+    border: none;
 }
 
 .btn-primary:hover {
     background-color: var(--clr-p-dark) !important;
-    box-shadow: 0 6px 16px var(--clr-p-35);
-    opacity: 0.95;
-    transform: translateY(-1px);
+    box-shadow: 0 8px 20px var(--clr-p-35);
+    transform: translateY(-1.5px);
 }
 
 .btn-primary:active {
     transform: translateY(0);
-    opacity: 0.9;
+    opacity: 0.92;
 }
 
 .btn-theme-primary,
@@ -376,396 +459,174 @@ html.dark .shape-blob-3 {
     color: var(--clr-p) !important;
 }
 
-html.dark .text-emerald-400,
-html.dark .text-emerald-500,
-html.dark .text-emerald-600 {
-    color: var(--clr-p) !important;
-}
-
 .border-theme-primary,
-.border-emerald-400,
 .border-emerald-500,
-.border-emerald-600,
-.border-emerald-700 {
+.border-emerald-600 {
     border-color: var(--clr-p) !important;
-}
-
-.bg-theme-bg,
-.bg-emerald-50,
-.bg-emerald-100 {
-    background-color: var(--clr-p-bg) !important;
-}
-
-.cat-pill.active,
-#cat-container button.bg-emerald-600,
-#cat-container button.bg-emerald-500 {
-    background-color: var(--clr-p) !important;
-    border-color: var(--clr-p) !important;
-    color: #ffffff !important;
-}
-
-#pwa-banner-inner {
-    background-color: var(--clr-p) !important;
-    border-color: var(--clr-p-dark) !important;
-}
-
-#pwa-install-btn {
-    color: var(--clr-p) !important;
-}
-
-#btn-modal-add-cart,
-.btn-add-cart-main {
-    background-color: var(--clr-p) !important;
-    color: #ffffff !important;
-}
-
-#btn-modal-add-cart:hover,
-.btn-add-cart-main:hover {
-    background-color: var(--clr-p-dark) !important;
 }
 
 .admin-input {
     width: 100%;
-    background-color: #ffffff;
-    border: 1.5px solid #cbd5e1;
-    border-radius: 0.875rem;
     padding: 0.75rem 1rem;
-    font-size: 13px;
+    border-radius: 0.875rem;
+    font-size: 0.875rem;
     font-weight: 600;
-    color: #0f172a;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    box-sizing: border-box;
-}
-
-.admin-input:hover {
-    border-color: #94a3b8;
-}
-
-.admin-input:focus,
-input:focus,
-textarea:focus,
-select:focus {
-    outline: none !important;
-    border-color: var(--clr-p) !important;
-    box-shadow: 0 0 0 3px var(--clr-p-10) !important;
-}
-
-.admin-input::placeholder {
-    color: #94a3b8;
-    font-weight: 500;
-}
-
-.card-modern {
-    background: #ffffff;
-    border-radius: 1rem;
     border: 1.5px solid #e2e8f0;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    box-sizing: border-box;
+    outline: none;
+    transition: all 0.2s ease;
+    background-color: #f8fafc;
+    color: #0f172a;
 }
 
-.card-modern:hover {
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-    border-color: #cbd5e1;
-}
-
-.custom-radio:checked + div,
-[type="radio"]:checked + div {
-    border-color: var(--clr-p) !important;
-    background-color: var(--clr-p-bg) !important;
-    box-shadow: 0 4px 12px var(--clr-p-25);
-    transform: translateY(-1px);
-}
-
-.custom-radio:checked + div .radio-icon,
-[type="radio"]:checked + div .radio-icon {
-    color: var(--clr-p) !important;
-    transform: scale(1.08);
-}
-
-.btn-disabled {
-    background: #cbd5e1 !important;
-    color: #64748b !important;
-    box-shadow: none !important;
-    pointer-events: none;
-}
-
-#toast {
-    position: fixed;
-    top: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-    z-index: 99999;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-}
-
-/* --------------------------------------------------------------------------
-   3. Dark Mode Overrides
-   -------------------------------------------------------------------------- */
-html.dark body {
-    background-color: #0f172a;
-    color: #f8fafc;
-}
-
-html.dark #app-container {
-    background-color: #0f172a;
-    border-color: #1e293b;
-}
-
-html.dark .glass-header {
-    background-color: var(--clr-p-dark) !important;
-    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-}
-
-#fab-cart-btn-container button {
-    background-color: var(--clr-p) !important;
-    box-shadow: 0 8px 25px var(--clr-p-35) !important;
-}
-
-#fab-cart-btn-container button:hover {
-    background-color: var(--clr-p-dark) !important;
-}
-
-html.dark .glass-nav {
-    background: #1e293b !important;
-    border-top-color: #334155 !important;
-}
-
-html.dark .card-modern {
-    background-color: #1e293b !important;
-    border-color: #334155 !important;
-}
-
-html.dark .card-modern:hover {
-    border-color: #475569 !important;
+.admin-input:focus {
+    border-color: var(--clr-p);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px var(--clr-p-10);
 }
 
 html.dark .admin-input {
-    background-color: #0f172a !important;
-    border-color: #334155 !important;
-    color: #f8fafc !important;
+    background-color: #0f172a;
+    border-color: #334155;
+    color: #f8fafc;
 }
 
 html.dark .admin-input:focus {
-    border-color: var(--clr-p) !important;
-    box-shadow: 0 0 0 4px var(--clr-p-10) !important;
-}
-
-html.dark .custom-radio:checked + div {
-    background-color: var(--clr-p-10) !important;
-    border-color: var(--clr-p) !important;
+    background-color: #1e293b;
+    border-color: var(--clr-p);
 }
 
 /* --------------------------------------------------------------------------
-   4. Unified Badge System
+   3. Modern Badges & Counters
    -------------------------------------------------------------------------- */
 .badge {
     display: inline-flex;
     align-items: center;
-    gap: .28em;
-    line-height: 1;
+    gap: 0.25rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 9999px;
+    font-size: 0.6875rem;
     font-weight: 700;
-    letter-spacing: .02em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    border-radius: .5rem;
-    border: 1px solid transparent;
-    padding: .3rem .55rem;
-    font-size: .62rem;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, .06);
-    transition: transform .15s ease, box-shadow .15s ease;
-}
-
-.badge i,
-.badge svg {
-    font-size: .9em;
     line-height: 1;
+    border: 1px solid transparent;
 }
 
 .badge-xs {
-    padding: .22rem .45rem;
-    font-size: .56rem;
-    border-radius: .4rem;
-    box-shadow: none;
-}
-
-.badge-pill {
-    border-radius: 9999px;
-}
-
-.badge-normal-case {
-    text-transform: none;
-    letter-spacing: .01em;
-}
-
-/* Soft Badges */
-.badge-slate {
-    background: #f1f5f9;
-    color: #64748b;
-    border-color: #e2e8f0;
+    font-size: 0.625rem;
+    padding: 0.2rem 0.5rem;
 }
 
 .badge-emerald {
-    background: #ecfdf5;
-    color: #059669;
+    background-color: #ecfdf5;
+    color: #047857;
     border-color: #a7f3d0;
 }
 
-.badge-rose {
-    background: #fff1f2;
-    color: #e11d48;
-    border-color: #fecdd3;
-}
-
 .badge-amber {
-    background: #fffbeb;
-    color: #d97706;
+    background-color: #fffbeb;
+    color: #b45309;
     border-color: #fde68a;
 }
 
 .badge-indigo {
-    background: #eef2ff;
-    color: #4f46e5;
-    border-color: #e0e7ff;
+    background-color: #eef2ff;
+    color: #4338ca;
+    border-color: #c7d2fe;
 }
 
-.badge-purple {
-    background: #faf5ff;
-    color: #9333ea;
-    border-color: #f3e8ff;
+.badge-rose {
+    background-color: #fff1f2;
+    color: #be123c;
+    border-color: #fecdd3;
 }
 
-.badge-blue {
-    background: #eff6ff;
-    color: #2563eb;
-    border-color: #bfdbfe;
+.badge-slate {
+    background-color: #f1f5f9;
+    color: #475569;
+    border-color: #e2e8f0;
 }
 
-/* Soft Badges (Dark Mode) */
-html.dark .badge-slate {
-    background: #334155;
-    color: #cbd5e1;
-    border-color: #475569;
-}
-
-html.dark .badge-emerald {
-    background: #064e3b;
-    color: #34d399;
-    border-color: #065f46;
-}
-
-html.dark .badge-rose {
-    background: #881337;
-    color: #fb7185;
-    border-color: #9f1239;
-}
-
-html.dark .badge-amber {
-    background: #78350f;
-    color: #fbbf24;
-    border-color: #92400e;
-}
-
-html.dark .badge-indigo {
-    background: #312e81;
-    color: #a5b4fc;
-    border-color: #3730a3;
-}
-
-html.dark .badge-purple {
-    background: #581c87;
-    color: #d8b4fe;
-    border-color: #6b21a8;
-}
-
-html.dark .badge-blue {
-    background: #1e3a8a;
-    color: #93c5fd;
-    border-color: #1e40af;
-}
-
-/* Solid Badges */
 .badge-solid-rose {
-    background: #f43f5e;
-    color: #fff;
-    border-color: transparent;
+    background-color: #e11d48;
+    color: #ffffff;
 }
 
-.badge-solid-amber {
-    background: #f59e0b;
-    color: #fff;
-    border-color: transparent;
-}
-
-.badge-solid-blue {
-    background: #3b82f6;
-    color: #fff;
-    border-color: transparent;
-}
-
-.badge-solid-emerald {
-    background: #059669;
-    color: #fff;
-    border-color: transparent;
-}
-
-.badge-solid-slate {
-    background: #e2e8f0;
-    color: #64748b;
-    border-color: #cbd5e1;
-}
-
-html.dark .badge-solid-slate {
-    background: #334155;
-    color: #94a3b8;
-    border-color: #475569;
-}
-
-/* Ribbon Badges */
-.badge-ribbon {
-    position: absolute;
-    top: 0;
-    right: 0;
-    border-radius: 0 .9rem 0 .75rem;
-    padding: .3rem .65rem;
-    font-size: .58rem;
-    box-shadow: 0 2px 6px rgba(15, 23, 42, .12);
-    z-index: 10;
-}
-
-.badge-ribbon-inset {
-    position: absolute;
-    top: -.4rem;
-    right: -.4rem;
-    border-radius: 9999px;
-    padding: .18rem .5rem;
-    font-size: .55rem;
-    z-index: 10;
-}
-
-/* Counter Badges */
 .badge-counter {
     position: absolute;
+    min-width: 1.125rem;
+    height: 1.125rem;
+    padding: 0 0.25rem;
+    border-radius: 9999px;
+    background-color: #ef4444;
+    color: #ffffff;
+    font-size: 0.625rem;
+    font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 1.1rem;
-    height: 1.1rem;
-    padding: 0 .25rem;
-    background: #f43f5e;
-    color: #fff;
-    font-weight: 700;
-    font-size: .6rem;
-    border-radius: 9999px;
-    border: 2px solid #fff;
-    box-shadow: 0 2px 5px rgba(244, 63, 94, .4);
-    transition: transform .3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4);
 }
 
 html.dark .badge-counter {
     border-color: #1e293b;
+}
+
+/* --------------------------------------------------------------------------
+   4. Floating Action & Cart Buttons
+   -------------------------------------------------------------------------- */
+.floating-cart-btn {
+    position: fixed;
+    bottom: calc(1.5rem + env(safe-area-inset-bottom));
+    right: 1.5rem;
+    background-color: var(--clr-p);
+    color: #ffffff;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px -3px var(--clr-p-35);
+    z-index: 40;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.floating-cart-btn:hover {
+    transform: scale(1.08) translateY(-2px);
+    background-color: var(--clr-p-dark);
+}
+
+.floating-cart-btn:active {
+    transform: scale(0.95);
+}
+
+/* --------------------------------------------------------------------------
+   5. Modern Radio & Option Cards
+   -------------------------------------------------------------------------- */
+.custom-radio:checked + div {
+    border-color: var(--clr-p) !important;
+    background-color: var(--clr-p-10) !important;
+    box-shadow: 0 0 0 2px var(--clr-p-25);
+}
+
+.custom-radio:checked + div .radio-icon {
+    color: var(--clr-p) !important;
+    transform: scale(1.1);
+}
+
+/* --------------------------------------------------------------------------
+   6. Modal Containers & Animations
+   -------------------------------------------------------------------------- */
+.modal-backdrop {
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.modal-box {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ==========================================================================
@@ -832,14 +693,10 @@ html.dark .badge-counter {
 </head>
 <body class="bg-gray-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between select-none">
 
-</head>
-<body>
-  <div style='display:none;'><b:section id='hidden-blogger-section' showaddelement='no'><b:widget id='Blog1' locked='true' title='Blog Posts' type='Blog' version='2' visible='false'/></b:section></div>
-  
-  <!-- ========================================================================= -->
-  <!-- 1. NOTIFICATIONS & GLOBAL LOADERS                                         -->
-  <!-- ========================================================================= -->
-  <!-- ========================================================================= -->
+<!-- ========================================================================= -->
+<!-- 1. NOTIFICATIONS & GLOBAL LOADERS                                         -->
+<!-- ========================================================================= -->
+<!-- ========================================================================= -->
 <!-- NOTIFICATIONS & GLOBAL LOADERS                                            -->
 <!-- ========================================================================= -->
 <div class='bg-slate-900 text-white px-6 py-3 rounded-full border-2 border-slate-700 flex items-center gap-3' id='toast'>
@@ -856,10 +713,10 @@ html.dark .badge-counter {
 </div>
 
 
-  <!-- ========================================================================= -->
-  <!-- 2. POPUP MODALS & DIALOGS                                                 -->
-  <!-- ========================================================================= -->
-  <!-- ========================================================================= -->
+<!-- ========================================================================= -->
+<!-- 2. POPUP MODALS & DIALOGS                                                 -->
+<!-- ========================================================================= -->
+<!-- ========================================================================= -->
 <!-- MODAL: CONFIRM DIALOG                                                     -->
 <!-- ========================================================================= -->
 <div class='fixed inset-0 z-[120] bg-slate-900 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300' id='custom-confirm-modal' onclick='if(event.target===this) closeConfirm()'>
@@ -876,7 +733,7 @@ html.dark .badge-counter {
   </div>
 </div>
 
-  <!-- ========================================================================= -->
+<!-- ========================================================================= -->
 <!-- MODAL: BARCODE / QR SCANNER                                               -->
 <!-- ========================================================================= -->
 <div class='fixed inset-0 z-[9999] bg-slate-900 hidden flex-col items-center justify-center p-4 transition-opacity duration-300 opacity-0' id='scanner-modal' onclick='if(event.target===this) closeCameraScanner()'>
@@ -898,7 +755,7 @@ html.dark .badge-counter {
   </div>
 </div>
 
-  <!-- ========================================================================= -->
+<!-- ========================================================================= -->
 <!-- MODAL: PRODUCT DETAIL & ADD TO CART                                       -->
 <!-- ========================================================================= -->
 <div class='fixed inset-0 z-[70] bg-slate-900/70 hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-5' id='product-modal' onclick='if(event.target===this) closeProductModal()'>
@@ -959,7 +816,7 @@ html.dark .badge-counter {
   </div>
 </div>
 
-  <!-- ========================================================================= -->
+<!-- ========================================================================= -->
 <!-- MODAL: ADMIN FORM MODAL                                                   -->
 <!-- ========================================================================= -->
 <div class='fixed inset-0 z-[80] bg-slate-900/70 hidden flex items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300' id='admin-modal' onclick='if(event.target===this) closeAdminModal()'>
@@ -979,7 +836,7 @@ html.dark .badge-counter {
   </div>
 </div>
 
-  <!-- ========================================================================= -->
+<!-- ========================================================================= -->
 <!-- MODAL: ADMIN ORDER DETAIL & PRINT OPTIONS                                 -->
 <!-- ========================================================================= -->
 <div class='fixed inset-0 z-[100] bg-slate-900/70 hidden flex items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300' id='admin-order-modal' onclick='if(event.target===this) closeOrderDetailModal()'>
@@ -1012,7 +869,7 @@ html.dark .badge-counter {
   </div>
 </div>
 
-  <!-- ========================================================================= -->
+<!-- ========================================================================= -->
 <!-- MODAL: RECEIPT PREVIEW (58MM THERMAL)                                     -->
 <!-- ========================================================================= -->
 <div class='fixed inset-0 z-[110] bg-slate-900 hidden flex items-center justify-center p-3 opacity-0 transition-opacity duration-300' id='receipt-preview-modal' onclick='if(event.target===this) closeReceiptPreviewModal()'>
@@ -1043,7 +900,7 @@ html.dark .badge-counter {
   </div>
 </div>
 
-  <!-- ========================================================================= -->
+<!-- ========================================================================= -->
 <!-- MODAL: PDF & DOCUMENT PREVIEW                                             -->
 <!-- ========================================================================= -->
 <div class='fixed inset-0 z-[99999] bg-slate-900/90 hidden flex items-center justify-center p-2 sm:p-4 transition-opacity fade-in' id='pdf-preview-modal' onclick='if(event.target===this) closePreviewModal()'>
@@ -1072,10 +929,10 @@ html.dark .badge-counter {
 <div id='thermal-print-section'></div>
 
 
-  <!-- ========================================================================= -->
-  <!-- 3. PRINT TEMPLATES (A4 INVOICE & SURAT JALAN)                             -->
-  <!-- ========================================================================= -->
-  <!-- ========================================================================= -->
+<!-- ========================================================================= -->
+<!-- 3. PRINT TEMPLATES (A4 INVOICE & SURAT JALAN)                             -->
+<!-- ========================================================================= -->
+<!-- ========================================================================= -->
 <!-- PRINT TEMPLATES (A4 INVOICE & SURAT JALAN)                                -->
 <!-- ========================================================================= -->
 <div class='hidden' id='document-templates'>
@@ -1223,20 +1080,20 @@ html.dark .badge-counter {
 </div>
 
 
-  <!-- ========================================================================= -->
-  <!-- 4. MAIN APP CONTAINER & MODULAR VIEWS                                     -->
-  <!-- ========================================================================= -->
-  <div class='w-full relative bg-slate-50 dark:bg-slate-900' id='app-container'>
-    <!-- Abstract Decorative Background Shapes -->
-    <div class='app-bg-shapes pointer-events-none' aria-hidden='true'>
-      <div class='shape-grid-pattern'></div>
-      <div class='shape-blob-1'></div>
-      <div class='shape-blob-2'></div>
-      <div class='shape-blob-3'></div>
-    </div>
+<!-- ========================================================================= -->
+<!-- 4. MAIN APP CONTAINER & MODULAR VIEWS                                     -->
+<!-- ========================================================================= -->
+<div class='w-full relative bg-slate-50 dark:bg-slate-900 min-h-screen' id='app-container'>
+  <!-- Abstract Decorative Background Shapes -->
+  <div class='app-bg-shapes pointer-events-none' aria-hidden='true'>
+    <div class='shape-grid-pattern'></div>
+    <div class='shape-blob-1'></div>
+    <div class='shape-blob-2'></div>
+    <div class='shape-blob-3'></div>
+  </div>
 
-    <!-- VIEWS -->
-    <!-- ========================================================================= -->
+  <!-- VIEWS -->
+  <!-- ========================================================================= -->
 <!-- VIEW: CATALOG / HOME                                                      -->
 <!-- ========================================================================= -->
 <div class='view-section flex flex-col fade-in' id='view-catalog'>
@@ -1414,7 +1271,7 @@ html.dark .badge-counter {
   </div>
 </div>
 
-    <!-- ========================================================================= -->
+  <!-- ========================================================================= -->
 <!-- VIEW: CART                                                                -->
 <!-- ========================================================================= -->
 <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 hidden' id='view-cart'>
@@ -1456,7 +1313,7 @@ html.dark .badge-counter {
   </div>
 </div>
 
-    <!-- ========================================================================= -->
+  <!-- ========================================================================= -->
 <!-- VIEW: CHECKOUT & SHIPPING                                                 -->
 <!-- ========================================================================= -->
 <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 hidden' id='view-checkout'>
@@ -1558,7 +1415,7 @@ html.dark .badge-counter {
   </div>
 </div>
 
-    <!-- ========================================================================= -->
+  <!-- ========================================================================= -->
 <!-- VIEW: PAYMENT                                                             -->
 <!-- ========================================================================= -->
 <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 hidden' id='view-payment'>
@@ -1714,7 +1571,7 @@ html.dark .badge-counter {
   </div>
 </div>
 
-    <!-- ========================================================================= -->
+  <!-- ========================================================================= -->
 <!-- VIEW: WISHLIST / FAVORIT                                                  -->
 <!-- ========================================================================= -->
 <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 hidden' id='view-wishlist'>
@@ -1743,7 +1600,7 @@ html.dark .badge-counter {
   </div>
 </div>
 
-    <!-- ========================================================================= -->
+  <!-- ========================================================================= -->
 <!-- VIEW: ADMIN LOGIN                                                         -->
 <!-- ========================================================================= -->
 <div class='view-section flex items-center justify-center fade-in bg-slate-900 dark:bg-[#020617] z-50 relative hidden min-h-screen' id='view-admin-login'>
@@ -1788,7 +1645,7 @@ html.dark .badge-counter {
   </div>
 </div>
 
-    <!-- ========================================================================= -->
+  <!-- ========================================================================= -->
 <!-- VIEW: ADMIN DASHBOARD & POS                                               -->
 <!-- ========================================================================= -->
 <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-[#0b1120] z-50 hidden min-h-screen' id='view-admin'>
@@ -1894,7 +1751,7 @@ html.dark .badge-counter {
 </div>
 <input accept='.json' class='hidden' id='restore-file' onchange='restoreData(event)' type='file'/>
 
-  </div>
+</div>
 
     <!-- Master JavaScript -->
     <script type="text/javascript">

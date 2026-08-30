@@ -1,46 +1,42 @@
-</head>
-<body>
-  <div style='display:none;'><b:section id='hidden-blogger-section' showaddelement='no'><b:widget id='Blog1' locked='true' title='Blog Posts' type='Blog' version='2' visible='false'/></b:section></div>
-  
-  <!-- ========================================================================= -->
-  <!-- 1. NOTIFICATIONS & GLOBAL LOADERS                                         -->
-  <!-- ========================================================================= -->
-  <!-- @include widgets/loader-toast.html -->
+<!-- ========================================================================= -->
+<!-- 1. NOTIFICATIONS & GLOBAL LOADERS                                         -->
+<!-- ========================================================================= -->
+<!-- @include widgets/loader-toast.html -->
 
-  <!-- ========================================================================= -->
-  <!-- 2. POPUP MODALS & DIALOGS                                                 -->
-  <!-- ========================================================================= -->
-  <!-- @include modals/confirm-modal.html -->
-  <!-- @include modals/scanner-modal.html -->
-  <!-- @include modals/product-modal.html -->
-  <!-- @include modals/admin-modal.html -->
-  <!-- @include modals/admin-order-modal.html -->
-  <!-- @include modals/receipt-modal.html -->
-  <!-- @include modals/pdf-preview-modal.html -->
+<!-- ========================================================================= -->
+<!-- 2. POPUP MODALS & DIALOGS                                                 -->
+<!-- ========================================================================= -->
+<!-- @include modals/confirm-modal.html -->
+<!-- @include modals/scanner-modal.html -->
+<!-- @include modals/product-modal.html -->
+<!-- @include modals/admin-modal.html -->
+<!-- @include modals/admin-order-modal.html -->
+<!-- @include modals/receipt-modal.html -->
+<!-- @include modals/pdf-preview-modal.html -->
 
-  <!-- ========================================================================= -->
-  <!-- 3. PRINT TEMPLATES (A4 INVOICE & SURAT JALAN)                             -->
-  <!-- ========================================================================= -->
-  <!-- @include templates/print-templates.html -->
+<!-- ========================================================================= -->
+<!-- 3. PRINT TEMPLATES (A4 INVOICE & SURAT JALAN)                             -->
+<!-- ========================================================================= -->
+<!-- @include templates/print-templates.html -->
 
-  <!-- ========================================================================= -->
-  <!-- 4. MAIN APP CONTAINER & MODULAR VIEWS                                     -->
-  <!-- ========================================================================= -->
-  <div class='w-full relative bg-slate-50 dark:bg-slate-900' id='app-container'>
-    <!-- Abstract Decorative Background Shapes -->
-    <div class='app-bg-shapes pointer-events-none' aria-hidden='true'>
-      <div class='shape-grid-pattern'></div>
-      <div class='shape-blob-1'></div>
-      <div class='shape-blob-2'></div>
-      <div class='shape-blob-3'></div>
-    </div>
-
-    <!-- VIEWS -->
-    <!-- @include views/catalog.html -->
-    <!-- @include views/cart.html -->
-    <!-- @include views/checkout.html -->
-    <!-- @include views/payment.html -->
-    <!-- @include views/wishlist.html -->
-    <!-- @include views/admin-login.html -->
-    <!-- @include views/admin.html -->
+<!-- ========================================================================= -->
+<!-- 4. MAIN APP CONTAINER & MODULAR VIEWS                                     -->
+<!-- ========================================================================= -->
+<div class='w-full relative bg-slate-50 dark:bg-slate-900 min-h-screen' id='app-container'>
+  <!-- Abstract Decorative Background Shapes -->
+  <div class='app-bg-shapes pointer-events-none' aria-hidden='true'>
+    <div class='shape-grid-pattern'></div>
+    <div class='shape-blob-1'></div>
+    <div class='shape-blob-2'></div>
+    <div class='shape-blob-3'></div>
   </div>
+
+  <!-- VIEWS -->
+  <!-- @include views/catalog.html -->
+  <!-- @include views/cart.html -->
+  <!-- @include views/checkout.html -->
+  <!-- @include views/payment.html -->
+  <!-- @include views/wishlist.html -->
+  <!-- @include views/admin-login.html -->
+  <!-- @include views/admin.html -->
+</div>
