@@ -11451,22 +11451,83 @@ window.showPricetagStep = (step) => {
     if (sPrev) sPrev.classList.add('hidden');
     if (btnProceed) btnProceed.classList.remove('hidden');
     if (prevActions) prevActions.classList.add('hidden');
+    if (previewActions) previewActions.classList.add('hidden');
+  } else {
+    // preview
+    if (stepSelection) stepSelection.classList.add('hidden');
+    if (stepPreview) stepPreview.classList.remove('hidden');
+    if (btnProceed) btnProceed.classList.add('hidden');
+    if (previewActions) previewActions.classList.remove('hidden');
   }
 };
 
 window.filterPrintProductsList = () => {
-  pricetagSearchQuery = (el('pricetag-search-input')?.value || '').toLowerCase().trim();
-  pricetagCatFilter = el('pricetag-cat-filter')?.value || 'all';
+  const sInput = el('pricetag-search-input');
+  const cSelect = el('pricetag-cat-filter');
+  pricetagSearchQuery = sInput ? sInput.value.trim().toLowerCase() : '';
+  pricetagCatFilter = cSelect ? cSelect.value : 'all';
   window.renderPricetagProductList();
 };
 
-window.toggleSelectAllPrintProducts = (selectAll) => {
+// Helper: build flattened print items (expanding variants)
+function _getPrintableItemList() {
   const products = appData.products || [];
+  const list = [];
+  products.forEach(p => {
+    if (p.variants && p.variants.length > 0) {
+      p.variants.forEach((v, vIdx) => {
+        list.push({
+          uid: `${p.id}__var__${vIdx}`,
+          parentId: p.id,
+          isVariant: true,
+          variantName: v.name,
+          name: p.name,
+          displayName: `${p.name} - ${v.name}`,
+          price: parseFloat(v.price) || parseFloat(p.price) || 0,
+          sku: v.sku || p.sku || '',
+          barcode: v.barcode || v.sku || p.barcode || p.sku || String(p.id),
+          img: v.img || p.img || '',
+          category: p.category || '',
+          unit: p.unit || '',
+          wholesale: p.wholesale || []
+        });
+      });
+    } else {
+      list.push({
+        uid: String(p.id),
+        parentId: p.id,
+        isVariant: false,
+        name: p.name,
+        displayName: p.name,
+        price: parseFloat(p.price) || 0,
+        sku: p.sku || '',
+        barcode: p.barcode || p.sku || String(p.id),
+        img: p.img || '',
+        category: p.category || '',
+        unit: p.unit || '',
+        wholesale: p.wholesale || []
+      });
+    }
+  });
+  return list;
+}
+
+window.toggleSelectAllPrintProducts = (selectAll) => {
+  const items = _getPrintableItemList();
+  const filtered = items.filter(item => {
+    if (pricetagCatFilter !== 'all' && item.category !== pricetagCatFilter) return false;
+    if (pricetagSearchQuery) {
+      const matchName = (item.displayName || '').toLowerCase().includes(pricetagSearchQuery);
+      const matchSku = (item.sku || '').toLowerCase().includes(pricetagSearchQuery);
+      const matchBarcode = (item.barcode || '').toLowerCase().includes(pricetagSearchQuery);
+      if (!matchName && !matchSku && !matchBarcode) return false;
+    }
+    return true;
+  });
+
   if (selectAll) {
-    products.forEach(p => {
-      if (!selectedPrintProducts[p.id]) {
-        selectedPrintProducts[p.id] = 1;
-      }
+    filtered.forEach(p => {
+      selectedPrintProducts[p.uid] = 1;
     });
   } else {
     selectedPrintProducts = {};
@@ -11474,32 +11535,32 @@ window.toggleSelectAllPrintProducts = (selectAll) => {
   window.renderPricetagProductList();
 };
 
-window.toggleSelectPrintProduct = (id) => {
-  if (selectedPrintProducts[id]) {
-    delete selectedPrintProducts[id];
+window.toggleSelectPrintProduct = (uid) => {
+  if (selectedPrintProducts[uid]) {
+    delete selectedPrintProducts[uid];
   } else {
-    selectedPrintProducts[id] = 1;
+    selectedPrintProducts[uid] = 1;
   }
   window.renderPricetagProductList();
 };
 
-window.changePrintProductQty = (id, delta) => {
-  const current = selectedPrintProducts[id] || 0;
+window.changePrintProductQty = (uid, delta) => {
+  const current = selectedPrintProducts[uid] || 0;
   const next = Math.max(0, current + delta);
   if (next <= 0) {
-    delete selectedPrintProducts[id];
+    delete selectedPrintProducts[uid];
   } else {
-    selectedPrintProducts[id] = next;
+    selectedPrintProducts[uid] = next;
   }
   window.renderPricetagProductList();
 };
 
-window.setPrintProductQty = (id, val) => {
+window.setPrintProductQty = (uid, val) => {
   const num = parseInt(val, 10);
   if (isNaN(num) || num <= 0) {
-    delete selectedPrintProducts[id];
+    delete selectedPrintProducts[uid];
   } else {
-    selectedPrintProducts[id] = Math.min(999, num);
+    selectedPrintProducts[uid] = Math.min(999, num);
   }
   window.renderPricetagProductList();
 };
@@ -11508,11 +11569,11 @@ window.renderPricetagProductList = () => {
   const container = el('pricetag-product-list-container');
   if (!container) return;
 
-  const products = appData.products || [];
-  let filtered = products.filter(p => {
+  const items = _getPrintableItemList();
+  let filtered = items.filter(p => {
     if (pricetagCatFilter !== 'all' && p.category !== pricetagCatFilter) return false;
     if (pricetagSearchQuery) {
-      const matchName = (p.name || '').toLowerCase().includes(pricetagSearchQuery);
+      const matchName = (p.displayName || '').toLowerCase().includes(pricetagSearchQuery);
       const matchSku = (p.sku || '').toLowerCase().includes(pricetagSearchQuery);
       const matchBarcode = (p.barcode || '').toLowerCase().includes(pricetagSearchQuery);
       if (!matchName && !matchSku && !matchBarcode) return false;
@@ -11523,8 +11584,8 @@ window.renderPricetagProductList = () => {
   // Calculate totals
   let selectedCount = 0;
   let totalLabels = 0;
-  Object.keys(selectedPrintProducts).forEach(id => {
-    const q = selectedPrintProducts[id];
+  Object.keys(selectedPrintProducts).forEach(uid => {
+    const q = selectedPrintProducts[uid];
     if (q > 0) {
       selectedCount++;
       totalLabels += q;
@@ -11533,40 +11594,50 @@ window.renderPricetagProductList = () => {
 
   const summaryEl = el('pricetag-selected-summary');
   if (summaryEl) {
-    summaryEl.textContent = `${selectedCount} Produk Dipilih (${totalLabels} Label)`;
+    summaryEl.textContent = `${selectedCount} Item Dipilih (${totalLabels} Label)`;
   }
   const footerBadge = el('pricetag-footer-count-badge');
   if (footerBadge) {
-    footerBadge.innerHTML = `<span class="badge badge-solid-emerald text-xs px-2.5 py-1 font-bold">${totalLabels} Label Siap Dicetak</span>`;
+    footerBadge.innerHTML = `<span class="badge badge-solid-emerald text-xs px-3 py-1 font-bold shadow-xs">${totalLabels} Label Siap Dicetak</span>`;
   }
 
   if (filtered.length === 0) {
     container.innerHTML = `
-      <div class="text-center py-12 text-slate-400 font-bold">
-        <i class="fa-solid fa-box-open text-3xl mb-2 opacity-40 block"></i>
-        Produk tidak ditemukan
+      <div class="p-8 text-center text-slate-400">
+        <i class="fa-solid fa-box-open text-3xl mb-2"></i>
+        <p class="text-xs font-semibold">Tidak ada produk yang cocok dengan pencarian.</p>
       </div>
     `;
     return;
   }
 
   container.innerHTML = filtered.map(p => {
-    const isSelected = !!selectedPrintProducts[p.id];
-    const qty = selectedPrintProducts[p.id] || 0;
+    const isSelected = !!selectedPrintProducts[p.uid];
+    const qty = selectedPrintProducts[p.uid] || 0;
     const cleanImg = p.img ? fixD(p.img) : '';
     const img = cleanImg 
       ? `<img src="${esc(cleanImg)}" onerror="this.onerror=null;this.outerHTML='<div class=\\'w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 flex items-center justify-center shrink-0 text-sm border border-slate-200 dark:border-slate-700 shadow-xs\\'><i class=\\'fa-solid fa-box\\'></i></div>';" class="w-12 h-12 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0 shadow-xs" loading="lazy" alt="" />`
       : `<div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 flex items-center justify-center shrink-0 text-sm border border-slate-200 dark:border-slate-700 shadow-xs"><i class="fa-solid fa-box"></i></div>`;
 
+    const variantBadge = p.isVariant 
+      ? `<span class="text-[10px] bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-md border border-indigo-200 dark:border-indigo-800 font-black"><i class="fa-solid fa-sitemap text-[9px] mr-1"></i>Varian: ${esc(p.variantName)}</span>`
+      : '';
+
+    const wholesaleBadge = (p.wholesale && p.wholesale.length > 0)
+      ? `<span class="text-[10px] bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded-md border border-amber-200 dark:border-amber-800 font-black"><i class="fa-solid fa-tags text-[9px] mr-1"></i>Ada Grosir (${p.wholesale.length} Tingkat)</span>`
+      : '';
+
     return `
       <div class="p-3.5 sm:p-4 flex items-center justify-between gap-3 sm:gap-4 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-all ${isSelected ? 'border-l-4' : ''}" style="${isSelected ? 'background-color:var(--clr-p-10); border-left-color:var(--clr-p);' : ''}">
-        <div class="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1 cursor-pointer select-none" onclick="toggleSelectPrintProduct(${p.id})">
-          <input type="checkbox" ${isSelected ? 'checked' : ''} class="w-4 h-4 sm:w-5 sm:h-5 rounded-md cursor-pointer shrink-0" style="accent-color:var(--clr-p)" onclick="event.stopPropagation(); toggleSelectPrintProduct(${p.id})" />
+        <div class="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1 cursor-pointer select-none" onclick="toggleSelectPrintProduct('${esc(p.uid)}')">
+          <input type="checkbox" ${isSelected ? 'checked' : ''} class="w-4 h-4 sm:w-5 sm:h-5 rounded-md cursor-pointer shrink-0" style="accent-color:var(--clr-p)" onclick="event.stopPropagation(); toggleSelectPrintProduct('${esc(p.uid)}')" />
           ${img}
           <div class="min-w-0 flex-1 pr-1">
             <h4 class="font-black text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-2 leading-snug">${esc(p.name)}</h4>
-            <div class="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+            <div class="flex flex-wrap items-center gap-1.5 mt-1 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
               <span class="font-black text-sm" style="color:var(--clr-p)">${fCur(p.price)}</span>
+              ${variantBadge}
+              ${wholesaleBadge}
               ${p.sku ? `<span class="font-mono text-[10px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded-md border border-slate-200 dark:border-slate-600">SKU: ${esc(p.sku)}</span>` : ''}
               ${p.category ? `<span class="text-[10px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded-md border border-slate-200 dark:border-slate-600">${esc(p.category)}</span>` : ''}
             </div>
@@ -11575,11 +11646,11 @@ window.renderPricetagProductList = () => {
 
         <!-- Qty Cetak Stepper -->
         <div class="flex items-center gap-1 shrink-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-1 shadow-xs">
-          <button type="button" onclick="changePrintProductQty(${p.id}, -1)" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 flex items-center justify-center text-xs font-bold active:scale-95 transition-all" title="Kurangi">
+          <button type="button" onclick="changePrintProductQty('${esc(p.uid)}', -1)" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 flex items-center justify-center text-xs font-bold active:scale-95 transition-all" title="Kurangi">
             <i class="fa-solid fa-minus"></i>
           </button>
-          <input type="number" min="0" max="999" value="${qty}" onchange="setPrintProductQty(${p.id}, this.value)" class="w-10 sm:w-12 text-center text-xs sm:text-sm font-black bg-transparent border-0 focus:ring-0 text-slate-800 dark:text-white p-0" />
-          <button type="button" onclick="changePrintProductQty(${p.id}, 1)" class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold active:scale-95 transition-all shadow-xs" style="background-color:var(--clr-p-bg);color:var(--clr-p)" title="Tambah">
+          <input type="number" min="0" max="999" value="${qty}" onchange="setPrintProductQty('${esc(p.uid)}', this.value)" class="w-10 sm:w-12 text-center text-xs sm:text-sm font-black bg-transparent border-0 focus:ring-0 text-slate-800 dark:text-white p-0" />
+          <button type="button" onclick="changePrintProductQty('${esc(p.uid)}', 1)" class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold active:scale-95 transition-all shadow-xs" style="background-color:var(--clr-p-bg);color:var(--clr-p)" title="Tambah">
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -11615,22 +11686,22 @@ window.refreshPricetagPreviewIfActive = () => {
 
 window.proceedToPricetagPreview = () => {
   // Check if any product selected
-  const selectedIds = Object.keys(selectedPrintProducts).filter(id => selectedPrintProducts[id] > 0);
-  if (selectedIds.length === 0) {
+  const selectedUids = Object.keys(selectedPrintProducts).filter(uid => selectedPrintProducts[uid] > 0);
+  if (selectedUids.length === 0) {
     return showToast("Pilih minimal 1 produk untuk dicetak!");
   }
 
   sLoad("Membuat Lembaran A4...");
   try {
-    const productsMap = {};
-    (appData.products || []).forEach(p => { productsMap[p.id] = p; });
+    const itemsMap = {};
+    _getPrintableItemList().forEach(item => { itemsMap[item.uid] = item; });
 
     // Flatten array of items based on Qty
     const printQueue = [];
-    selectedIds.forEach(id => {
-      const p = productsMap[id];
+    selectedUids.forEach(uid => {
+      const p = itemsMap[uid];
       if (p) {
-        const qty = selectedPrintProducts[id];
+        const qty = selectedPrintProducts[uid];
         for (let i = 0; i < qty; i++) {
           printQueue.push(p);
         }
@@ -11682,9 +11753,29 @@ window.proceedToPricetagPreview = () => {
       const totalPages = pages.length;
       
       const cardsHtml = pageItems.map(p => {
-        const barcodeVal = p.barcode || p.sku || String(p.id);
+        const barcodeVal = p.barcode || p.sku || String(p.uid);
         const barcodeSvg = _generateReceiptBarcodeSvg(barcodeVal);
         const unit = p.unit ? ` / ${esc(p.unit)}` : '';
+
+        // Wholesale tiers info for Shelf Pricetags
+        let wholesaleSnippet = '';
+        if (p.wholesale && p.wholesale.length > 0) {
+          const sortedWhol = p.wholesale.slice().sort((a, b) => a.minQty - b.minQty);
+          wholesaleSnippet = `
+            <div class="mt-1 pt-1 border-t border-dashed border-slate-200 flex flex-wrap items-center gap-1">
+              <span class="text-[8px] uppercase font-black px-1 py-0.2 rounded bg-purple-100 text-purple-900">Grosir:</span>
+              ${sortedWhol.map(w => `
+                <span class="text-[8.5px] bg-amber-50 text-amber-900 border border-amber-200 px-1 py-0.2 rounded font-black">
+                  ≥${w.minQty} @${fCur(w.price).replace('Rp\u00a0','').replace('Rp ','')}
+                </span>
+              `).join('')}
+            </div>
+          `;
+        }
+
+        const variantLine = p.isVariant 
+          ? `<div class="text-[9.5px] font-black text-indigo-700 bg-indigo-50 border border-indigo-100 px-1.5 py-0.2 rounded inline-block mt-0.5"><i class="fa-solid fa-sitemap text-[8px] mr-1"></i>Varian: ${esc(p.variantName)}</div>`
+          : '';
 
         if (currentPricetagMode === 'pricetag') {
           return `
@@ -11695,13 +11786,15 @@ window.proceedToPricetagPreview = () => {
                 <span class="text-slate-400 font-mono">${nowStr}</span>
               </div>
 
-              <!-- Middle: Product Name & Category -->
+              <!-- Middle: Product Name, Variant, Category -->
               <div class="my-1">
                 <h3 class="font-black text-slate-900 text-xs sm:text-[13px] leading-tight line-clamp-2 uppercase">${esc(p.name)}</h3>
+                ${variantLine}
                 <div class="flex items-center gap-1.5 text-[9.5px] text-slate-500 font-bold mt-0.5">
                   ${p.category ? `<span class="bg-slate-100 px-1.5 py-0.5 rounded">${esc(p.category)}</span>` : ''}
                   ${p.sku ? `<span class="font-mono text-slate-400">SKU: ${esc(p.sku)}</span>` : ''}
                 </div>
+                ${wholesaleSnippet}
               </div>
 
               <!-- Bottom: Barcode + Prominent Price Box -->
@@ -11710,7 +11803,7 @@ window.proceedToPricetagPreview = () => {
                   ${barcodeSvg}
                 </div>
                 <div class="text-right">
-                  <div class="text-[9px] font-black uppercase text-slate-400 tracking-wider">Harga Pas</div>
+                  <div class="text-[9px] font-black uppercase text-slate-400 tracking-wider">Harga Eceran</div>
                   <div class="text-base sm:text-lg font-black text-slate-950 leading-none tracking-tight">
                     <span class="text-[10px] font-extrabold align-top mr-0.5" style="color:var(--clr-p)">Rp</span>${fCur(p.price).replace('Rp\u00a0','').replace('Rp ','')}
                   </div>
@@ -11727,7 +11820,7 @@ window.proceedToPricetagPreview = () => {
                 ${storeName}
               </div>
               <div class="w-full my-0.5">
-                <div class="text-[10px] font-bold text-slate-800 truncate w-full leading-tight uppercase">${esc(p.name)}</div>
+                <div class="text-[10px] font-bold text-slate-800 truncate w-full leading-tight uppercase">${esc(p.displayName || p.name)}</div>
               </div>
               <div class="w-full my-0.5 transform scale-90 origin-center">
                 ${barcodeSvg}
