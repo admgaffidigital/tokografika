@@ -52,7 +52,8 @@ window.openAdminMenu = () => {
       const tabName = tabMatch[1];
       if (cRole === 'cashier') {
         const isSensitive = ['settings', 'banks', 'accounts'].includes(tabName);
-        if (isSensitive || !cPerms.includes(tabName)) {
+        const hasReportPerm = tabName === 'reports' && cPerms.includes('view_reports');
+        if (isSensitive || (tabName === 'reports' ? !hasReportPerm : !cPerms.includes(tabName))) {
           btn.classList.add('hidden'); btn.classList.remove('flex');
         } else {
           btn.classList.remove('hidden'); btn.classList.add('flex');
@@ -181,7 +182,8 @@ window.openAdminTab = (t, fH = !1) => {
   
   if (cRole === 'cashier') {
     const isSensitive = ['settings', 'banks', 'accounts'].includes(t);
-    if (isSensitive || !cPerms.includes(t)) {
+    const hasReportPerm = t === 'reports' && cPerms.includes('view_reports');
+    if (isSensitive || (t === 'reports' ? !hasReportPerm : !cPerms.includes(t))) {
       hide('admin-dashboard-view'); 
       show('admin-content-view'); 
       show('btn-admin-back'); 
@@ -198,13 +200,465 @@ window.openAdminTab = (t, fH = !1) => {
   show('admin-content-view'); 
   show('btn-admin-back'); 
   hide('admin-logo-box');
-  const titles = { 'orders': 'Daftar Pesanan', 'settings': 'Pengaturan Toko', 'products': 'Kelola Produk', 'categories': 'Kelola Kategori', 'vouchers': 'Kelola Voucher', 'banks': 'Rekening Bank', 'banners': 'Kelola Banner', 'accounts': 'Kelola Akun Kasir' };
+  const titles = { 
+    'orders': 'Daftar Pesanan', 
+    'reports': 'Laporan Penjualan & Laba Rugi',
+    'settings': 'Pengaturan Toko', 
+    'products': 'Kelola Produk', 
+    'categories': 'Kelola Kategori', 
+    'vouchers': 'Kelola Voucher', 
+    'banks': 'Rekening Bank', 
+    'banners': 'Kelola Banner', 
+    'accounts': 'Kelola Akun Kasir' 
+  };
   setIn('admin-header-title', titles[t] || 'CMS Toko');
   
   if (t !== 'orders' && aOrdLst) { aOrdLst(); aOrdLst = null; }
   if (t === 'settings') rAdmSet(); 
   else if (t === 'orders') rAdmOrd(); 
+  else if (t === 'reports') rAdmReports();
   else rAdmL(t);
+};
+
+// =============================================================================
+// LAPORAN KEUANGAN, LABA RUGI & MODAL TOKO
+// =============================================================================
+let reportPeriod = 'today';
+let reportCustomStart = '';
+let reportCustomEnd = '';
+let cachedReportOrders = [];
+
+window.rAdmReports = async () => {
+  setH('admin-content', `
+    <div class="space-y-5 pb-16">
+      <!-- Header Laporan -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div>
+          <h2 class="text-base sm:text-lg font-black text-slate-800 dark:text-white flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 flex items-center justify-center text-sm"><i class="fa-solid fa-chart-pie"></i></div>
+            <span>Laporan Penjualan & Laba Rugi</span>
+          </h2>
+          <p class="text-[11px] font-semibold text-slate-400 mt-1">Rekapitulasi Omset, Total Modal (HPP), dan Keuntungan Bersih Toko.</p>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button type="button" onclick="printFinancialReport()" class="px-3.5 py-2.5 bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+            <i class="fa-solid fa-print text-sm"></i> <span>Cetak</span>
+          </button>
+          <button type="button" onclick="exportFinancialReportCsv()" class="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+            <i class="fa-solid fa-file-excel text-sm"></i> <span>Export CSV</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Periode Bar -->
+      <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-filter text-emerald-500"></i> Periode Laporan:
+          </span>
+          <div class="flex flex-wrap gap-1.5">
+            <button type="button" onclick="setReportPeriod('today')" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all ${reportPeriod === 'today' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">Hari Ini</button>
+            <button type="button" onclick="setReportPeriod('7days')" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all ${reportPeriod === '7days' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">7 Hari</button>
+            <button type="button" onclick="setReportPeriod('month')" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all ${reportPeriod === 'month' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">Bulan Ini</button>
+            <button type="button" onclick="setReportPeriod('year')" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all ${reportPeriod === 'year' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">Tahun Ini</button>
+            <button type="button" onclick="setReportPeriod('all')" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all ${reportPeriod === 'all' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">Semua</button>
+          </div>
+        </div>
+
+        <!-- Custom Date Range -->
+        <div class="pt-3 border-t border-slate-100 dark:border-slate-700/70 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+          <span class="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0"><i class="fa-regular fa-calendar-days mr-1"></i> Sesuaikan Tanggal:</span>
+          <div class="flex items-center gap-2 flex-1">
+            <input type="date" id="report-start-date" value="${reportCustomStart}" class="admin-input !py-1.5 !text-xs bg-slate-50 dark:bg-slate-900 flex-1 font-bold"/>
+            <span class="text-xs font-bold text-slate-400">s/d</span>
+            <input type="date" id="report-end-date" value="${reportCustomEnd}" class="admin-input !py-1.5 !text-xs bg-slate-50 dark:bg-slate-900 flex-1 font-bold"/>
+          </div>
+          <button type="button" onclick="applyCustomReportDate()" class="px-4 py-2 bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white text-xs font-black rounded-xl shrink-0 transition-all shadow-sm">
+            Terapkan
+          </button>
+        </div>
+      </div>
+
+      <!-- Report Dynamic Output -->
+      <div id="report-data-container" class="space-y-6">
+        <div class="text-center py-16"><i class="fa-solid fa-spinner fa-spin text-3xl text-emerald-500"></i><p class="text-xs font-bold text-slate-400 mt-2">Memuat data transaksi...</p></div>
+      </div>
+    </div>
+  `);
+
+  try {
+    if (typeof db !== 'undefined' && db.collection) {
+      const snap = await db.collection("freshmart_orders").orderBy("timestamp", "desc").limit(500).get();
+      cachedReportOrders = snap.docs.map(doc => doc.data());
+    } else {
+      cachedReportOrders = [];
+    }
+  } catch (err) {
+    console.warn('[Reports] Fetch error:', err);
+    cachedReportOrders = [];
+  }
+
+  renderReportView();
+};
+
+window.setReportPeriod = (period) => {
+  reportPeriod = period;
+  if (period !== 'custom') {
+    reportCustomStart = '';
+    reportCustomEnd = '';
+  }
+  rAdmReports();
+};
+
+window.applyCustomReportDate = () => {
+  const start = (el('report-start-date')?.value || '').trim();
+  const end = (el('report-end-date')?.value || '').trim();
+  if (!start || !end) return showToast('Pilih tanggal mulai & tanggal selesai!');
+  reportCustomStart = start;
+  reportCustomEnd = end;
+  reportPeriod = 'custom';
+  renderReportView();
+};
+
+window.renderReportView = () => {
+  const container = el('report-data-container');
+  if (!container) return;
+
+  const now = new Date();
+  const todayStr = now.toISOString().slice(0, 10);
+  const thisMonthStr = now.toISOString().slice(0, 7);
+  const thisYearStr = now.getFullYear().toString();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  // Filter orders
+  const validOrders = (cachedReportOrders || []).filter(order => {
+    if (order.status === 'Dibatalkan') return false;
+    
+    let orderDate = null;
+    if (order.timestamp && order.timestamp.toDate) {
+      orderDate = order.timestamp.toDate();
+    } else if (order.dateString || order.createdAt) {
+      orderDate = new Date(order.dateString || order.createdAt);
+    } else {
+      orderDate = new Date();
+    }
+    const orderDateStr = orderDate.toISOString().slice(0, 10);
+
+    if (reportPeriod === 'today') {
+      return orderDateStr === todayStr;
+    } else if (reportPeriod === '7days') {
+      return orderDate >= sevenDaysAgo;
+    } else if (reportPeriod === 'month') {
+      return orderDateStr.startsWith(thisMonthStr);
+    } else if (reportPeriod === 'year') {
+      return orderDateStr.startsWith(thisYearStr);
+    } else if (reportPeriod === 'custom') {
+      return orderDateStr >= reportCustomStart && orderDateStr <= reportCustomEnd;
+    }
+    return true;
+  });
+
+  // Calculate Metrics
+  let totalSales = 0;
+  let totalCost = 0;
+  let totalItemsSold = 0;
+  const paymentBreakdown = { cash: 0, qris: 0, transfer: 0, edc: 0, cod: 0, other: 0 };
+  const productAgg = {};
+
+  validOrders.forEach(o => {
+    const grand = parseFloat(o.payment?.grandTotal || o.payment?.total || 0) || 0;
+    totalSales += grand;
+
+    const methodKey = (o.payment?.methodKey || o.payment?.method || 'cash').toLowerCase();
+    if (methodKey.includes('tunai') || methodKey === 'cash') paymentBreakdown.cash += grand;
+    else if (methodKey.includes('qris')) paymentBreakdown.qris += grand;
+    else if (methodKey.includes('transfer')) paymentBreakdown.transfer += grand;
+    else if (methodKey.includes('edc') || methodKey.includes('debit')) paymentBreakdown.edc += grand;
+    else if (methodKey.includes('cod')) paymentBreakdown.cod += grand;
+    else paymentBreakdown.other += grand;
+
+    let orderCost = 0;
+    (o.items || []).forEach(item => {
+      const qty = parseInt(item.qty) || 1;
+      totalItemsSold += qty;
+      const price = parseFloat(item.price || item.effectivePrice) || 0;
+
+      const prod = (appData.products || []).find(p => String(p.id) === String(item.id) || p.name === item.name);
+      let costPerUnit = 0;
+      if (prod) {
+        if (item.variantName && prod.variants && prod.variants.length > 0) {
+          const v = prod.variants.find(vr => vr.name === item.variantName);
+          costPerUnit = parseFloat(v?.costPrice) || parseFloat(prod.costPrice) || 0;
+        } else {
+          costPerUnit = parseFloat(prod.costPrice) || 0;
+        }
+      }
+      const itemCost = costPerUnit * qty;
+      orderCost += itemCost;
+
+      const pKey = `${item.name}${item.variantName ? ' (' + item.variantName + ')' : ''}`;
+      if (!productAgg[pKey]) {
+        productAgg[pKey] = { name: pKey, qty: 0, sales: 0, cost: 0, profit: 0 };
+      }
+      productAgg[pKey].qty += qty;
+      productAgg[pKey].sales += (price * qty);
+      productAgg[pKey].cost += itemCost;
+      productAgg[pKey].profit += ((price * qty) - itemCost);
+    });
+
+    totalCost += orderCost;
+  });
+
+  const netProfit = totalSales - totalCost;
+  const marginPct = totalSales > 0 && netProfit > 0 ? Math.round((netProfit / totalSales) * 100) : 0;
+  const productList = Object.values(productAgg).sort((a, b) => b.profit - a.profit);
+
+  let periodLabel = 'Hari Ini';
+  if (reportPeriod === '7days') periodLabel = '7 Hari Terakhir';
+  else if (reportPeriod === 'month') periodLabel = `Bulan ${now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}`;
+  else if (reportPeriod === 'year') periodLabel = `Tahun ${thisYearStr}`;
+  else if (reportPeriod === 'custom') periodLabel = `${reportCustomStart} s/d ${reportCustomEnd}`;
+  else if (reportPeriod === 'all') periodLabel = 'Semua Transaksi';
+
+  container.innerHTML = `
+    <!-- 4 Ringkasan Metrik Kartu -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Card 1: Total Omset -->
+      <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Penjualan (Omset)</span>
+          <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center text-sm"><i class="fa-solid fa-wallet"></i></div>
+        </div>
+        <div class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white mb-1">${fCur(totalSales)}</div>
+        <p class="text-[10px] font-bold text-slate-400">Periode: ${periodLabel}</p>
+      </div>
+
+      <!-- Card 2: Total Modal (HPP) -->
+      <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Modal (HPP)</span>
+          <div class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 flex items-center justify-center text-sm"><i class="fa-solid fa-boxes-packing"></i></div>
+        </div>
+        <div class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white mb-1">${fCur(totalCost)}</div>
+        <p class="text-[10px] font-bold text-slate-400">Beban pokok produk terjual</p>
+      </div>
+
+      <!-- Card 3: Laba Bersih -->
+      <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border-2 ${netProfit >= 0 ? 'border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/20' : 'border-rose-200 dark:border-rose-800/60 bg-rose-50/20'} shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[10px] font-black uppercase tracking-widest ${netProfit >= 0 ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'}">Laba Bersih Toko</span>
+          <div class="w-8 h-8 rounded-xl ${netProfit >= 0 ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600' : 'bg-rose-100 text-rose-600'} flex items-center justify-center text-sm"><i class="fa-solid fa-arrow-trend-up"></i></div>
+        </div>
+        <div class="text-xl sm:text-2xl font-black ${netProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600'} mb-1">${fCur(netProfit)}</div>
+        <div class="inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full ${netProfit >= 0 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-100 text-rose-800'}">
+          <i class="fa-solid fa-percent text-[9px]"></i> Margin Keuntungan: ${marginPct}%
+        </div>
+      </div>
+
+      <!-- Card 4: Transaksi & Volume -->
+      <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Transaksi</span>
+          <div class="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 flex items-center justify-center text-sm"><i class="fa-solid fa-receipt"></i></div>
+        </div>
+        <div class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white mb-1">${validOrders.length} <span class="text-xs font-bold text-slate-400">Transaksi</span></div>
+        <p class="text-[10px] font-bold text-slate-400">Total ${totalItemsSold} pcs produk terjual</p>
+      </div>
+    </div>
+
+    <!-- Rincian Metode Pembayaran -->
+    <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
+      <h3 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-2">
+        <i class="fa-solid fa-money-bill-wave text-emerald-500"></i> Rincian Pembayaran Masuk
+      </h3>
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
+        <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <span class="text-[10px] font-bold text-slate-400 block mb-1">TUNAI</span>
+          <span class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">${fCur(paymentBreakdown.cash)}</span>
+        </div>
+        <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <span class="text-[10px] font-bold text-slate-400 block mb-1">QRIS</span>
+          <span class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">${fCur(paymentBreakdown.qris)}</span>
+        </div>
+        <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <span class="text-[10px] font-bold text-slate-400 block mb-1">TRANSFER</span>
+          <span class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">${fCur(paymentBreakdown.transfer)}</span>
+        </div>
+        <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <span class="text-[10px] font-bold text-slate-400 block mb-1">EDC / DEBIT</span>
+          <span class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">${fCur(paymentBreakdown.edc)}</span>
+        </div>
+        <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 col-span-2 sm:col-span-1">
+          <span class="text-[10px] font-bold text-slate-400 block mb-1">COD</span>
+          <span class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">${fCur(paymentBreakdown.cod)}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabel 1: Kontribusi Laba per Produk -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+      <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+        <div>
+          <h3 class="text-sm font-black text-slate-800 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-trophy text-amber-500"></i> Kontribusi Laba per Produk
+          </h3>
+          <p class="text-[10px] font-semibold text-slate-400 mt-0.5">Daftar produk dengan kontribusi laba bersih tertinggi.</p>
+        </div>
+        <span class="text-xs font-bold text-slate-400">${productList.length} Produk</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 dark:bg-slate-900/60 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700">
+            <tr>
+              <th class="py-3.5 px-4">No</th>
+              <th class="py-3.5 px-4">Nama Produk</th>
+              <th class="py-3.5 px-4 text-center">Terjual</th>
+              <th class="py-3.5 px-4 text-right">Total Jual (Omset)</th>
+              <th class="py-3.5 px-4 text-right">Total Modal (HPP)</th>
+              <th class="py-3.5 px-4 text-right">Laba Bersih</th>
+              <th class="py-3.5 px-4 text-center">Margin</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60 font-semibold text-slate-700 dark:text-slate-300">
+            ${productList.length === 0 ? `
+              <tr><td colspan="7" class="text-center py-10 text-slate-400 font-bold">Tidak ada produk terjual pada periode ini</td></tr>
+            ` : productList.map((p, idx) => {
+              const pMargin = p.sales > 0 && p.profit > 0 ? Math.round((p.profit / p.sales) * 100) : 0;
+              return `
+                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/30 transition-colors">
+                  <td class="py-3 px-4 font-bold text-slate-400">${idx + 1}</td>
+                  <td class="py-3 px-4 font-bold text-slate-800 dark:text-white">${esc(p.name)}</td>
+                  <td class="py-3 px-4 text-center font-black">${p.qty} pcs</td>
+                  <td class="py-3 px-4 text-right font-black text-slate-900 dark:text-slate-100">${fCur(p.sales)}</td>
+                  <td class="py-3 px-4 text-right text-slate-500 font-bold">${fCur(p.cost)}</td>
+                  <td class="py-3 px-4 text-right font-black ${p.profit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600'}">${fCur(p.profit)}</td>
+                  <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-black ${p.profit >= 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-rose-50 text-rose-700'}">${pMargin}%</span></td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tabel 2: Rincian Transaksi -->
+    <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+      <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+        <div>
+          <h3 class="text-sm font-black text-slate-800 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-emerald-500"></i> Rincian Transaksi Periode Ini
+          </h3>
+          <p class="text-[10px] font-semibold text-slate-400 mt-0.5">Daftar transaksi kasir & pesanan online yang telah selesai.</p>
+        </div>
+        <span class="text-xs font-bold text-slate-400">${validOrders.length} Transaksi</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 dark:bg-slate-900/60 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700">
+            <tr>
+              <th class="py-3.5 px-4">No. Order</th>
+              <th class="py-3.5 px-4">Waktu</th>
+              <th class="py-3.5 px-4">Kasir / Sumber</th>
+              <th class="py-3.5 px-4">Metode</th>
+              <th class="py-3.5 px-4 text-right">Total Jual</th>
+              <th class="py-3.5 px-4 text-right">Modal (HPP)</th>
+              <th class="py-3.5 px-4 text-right">Laba</th>
+              <th class="py-3.5 px-4 text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60 font-semibold text-slate-700 dark:text-slate-300">
+            ${validOrders.length === 0 ? `
+              <tr><td colspan="8" class="text-center py-10 text-slate-400 font-bold">Tidak ada transaksi pada periode ini</td></tr>
+            ` : validOrders.map(o => {
+              const grand = parseFloat(o.payment?.grandTotal || o.payment?.total || 0) || 0;
+              let ordCost = 0;
+              (o.items || []).forEach(it => {
+                const q = parseInt(it.qty) || 1;
+                const pr = (appData.products || []).find(p => String(p.id) === String(it.id) || p.name === it.name);
+                let cpu = 0;
+                if (pr) {
+                  if (it.variantName && pr.variants && pr.variants.length > 0) {
+                    const vr = pr.variants.find(v => v.name === it.variantName);
+                    cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
+                  } else {
+                    cpu = parseFloat(pr.costPrice) || 0;
+                  }
+                }
+                ordCost += (cpu * q);
+              });
+              const ordProfit = grand - ordCost;
+              let dtStr = o.dateString ? new Date(o.dateString).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '-';
+
+              return `
+                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/30 transition-colors">
+                  <td class="py-3 px-4 font-mono font-bold text-slate-800 dark:text-white">${esc(o.orderId || o.id)}</td>
+                  <td class="py-3 px-4 text-slate-500">${dtStr}</td>
+                  <td class="py-3 px-4">${esc(o.cashier || o.source || 'Online')}</td>
+                  <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 dark:bg-slate-700">${esc(o.payment?.method || 'Tunai')}</span></td>
+                  <td class="py-3 px-4 text-right font-black text-slate-900 dark:text-white">${fCur(grand)}</td>
+                  <td class="py-3 px-4 text-right text-slate-500 font-bold">${fCur(ordCost)}</td>
+                  <td class="py-3 px-4 text-right font-black ${ordProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600'}">${fCur(ordProfit)}</td>
+                  <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">${esc(o.status || 'Selesai')}</span></td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+};
+
+window.printFinancialReport = () => {
+  window.print();
+};
+
+window.exportFinancialReportCsv = () => {
+  if (!cachedReportOrders || cachedReportOrders.length === 0) {
+    return showToast('Tidak ada data laporan untuk diekspor!');
+  }
+
+  let csv = '\uFEFF'; // UTF-8 BOM
+  csv += `LAPORAN PENJUALAN & LABA RUGI - ${appData.store?.name || 'Toko Grafika'}\n`;
+  csv += `Periode: ${reportPeriod.toUpperCase()}\n`;
+  csv += `Tanggal Cetak: ${new Date().toLocaleString('id-ID')}\n\n`;
+
+  csv += `No. Order,Tanggal/Waktu,Kasir/Sumber,Metode Pembayaran,Total Penjualan (Omset),Total Modal (HPP),Laba Bersih,Status\n`;
+
+  cachedReportOrders.forEach(o => {
+    if (o.status === 'Dibatalkan') return;
+    const grand = parseFloat(o.payment?.grandTotal || o.payment?.total || 0) || 0;
+    let ordCost = 0;
+    (o.items || []).forEach(it => {
+      const q = parseInt(it.qty) || 1;
+      const pr = (appData.products || []).find(p => String(p.id) === String(it.id) || p.name === it.name);
+      let cpu = 0;
+      if (pr) {
+        if (it.variantName && pr.variants && pr.variants.length > 0) {
+          const vr = pr.variants.find(v => v.name === it.variantName);
+          cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
+        } else {
+          cpu = parseFloat(pr.costPrice) || 0;
+        }
+      }
+      ordCost += (cpu * q);
+    });
+    const ordProfit = grand - ordCost;
+    const dtStr = o.dateString || o.createdAt || '';
+    csv += `"${o.orderId || o.id}","${dtStr}","${o.cashier || o.source || 'Online'}","${o.payment?.method || 'Tunai'}",${grand},${ordCost},${ordProfit},"${o.status || 'Selesai'}"\n`;
+  });
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', `Laporan_Laba_Rugi_${Date.now()}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast('✅ Laporan CSV berhasil diunduh!');
 };
 
 window.activatePro = async () => {
