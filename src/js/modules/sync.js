@@ -98,51 +98,33 @@ const _debouncedSync = (updatedProduct) => {
 };
 
 window.startPriceWatcher = () => {
-  // Listener Subcollection products
-  if (!_priceWatcherUnsub) {
-    _priceWatcherUnsub = db.collection('freshmart')
-      .doc('cms_data')
-      .collection('products')
-      .onSnapshot(snapshot => {
-        snapshot.docChanges().forEach(change => {
-          if (change.type === 'modified') {
-            const updatedProduct = change.doc.data();
-            const idx = appData.products.findIndex(p => p.id == updatedProduct.id);
-            if (idx > -1) {
-              appData.products[idx] = { ...appData.products[idx], ...updatedProduct };
-            }
-            _debouncedSync(updatedProduct);
-          }
-        });
-      }, err => {
-        console.warn('[PriceWatcher] Subcollection error, retry in 10s:', err);
-        _priceWatcherUnsub = null;
-        setTimeout(() => { if (!_priceWatcherUnsub) startPriceWatcher(); }, 10000);
-      });
-  }
-
-  // Listener cms_data document (fallback / legacy)
-  if (!_priceWatcherLegacyUnsub) {
-    let _legacyPrevProducts = null;
+  // Hanya pasang 1 listener hemat kuota pada dokumen metadata cms_data (Bukan membaca semua subkoleksi!)
+  if (!_priceWatcherLegacyUnsub && typeof db !== 'undefined' && db.collection) {
+    let _lastSeenUpdate = parseInt(sL('freshmart_last_update') || '0');
     _priceWatcherLegacyUnsub = db.collection('freshmart')
       .doc('cms_data')
       .onSnapshot(snapshot => {
+        if (!snapshot.exists) return;
         const data = snapshot.data();
-        if (!data || !data.products || !Array.isArray(data.products)) return;
-        if (_legacyPrevProducts) {
-          data.products.forEach(newProd => {
-            const oldProd = _legacyPrevProducts.find(p => p.id == newProd.id);
-            if (oldProd && (oldProd.price !== newProd.price ||
-                JSON.stringify(oldProd.variants) !== JSON.stringify(newProd.variants))) {
+        if (!data) return;
+
+        const serverUpdate = data.lastUpdate || 0;
+        // Jika ada pembaruan data dari admin di server
+        if (serverUpdate && serverUpdate > _lastSeenUpdate) {
+          _lastSeenUpdate = serverUpdate;
+          ssL('freshmart_last_update', serverUpdate.toString());
+
+          // Jika ada produk lama di cms_data
+          if (data.products && Array.isArray(data.products)) {
+            data.products.forEach(newProd => {
               const idx = appData.products.findIndex(p => p.id == newProd.id);
               if (idx > -1) appData.products[idx] = { ...appData.products[idx], ...newProd };
               _debouncedSync(newProd);
-            }
-          });
+            });
+          }
         }
-        _legacyPrevProducts = data.products;
       }, err => {
-        console.warn('[PriceWatcher] cms_data listener error:', err);
+        console.warn('[PriceWatcher] Listener error:', err);
         _priceWatcherLegacyUnsub = null;
       });
   }
