@@ -23,12 +23,16 @@ Tema Blogger PWA Modern & Modular dengan integrasi Firebase Firestore, Tailwind 
 
 ---
 
-## 📁 Struktur Direktori Modular
+## 📁 Struktur Direktori Bersih & Modular
 
 ```
 ├── dist/                  # Output build produksi (ringkas & bersih)
 │   ├── index.html         # Web preview untuk deployment (Vercel)
 │   └── theme.xml          # XML Theme siap pakai untuk Blogger
+├── docs/                  # Dokumentasi & konfigurasi eksternal
+│   ├── FIREBASE_CONFIG.md # Kredensial Firebase SDK
+│   ├── FIRESTORE_RULES.txt# Aturan keamanan Cloud Firestore
+│   └── GOOGLE_APPS_SCRIPT.gs # Skrip uploader Google Drive
 ├── scripts/               # Utilitas build & testing
 │   ├── audit-bugs.js      # Audit konsistensi ID DOM dan event handler JS
 │   ├── build.js           # Engine compiler modular @include
