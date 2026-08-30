@@ -1375,10 +1375,10 @@ const rAdmSet = () => {
           <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mb-3.5 leading-relaxed">Pilih pola background modern dinamis agar Storefront & CMS tidak polos dan tampil hidup seperti aplikasi native.</p>
           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
           ${[
-            { id: 'mesh-aurora', name: 'Mesh Aurora', desc: 'Glow ambient halus', icon: 'fa-solid fa-certificate' },
-            { id: 'dot-grid', name: 'Dot Matrix', desc: 'Titik geometric tech', icon: 'fa-solid fa-braille' },
-            { id: 'diag-grid', name: 'Diagonal Grid', desc: 'Garis geometri 3D', icon: 'fa-solid fa-border-none' },
-            { id: 'glass-blobs', name: 'Organic Blobs', desc: 'Gelombang dinamis', icon: 'fa-solid fa-shapes' },
+            { id: 'mesh-aurora', name: 'Mesh Aurora', desc: 'Pendaran halus', icon: 'fa-solid fa-certificate' },
+            { id: 'dot-grid', name: 'Spotlight', desc: 'Sorotan ambient', icon: 'fa-solid fa-sun' },
+            { id: 'diag-grid', name: 'Dual Aurora', desc: 'Pendaran 2 sisi', icon: 'fa-solid fa-gem' },
+            { id: 'glass-blobs', name: 'Organic Waves', desc: 'Gelombang cair', icon: 'fa-solid fa-shapes' },
             { id: 'clean-minimal', name: 'Minimalis', desc: 'Bersih & tenang', icon: 'fa-solid fa-layer-group' }
           ].map(bg => {
             const currentBg = appData.store.bgStyle || 'mesh-aurora';

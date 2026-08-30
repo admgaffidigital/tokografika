@@ -200,14 +200,14 @@ code, kbd, samp, pre, .font-mono {
 }
 
 /* --------------------------------------------------------------------------
-   4. Background Shapes, Patterns & Dynamic Variations (Storefront & CMS)
+   4. Background Shapes & Dynamic Ambient Lighting (Smooth - No Dots/Speckles)
    -------------------------------------------------------------------------- */
 #app-container {
     background-color: #f8fafc;
     background-image: 
-        radial-gradient(at 0% 0%, var(--clr-p-10) 0px, transparent 55%),
-        radial-gradient(at 100% 0%, var(--clr-p-10) 0px, transparent 55%),
-        radial-gradient(at 50% 100%, var(--clr-p-10) 0px, transparent 55%);
+        radial-gradient(at 0% 0%, var(--clr-p-10) 0px, transparent 60%),
+        radial-gradient(at 100% 0%, var(--clr-p-10) 0px, transparent 60%),
+        radial-gradient(at 50% 100%, var(--clr-p-10) 0px, transparent 60%);
     background-attachment: fixed;
     transition: background 0.4s ease;
 }
@@ -215,9 +215,9 @@ code, kbd, samp, pre, .font-mono {
 html.dark #app-container {
     background-color: #0b0f19;
     background-image: 
-        radial-gradient(at 0% 0%, rgba(var(--clr-p-rgb, 5, 150, 105), 0.18) 0px, transparent 55%),
-        radial-gradient(at 100% 0%, rgba(var(--clr-p-rgb, 5, 150, 105), 0.12) 0px, transparent 55%),
-        radial-gradient(at 50% 100%, rgba(var(--clr-p-rgb, 5, 150, 105), 0.10) 0px, transparent 55%);
+        radial-gradient(at 0% 0%, rgba(var(--clr-p-rgb, 5, 150, 105), 0.18) 0px, transparent 60%),
+        radial-gradient(at 100% 0%, rgba(var(--clr-p-rgb, 5, 150, 105), 0.12) 0px, transparent 60%),
+        radial-gradient(at 50% 100%, rgba(var(--clr-p-rgb, 5, 150, 105), 0.10) 0px, transparent 60%);
 }
 
 .app-bg-shapes {
@@ -229,7 +229,10 @@ html.dark #app-container {
     transition: all 0.4s ease;
 }
 
-.shape-grid-pattern,
+.shape-grid-pattern {
+    display: none !important;
+}
+
 .shape-blob-1,
 .shape-blob-2,
 .shape-blob-3 {
@@ -237,14 +240,7 @@ html.dark #app-container {
     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* 1. MESH AURORA (Default Modern Dynamic App - Highly Vibrant) */
-.bg-style-mesh-aurora .shape-grid-pattern {
-    inset: 0;
-    background-image: radial-gradient(var(--clr-p-25) 1.8px, transparent 1.8px);
-    background-size: 24px 24px;
-    opacity: 0.8;
-}
-
+/* 1. MESH AURORA (Smooth Glowing Dynamic Ambient Orbs) */
 .bg-style-mesh-aurora .shape-blob-1 {
     top: -120px;
     right: -100px;
@@ -278,53 +274,52 @@ html.dark #app-container {
     animation: floatBlob1 20s ease-in-out infinite alternate-reverse;
 }
 
-/* 2. DOT GRID (Tech & Precision Geometric Matrix - Clean & Crisp) */
-.bg-style-dot-grid .shape-grid-pattern {
-    inset: 0;
-    background-image: radial-gradient(var(--clr-p-35) 2px, transparent 2px);
-    background-size: 22px 22px;
-    opacity: 0.9;
-}
+/* 2. GLOWING SPOTLIGHT (Smooth Focused Ambient Glow) */
 .bg-style-dot-grid .shape-blob-1 {
     top: -150px;
     left: 20%;
     width: 600px;
     height: 400px;
-    background: radial-gradient(circle, var(--clr-p-25) 0%, transparent 70%);
+    background: radial-gradient(circle, var(--clr-p-35) 0%, transparent 70%);
     filter: blur(70px);
+    animation: floatBlob1 16s ease-in-out infinite alternate;
 }
-.bg-style-dot-grid .shape-blob-2,
+.bg-style-dot-grid .shape-blob-2 {
+    bottom: 5%;
+    right: -80px;
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, var(--clr-p-25) 0%, transparent 70%);
+    filter: blur(65px);
+}
 .bg-style-dot-grid .shape-blob-3 {
     opacity: 0.15;
 }
 
-/* 3. DIAGONAL GRID (Isometric Structural Lines) */
-.bg-style-diag-grid .shape-grid-pattern {
-    inset: 0;
-    background-image: 
-        linear-gradient(45deg, var(--clr-p-25) 1.5px, transparent 1.5px),
-        linear-gradient(-45deg, var(--clr-p-25) 1.5px, transparent 1.5px);
-    background-size: 32px 32px;
-    opacity: 0.75;
-}
+/* 3. DUAL AURORA (Top-Bottom Split Ambient Glow) */
 .bg-style-diag-grid .shape-blob-1 {
-    top: 10%;
+    top: 5%;
     right: -80px;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, var(--clr-p-25) 0%, transparent 70%);
-    filter: blur(60px);
+    background: radial-gradient(circle, var(--clr-p-35) 0%, transparent 70%);
+    filter: blur(65px);
     animation: floatBlob1 15s ease-in-out infinite alternate;
 }
-.bg-style-diag-grid .shape-blob-2,
+.bg-style-diag-grid .shape-blob-2 {
+    bottom: 10%;
+    left: -80px;
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, var(--clr-p-25) 0%, transparent 70%);
+    filter: blur(60px);
+    animation: floatBlob2 15s ease-in-out infinite alternate;
+}
 .bg-style-diag-grid .shape-blob-3 {
     opacity: 0.2;
 }
 
-/* 4. GLASS BLOBS (Fluid Organic Translucent Waves) */
-.bg-style-glass-blobs .shape-grid-pattern {
-    display: none;
-}
+/* 4. ORGANIC GLASS BLOBS (Fluid Liquid Waves) */
 .bg-style-glass-blobs .shape-blob-1 {
     top: 5%;
     right: -80px;
@@ -357,12 +352,6 @@ html.dark #app-container {
 }
 
 /* 5. CLEAN MINIMAL (Soft Studio Lighting) */
-.bg-style-clean-minimal .shape-grid-pattern {
-    inset: 0;
-    background-image: radial-gradient(var(--clr-p-10) 1px, transparent 1px);
-    background-size: 32px 32px;
-    opacity: 0.45;
-}
 .bg-style-clean-minimal .shape-blob-1,
 .bg-style-clean-minimal .shape-blob-2,
 .bg-style-clean-minimal .shape-blob-3 {
@@ -379,10 +368,6 @@ html.dark #app-container {
     0% { transform: translate(0, 0) scale(1) rotate(0deg); }
     50% { transform: translate(40px, -30px) scale(1.08) rotate(-12deg); }
     100% { transform: translate(-25px, 35px) scale(0.90) rotate(16deg); }
-}
-
-html.dark .shape-grid-pattern {
-    background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1.5px, transparent 1.5px);
 }
 
 html.dark .shape-blob-1,
