@@ -126,28 +126,108 @@ const updatePosClock = () => {
 };
 
 // -----------------------------------------------------------------------------
-// 3. POS CATALOG & CATEGORY CONTROLS
+// 3. POS CATALOG & CATEGORY CONTROLS (DRAWER MODAL & SPACIOUS CARDS)
 // -----------------------------------------------------------------------------
-const renderPosCategories = () => {
-  const container = el('pos-categories-container');
-  if (!container) return;
+let posCategorySearchQuery = '';
 
-  const categories = ['Semua Produk', ...(appData.categories || []).map(c => c.name)];
-  
-  container.innerHTML = categories.map(cat => {
-    const isSelected = posActiveCategory === cat;
+window.openPosCategoryModal = () => {
+  posCategorySearchQuery = '';
+  const filterInput = el('pos-category-filter-input');
+  if (filterInput) filterInput.value = '';
+  renderPosCategories();
+
+  const modal = el('pos-category-modal');
+  const box = el('pos-category-box');
+  if (modal && box) {
+    show('pos-category-modal');
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      box.classList.remove('translate-y-full', 'sm:scale-95');
+      box.classList.add('sm:scale-100');
+      filterInput?.focus();
+    }, 10);
+  }
+};
+
+window.closePosCategoryModal = () => {
+  const modal = el('pos-category-modal');
+  const box = el('pos-category-box');
+  if (modal && box) {
+    modal.classList.add('opacity-0');
+    box.classList.add('translate-y-full');
+    box.classList.remove('sm:scale-100');
+    box.classList.add('sm:scale-95');
+    setTimeout(() => hide('pos-category-modal'), 300);
+  }
+};
+
+window.filterCategoryModalList = (q) => {
+  posCategorySearchQuery = (q || '').trim().toLowerCase();
+  renderPosCategories();
+};
+
+const renderPosCategories = () => {
+  const labelEl = el('pos-active-cat-label');
+  if (labelEl) labelEl.innerText = posActiveCategory;
+
+  const listContainer = el('pos-category-modal-list');
+  if (!listContainer) return;
+
+  const allProducts = appData.products || [];
+  const categories = [
+    { name: 'Semua Produk', count: allProducts.length, icon: 'fa-boxes-stacked' },
+    ...(appData.categories || []).map(c => ({
+      name: c.name,
+      count: allProducts.filter(p => p.category === c.name).length,
+      icon: 'fa-tag'
+    }))
+  ];
+
+  const filteredCats = categories.filter(c => {
+    if (!posCategorySearchQuery) return true;
+    return c.name.toLowerCase().includes(posCategorySearchQuery);
+  });
+
+  if (!filteredCats.length) {
+    listContainer.innerHTML = `
+      <div class="py-8 text-center text-slate-400 font-bold text-xs">
+        <i class="fa-solid fa-folder-open text-2xl mb-1.5 block opacity-40"></i>
+        Kategori tidak ditemukan
+      </div>
+    `;
+    return;
+  }
+
+  listContainer.innerHTML = filteredCats.map(cat => {
+    const isSelected = posActiveCategory === cat.name;
     return `
-      <button type="button" onclick="filterPosCategory('${esc(cat)}')" class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${isSelected ? 'bg-emerald-600 text-white shadow-sm border border-emerald-600' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 border border-slate-200 shadow-sm'}">
-        ${esc(cat)}
+      <button type="button" onclick="selectPosCategory('${esc(cat.name)}')" 
+        class="w-full p-3 sm:p-3.5 rounded-2xl border-2 flex items-center justify-between transition-all cursor-pointer text-left active:scale-98 ${isSelected ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 shadow-sm' : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:border-emerald-300 dark:hover:border-emerald-700'}">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-9 h-9 rounded-xl flex items-center justify-center text-xs shrink-0 ${isSelected ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'}">
+            <i class="fa-solid ${cat.icon}"></i>
+          </div>
+          <div class="min-w-0">
+            <p class="text-xs sm:text-sm font-extrabold truncate">${esc(cat.name)}</p>
+            <p class="text-[10px] font-semibold opacity-70 mt-0.5">${cat.count} Produk</p>
+          </div>
+        </div>
+        ${isSelected ? `<span class="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs font-black flex items-center justify-center shrink-0 shadow-sm"><i class="fa-solid fa-check"></i></span>` : `<i class="fa-solid fa-chevron-right text-slate-300 text-xs shrink-0"></i>`}
       </button>
     `;
   }).join('');
 };
 
-window.filterPosCategory = (cat) => {
+window.selectPosCategory = (cat) => {
   posActiveCategory = cat;
-  renderPosCategories();
+  const labelEl = el('pos-active-cat-label');
+  if (labelEl) labelEl.innerText = cat;
+  closePosCategoryModal();
   renderPosProducts();
+};
+
+window.filterPosCategory = (cat) => {
+  window.selectPosCategory(cat);
 };
 
 window.setPosViewMode = (mode) => {
@@ -156,11 +236,19 @@ window.setPosViewMode = (mode) => {
   const btnList = el('btn-pos-view-list');
   
   if (mode === 'grid') {
-    if (btnGrid) btnGrid.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-white bg-white/30 shadow-sm';
-    if (btnList) btnList.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-white/60 hover:text-white';
+    if (btnGrid) {
+      btnGrid.className = 'px-2.5 sm:px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-xs font-black transition-all text-emerald-700 dark:text-emerald-300 bg-white dark:bg-slate-900 shadow-md border border-slate-200/50 dark:border-slate-700';
+    }
+    if (btnList) {
+      btnList.className = 'px-2.5 sm:px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-xs font-black transition-all text-white/70 hover:text-white';
+    }
   } else {
-    if (btnGrid) btnGrid.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-white/60 hover:text-white';
-    if (btnList) btnList.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-white bg-white/30 shadow-sm';
+    if (btnGrid) {
+      btnGrid.className = 'px-2.5 sm:px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-xs font-black transition-all text-white/70 hover:text-white';
+    }
+    if (btnList) {
+      btnList.className = 'px-2.5 sm:px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-xs font-black transition-all text-emerald-700 dark:text-emerald-300 bg-white dark:bg-slate-900 shadow-md border border-slate-200/50 dark:border-slate-700';
+    }
   }
 
   renderPosProducts();
@@ -196,19 +284,22 @@ const renderPosProducts = () => {
   });
 
   if (!filtered.length) {
-    container.className = 'w-full py-16 text-center text-slate-400 dark:text-slate-500 font-bold text-xs bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800';
+    container.className = 'w-full py-20 text-center text-slate-400 dark:text-slate-500 font-bold text-xs bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm';
     container.innerHTML = `
-      <i class="fa-solid fa-box-open text-3xl mb-2 block opacity-40"></i>
-      Produk tidak ditemukan
+      <div class="w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-3 text-slate-400">
+        <i class="fa-solid fa-box-open text-2xl"></i>
+      </div>
+      <p class="text-sm font-black text-slate-700 dark:text-slate-300">Produk Tidak Ditemukan</p>
+      <p class="text-[10px] text-slate-400 mt-1 max-w-[220px] mx-auto">Coba cari dengan kata kunci lain atau pilih kategori Semua Produk</p>
     `;
     return;
   }
 
   if (posViewMode === 'grid') {
-    container.className = 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-3';
+    container.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4';
     container.innerHTML = filtered.map(p => renderPosProductCardGrid(p)).join('');
   } else {
-    container.className = 'space-y-2';
+    container.className = 'space-y-2.5 max-w-4xl mx-auto';
     container.innerHTML = filtered.map(p => renderPosProductCardList(p)).join('');
   }
 };
@@ -217,10 +308,10 @@ const getEffP = (item) => item.effectivePrice || item.price || 0;
 
 const _getPosMainPrice = (p) => {
   if (p.variants && p.variants.length > 0) {
-    const prices = p.variants.map(v => v.price || 0);
+    const prices = p.variants.map(v => parseFloat(v.price) || 0);
     return Math.min(...prices);
   }
-  return p.salePrice > 0 ? p.salePrice : (p.price || 0);
+  return parseFloat(p.salePrice > 0 ? p.salePrice : (p.price || 0)) || 0;
 };
 
 const renderPosProductCardGrid = (p) => {
@@ -233,17 +324,50 @@ const renderPosProductCardGrid = (p) => {
   const isGrosir = (p.wholesalePrice > 0 && p.wholesaleMinQty > 0) || (p.wholesale && p.wholesale.length > 0);
 
   return `
-    <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isOutOfStock ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 hover:shadow-md'} overflow-hidden transition-all cursor-pointer group flex flex-col active:scale-98" onclick="${isOutOfStock ? '' : (hasVariants ? `openPosVariantModal('${esc(p.id)}')` : `addToCartPos('${esc(p.id)}', null, 1)`)}" title="${esc(p.name)}">
-      <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 overflow-hidden">
-        ${imgUrl ? `<img src="${esc(imgUrl)}" alt="${esc(p.name)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="if(window.imgErrRetry) window.imgErrRetry(this, 'No Image', 400); else this.style.display='none';"/>` : `<div class="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600"><i class="fa-solid fa-image text-2xl"></i></div>`}
-        ${cartQty > 0 ? `<div class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center shadow-md border-2 border-white">${cartQty}</div>` : ''}
-        ${isGrosir ? `<div class="absolute top-1.5 left-1.5 bg-amber-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full">GROSIR</div>` : ''}
-        ${hasVariants ? `<div class="absolute bottom-1.5 right-1.5 bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 text-[8px] font-black px-1.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">${p.variants.length} varian</div>` : ''}
-        ${isOutOfStock ? `<div class="absolute inset-0 bg-white/60 dark:bg-black/60 flex items-center justify-center"><span class="text-[10px] font-black text-rose-600 bg-white/90 dark:bg-slate-900/90 px-2 py-1 rounded-full">Habis</span></div>` : ''}
+    <div class="bg-white dark:bg-slate-900 rounded-3xl border ${isOutOfStock ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-200/90 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 hover:shadow-xl'} overflow-hidden transition-all duration-200 cursor-pointer group flex flex-col justify-between active:scale-[0.98] shadow-sm hover:-translate-y-0.5" onclick="${isOutOfStock ? '' : (hasVariants ? `openPosVariantModal('${esc(p.id)}')` : `addToCartPos('${esc(p.id)}', null, 1)`)}" title="${esc(p.name)}">
+      
+      <!-- Image Box with Badges -->
+      <div class="relative aspect-square bg-slate-50 dark:bg-slate-800/60 overflow-hidden m-2 sm:m-2.5 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-center">
+        ${imgUrl ? `<img src="${esc(imgUrl)}" alt="${esc(p.name)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="if(window.imgErrRetry) window.imgErrRetry(this, 'No Image', 400); else this.style.display='none';"/>` : `<div class="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600"><i class="fa-solid fa-image text-3xl"></i></div>`}
+        
+        <!-- Cart Counter Badge (Floating Top Right) -->
+        ${cartQty > 0 ? `
+          <div class="absolute top-1.5 right-1.5 bg-emerald-600 text-white text-[10px] sm:text-xs font-black px-2 py-0.5 rounded-xl shadow-lg border border-white/50 flex items-center gap-1">
+            <i class="fa-solid fa-check text-[9px]"></i>
+            <span>${cartQty}</span>
+          </div>` : ''}
+
+        <!-- Wholesale Badge (Top Left) -->
+        ${isGrosir ? `<div class="absolute top-1.5 left-1.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[8px] sm:text-[9px] font-black px-2 py-0.5 rounded-lg shadow-sm tracking-wider uppercase">Grosir</div>` : ''}
+
+        <!-- Variant Count Badge (Bottom Right) -->
+        ${hasVariants ? `
+          <div class="absolute bottom-1.5 right-1.5 bg-slate-900/85 text-white text-[8px] sm:text-[9px] font-extrabold px-2 py-0.5 rounded-lg border border-white/20 backdrop-blur-sm flex items-center gap-1">
+            <i class="fa-solid fa-layer-group text-[8px]"></i>
+            <span>${p.variants.length} Varian</span>
+          </div>` : ''}
+
+        <!-- Out of Stock Overlay -->
+        ${isOutOfStock ? `<div class="absolute inset-0 bg-white/70 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center"><span class="text-[10px] font-black text-rose-600 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-full shadow-md">Habis</span></div>` : ''}
       </div>
-      <div class="p-2.5 flex flex-col flex-1">
-        <p class="text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight line-clamp-2 flex-1">${esc(p.name)}</p>
-        <p class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 mt-1.5">${hasVariants ? 'Mulai ' : ''}${price > 0 ? fCur(price) : 'Lihat Varian'}</p>
+
+      <!-- Info & Price Content -->
+      <div class="p-3 pt-1 flex flex-col flex-1 justify-between">
+        <div>
+          <h4 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 leading-snug line-clamp-2 mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
+          <p class="text-[10px] font-semibold text-slate-400 dark:text-slate-500 truncate">${esc(p.category || 'Umum')}${p.sku ? ' · ' + esc(p.sku) : ''}</p>
+        </div>
+
+        <div class="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-1">
+          <div class="min-w-0">
+            ${hasVariants ? `<span class="text-[9px] font-bold text-slate-400 block leading-tight">Mulai</span>` : ''}
+            <span class="text-sm sm:text-base font-black text-emerald-600 dark:text-emerald-400 leading-none">${fCur(price)}</span>
+          </div>
+          
+          <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-sm shrink-0">
+            <i class="fa-solid fa-plus text-[11px]"></i>
+          </div>
+        </div>
       </div>
     </div>
   `;
@@ -259,24 +383,36 @@ const renderPosProductCardList = (p) => {
   const isGrosir = (p.wholesalePrice > 0 && p.wholesaleMinQty > 0) || (p.wholesale && p.wholesale.length > 0);
 
   return `
-    <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isOutOfStock ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 hover:shadow-md'} p-3 flex items-center gap-3 transition-all cursor-pointer active:scale-98" onclick="${isOutOfStock ? '' : (hasVariants ? `openPosVariantModal('${esc(p.id)}')` : `addToCartPos('${esc(p.id)}', null, 1)`)}" title="${esc(p.name)}">
-      <div class="w-14 h-14 rounded-xl bg-slate-100 dark:bg-slate-800 overflow-hidden shrink-0 flex items-center justify-center">
-        ${imgUrl ? `<img src="${esc(imgUrl)}" alt="${esc(p.name)}" class="w-full h-full object-cover" loading="lazy" onerror="if(window.imgErrRetry) window.imgErrRetry(this, 'No Image', 400); else this.style.display='none';"/>` : `<i class="fa-solid fa-image text-slate-300 dark:text-slate-600 text-lg"></i>`}
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isOutOfStock ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-200/90 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 hover:shadow-md'} p-3 sm:p-3.5 flex items-center gap-3.5 transition-all cursor-pointer group active:scale-[0.99] shadow-sm" onclick="${isOutOfStock ? '' : (hasVariants ? `openPosVariantModal('${esc(p.id)}')` : `addToCartPos('${esc(p.id)}', null, 1)`)}" title="${esc(p.name)}">
+      
+      <!-- List Thumbnail -->
+      <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-50 dark:bg-slate-800 overflow-hidden shrink-0 border border-slate-100 dark:border-slate-800 flex items-center justify-center relative">
+        ${imgUrl ? `<img src="${esc(imgUrl)}" alt="${esc(p.name)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="if(window.imgErrRetry) window.imgErrRetry(this, 'No Image', 400); else this.style.display='none';"/>` : `<i class="fa-solid fa-image text-slate-300 dark:text-slate-600 text-xl"></i>`}
+        ${cartQty > 0 ? `<span class="absolute top-1 right-1 w-5 h-5 rounded-full bg-emerald-600 text-white text-[9px] font-black flex items-center justify-center shadow-md">${cartQty}</span>` : ''}
       </div>
-      <div class="flex-1 min-w-0">
-        <p class="text-sm font-bold text-slate-800 dark:text-slate-200 truncate">${esc(p.name)}</p>
-        <div class="flex items-center gap-2 mt-0.5">
-          ${isGrosir ? `<span class="text-[8px] font-black bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 px-1.5 py-0.5 rounded-full">GROSIR</span>` : ''}
-          ${hasVariants ? `<span class="text-[8px] font-black bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded-full">${p.variants.length} varian</span>` : ''}
-          ${isOutOfStock ? `<span class="text-[10px] font-black text-rose-600">Habis</span>` : ''}
+
+      <!-- List Info -->
+      <div class="flex-1 min-w-0 pr-1">
+        <div class="flex items-center gap-2 mb-0.5">
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${esc(p.category || 'Umum')}</span>
+          ${isGrosir ? `<span class="text-[8px] font-black bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 px-1.5 py-0.2 rounded-md uppercase">Grosir</span>` : ''}
+          ${hasVariants ? `<span class="text-[8px] font-black bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.2 rounded-md">${p.variants.length} Varian</span>` : ''}
+          ${isOutOfStock ? `<span class="text-[9px] font-black text-rose-600 bg-rose-50 px-1.5 py-0.2 rounded-md">Habis</span>` : ''}
         </div>
-        <p class="text-sm font-black text-emerald-600 dark:text-emerald-400 mt-1">${hasVariants ? 'Mulai ' : ''}${price > 0 ? fCur(price) : 'Lihat Varian'}</p>
+        <h4 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 truncate group-hover:text-emerald-600 transition-colors">${esc(p.name)}</h4>
+        <div class="flex items-baseline gap-1 mt-1">
+          ${hasVariants ? `<span class="text-[9px] font-bold text-slate-400">Mulai</span>` : ''}
+          <span class="text-sm sm:text-base font-black text-emerald-600 dark:text-emerald-400">${fCur(price)}</span>
+          ${p.unit ? `<span class="text-[10px] text-slate-400 font-semibold">/${esc(p.unit)}</span>` : ''}
+        </div>
       </div>
-      <div class="flex items-center gap-1.5 shrink-0">
-        ${cartQty > 0 ? `<span class="w-6 h-6 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center">${cartQty}</span>` : ''}
+
+      <!-- Quick Add / Action Button -->
+      <div class="flex items-center gap-2 shrink-0">
         ${!isOutOfStock ? `
-          <button type="button" class="w-8 h-8 rounded-xl flex items-center justify-center font-black transition-all text-white shadow-sm active:scale-95" style="background-color:var(--clr-p)" onclick="event.stopPropagation(); ${hasVariants ? `openPosVariantModal('${esc(p.id)}')` : `addToCartPos('${esc(p.id)}', null, 1)`}">
-            <i class="fa-solid fa-plus text-xs"></i>
+          <button type="button" class="px-3 py-2 rounded-xl flex items-center gap-1.5 font-extrabold text-xs transition-all shadow-sm active:scale-95 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 group-hover:bg-emerald-600 group-hover:text-white border border-emerald-200 dark:border-emerald-800" onclick="event.stopPropagation(); ${hasVariants ? `openPosVariantModal('${esc(p.id)}')` : `addToCartPos('${esc(p.id)}', null, 1)`}">
+            <i class="fa-solid fa-plus text-[10px]"></i>
+            <span class="hidden sm:inline">${hasVariants ? 'Pilih Varian' : 'Tambah'}</span>
           </button>` : ''}
       </div>
     </div>
