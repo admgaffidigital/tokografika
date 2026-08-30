@@ -687,7 +687,233 @@ window.renderReportView = () => {
 };
 
 window.printFinancialReport = () => {
-  window.print();
+  if (!cachedReportOrders || cachedReportOrders.length === 0) {
+    return showToast('Tidak ada data transaksi untuk dicetak!');
+  }
+
+  const now = new Date();
+  const todayStr = now.toISOString().slice(0, 10);
+  const thisMonthStr = now.toISOString().slice(0, 7);
+  const thisYearStr = now.getFullYear().toString();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  // 1. Filter Orders
+  const validOrders = (cachedReportOrders || []).filter(order => {
+    if (order.status === 'Dibatalkan') return false;
+    let orderDate = null;
+    if (order.timestamp && order.timestamp.toDate) {
+      orderDate = order.timestamp.toDate();
+    } else if (order.dateString || order.createdAt) {
+      orderDate = new Date(order.dateString || order.createdAt);
+    } else {
+      orderDate = new Date();
+    }
+    const orderDateStr = orderDate.toISOString().slice(0, 10);
+
+    if (reportPeriod === 'today') return orderDateStr === todayStr;
+    if (reportPeriod === '7days') return orderDate >= sevenDaysAgo;
+    if (reportPeriod === 'month') return orderDateStr.startsWith(thisMonthStr);
+    if (reportPeriod === 'year') return orderDateStr.startsWith(thisYearStr);
+    if (reportPeriod === 'custom') return orderDateStr >= reportCustomStart && orderDateStr <= reportCustomEnd;
+    return true;
+  });
+
+  if (!validOrders.length) {
+    return showToast('Tidak ada data transaksi pada periode ini!');
+  }
+
+  // 2. Metrics Calculation
+  let totalSales = 0;
+  let totalCost = 0;
+  let totalItems = 0;
+  const productAgg = {};
+
+  validOrders.forEach(o => {
+    const grand = parseFloat(o.payment?.grandTotal || o.payment?.total || 0) || 0;
+    totalSales += grand;
+
+    let ordCost = 0;
+    (o.items || []).forEach(it => {
+      const q = parseInt(it.qty) || 1;
+      totalItems += q;
+      const p = parseFloat(it.price || it.effectivePrice) || 0;
+
+      let cpu = typeof it.costPrice !== 'undefined' && it.costPrice !== '' ? (parseFloat(it.costPrice) || 0) : 0;
+      if (!cpu) {
+        const pr = (appData.products || []).find(x => String(x.id) === String(it.id) || x.name === it.name);
+        if (pr) {
+          if (it.variantName && pr.variants && pr.variants.length > 0) {
+            const vr = pr.variants.find(v => v.name === it.variantName);
+            cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
+          } else {
+            cpu = parseFloat(pr.costPrice) || 0;
+          }
+        }
+      }
+      const itemCost = cpu * q;
+      ordCost += itemCost;
+
+      const pKey = `${it.name}${it.variantName ? ' (' + it.variantName + ')' : ''}`;
+      if (!productAgg[pKey]) {
+        productAgg[pKey] = { name: pKey, qty: 0, sales: 0, cost: 0, profit: 0 };
+      }
+      productAgg[pKey].qty += q;
+      productAgg[pKey].sales += (p * q);
+      productAgg[pKey].cost += itemCost;
+      productAgg[pKey].profit += ((p * q) - itemCost);
+    });
+
+    totalCost += ordCost;
+  });
+
+  const netProfit = totalSales - totalCost;
+  const marginPct = totalSales > 0 && netProfit > 0 ? Math.round((netProfit / totalSales) * 100) : 0;
+  const periodLabelMap = {
+    today: 'Hari Ini (' + now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) + ')',
+    '7days': '7 Hari Terakhir',
+    month: 'Bulan Ini (' + now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }) + ')',
+    year: 'Tahun ' + now.getFullYear(),
+    all: 'Semua Waktu',
+    custom: `${reportCustomStart || '-'} s/d ${reportCustomEnd || '-'}`
+  };
+  const periodText = periodLabelMap[reportPeriod] || reportPeriod;
+  const printDateText = now.toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
+
+  // 3. Build HTML Output for Printing
+  let h = `
+    <div style="font-family:'Plus Jakarta Sans',Arial,sans-serif;color:#0f172a;max-width:800px;margin:0 auto;padding:10px 0;background:#ffffff;">
+      <!-- Header Laporan -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #e2e8f0;padding-bottom:14px;margin-bottom:16px;">
+        <div>
+          <h1 style="font-size:20px;font-weight:900;color:#0f172a;margin:0;letter-spacing:-0.02em;">${esc(appData.store?.name || 'TOKO GRAFIKA')}</h1>
+          <p style="font-size:11px;color:#64748b;margin:2px 0 0 0;">${esc(appData.store?.slogan || 'Ritel & Grosir Online')}</p>
+          <p style="font-size:10px;color:#64748b;margin:2px 0 0 0;">${esc(appData.store?.address || '')} ${appData.store?.wa ? ' · WA: ' + appData.store.wa : ''}</p>
+        </div>
+        <div style="text-align:right;">
+          <h2 style="font-size:15px;font-weight:900;color:#059669;margin:0;text-transform:uppercase;letter-spacing:0.04em;">LAPORAN PENJUALAN & LABA</h2>
+          <p style="font-size:11px;font-weight:700;color:#334155;margin:3px 0 0 0;">Periode: ${esc(periodText)}</p>
+          <p style="font-size:9px;color:#94a3b8;margin:2px 0 0 0;">Dicetak: ${printDateText}</p>
+        </div>
+      </div>
+
+      <!-- 4 Kotak Ringkasan KPI Finansial -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;">
+        <div style="border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#f8fafc;">
+          <p style="font-size:9px;font-weight:800;color:#64748b;text-transform:uppercase;margin:0 0 4px 0;">Total Penjualan</p>
+          <p style="font-size:14px;font-weight:900;color:#059669;margin:0;">${fCur(totalSales)}</p>
+          <p style="font-size:8.5px;color:#94a3b8;margin:2px 0 0 0;">${validOrders.length} transaksi</p>
+        </div>
+        <div style="border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#f8fafc;">
+          <p style="font-size:9px;font-weight:800;color:#64748b;text-transform:uppercase;margin:0 0 4px 0;">Total Modal (HPP)</p>
+          <p style="font-size:14px;font-weight:900;color:#dc2626;margin:0;">${fCur(totalCost)}</p>
+          <p style="font-size:8.5px;color:#94a3b8;margin:2px 0 0 0;">${totalItems} qty produk</p>
+        </div>
+        <div style="border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#ecfdf5;border-color:#a7f3d0;">
+          <p style="font-size:9px;font-weight:800;color:#047857;text-transform:uppercase;margin:0 0 4px 0;">Laba Bersih</p>
+          <p style="font-size:14px;font-weight:900;color:#047857;margin:0;">${fCur(netProfit)}</p>
+          <p style="font-size:8.5px;color:#059669;margin:2px 0 0 0;">Omset - HPP</p>
+        </div>
+        <div style="border:1px solid #e2e8f0;border-radius:10px;padding:10px;background:#eff6ff;border-color:#bfdbfe;">
+          <p style="font-size:9px;font-weight:800;color:#1d4ed8;text-transform:uppercase;margin:0 0 4px 0;">Margin Profit</p>
+          <p style="font-size:14px;font-weight:900;color:#1d4ed8;margin:0;">${marginPct}%</p>
+          <p style="font-size:8.5px;color:#2563eb;margin:2px 0 0 0;">Rasio Profitabilitas</p>
+        </div>
+      </div>
+
+      <!-- Tabel Rincian Transaksi Penjualan -->
+      <div style="margin-bottom:20px;">
+        <h3 style="font-size:12px;font-weight:800;color:#334155;margin:0 0 8px 0;text-transform:uppercase;letter-spacing:0.04em;">Rincian Transaksi Kasir & Online (${validOrders.length})</h3>
+        <table style="width:100%;border-collapse:collapse;font-size:10px;text-align:left;">
+          <thead>
+            <tr style="background:#f1f5f9;border-top:1px solid #cbd5e1;border-bottom:1px solid #cbd5e1;">
+              <th style="padding:6px 8px;font-weight:800;color:#475569;width:5%;">No</th>
+              <th style="padding:6px 8px;font-weight:800;color:#475569;width:16%;">Waktu / Tanggal</th>
+              <th style="padding:6px 8px;font-weight:800;color:#475569;width:15%;">No Order</th>
+              <th style="padding:6px 8px;font-weight:800;color:#475569;width:16%;">Kasir / Sumber</th>
+              <th style="padding:6px 8px;font-weight:800;color:#475569;width:12%;">Metode</th>
+              <th style="padding:6px 8px;font-weight:800;color:#475569;text-align:right;width:12%;">Omset</th>
+              <th style="padding:6px 8px;font-weight:800;color:#475569;text-align:right;width:12%;">Modal (HPP)</th>
+              <th style="padding:6px 8px;font-weight:800;color:#475569;text-align:right;width:12%;">Laba Bersih</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${validOrders.map((o, idx) => {
+              const grand = parseFloat(o.payment?.grandTotal || o.payment?.total || 0) || 0;
+              let ordCost = 0;
+              (o.items || []).forEach(it => {
+                const q = parseInt(it.qty) || 1;
+                let cpu = typeof it.costPrice !== 'undefined' && it.costPrice !== '' ? (parseFloat(it.costPrice) || 0) : 0;
+                if (!cpu) {
+                  const pr = (appData.products || []).find(x => String(x.id) === String(it.id) || x.name === it.name);
+                  if (pr) {
+                    if (it.variantName && pr.variants && pr.variants.length > 0) {
+                      const vr = pr.variants.find(v => v.name === it.variantName);
+                      cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
+                    } else {
+                      cpu = parseFloat(pr.costPrice) || 0;
+                    }
+                  }
+                }
+                ordCost += (cpu * q);
+              });
+              const ordProfit = grand - ordCost;
+              const dt = o.dateString ? new Date(o.dateString).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' }) : (o.createdAt || '-');
+              const bg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+
+              return `
+                <tr style="background:${bg};border-bottom:1px solid #f1f5f9;">
+                  <td style="padding:6px 8px;color:#64748b;">${idx + 1}</td>
+                  <td style="padding:6px 8px;color:#334155;white-space:nowrap;">${dt}</td>
+                  <td style="padding:6px 8px;font-weight:700;color:#0f172a;font-family:'JetBrains Mono',monospace;">#${esc(o.orderId || o.id)}</td>
+                  <td style="padding:6px 8px;color:#475569;">${esc(o.cashier || o.source || 'Online')}</td>
+                  <td style="padding:6px 8px;color:#475569;text-transform:uppercase;font-size:9px;">${esc(o.payment?.method || 'Tunai')}</td>
+                  <td style="padding:6px 8px;text-align:right;font-weight:700;color:#0f172a;">${fCur(grand)}</td>
+                  <td style="padding:6px 8px;text-align:right;color:#dc2626;">${fCur(ordCost)}</td>
+                  <td style="padding:6px 8px;text-align:right;font-weight:800;color:#059669;">${fCur(ordProfit)}</td>
+                </tr>
+              `;
+            }).join('')}
+            <tr style="background:#f1f5f9;border-top:2px solid #cbd5e1;font-weight:900;">
+              <td colspan="5" style="padding:8px;text-align:right;text-transform:uppercase;">TOTAL KESELURUHAN:</td>
+              <td style="padding:8px;text-align:right;color:#0f172a;">${fCur(totalSales)}</td>
+              <td style="padding:8px;text-align:right;color:#dc2626;">${fCur(totalCost)}</td>
+              <td style="padding:8px;text-align:right;color:#059669;">${fCur(netProfit)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tanda Tangan Pengesahan Laporan -->
+      <div style="display:flex;justify-content:space-between;margin-top:30px;padding-top:10px;text-align:center;font-size:10px;">
+        <div style="width:200px;">
+          <p style="margin:0 0 45px 0;color:#64748b;">Dibuat Oleh (Admin/Kasir),</p>
+          <p style="font-weight:800;border-bottom:1px solid #94a3b8;padding-bottom:2px;margin:0;">( ..................................... )</p>
+        </div>
+        <div style="width:200px;">
+          <p style="margin:0 0 45px 0;color:#64748b;">Mengetahui (Owner Toko),</p>
+          <p style="font-weight:800;border-bottom:1px solid #94a3b8;padding-bottom:2px;margin:0;">${esc(appData.store?.name || 'Toko Grafika')}</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // 4. Inject ke #report-print-section
+  let printEl = document.getElementById('report-print-section');
+  if (!printEl) {
+    printEl = document.createElement('div');
+    printEl.id = 'report-print-section';
+    document.body.appendChild(printEl);
+  }
+  printEl.innerHTML = h;
+
+  // 5. Masuk ke mode report print & panggil window.print()
+  document.body.classList.add('print-mode-report');
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => {
+      document.body.classList.remove('print-mode-report');
+    }, 1000);
+  }, 150);
 };
 
 window.exportFinancialReportCsv = () => {

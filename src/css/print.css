@@ -1,25 +1,14 @@
 /* ==========================================================================
-   GRAFIKA PWA STORE - PRINT STYLESHEET (THERMAL 58MM & A4)
+   GRAFIKA PWA STORE - PRINT STYLESHEET (THERMAL 58MM & A4 FINANCIAL REPORT)
    ========================================================================== */
 
-#thermal-print-section {
+#thermal-print-section,
+#report-print-section {
     display: none;
 }
 
 @media print {
-    @page {
-        margin: 0;
-        size: 58mm auto;
-    }
-    
-    html, body {
-        background-color: #fff !important;
-        color: #000 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 58mm !important;
-    }
-    
+    /* 1. Sembunyikan elemen aplikasi umum */
     #app-container,
     #global-loader,
     #toast,
@@ -31,29 +20,64 @@
         overflow: hidden !important;
     }
     
-    #thermal-print-section {
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* 2. MODE: CETAK LAPORAN KEUANGAN A4 */
+    body.print-mode-report {
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+    
+    body.print-mode-report #report-print-section {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        padding: 8mm 10mm !important;
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        box-sizing: border-box !important;
+    }
+    
+    body.print-mode-report #thermal-print-section {
+        display: none !important;
+    }
+
+    /* 3. MODE: CETAK STRUK THERMAL 58MM */
+    body:not(.print-mode-report) {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 58mm !important;
+    }
+    
+    body:not(.print-mode-report) #thermal-print-section {
         display: block !important;
         width: 58mm !important;
         max-width: 58mm !important;
         margin: 0 !important;
         padding: 2mm !important;
-        background-color: #fff !important;
-        color: #000 !important;
+        background-color: #ffffff !important;
+        color: #000000 !important;
         opacity: 1 !important;
         visibility: visible !important;
     }
     
-    #thermal-print-section * {
-        font-family: 'Courier New', Courier, monospace !important;
+    body:not(.print-mode-report) #thermal-print-section * {
+        font-family: 'JetBrains Mono', 'Courier New', Courier, monospace !important;
         font-size: 11px !important;
         font-weight: bold !important;
-        color: #000 !important;
+        color: #000000 !important;
         line-height: 1.2 !important;
         box-sizing: border-box !important;
-    }
-    
-    * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
     }
 }
