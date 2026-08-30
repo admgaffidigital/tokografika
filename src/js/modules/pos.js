@@ -469,7 +469,6 @@ window.savePosQtyModal = () => {
 
 const renderPosCart = () => {
   const drawerContainer = el('pos-drawer-cart-items-container');
-  const topBadge = el('pos-top-cart-badge');
   const floatDock = el('pos-floating-cart-dock');
   const floatDockCount = el('pos-float-dock-count');
   const floatDockTotal = el('pos-float-dock-total');
