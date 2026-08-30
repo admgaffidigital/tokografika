@@ -221,67 +221,78 @@ window.openAdminTab = (t, fH = !1) => {
 };
 
 // =============================================================================
-// LAPORAN KEUANGAN, LABA RUGI & MODAL TOKO
+// LAPORAN KEUANGAN, LABA RUGI & MODAL TOKO (APP-STYLE CARD BOX DESIGN)
 // =============================================================================
 let reportPeriod = 'today';
+let reportSubTab = 'products'; // 'products' | 'transactions'
 let reportCustomStart = '';
 let reportCustomEnd = '';
 let cachedReportOrders = [];
+let reportSearchQuery = '';
 
 window.rAdmReports = async () => {
   setH('admin-content', `
-    <div class="space-y-5 pb-16">
-      <!-- Header Laporan -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
-        <div>
-          <h2 class="text-base sm:text-lg font-black text-slate-800 dark:text-white flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 flex items-center justify-center text-sm"><i class="fa-solid fa-chart-pie"></i></div>
-            <span>Laporan Penjualan & Laba Rugi</span>
-          </h2>
-          <p class="text-[11px] font-semibold text-slate-400 mt-1">Rekapitulasi Omset, Total Modal (HPP), dan Keuntungan Bersih Toko.</p>
-        </div>
-        <div class="flex items-center gap-2 shrink-0">
-          <button type="button" onclick="printFinancialReport()" class="px-3.5 py-2.5 bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
-            <i class="fa-solid fa-print text-sm"></i> <span>Cetak</span>
-          </button>
-          <button type="button" onclick="exportFinancialReportCsv()" class="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
-            <i class="fa-solid fa-file-excel text-sm"></i> <span>Export CSV</span>
-          </button>
+    <div class="space-y-4 pb-20">
+      <!-- Header App-Style Card Box -->
+      <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm relative overflow-hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+          <div class="flex items-center gap-3.5">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl shrink-0 shadow-sm" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
+              <i class="fa-solid fa-chart-pie"></i>
+            </div>
+            <div>
+              <h2 class="text-base sm:text-lg font-black text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
+                <span>Laporan Penjualan & Laba</span>
+              </h2>
+              <p class="text-[11px] font-semibold text-slate-400 mt-0.5">Rekapitulasi Omset, Total Modal (HPP), & Keuntungan Bersih.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button type="button" onclick="printFinancialReport()" class="flex-1 sm:flex-initial px-3.5 py-2.5 bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95">
+              <i class="fa-solid fa-print text-sm"></i> <span>Cetak</span>
+            </button>
+            <button type="button" onclick="exportFinancialReportCsv()" class="flex-1 sm:flex-initial px-4 py-2.5 text-white rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95" style="background-color:var(--clr-p)">
+              <i class="fa-solid fa-file-excel text-sm"></i> <span>Export CSV</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Filter Periode Bar -->
-      <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+      <!-- Filter Periode Segmented App Pills -->
+      <div class="bg-white dark:bg-slate-800 p-3.5 sm:p-4 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3">
         <div class="flex items-center justify-between flex-wrap gap-2">
           <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-            <i class="fa-solid fa-filter text-emerald-500"></i> Periode Laporan:
+            <i class="fa-solid fa-calendar-check text-emerald-500"></i> Periode:
           </span>
-          <div class="flex flex-wrap gap-1.5">
-            <button type="button" onclick="setReportPeriod('today')" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all ${reportPeriod === 'today' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">Hari Ini</button>
-            <button type="button" onclick="setReportPeriod('7days')" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all ${reportPeriod === '7days' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">7 Hari</button>
-            <button type="button" onclick="setReportPeriod('month')" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all ${reportPeriod === 'month' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">Bulan Ini</button>
-            <button type="button" onclick="setReportPeriod('year')" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all ${reportPeriod === 'year' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">Tahun Ini</button>
-            <button type="button" onclick="setReportPeriod('all')" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all ${reportPeriod === 'all' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">Semua</button>
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 max-w-full">
+            <button type="button" onclick="setReportPeriod('today')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 ${reportPeriod === 'today' ? 'text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}" style="${reportPeriod === 'today' ? 'background-color:var(--clr-p);color:#fff' : ''}">Hari Ini</button>
+            <button type="button" onclick="setReportPeriod('7days')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 ${reportPeriod === '7days' ? 'text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}" style="${reportPeriod === '7days' ? 'background-color:var(--clr-p);color:#fff' : ''}">7 Hari</button>
+            <button type="button" onclick="setReportPeriod('month')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 ${reportPeriod === 'month' ? 'text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}" style="${reportPeriod === 'month' ? 'background-color:var(--clr-p);color:#fff' : ''}">Bulan Ini</button>
+            <button type="button" onclick="setReportPeriod('year')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 ${reportPeriod === 'year' ? 'text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}" style="${reportPeriod === 'year' ? 'background-color:var(--clr-p);color:#fff' : ''}">Tahun Ini</button>
+            <button type="button" onclick="setReportPeriod('all')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 ${reportPeriod === 'all' ? 'text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}" style="${reportPeriod === 'all' ? 'background-color:var(--clr-p);color:#fff' : ''}">Semua</button>
           </div>
         </div>
 
-        <!-- Custom Date Range -->
-        <div class="pt-3 border-t border-slate-100 dark:border-slate-700/70 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-          <span class="text-xs font-bold text-slate-500 dark:text-slate-400 shrink-0"><i class="fa-regular fa-calendar-days mr-1"></i> Sesuaikan Tanggal:</span>
+        <!-- Custom Date Range Bar -->
+        <div class="pt-3 border-t border-slate-100 dark:border-slate-700/70 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+          <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 shrink-0"><i class="fa-regular fa-calendar-days mr-1"></i> Sesuaikan:</span>
           <div class="flex items-center gap-2 flex-1">
-            <input type="date" id="report-start-date" value="${reportCustomStart}" class="admin-input !py-1.5 !text-xs bg-slate-50 dark:bg-slate-900 flex-1 font-bold"/>
+            <input type="date" id="report-start-date" value="${reportCustomStart}" class="admin-input !py-2 !px-3 !text-xs !rounded-xl bg-slate-50 dark:bg-slate-900 flex-1 font-bold"/>
             <span class="text-xs font-bold text-slate-400">s/d</span>
-            <input type="date" id="report-end-date" value="${reportCustomEnd}" class="admin-input !py-1.5 !text-xs bg-slate-50 dark:bg-slate-900 flex-1 font-bold"/>
+            <input type="date" id="report-end-date" value="${reportCustomEnd}" class="admin-input !py-2 !px-3 !text-xs !rounded-xl bg-slate-50 dark:bg-slate-900 flex-1 font-bold"/>
           </div>
-          <button type="button" onclick="applyCustomReportDate()" class="px-4 py-2 bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white text-xs font-black rounded-xl shrink-0 transition-all shadow-sm">
+          <button type="button" onclick="applyCustomReportDate()" class="px-4 py-2 bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white text-xs font-black rounded-xl shrink-0 transition-all shadow-sm active:scale-95">
             Terapkan
           </button>
         </div>
       </div>
 
-      <!-- Report Dynamic Output -->
-      <div id="report-data-container" class="space-y-6">
-        <div class="text-center py-16"><i class="fa-solid fa-spinner fa-spin text-3xl text-emerald-500"></i><p class="text-xs font-bold text-slate-400 mt-2">Memuat data transaksi...</p></div>
+      <!-- Report Dynamic Output Container -->
+      <div id="report-data-container" class="space-y-4">
+        <div class="text-center py-16 bg-white dark:bg-slate-800 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
+          <i class="fa-solid fa-spinner fa-spin text-3xl" style="color:var(--clr-p)"></i>
+          <p class="text-xs font-bold text-slate-400 mt-3">Menghitung laporan keuangan...</p>
+        </div>
       </div>
     </div>
   `);
@@ -310,6 +321,11 @@ window.setReportPeriod = (period) => {
   rAdmReports();
 };
 
+window.setReportSubTab = (subTab) => {
+  reportSubTab = subTab;
+  renderReportView();
+};
+
 window.applyCustomReportDate = () => {
   const start = (el('report-start-date')?.value || '').trim();
   const end = (el('report-end-date')?.value || '').trim();
@@ -317,6 +333,11 @@ window.applyCustomReportDate = () => {
   reportCustomStart = start;
   reportCustomEnd = end;
   reportPeriod = 'custom';
+  renderReportView();
+};
+
+window.onReportSearch = (val) => {
+  reportSearchQuery = (val || '').toLowerCase().trim();
   renderReportView();
 };
 
@@ -411,7 +432,21 @@ window.renderReportView = () => {
 
   const netProfit = totalSales - totalCost;
   const marginPct = totalSales > 0 && netProfit > 0 ? Math.round((netProfit / totalSales) * 100) : 0;
-  const productList = Object.values(productAgg).sort((a, b) => b.profit - a.profit);
+  
+  let productList = Object.values(productAgg).sort((a, b) => b.profit - a.profit);
+  if (reportSearchQuery) {
+    productList = productList.filter(p => p.name.toLowerCase().includes(reportSearchQuery));
+  }
+
+  let filteredOrders = validOrders;
+  if (reportSearchQuery) {
+    filteredOrders = validOrders.filter(o => {
+      const id = String(o.orderId || o.id || '').toLowerCase();
+      const c = String(o.cashier || o.source || '').toLowerCase();
+      const m = String(o.payment?.method || '').toLowerCase();
+      return id.includes(reportSearchQuery) || c.includes(reportSearchQuery) || m.includes(reportSearchQuery);
+    });
+  }
 
   let periodLabel = 'Hari Ini';
   if (reportPeriod === '7days') periodLabel = '7 Hari Terakhir';
@@ -421,193 +456,228 @@ window.renderReportView = () => {
   else if (reportPeriod === 'all') periodLabel = 'Semua Transaksi';
 
   container.innerHTML = `
-    <!-- 4 Ringkasan Metrik Kartu -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- 4 App-Style Metric Card Boxes -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       <!-- Card 1: Total Omset -->
-      <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
-        <div class="flex items-center justify-between mb-3">
-          <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Penjualan (Omset)</span>
-          <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center text-sm"><i class="fa-solid fa-wallet"></i></div>
+      <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm relative overflow-hidden flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2 sm:mb-3">
+            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-400">Total Omset</span>
+            <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-wallet"></i></div>
+          </div>
+          <div class="text-base sm:text-xl font-black text-slate-800 dark:text-white leading-tight mb-1">${fCur(totalSales)}</div>
         </div>
-        <div class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white mb-1">${fCur(totalSales)}</div>
-        <p class="text-[10px] font-bold text-slate-400">Periode: ${periodLabel}</p>
+        <p class="text-[10px] font-bold text-slate-400 mt-2 truncate">${periodLabel}</p>
       </div>
 
       <!-- Card 2: Total Modal (HPP) -->
-      <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
-        <div class="flex items-center justify-between mb-3">
-          <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Modal (HPP)</span>
-          <div class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 flex items-center justify-center text-sm"><i class="fa-solid fa-boxes-packing"></i></div>
+      <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm relative overflow-hidden flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2 sm:mb-3">
+            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-400">Modal (HPP)</span>
+            <div class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-boxes-packing"></i></div>
+          </div>
+          <div class="text-base sm:text-xl font-black text-slate-800 dark:text-white leading-tight mb-1">${fCur(totalCost)}</div>
         </div>
-        <div class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white mb-1">${fCur(totalCost)}</div>
-        <p class="text-[10px] font-bold text-slate-400">Beban pokok produk terjual</p>
+        <p class="text-[10px] font-bold text-slate-400 mt-2">Beban modal produk</p>
       </div>
 
       <!-- Card 3: Laba Bersih -->
-      <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border-2 ${netProfit >= 0 ? 'border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/20' : 'border-rose-200 dark:border-rose-800/60 bg-rose-50/20'} shadow-sm relative overflow-hidden">
-        <div class="flex items-center justify-between mb-3">
-          <span class="text-[10px] font-black uppercase tracking-widest ${netProfit >= 0 ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'}">Laba Bersih Toko</span>
-          <div class="w-8 h-8 rounded-xl ${netProfit >= 0 ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600' : 'bg-rose-100 text-rose-600'} flex items-center justify-center text-sm"><i class="fa-solid fa-arrow-trend-up"></i></div>
+      <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-[1.75rem] border-2 ${netProfit >= 0 ? 'border-emerald-300/80 dark:border-emerald-700/80 bg-emerald-50/20' : 'border-rose-300/80 dark:border-rose-700/80 bg-rose-50/20'} shadow-sm relative overflow-hidden flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2 sm:mb-3">
+            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${netProfit >= 0 ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'}">Laba Bersih</span>
+            <div class="w-8 h-8 rounded-xl ${netProfit >= 0 ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600' : 'bg-rose-100 text-rose-600'} flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-arrow-trend-up"></i></div>
+          </div>
+          <div class="text-base sm:text-xl font-black ${netProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600'} leading-tight mb-1">${fCur(netProfit)}</div>
         </div>
-        <div class="text-xl sm:text-2xl font-black ${netProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600'} mb-1">${fCur(netProfit)}</div>
-        <div class="inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full ${netProfit >= 0 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-100 text-rose-800'}">
-          <i class="fa-solid fa-percent text-[9px]"></i> Margin Keuntungan: ${marginPct}%
+        <div class="inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded-full mt-2 w-fit ${netProfit >= 0 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-100 text-rose-800'}">
+          Margin: ${marginPct}%
         </div>
       </div>
 
       <!-- Card 4: Transaksi & Volume -->
-      <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm relative overflow-hidden">
-        <div class="flex items-center justify-between mb-3">
-          <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Transaksi</span>
-          <div class="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 flex items-center justify-center text-sm"><i class="fa-solid fa-receipt"></i></div>
+      <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm relative overflow-hidden flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2 sm:mb-3">
+            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-400">Total Transaksi</span>
+            <div class="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-receipt"></i></div>
+          </div>
+          <div class="text-base sm:text-xl font-black text-slate-800 dark:text-white leading-tight mb-1">${validOrders.length} <span class="text-xs font-bold text-slate-400">Trx</span></div>
         </div>
-        <div class="text-xl sm:text-2xl font-black text-slate-800 dark:text-white mb-1">${validOrders.length} <span class="text-xs font-bold text-slate-400">Transaksi</span></div>
-        <p class="text-[10px] font-bold text-slate-400">Total ${totalItemsSold} pcs produk terjual</p>
+        <p class="text-[10px] font-bold text-slate-400 mt-2">${totalItemsSold} pcs produk terjual</p>
       </div>
     </div>
 
-    <!-- Rincian Metode Pembayaran -->
-    <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm">
-      <h3 class="text-xs font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-2">
+    <!-- Rincian Metode Pembayaran Card Box -->
+    <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-2.5">
+      <h3 class="text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
         <i class="fa-solid fa-money-bill-wave text-emerald-500"></i> Rincian Pembayaran Masuk
       </h3>
-      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-center">
-        <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700">
-          <span class="text-[10px] font-bold text-slate-400 block mb-1">TUNAI</span>
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-700/60 text-center">
+          <span class="text-[9px] font-bold text-slate-400 block mb-0.5">TUNAI</span>
           <span class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">${fCur(paymentBreakdown.cash)}</span>
         </div>
-        <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700">
-          <span class="text-[10px] font-bold text-slate-400 block mb-1">QRIS</span>
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-700/60 text-center">
+          <span class="text-[9px] font-bold text-slate-400 block mb-0.5">QRIS</span>
           <span class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">${fCur(paymentBreakdown.qris)}</span>
         </div>
-        <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700">
-          <span class="text-[10px] font-bold text-slate-400 block mb-1">TRANSFER</span>
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-700/60 text-center">
+          <span class="text-[9px] font-bold text-slate-400 block mb-0.5">TRANSFER</span>
           <span class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">${fCur(paymentBreakdown.transfer)}</span>
         </div>
-        <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700">
-          <span class="text-[10px] font-bold text-slate-400 block mb-1">EDC / DEBIT</span>
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-700/60 text-center">
+          <span class="text-[9px] font-bold text-slate-400 block mb-0.5">EDC / DEBIT</span>
           <span class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">${fCur(paymentBreakdown.edc)}</span>
         </div>
-        <div class="p-3 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 col-span-2 sm:col-span-1">
-          <span class="text-[10px] font-bold text-slate-400 block mb-1">COD</span>
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-700/60 text-center col-span-2 sm:col-span-1">
+          <span class="text-[9px] font-bold text-slate-400 block mb-0.5">COD</span>
           <span class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">${fCur(paymentBreakdown.cod)}</span>
         </div>
       </div>
     </div>
 
-    <!-- Tabel 1: Kontribusi Laba per Produk -->
-    <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-      <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
-        <div>
-          <h3 class="text-sm font-black text-slate-800 dark:text-white flex items-center gap-2">
-            <i class="fa-solid fa-trophy text-amber-500"></i> Kontribusi Laba per Produk
-          </h3>
-          <p class="text-[10px] font-semibold text-slate-400 mt-0.5">Daftar produk dengan kontribusi laba bersih tertinggi.</p>
+    <!-- Segmented Navigation Tab & Search Bar (Mobile App Style) -->
+    <div class="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <!-- Segmented Tab Switch -->
+        <div class="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+          <button type="button" onclick="setReportSubTab('products')" class="py-2 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${reportSubTab === 'products' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}">
+            <i class="fa-solid fa-trophy text-amber-500"></i> <span>Produk (${productList.length})</span>
+          </button>
+          <button type="button" onclick="setReportSubTab('transactions')" class="py-2 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${reportSubTab === 'transactions' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}">
+            <i class="fa-solid fa-receipt text-purple-500"></i> <span>Transaksi (${filteredOrders.length})</span>
+          </button>
         </div>
-        <span class="text-xs font-bold text-slate-400">${productList.length} Produk</span>
-      </div>
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-slate-50 dark:bg-slate-900/60 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700">
-            <tr>
-              <th class="py-3.5 px-4">No</th>
-              <th class="py-3.5 px-4">Nama Produk</th>
-              <th class="py-3.5 px-4 text-center">Terjual</th>
-              <th class="py-3.5 px-4 text-right">Total Jual (Omset)</th>
-              <th class="py-3.5 px-4 text-right">Total Modal (HPP)</th>
-              <th class="py-3.5 px-4 text-right">Laba Bersih</th>
-              <th class="py-3.5 px-4 text-center">Margin</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60 font-semibold text-slate-700 dark:text-slate-300">
-            ${productList.length === 0 ? `
-              <tr><td colspan="7" class="text-center py-10 text-slate-400 font-bold">Tidak ada produk terjual pada periode ini</td></tr>
-            ` : productList.map((p, idx) => {
-              const pMargin = p.sales > 0 && p.profit > 0 ? Math.round((p.profit / p.sales) * 100) : 0;
-              return `
-                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/30 transition-colors">
-                  <td class="py-3 px-4 font-bold text-slate-400">${idx + 1}</td>
-                  <td class="py-3 px-4 font-bold text-slate-800 dark:text-white">${esc(p.name)}</td>
-                  <td class="py-3 px-4 text-center font-black">${p.qty} pcs</td>
-                  <td class="py-3 px-4 text-right font-black text-slate-900 dark:text-slate-100">${fCur(p.sales)}</td>
-                  <td class="py-3 px-4 text-right text-slate-500 font-bold">${fCur(p.cost)}</td>
-                  <td class="py-3 px-4 text-right font-black ${p.profit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600'}">${fCur(p.profit)}</td>
-                  <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-black ${p.profit >= 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-rose-50 text-rose-700'}">${pMargin}%</span></td>
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
+        <!-- Quick Search Bar -->
+        <div class="relative flex-1 max-w-sm">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input type="text" placeholder="Cari nama produk / ID transaksi..." value="${reportSearchQuery}" oninput="onReportSearch(this.value)" class="admin-input !py-2 !pl-9 !pr-3 !text-xs !rounded-2xl bg-slate-50 dark:bg-slate-900 w-full font-bold"/>
+        </div>
       </div>
     </div>
 
-    <!-- Tabel 2: Rincian Transaksi -->
-    <div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-      <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
-        <div>
-          <h3 class="text-sm font-black text-slate-800 dark:text-white flex items-center gap-2">
-            <i class="fa-solid fa-list-check text-emerald-500"></i> Rincian Transaksi Periode Ini
-          </h3>
-          <p class="text-[10px] font-semibold text-slate-400 mt-0.5">Daftar transaksi kasir & pesanan online yang telah selesai.</p>
-        </div>
-        <span class="text-xs font-bold text-slate-400">${validOrders.length} Transaksi</span>
+    <!-- LIST VIEW CARD BOX CONTAINER -->
+    ${reportSubTab === 'products' ? `
+      <!-- LIST VIEW: KONTRIBUSI PRODUK -->
+      <div class="space-y-2.5">
+        ${productList.length === 0 ? `
+          <div class="text-center py-14 bg-white dark:bg-slate-800 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
+            <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-700/50 text-slate-400 flex items-center justify-center mx-auto mb-3 text-2xl">
+              <i class="fa-solid fa-box-open"></i>
+            </div>
+            <h4 class="text-xs font-bold text-slate-600 dark:text-slate-300">Belum ada produk terjual</h4>
+            <p class="text-[10px] text-slate-400 mt-1">Coba ganti filter periode laporan Anda.</p>
+          </div>
+        ` : productList.map((p, idx) => {
+          const pMargin = p.sales > 0 && p.profit > 0 ? Math.round((p.profit / p.sales) * 100) : 0;
+          return `
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-[1.5rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-2xl flex items-center justify-center font-black text-xs shrink-0 ${idx === 0 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border border-amber-200' : idx === 1 ? 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300' : idx === 2 ? 'bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-500'}">
+                  #${idx + 1}
+                </div>
+                <div class="min-w-0">
+                  <h4 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-white truncate">${esc(p.name)}</h4>
+                  <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-1 text-[10px] sm:text-[11px] text-slate-400 font-semibold">
+                    <span class="inline-flex items-center gap-1"><i class="fa-solid fa-cubes text-[9px]"></i> Terjual: <b class="text-slate-700 dark:text-slate-200">${p.qty} pcs</b></span>
+                    <span>•</span>
+                    <span>Modal: <b class="text-slate-500 font-bold">${fCur(p.cost)}</b></span>
+                    <span>•</span>
+                    <span>Omset: <b class="text-slate-800 dark:text-slate-200 font-black">${fCur(p.sales)}</b></span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-between sm:justify-end gap-3 pt-2.5 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-700/50 shrink-0">
+                <div class="text-left sm:text-right">
+                  <span class="text-[9px] uppercase font-black text-slate-400 block">Laba Bersih</span>
+                  <span class="text-xs sm:text-sm font-black ${p.profit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600'}">${fCur(p.profit)}</span>
+                </div>
+                <span class="px-2.5 py-1 rounded-xl text-[10px] font-black shrink-0 ${p.profit >= 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50' : 'bg-rose-50 text-rose-700 border border-rose-200'}">
+                  ${pMargin}% Margin
+                </span>
+              </div>
+            </div>
+          `;
+        }).join('')}
       </div>
+    ` : `
+      <!-- LIST VIEW: RIWAYAT TRANSAKSI -->
+      <div class="space-y-2.5">
+        ${filteredOrders.length === 0 ? `
+          <div class="text-center py-14 bg-white dark:bg-slate-800 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
+            <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-700/50 text-slate-400 flex items-center justify-center mx-auto mb-3 text-2xl">
+              <i class="fa-solid fa-receipt"></i>
+            </div>
+            <h4 class="text-xs font-bold text-slate-600 dark:text-slate-300">Belum ada transaksi</h4>
+            <p class="text-[10px] text-slate-400 mt-1">Belum ada data pesanan pada periode ini.</p>
+          </div>
+        ` : filteredOrders.map(o => {
+          const grand = parseFloat(o.payment?.grandTotal || o.payment?.total || 0) || 0;
+          let ordCost = 0;
+          let itemCount = 0;
+          (o.items || []).forEach(it => {
+            const q = parseInt(it.qty) || 1;
+            itemCount += q;
+            const pr = (appData.products || []).find(p => String(p.id) === String(it.id) || p.name === it.name);
+            let cpu = 0;
+            if (pr) {
+              if (it.variantName && pr.variants && pr.variants.length > 0) {
+                const vr = pr.variants.find(v => v.name === it.variantName);
+                cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
+              } else {
+                cpu = parseFloat(pr.costPrice) || 0;
+              }
+            }
+            ordCost += (cpu * q);
+          });
+          const ordProfit = grand - ordCost;
+          let dtStr = o.dateString ? new Date(o.dateString).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '-';
 
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs">
-          <thead class="bg-slate-50 dark:bg-slate-900/60 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 dark:border-slate-700">
-            <tr>
-              <th class="py-3.5 px-4">No. Order</th>
-              <th class="py-3.5 px-4">Waktu</th>
-              <th class="py-3.5 px-4">Kasir / Sumber</th>
-              <th class="py-3.5 px-4">Metode</th>
-              <th class="py-3.5 px-4 text-right">Total Jual</th>
-              <th class="py-3.5 px-4 text-right">Modal (HPP)</th>
-              <th class="py-3.5 px-4 text-right">Laba</th>
-              <th class="py-3.5 px-4 text-center">Status</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-slate-700/60 font-semibold text-slate-700 dark:text-slate-300">
-            ${validOrders.length === 0 ? `
-              <tr><td colspan="8" class="text-center py-10 text-slate-400 font-bold">Tidak ada transaksi pada periode ini</td></tr>
-            ` : validOrders.map(o => {
-              const grand = parseFloat(o.payment?.grandTotal || o.payment?.total || 0) || 0;
-              let ordCost = 0;
-              (o.items || []).forEach(it => {
-                const q = parseInt(it.qty) || 1;
-                const pr = (appData.products || []).find(p => String(p.id) === String(it.id) || p.name === it.name);
-                let cpu = 0;
-                if (pr) {
-                  if (it.variantName && pr.variants && pr.variants.length > 0) {
-                    const vr = pr.variants.find(v => v.name === it.variantName);
-                    cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
-                  } else {
-                    cpu = parseFloat(pr.costPrice) || 0;
-                  }
-                }
-                ordCost += (cpu * q);
-              });
-              const ordProfit = grand - ordCost;
-              let dtStr = o.dateString ? new Date(o.dateString).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '-';
-
-              return `
-                <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-700/30 transition-colors">
-                  <td class="py-3 px-4 font-mono font-bold text-slate-800 dark:text-white">${esc(o.orderId || o.id)}</td>
-                  <td class="py-3 px-4 text-slate-500">${dtStr}</td>
-                  <td class="py-3 px-4">${esc(o.cashier || o.source || 'Online')}</td>
-                  <td class="py-3 px-4"><span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-100 dark:bg-slate-700">${esc(o.payment?.method || 'Tunai')}</span></td>
-                  <td class="py-3 px-4 text-right font-black text-slate-900 dark:text-white">${fCur(grand)}</td>
-                  <td class="py-3 px-4 text-right text-slate-500 font-bold">${fCur(ordCost)}</td>
-                  <td class="py-3 px-4 text-right font-black ${ordProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600'}">${fCur(ordProfit)}</td>
-                  <td class="py-3 px-4 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">${esc(o.status || 'Selesai')}</span></td>
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
+          return `
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-[1.5rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all space-y-3">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-9 h-9 rounded-2xl flex items-center justify-center text-xs shrink-0" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
+                    <i class="fa-solid fa-receipt"></i>
+                  </div>
+                  <div class="min-w-0">
+                    <span class="font-mono font-bold text-xs text-slate-900 dark:text-white block truncate">${esc(o.orderId || o.id)}</span>
+                    <span class="text-[10px] text-slate-400 font-semibold block">${dtStr} • ${esc(o.cashier || o.source || 'Kasir')} • ${itemCount} item</span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <span class="px-2.5 py-1 rounded-xl text-[10px] font-black bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 uppercase">
+                    ${esc(o.payment?.method || 'Tunai')}
+                  </span>
+                  <span class="px-2.5 py-1 rounded-xl text-[10px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                    ${esc(o.status || 'Selesai')}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-3 gap-2 bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-2xl border border-slate-100 dark:border-slate-700/60 text-center">
+                <div>
+                  <span class="text-[9px] uppercase font-black text-slate-400 block mb-0.5">Omset</span>
+                  <span class="text-xs font-black text-slate-900 dark:text-white">${fCur(grand)}</span>
+                </div>
+                <div>
+                  <span class="text-[9px] uppercase font-black text-slate-400 block mb-0.5">Modal HPP</span>
+                  <span class="text-xs font-bold text-slate-500">${fCur(ordCost)}</span>
+                </div>
+                <div>
+                  <span class="text-[9px] uppercase font-black text-emerald-600 dark:text-emerald-400 block mb-0.5">Laba</span>
+                  <span class="text-xs font-black ${ordProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600'}">${fCur(ordProfit)}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('')}
       </div>
-    </div>
+    `}
   `;
 };
 
@@ -620,7 +690,7 @@ window.exportFinancialReportCsv = () => {
     return showToast('Tidak ada data laporan untuk diekspor!');
   }
 
-  let csv = '\uFEFF'; // UTF-8 BOM
+  let csv = '\uFEFF';
   csv += `LAPORAN PENJUALAN & LABA RUGI - ${appData.store?.name || 'Toko Grafika'}\n`;
   csv += `Periode: ${reportPeriod.toUpperCase()}\n`;
   csv += `Tanggal Cetak: ${new Date().toLocaleString('id-ID')}\n\n`;
