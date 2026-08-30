@@ -5548,6 +5548,7 @@ const renderPosCart = () => {
   const floatDockCount = el('pos-float-dock-count');
   const floatDockTotal = el('pos-float-dock-total');
   const drawerCount = el('pos-drawer-cart-count');
+  const topBadge = el('pos-cart-header-badge');
 
   const totalItems = posCart.length;
   const totalQty = posCart.reduce((acc, item) => acc + item.qty, 0);
