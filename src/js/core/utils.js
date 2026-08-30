@@ -84,10 +84,14 @@ window.applyGlobalTheme = () => {
       e.className = e.className.replace(/(bg-|text-|border-|ring-|from-|to-|shadow-|border-[tblr]-)emerald/g, '$1' + tc);
     });
   }
+  applyBgStyle();
 };
 
 window.applyBgStyle = (style) => {
   const s = style || appData?.store?.bgStyle || localStorage.getItem('freshmart_bg_style') || 'mesh-aurora';
+  document.body.classList.remove('bg-style-mesh-aurora', 'bg-style-dot-grid', 'bg-style-diag-grid', 'bg-style-glass-blobs', 'bg-style-clean-minimal');
+  document.body.classList.add(`bg-style-${s}`);
+  
   const elBg = document.getElementById('app-bg-shapes');
   if (elBg) {
     elBg.className = `app-bg-shapes bg-style-${s} pointer-events-none`;

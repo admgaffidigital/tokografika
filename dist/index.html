@@ -384,8 +384,26 @@ code, kbd, samp, pre, .font-mono {
 }
 
 /* --------------------------------------------------------------------------
-   4. Background Shapes, Patterns & Dynamic Variations (CMS Configurable)
+   4. Background Shapes, Patterns & Dynamic Variations (Storefront & CMS)
    -------------------------------------------------------------------------- */
+#app-container {
+    background-color: #f8fafc;
+    background-image: 
+        radial-gradient(at 0% 0%, var(--clr-p-10) 0px, transparent 55%),
+        radial-gradient(at 100% 0%, var(--clr-p-10) 0px, transparent 55%),
+        radial-gradient(at 50% 100%, var(--clr-p-10) 0px, transparent 55%);
+    background-attachment: fixed;
+    transition: background 0.4s ease;
+}
+
+html.dark #app-container {
+    background-color: #0b0f19;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(var(--clr-p-rgb, 5, 150, 105), 0.18) 0px, transparent 55%),
+        radial-gradient(at 100% 0%, rgba(var(--clr-p-rgb, 5, 150, 105), 0.12) 0px, transparent 55%),
+        radial-gradient(at 50% 100%, rgba(var(--clr-p-rgb, 5, 150, 105), 0.10) 0px, transparent 55%);
+}
+
 .app-bg-shapes {
     position: fixed;
     inset: 0;
@@ -395,7 +413,6 @@ code, kbd, samp, pre, .font-mono {
     transition: all 0.4s ease;
 }
 
-/* Base Shapes */
 .shape-grid-pattern,
 .shape-blob-1,
 .shape-blob-2,
@@ -404,73 +421,88 @@ code, kbd, samp, pre, .font-mono {
     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* 1. MESH AURORA (Default Modern Dynamic App) */
+/* 1. MESH AURORA (Default Modern Dynamic App - Highly Vibrant) */
 .bg-style-mesh-aurora .shape-grid-pattern {
     inset: 0;
-    background-image: radial-gradient(var(--clr-p-10) 1px, transparent 1px);
-    background-size: 28px 28px;
-    opacity: 0.65;
+    background-image: radial-gradient(var(--clr-p-25) 1.8px, transparent 1.8px);
+    background-size: 24px 24px;
+    opacity: 0.8;
 }
 
 .bg-style-mesh-aurora .shape-blob-1 {
-    top: -100px;
+    top: -120px;
     right: -100px;
-    width: 380px;
-    height: 380px;
-    background: radial-gradient(circle, var(--clr-p-25) 0%, transparent 70%);
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, var(--clr-p-35) 0%, var(--clr-p-10) 50%, transparent 75%);
     border-radius: 50%;
-    filter: blur(50px);
+    filter: blur(65px);
     animation: floatBlob1 18s ease-in-out infinite alternate;
 }
 
 .bg-style-mesh-aurora .shape-blob-2 {
-    top: 35%;
-    left: -120px;
-    width: 320px;
-    height: 320px;
-    background: radial-gradient(circle, var(--clr-p-10) 0%, transparent 70%);
+    top: 30%;
+    left: -140px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, var(--clr-p-25) 0%, var(--clr-p-10) 50%, transparent 75%);
     border-radius: 50%;
-    filter: blur(45px);
+    filter: blur(60px);
     animation: floatBlob2 14s ease-in-out infinite alternate;
 }
 
 .bg-style-mesh-aurora .shape-blob-3 {
-    bottom: -60px;
-    right: 10%;
-    width: 340px;
-    height: 340px;
-    background: radial-gradient(circle, var(--clr-p-10) 0%, transparent 70%);
+    bottom: -80px;
+    right: 5%;
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, var(--clr-p-25) 0%, var(--clr-p-10) 50%, transparent 75%);
     border-radius: 50%;
-    filter: blur(50px);
+    filter: blur(65px);
     animation: floatBlob1 20s ease-in-out infinite alternate-reverse;
 }
 
-/* 2. DOT GRID (Tech & Precision Geometric Matrix) */
+/* 2. DOT GRID (Tech & Precision Geometric Matrix - Clean & Crisp) */
 .bg-style-dot-grid .shape-grid-pattern {
     inset: 0;
-    background-image: radial-gradient(var(--clr-p-25) 1.5px, transparent 1.5px);
-    background-size: 20px 20px;
-    opacity: 0.85;
+    background-image: radial-gradient(var(--clr-p-35) 2px, transparent 2px);
+    background-size: 22px 22px;
+    opacity: 0.9;
 }
-.bg-style-dot-grid .shape-blob-1,
+.bg-style-dot-grid .shape-blob-1 {
+    top: -150px;
+    left: 20%;
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(circle, var(--clr-p-25) 0%, transparent 70%);
+    filter: blur(70px);
+}
 .bg-style-dot-grid .shape-blob-2,
 .bg-style-dot-grid .shape-blob-3 {
-    opacity: 0.12;
+    opacity: 0.15;
 }
 
 /* 3. DIAGONAL GRID (Isometric Structural Lines) */
 .bg-style-diag-grid .shape-grid-pattern {
     inset: 0;
     background-image: 
-        linear-gradient(45deg, var(--clr-p-10) 1px, transparent 1px),
-        linear-gradient(-45deg, var(--clr-p-10) 1px, transparent 1px);
+        linear-gradient(45deg, var(--clr-p-25) 1.5px, transparent 1.5px),
+        linear-gradient(-45deg, var(--clr-p-25) 1.5px, transparent 1.5px);
     background-size: 32px 32px;
-    opacity: 0.7;
+    opacity: 0.75;
 }
-.bg-style-diag-grid .shape-blob-1,
+.bg-style-diag-grid .shape-blob-1 {
+    top: 10%;
+    right: -80px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--clr-p-25) 0%, transparent 70%);
+    filter: blur(60px);
+    animation: floatBlob1 15s ease-in-out infinite alternate;
+}
 .bg-style-diag-grid .shape-blob-2,
 .bg-style-diag-grid .shape-blob-3 {
-    opacity: 0.18;
+    opacity: 0.2;
 }
 
 /* 4. GLASS BLOBS (Fluid Organic Translucent Waves) */
@@ -479,41 +511,41 @@ code, kbd, samp, pre, .font-mono {
 }
 .bg-style-glass-blobs .shape-blob-1 {
     top: 5%;
-    right: -60px;
-    width: 400px;
-    height: 400px;
-    background-color: var(--clr-p-25);
+    right: -80px;
+    width: 500px;
+    height: 500px;
+    background-color: var(--clr-p-35);
     border-radius: 60% 40% 70% 30% / 40% 50% 60% 50%;
-    filter: blur(60px);
+    filter: blur(65px);
     animation: floatBlob1 12s ease-in-out infinite alternate;
 }
 .bg-style-glass-blobs .shape-blob-2 {
-    top: 50%;
-    left: -80px;
-    width: 350px;
-    height: 350px;
-    background-color: var(--clr-p-10);
+    top: 45%;
+    left: -100px;
+    width: 440px;
+    height: 440px;
+    background-color: var(--clr-p-25);
     border-radius: 40% 60% 50% 50% / 60% 30% 70% 40%;
-    filter: blur(55px);
+    filter: blur(60px);
     animation: floatBlob2 15s ease-in-out infinite alternate;
 }
 .bg-style-glass-blobs .shape-blob-3 {
     bottom: 2%;
-    right: 20%;
-    width: 360px;
-    height: 360px;
-    background-color: var(--clr-p-10);
+    right: 15%;
+    width: 450px;
+    height: 450px;
+    background-color: var(--clr-p-25);
     border-radius: 50% 50% 40% 60% / 40% 60% 50% 50%;
-    filter: blur(55px);
+    filter: blur(60px);
     animation: floatBlob1 16s ease-in-out infinite alternate;
 }
 
-/* 5. CLEAN MINIMAL (Soft Vignette) */
+/* 5. CLEAN MINIMAL (Soft Studio Lighting) */
 .bg-style-clean-minimal .shape-grid-pattern {
     inset: 0;
-    background-image: radial-gradient(var(--clr-p-10) 0.8px, transparent 0.8px);
-    background-size: 36px 36px;
-    opacity: 0.35;
+    background-image: radial-gradient(var(--clr-p-10) 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.45;
 }
 .bg-style-clean-minimal .shape-blob-1,
 .bg-style-clean-minimal .shape-blob-2,
@@ -523,24 +555,24 @@ code, kbd, samp, pre, .font-mono {
 
 @keyframes floatBlob1 {
     0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-    50% { transform: translate(-30px, 35px) scale(1.08) rotate(12deg); }
-    100% { transform: translate(25px, -20px) scale(0.95) rotate(-8deg); }
+    50% { transform: translate(-35px, 40px) scale(1.10) rotate(14deg); }
+    100% { transform: translate(30px, -25px) scale(0.95) rotate(-10deg); }
 }
 
 @keyframes floatBlob2 {
     0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-    50% { transform: translate(35px, -25px) scale(1.05) rotate(-10deg); }
-    100% { transform: translate(-20px, 30px) scale(0.92) rotate(15deg); }
+    50% { transform: translate(40px, -30px) scale(1.08) rotate(-12deg); }
+    100% { transform: translate(-25px, 35px) scale(0.90) rotate(16deg); }
 }
 
 html.dark .shape-grid-pattern {
-    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1.2px, transparent 1.2px);
+    background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1.5px, transparent 1.5px);
 }
 
 html.dark .shape-blob-1,
 html.dark .shape-blob-2,
 html.dark .shape-blob-3 {
-    opacity: 0.08 !important;
+    opacity: 0.18 !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -3214,10 +3246,14 @@ window.applyGlobalTheme = () => {
       e.className = e.className.replace(/(bg-|text-|border-|ring-|from-|to-|shadow-|border-[tblr]-)emerald/g, '$1' + tc);
     });
   }
+  applyBgStyle();
 };
 
 window.applyBgStyle = (style) => {
   const s = style || appData?.store?.bgStyle || localStorage.getItem('freshmart_bg_style') || 'mesh-aurora';
+  document.body.classList.remove('bg-style-mesh-aurora', 'bg-style-dot-grid', 'bg-style-diag-grid', 'bg-style-glass-blobs', 'bg-style-clean-minimal');
+  document.body.classList.add(`bg-style-${s}`);
+  
   const elBg = document.getElementById('app-bg-shapes');
   if (elBg) {
     elBg.className = `app-bg-shapes bg-style-${s} pointer-events-none`;
