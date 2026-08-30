@@ -5,8 +5,9 @@
 const aF = {
   products: [
     { key: 'name', label: 'Nama Produk', type: 'text' }, 
-    { key: 'sku', label: 'Barcode / SKU (Kosongkan utk Auto)', type: 'text' },
-    { key: 'price', label: 'Harga Dasar (Rp)', type: 'number' }, 
+    { key: 'sku', label: 'Barcode / SKU (Bisa Auto / Manual)', type: 'sku' },
+    { key: 'price', label: 'Harga Jual Dasar (Rp)', type: 'number' }, 
+    { key: 'costPrice', label: 'Harga Modal / HPP (Rp)', type: 'number' }, 
     { key: 'unit', label: 'Satuan (cth: pcs, kg, lusin)', type: 'unit_selector' },
     { key: 'img', label: 'URL Gambar', type: 'text' },
     { key: 'category', label: 'Kategori', type: 'dynamic_select_category' }, 
@@ -961,7 +962,7 @@ window.oAEd = (t, id) => {
 
   const getIcon = (key) => {
     const icons = {
-      name: 'fa-box-open', sku: 'fa-barcode', price: 'fa-tag', unit: 'fa-ruler', img: 'fa-image',
+      name: 'fa-box-open', sku: 'fa-barcode', price: 'fa-tag', costPrice: 'fa-coins', unit: 'fa-ruler', img: 'fa-image',
       category: 'fa-layer-group', tag: 'fa-hashtag', isActive: 'fa-power-off',
       desc: 'fa-align-left', wholesale: 'fa-boxes-stacked', variants: 'fa-sitemap',
       code: 'fa-ticket', type: 'fa-filter', value: 'fa-coins',
@@ -1021,9 +1022,21 @@ window.oAEd = (t, id) => {
       });
       h += `</div><p class="text-[9px] text-slate-400 mt-2 italic font-medium">*Pengaturan Toko, Rekening, dan Kelola Akun otomatis terkunci untuk Kasir.</p>`;
     } else if (k.key === 'sku') {
-      h += `<div class="relative flex items-center">
-        <input type="${k.type}" id="af-${k.key}" value="${esc(v)}" class="admin-input !py-3 !pr-12 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full font-mono text-xs focus:bg-white dark:focus:bg-slate-800 transition-all" placeholder="Scan barcode atau ketik manual..." />
-        <button type="button" onclick="openCameraScanner('af-${k.key}')" class="absolute right-1 w-10 h-10 flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-xl transition-all" title="Scan Barcode via HP"><i class="fa-solid fa-qrcode"></i></button>
+      h += `<div class="relative flex items-center gap-1.5">
+        <div class="relative flex-1">
+          <input type="text" id="af-${k.key}" value="${esc(v)}" class="admin-input !py-3 !pr-10 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full font-mono text-xs focus:bg-white dark:focus:bg-slate-800 transition-all font-bold" placeholder="Scan barcode atau ketik manual..." />
+          <button type="button" onclick="openCameraScanner('af-${k.key}')" class="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-600 rounded-lg transition-all" title="Scan Barcode via HP"><i class="fa-solid fa-qrcode text-xs"></i></button>
+        </div>
+        <button type="button" onclick="generateAutoSku('af-${k.key}')" class="px-3.5 py-3 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white border-2 border-indigo-200 dark:border-indigo-800 rounded-xl font-bold text-xs shrink-0 transition-all flex items-center gap-1.5 shadow-sm active:scale-95" title="Generate SKU Otomatis"><i class="fa-solid fa-wand-magic-sparkles text-xs"></i> <span>Auto SKU</span></button>
+      </div>`;
+    } else if (k.key === 'price') {
+      h += `<div class="relative">
+        <input type="number" min="0" step="1" id="af-${k.key}" value="${esc(v)}" oninput="updateProductMarginPreview()" class="admin-input !py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full focus:bg-white dark:focus:bg-slate-800 transition-all font-bold" placeholder="Masukkan harga jual..."/>
+      </div>`;
+    } else if (k.key === 'costPrice') {
+      h += `<div class="relative">
+        <input type="number" min="0" step="1" id="af-${k.key}" value="${esc(v)}" oninput="updateProductMarginPreview()" class="admin-input !py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full focus:bg-white dark:focus:bg-slate-800 transition-all font-bold" placeholder="Masukkan harga modal (HPP)..."/>
+        <div id="product-margin-preview" class="mt-2 text-[11px] font-bold"></div>
       </div>`;
     } else if (k.key === 'img') {
       h += `<div class="flex flex-col sm:flex-row gap-2">
@@ -1034,13 +1047,17 @@ window.oAEd = (t, id) => {
         </label>
       </div>`;
     } else {
-      h += `<input type="${k.type}" id="af-${k.key}" value="${esc(v)}" class="admin-input !py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full focus:bg-white dark:focus:bg-slate-800 transition-all" ${k.key === 'price' ? 'min="0" step="1"' : ''} placeholder="Masukkan ${k.label.toLowerCase()}..."/>`;
+      h += `<input type="${k.type}" id="af-${k.key}" value="${esc(v)}" class="admin-input !py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full focus:bg-white dark:focus:bg-slate-800 transition-all" placeholder="Masukkan ${k.label.toLowerCase()}..."/>`;
     }
     h += `</div>`;
   });
   
   setH('admin-modal-form', h);
-  if (t === 'products') { rVarsB(); rWholB(); }
+  if (t === 'products') { 
+    rVarsB(); 
+    rWholB(); 
+    setTimeout(updateProductMarginPreview, 50);
+  }
   show('admin-modal');
   setTimeout(() => { 
     el('admin-modal').classList.remove('opacity-0'); 
@@ -1048,43 +1065,113 @@ window.oAEd = (t, id) => {
   }, 10);
 };
 
+window.generateAutoSku = (targetId = 'af-sku') => {
+  const code = 'SKU' + Math.floor(100000 + Math.random() * 900000);
+  const input = el(targetId);
+  if (input) {
+    input.value = code;
+    showToast(`SKU dibuat: ${code}`);
+  }
+  return code;
+};
+
+window.generateAutoVarSku = (index) => {
+  const parentSku = (getV('af-sku') || 'SKU' + Date.now().toString().slice(-4)).trim();
+  const code = `${parentSku}-V${index + 1}`;
+  if (tVars[index]) {
+    tVars[index].sku = code;
+  }
+  const input = el(`var-sku-${index}`);
+  if (input) input.value = code;
+  showToast(`SKU Varian dibuat: ${code}`);
+};
+
+window.updateProductMarginPreview = () => {
+  const price = parseFloat(getV('af-price')) || 0;
+  const cost = parseFloat(getV('af-costPrice')) || 0;
+  const container = el('product-margin-preview');
+  if (!container) return;
+  if (price <= 0 && cost <= 0) {
+    container.innerHTML = '';
+    return;
+  }
+  const profit = price - cost;
+  const pct = (price > 0 && profit > 0) ? Math.round((profit / price) * 100) : 0;
+  if (cost > 0) {
+    if (profit >= 0) {
+      container.innerHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"><i class="fa-solid fa-arrow-trend-up"></i> Estimasi Laba Bersih: ${fCur(profit)} (Margin ${pct}%)</span>`;
+    } else {
+      container.innerHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800"><i class="fa-solid fa-arrow-trend-down"></i> Potensi Rugi: ${fCur(profit)}</span>`;
+    }
+  } else {
+    container.innerHTML = `<span class="text-slate-400 font-medium italic text-[10px]">*Isi harga modal (HPP) untuk melihat kalkulasi margin laba</span>`;
+  }
+};
+
 window.rVarsB = () => {
-  let h = `<div class="space-y-3 mb-4">` + tVars.map((v, i) => `
-  <div class="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-2xl border-2 border-indigo-100 dark:border-indigo-900/40 shadow-sm relative overflow-hidden group">
-    <div class="absolute top-0 right-0 w-10 h-10 bg-indigo-50 dark:bg-indigo-900/20 rounded-bl-full -z-10"></div>
-    
-    <div class="flex items-center justify-between mb-3 border-b-2 border-slate-50 dark:border-slate-700 pb-2">
-      <span class="text-[10px] font-medium text-indigo-600 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-1.5"><i class="fa-solid fa-sitemap"></i> Varian ${i+1}</span>
-      <button onclick="rmVar(${i})" class="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center" title="Hapus Varian"><i class="fa-solid fa-xmark text-sm"></i></button>
-    </div>
-    
-    <div class="space-y-2">
-      <div class="grid grid-cols-2 gap-2">
-        <input placeholder="Nama Varian (Cth: XL / Merah)" class="admin-input !py-2.5 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700" value="${esc(v.name)}" onchange="uVar(${i},'name',this.value)"/>
-        <div class="relative">
-          <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-medium text-slate-400">Rp</span>
-          <input placeholder="Harga" type="number" class="admin-input !py-2.5 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700" value="${v.price}" onchange="uVar(${i},'price',this.value)"/>
+  let h = `<div class="space-y-3 mb-4">` + tVars.map((v, i) => {
+    const profit = (parseFloat(v.price) || 0) - (parseFloat(v.costPrice) || 0);
+    const marginPct = (v.price > 0 && profit > 0) ? Math.round((profit / v.price) * 100) : 0;
+    return `
+    <div class="bg-white dark:bg-slate-800 p-3.5 sm:p-4 rounded-2xl border-2 border-indigo-100 dark:border-indigo-900/40 shadow-sm relative overflow-hidden group">
+      <div class="flex items-center justify-between mb-3 border-b-2 border-slate-50 dark:border-slate-700 pb-2">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-1.5"><i class="fa-solid fa-sitemap"></i> Varian ${i+1}</span>
+          ${(parseFloat(v.costPrice) || 0) > 0 ? `<span class="text-[9px] px-2 py-0.5 rounded-full font-black ${profit >= 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-rose-50 text-rose-700'}">Laba: ${fCur(profit)} (${marginPct}%)</span>` : ''}
+        </div>
+        <button onclick="rmVar(${i})" class="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center" title="Hapus Varian"><i class="fa-solid fa-xmark text-sm"></i></button>
+      </div>
+      
+      <div class="space-y-2.5">
+        <!-- Row 1: Nama Varian -->
+        <div>
+          <input placeholder="Nama Varian (Cth: 22 Oz / Merah / 1 Kg)" class="admin-input !py-2.5 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold w-full" value="${esc(v.name)}" onchange="uVar(${i},'name',this.value)"/>
+        </div>
+
+        <!-- Row 2: Harga Jual & Harga Modal / HPP -->
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-[9px] font-bold text-slate-500 block mb-1">HARGA JUAL (Rp)</label>
+            <div class="relative">
+              <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">Rp</span>
+              <input placeholder="0" type="number" min="0" class="admin-input !py-2 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold" value="${v.price || ''}" oninput="uVar(${i},'price',this.value); rVarsB();"/>
+            </div>
+          </div>
+          <div>
+            <label class="text-[9px] font-bold text-slate-500 block mb-1">MODAL / HPP (Rp)</label>
+            <div class="relative">
+              <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">Rp</span>
+              <input placeholder="0" type="number" min="0" class="admin-input !py-2 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold" value="${v.costPrice || ''}" oninput="uVar(${i},'costPrice',this.value); rVarsB();"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: SKU with Auto Generator & Foto Varian -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div class="relative flex items-center gap-1">
+            <div class="relative flex-1">
+              <input id="var-sku-${i}" placeholder="SKU Barcode" class="admin-input !py-2.5 !pr-7 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-mono text-xs w-full font-bold" value="${esc(v.sku||'')}" onchange="uVar(${i},'sku',this.value)"/>
+              <button type="button" onclick="openCameraScanner('var-sku-${i}')" class="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-slate-400 hover:text-emerald-600 rounded transition-all" title="Scan Barcode"><i class="fa-solid fa-qrcode text-[10px]"></i></button>
+            </div>
+            <button type="button" onclick="generateAutoVarSku(${i})" class="px-2.5 py-2.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white border border-indigo-200 dark:border-indigo-800 rounded-xl font-bold text-[10px] shrink-0 transition-all flex items-center gap-1" title="Auto SKU Varian"><i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> <span>Auto</span></button>
+          </div>
+          <div class="flex gap-1.5">
+            <input id="var-img-${i}" placeholder="URL Gambar Varian" class="admin-input !py-2.5 !text-xs flex-1 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 min-w-0" value="${esc(v.img||'')}" onchange="uVar(${i},'img',this.value)"/>
+            <label onclick="if(window.AppInventor){ event.preventDefault(); window.AppInventor.setWebViewString('BUKA_GALERI|||var-img-${i}|||${i}'); }" class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 border border-emerald-200 dark:border-emerald-800 rounded-xl w-10 flex items-center justify-center cursor-pointer hover:bg-emerald-600 hover:text-white transition-all shrink-0"><i class="fa-solid fa-image text-[11px]"></i><input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'var-img-${i}', ${i})" /></label>
+          </div>
         </div>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-        <div class="relative flex items-center">
-          <input id="var-sku-${i}" placeholder="SKU Barcode" class="admin-input !py-2.5 !pr-10 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-mono text-xs w-full" value="${esc(v.sku||'')}" onchange="uVar(${i},'sku',this.value)"/>
-          <button type="button" onclick="openCameraScanner('var-sku-${i}')" class="absolute right-1 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"><i class="fa-solid fa-qrcode text-[10px]"></i></button>
-        </div>
-        <div class="flex gap-1.5">
-          <input id="var-img-${i}" placeholder="URL Gambar Varian" class="admin-input !py-2.5 !text-xs flex-1 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 min-w-0" value="${esc(v.img||'')}" onchange="uVar(${i},'img',this.value)"/>
-          <label onclick="if(window.AppInventor){ event.preventDefault(); window.AppInventor.setWebViewString('BUKA_GALERI|||var-img-${i}|||${i}'); }" class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 border border-emerald-200 dark:border-emerald-800 rounded-xl w-10 flex items-center justify-center cursor-pointer hover:bg-emerald-600 hover:text-white transition-all shrink-0"><i class="fa-solid fa-image text-[11px]"></i><input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'var-img-${i}', ${i})" /></label>
-        </div>
-      </div>
-    </div>
-  </div>`).join('') + `</div>
+    </div>`;
+  }).join('') + `</div>
   <button onclick="addVar()" class="w-full py-3.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 font-bold rounded-xl text-[10px] uppercase tracking-widest border-2 border-emerald-200 dark:border-emerald-800 border-dashed hover:bg-emerald-600 hover:text-white transition-all shadow-sm flex items-center justify-center gap-2"><i class="fa-solid fa-plus text-sm"></i> Tambah Varian Produk</button>`;
   setH('variants-builder-container', h);
 };
 
-window.addVar = () => { tVars.push({ name: '', price: 0, sku: '', img: '' }); rVarsB(); };
+window.addVar = () => { tVars.push({ name: '', price: 0, costPrice: 0, sku: '', img: '' }); rVarsB(); };
 window.rmVar = i => { tVars.splice(i, 1); rVarsB(); };
-window.uVar = (i, k, v) => { tVars[i][k] = k === 'price' ? parseFloat(v) || 0 : (k === 'img' ? fixD(v) : v); };
+window.uVar = (i, k, v) => { 
+  tVars[i][k] = (k === 'price' || k === 'costPrice') ? parseFloat(v) || 0 : (k === 'img' ? fixD(v) : v); 
+};
 
 window.rWholB = () => {
   let h = `<div class="space-y-3 mb-4">` + tWhol.map((w, i) => `

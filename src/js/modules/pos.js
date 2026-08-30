@@ -86,10 +86,71 @@ window.checkAdminAccess = () => {
   }
 };
 
+window.openSubscriptionModal = (msg) => {
+  const modal = el('pos-subscription-modal');
+  const box = el('pos-subscription-box');
+  const msgEl = el('pos-sub-modal-msg');
+  if (msg && msgEl) msgEl.innerText = msg;
+  if (!modal || !box) return;
+  modal.classList.remove('hidden');
+  setTimeout(() => {
+    modal.classList.remove('opacity-0');
+    box.classList.remove('scale-95');
+  }, 10);
+};
+
+window.closeSubscriptionModal = () => {
+  const modal = el('pos-subscription-modal');
+  const box = el('pos-subscription-box');
+  if (!modal || !box) return;
+  modal.classList.add('opacity-0');
+  box.classList.add('scale-95');
+  setTimeout(() => modal.classList.add('hidden'), 300);
+};
+
+window.orderSubscriptionWa = (planName) => {
+  let waNumber = appData.store?.wa || '6285156550244';
+  waNumber = waNumber.replace(/\D/g, '');
+  if (waNumber.startsWith('0')) waNumber = '62' + waNumber.substring(1);
+  const storeName = appData.store?.name || 'Toko Grafika';
+  const text = `Halo Admin Toko Grafika,\nSaya ingin berlangganan *Full Premium POS Kasir* untuk toko saya:\n\n🏪 *Nama Toko:* ${storeName}\n📦 *Paket:* ${planName}\n\nMohon petunjuk aktivasi lisensi. Terima kasih! 🙏`;
+  window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(text)}`, '_blank');
+};
+
+window.activateSubscriptionToken = async () => {
+  const tokenInput = el('pos-sub-token-input');
+  if (!tokenInput) return;
+  const token = tokenInput.value.trim().toUpperCase();
+  if (!token) return showToast('Masukkan kode lisensi!');
+
+  sLoad('Memverifikasi Lisensi...');
+  const isValid = await verifyLicenseInDb(token, 'PRO');
+  hLoad();
+
+  if (isValid) {
+    appData.licenseKey = token;
+    localStorage.setItem('freshmart_cache_PRO', token);
+    isPro = true;
+    const badge = el('admin-pro-badge');
+    if (badge) badge.innerHTML = '<span class="badge badge-xs badge-solid-amber"><i class="fa-solid fa-crown"></i> PRO</span>';
+    await saveApp();
+    showToast('🎉 Langganan Full Premium Aktif!');
+    closeSubscriptionModal();
+    initPosView();
+  } else {
+    showToast('Kode Lisensi tidak valid / kadaluarsa!');
+  }
+};
+
 // -----------------------------------------------------------------------------
 // 2. POS VIEW INITIALIZATION & CLOCK
 // -----------------------------------------------------------------------------
 window.initPosView = () => {
+  if (!isPro) {
+    window.openSubscriptionModal('Fitur POS Kasir & Struk hanya tersedia untuk pengguna Toko Grafika POS Premium (Promo Rp 35.000/bln).');
+    return;
+  }
+
   changeView('view-pos');
   
   const storeName = appData.store?.name || 'FreshMart Store';

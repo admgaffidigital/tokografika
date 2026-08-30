@@ -611,3 +611,101 @@
     <div class='p-3.5 space-y-2 overflow-y-auto custom-scrollbar flex-1 max-h-[50vh]' id='pos-category-modal-list'></div>
   </div>
 </div>
+
+<!-- ========================================================================= -->
+<!-- MODAL: SAAS SUBSCRIPTION PAYWALL (POS KASIR & HPP FULL PREMIUM)           -->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[90] bg-slate-950/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-3 sm:p-5' id='pos-subscription-modal' onclick='if(event.target===this) closeSubscriptionModal()'>
+  <div class='w-full max-w-lg bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform scale-95 transition-transform duration-300 max-h-[92dvh] overflow-hidden' id='pos-subscription-box'>
+    
+    <!-- Top Header Banner with Gradient -->
+    <div class='relative px-6 pt-6 pb-5 text-center bg-gradient-to-br from-amber-500 via-amber-600 to-emerald-600 text-white shrink-0 overflow-hidden'>
+      <!-- Background Shapes -->
+      <div class='absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-white/10 blur-xl pointer-events-none'></div>
+      <div class='absolute -left-6 -top-6 w-24 h-24 rounded-full bg-black/10 blur-xl pointer-events-none'></div>
+      
+      <!-- Close Button -->
+      <button type='button' class='absolute top-4 right-4 w-8 h-8 rounded-full bg-black/20 hover:bg-black/30 text-white flex items-center justify-center text-xs transition-colors' onclick='closeSubscriptionModal()'>
+        <i class='fa-solid fa-xmark'></i>
+      </button>
+
+      <div class='w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl mx-auto mb-3 shadow-md border border-white/30'>
+        <i class='fa-solid fa-crown text-amber-200'></i>
+      </div>
+      <div class='inline-block px-3 py-1 rounded-full bg-white/25 border border-white/30 text-[10px] font-black uppercase tracking-widest mb-1.5 shadow-sm'>
+        ✨ TOKO GRAFIKA POS PREMIUM
+      </div>
+      <h2 class='text-lg sm:text-xl font-black tracking-tight leading-snug'>Buka Fitur POS Kasir & HPP</h2>
+      <p class='text-xs text-white/90 font-semibold mt-1 max-w-sm mx-auto' id='pos-sub-modal-msg'>Tingkatkan produktivitas bisnismu dengan kasir modern & manajemen keuntungan otomatis.</p>
+    </div>
+
+    <!-- Body Content: Pricing & Features -->
+    <div class='p-5 sm:p-6 overflow-y-auto custom-scrollbar space-y-4 flex-1'>
+      
+      <!-- Plan Selector Cards -->
+      <div class='grid grid-cols-1 sm:grid-cols-2 gap-3'>
+        <!-- Monthly Promo Plan (Recommended) -->
+        <div class='relative p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 flex flex-col justify-between shadow-sm'>
+          <div class='absolute -top-2.5 right-3 bg-rose-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm'>
+            PROMO HEMAT
+          </div>
+          <div>
+            <p class='text-xs font-black text-slate-900 dark:text-white'>Paket Bulanan</p>
+            <div class='flex items-baseline gap-1.5 mt-1.5'>
+              <span class='text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400'>Rp 35.000</span>
+              <span class='text-[11px] text-slate-400 font-bold'>/bln</span>
+            </div>
+            <p class='text-[10px] text-slate-400 font-bold line-through mt-0.5'>Rp 50.000 /bln</p>
+          </div>
+          <button type='button' onclick='orderSubscriptionWa("Bulanan Promo (Rp 35.000/bln)")' class='mt-3.5 w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center gap-1.5'>
+            <i class='fa-brands fa-whatsapp text-sm'></i> Pilih Bulanan
+          </button>
+        </div>
+
+        <!-- Yearly Super Saver Plan -->
+        <div class='relative p-4 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/80 flex flex-col justify-between hover:border-amber-400 transition-all'>
+          <div class='absolute -top-2.5 right-3 bg-amber-500 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm'>
+            SUPER HEMAT
+          </div>
+          <div>
+            <p class='text-xs font-black text-slate-900 dark:text-white'>Paket 1 Tahun</p>
+            <div class='flex items-baseline gap-1.5 mt-1.5'>
+              <span class='text-xl sm:text-2xl font-black text-slate-900 dark:text-white'>Rp 350.000</span>
+              <span class='text-[11px] text-slate-400 font-bold'>/thn</span>
+            </div>
+            <p class='text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5'>Hemat Rp 70.000 + Free Setup</p>
+          </div>
+          <button type='button' onclick='orderSubscriptionWa("Tahunan Super Hemat (Rp 350.000/thn)")' class='mt-3.5 w-full py-2 bg-slate-900 dark:bg-slate-700 hover:bg-black text-white text-xs font-black rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5'>
+            <i class='fa-brands fa-whatsapp text-sm'></i> Pilih Tahunan
+          </button>
+        </div>
+      </div>
+
+      <!-- Feature List -->
+      <div class='bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2'>
+        <p class='text-[11px] font-black text-slate-900 dark:text-white uppercase tracking-wider mb-2.5 flex items-center gap-1.5'>
+          <i class='fa-solid fa-sparkles text-amber-500'></i> Fitur Premium yang Anda Dapatkan:
+        </p>
+        <ul class='space-y-2 text-xs font-semibold text-slate-600 dark:text-slate-300'>
+          <li class='flex items-center gap-2'><i class='fa-solid fa-circle-check text-emerald-500 text-xs shrink-0'></i> <span><b>Aplikasi POS Kasir Lengkap</b> (Scan Barcode & Desimal Satuan)</span></li>
+          <li class='flex items-center gap-2'><i class='fa-solid fa-circle-check text-emerald-500 text-xs shrink-0'></i> <span><b>Cetak Struk Thermal (58mm)</b>, Invoice A4 & Surat Jalan Resmi</span></li>
+          <li class='flex items-center gap-2'><i class='fa-solid fa-circle-check text-emerald-500 text-xs shrink-0'></i> <span><b>Harga Modal (HPP) & Hitung Laba/Rugi</b> Otomatis per Produk & Varian</span></li>
+          <li class='flex items-center gap-2'><i class='fa-solid fa-circle-check text-emerald-500 text-xs shrink-0'></i> <span><b>Generator Auto SKU</b> Barcode Produk & Varian Instan</span></li>
+          <li class='flex items-center gap-2'><i class='fa-solid fa-circle-check text-emerald-500 text-xs shrink-0'></i> <span><b>Multi Akun Kasir</b> dengan Hak Akses Fitur Terpisah</span></li>
+        </ul>
+      </div>
+
+      <!-- Activation via Token/License Form -->
+      <div class='pt-2 border-t border-slate-100 dark:border-slate-800'>
+        <p class='text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-2'>Sudah berlangganan / punya kode lisensi?</p>
+        <div class='flex gap-2'>
+          <input type='text' id='pos-sub-token-input' placeholder='MASUKKAN KODE LISENSI...' class='admin-input !py-2.5 uppercase font-mono text-xs text-center font-bold tracking-widest flex-1 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700'/>
+          <button type='button' onclick='activateSubscriptionToken()' class='px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl shadow-sm transition-all active:scale-95 shrink-0 flex items-center gap-1.5'>
+            <i class='fa-solid fa-key'></i> Aktivasi
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
