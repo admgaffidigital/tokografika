@@ -1265,14 +1265,14 @@ window.renderPricetagProductList = () => {
       : `<div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-image"></i></div>`;
 
     return `
-      <div class="p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors ${isSelected ? 'bg-emerald-50/40 dark:bg-emerald-950/20' : ''}">
+      <div class="p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors ${isSelected ? 'border-l-4' : ''}" style="${isSelected ? 'background-color:var(--clr-p-10); border-left-color:var(--clr-p);' : ''}">
         <div class="flex items-center gap-3 min-w-0 flex-1 cursor-pointer" onclick="toggleSelectPrintProduct(${p.id})">
-          <input type="checkbox" ${isSelected ? 'checked' : ''} class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer" onclick="event.stopPropagation(); toggleSelectPrintProduct(${p.id})" />
+          <input type="checkbox" ${isSelected ? 'checked' : ''} class="w-4 h-4 rounded cursor-pointer" style="accent-color:var(--clr-p)" onclick="event.stopPropagation(); toggleSelectPrintProduct(${p.id})" />
           ${img}
           <div class="min-w-0 flex-1">
             <h4 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-white truncate">${esc(p.name)}</h4>
             <div class="flex flex-wrap items-center gap-2 mt-0.5 text-[10px] text-slate-400 font-medium">
-              <span class="font-black text-emerald-600 dark:text-emerald-400">${fCur(p.price)}</span>
+              <span class="font-black" style="color:var(--clr-p)">${fCur(p.price)}</span>
               ${p.sku ? `<span class="badge badge-xs badge-slate">${esc(p.sku)}</span>` : ''}
               <span>${esc(p.category || '')}</span>
             </div>
@@ -1285,13 +1285,31 @@ window.renderPricetagProductList = () => {
             <i class="fa-solid fa-minus"></i>
           </button>
           <input type="number" min="0" max="999" value="${qty}" onchange="setPrintProductQty(${p.id}, this.value)" class="w-10 text-center text-xs font-black bg-transparent border-0 focus:ring-0 text-slate-800 dark:text-white p-0" />
-          <button type="button" onclick="changePrintProductQty(${p.id}, 1)" class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 hover:bg-emerald-200 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-xs font-bold active:scale-95 transition-all">
+          <button type="button" onclick="changePrintProductQty(${p.id}, 1)" class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold active:scale-95 transition-all" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
       </div>
     `;
   }).join('');
+};
+
+window.setPricetagZoom = (scale) => {
+  const wrapper = el('pricetag-sheets-zoom-wrapper');
+  if (!wrapper) return;
+  wrapper.style.transform = `scale(${scale})`;
+  wrapper.style.transformOrigin = 'top center';
+  wrapper.style.marginBottom = scale < 1 ? `-${Math.round((1 - scale) * 1140)}px` : '0px';
+
+  ['50', '75', '100'].forEach(s => {
+    const b = el(`btn-zoom-${s}`);
+    if (b) {
+      const match = (s === '50' && Math.abs(scale - 0.5) < 0.05) || (s === '75' && Math.abs(scale - 0.75) < 0.05) || (s === '100' && Math.abs(scale - 1) < 0.05);
+      b.className = match
+        ? 'px-2 py-0.5 rounded-lg bg-white dark:bg-slate-600 shadow-xs text-slate-900 dark:text-white font-black'
+        : 'px-2 py-0.5 rounded-lg hover:bg-white dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 transition-all';
+    }
+  });
 };
 
 window.refreshPricetagPreviewIfActive = () => {
@@ -1379,7 +1397,7 @@ window.proceedToPricetagPreview = () => {
             <div class="pricetag-card bg-white text-slate-900 border border-dashed border-slate-300 rounded-lg p-2.5 flex flex-col justify-between relative overflow-hidden box-border shadow-xs" style="min-height:${cardMinHeight}; height:${cardHeight};">
               <!-- Top Header: Store & Date -->
               <div class="flex items-center justify-between text-[9px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-1">
-                <span class="truncate max-w-[120px]"><i class="fa-solid fa-store text-emerald-600 mr-0.5"></i> ${storeName}</span>
+                <span class="truncate max-w-[120px]"><i class="fa-solid fa-store mr-0.5" style="color:var(--clr-p)"></i> ${storeName}</span>
                 <span class="text-slate-400 font-mono">${nowStr}</span>
               </div>
 
@@ -1400,7 +1418,7 @@ window.proceedToPricetagPreview = () => {
                 <div class="text-right">
                   <div class="text-[9px] font-black uppercase text-slate-400 tracking-wider">Harga Pas</div>
                   <div class="text-base sm:text-lg font-black text-slate-950 leading-none tracking-tight">
-                    <span class="text-[10px] font-extrabold text-emerald-600 align-top mr-0.5">Rp</span>${fCur(p.price).replace('Rp\u00a0','').replace('Rp ','')}
+                    <span class="text-[10px] font-extrabold align-top mr-0.5" style="color:var(--clr-p)">Rp</span>${fCur(p.price).replace('Rp\u00a0','').replace('Rp ','')}
                   </div>
                   <div class="text-[8.5px] font-bold text-slate-400">${unit}</div>
                 </div>
@@ -1421,7 +1439,7 @@ window.proceedToPricetagPreview = () => {
                 ${barcodeSvg}
               </div>
               <div class="text-[11px] font-black text-slate-950 leading-none mt-auto pt-0.5 border-t border-slate-100 w-full flex items-center justify-center gap-0.5">
-                <span class="text-[8px] font-bold text-emerald-600">Rp</span>${fCur(p.price).replace('Rp\u00a0','').replace('Rp ','')}
+                <span class="text-[8px] font-bold" style="color:var(--clr-p)">Rp</span>${fCur(p.price).replace('Rp\u00a0','').replace('Rp ','')}
               </div>
             </div>
           `;
@@ -1432,7 +1450,7 @@ window.proceedToPricetagPreview = () => {
         <div class="a4-pricetag-page bg-white text-slate-900 p-5 rounded-2xl shadow-xl border border-slate-300 mx-auto box-border" style="width: 794px; min-width: 794px; max-width: 794px; min-height: 1123px; box-sizing: border-box; position: relative;">
           <!-- A4 Header Meta -->
           <div class="flex items-center justify-between text-[10px] font-bold text-slate-400 border-b border-slate-200 pb-2 mb-3">
-            <span class="uppercase tracking-widest"><i class="fa-solid fa-tags text-emerald-500 mr-1"></i> ${currentPricetagMode === 'pricetag' ? 'Lembar Pricetag Rak Toko' : 'Lembar Label Stiker Barcode'}</span>
+            <span class="uppercase tracking-widest"><i class="fa-solid fa-tags mr-1" style="color:var(--clr-p)"></i> ${currentPricetagMode === 'pricetag' ? 'Lembar Pricetag Rak Toko' : 'Lembar Label Stiker Barcode'}</span>
             <span>Halaman ${pageIdx + 1} dari ${totalPages} &bull; Kertas A4 (210 x 297 mm)</span>
           </div>
 
@@ -1458,6 +1476,16 @@ window.proceedToPricetagPreview = () => {
     const pageInfoEl = el('pricetag-preview-page-info');
     if (pageInfoEl) {
       pageInfoEl.textContent = `Total ${pages.length} Halaman A4 (${printQueue.length} Label)`;
+    }
+
+    // Auto-fit on mobile screens
+    if (window.innerWidth < 640) {
+      const scale = Math.min(0.85, (window.innerWidth - 32) / 794);
+      window.setPricetagZoom(scale);
+    } else if (window.innerWidth < 900) {
+      window.setPricetagZoom(0.75);
+    } else {
+      window.setPricetagZoom(1);
     }
 
     window.showPricetagStep('preview');
