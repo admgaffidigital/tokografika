@@ -2,10 +2,10 @@
 // FRESHMART PRINT & PDF ENGINE (58MM THERMAL & A4 INVOICE / SURAT JALAN)
 // =============================================================================
 
-window.openReceiptPreview = () => {
-  const o = gOrds.find(x => x.orderId === cVOrd);
+window.openReceiptPreview = (directOrder = null) => {
+  const o = directOrder || gOrds.find(x => x.orderId === cVOrd);
   if (!o) return;
-  const d = o.dateString ? new Date(o.dateString).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+  const d = (o.dateString || o.createdAt) ? new Date(o.dateString || o.createdAt).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
   const sN = appData.store.name || "Toko";
   const sW = appData.store.wa || "";
   const pL = (l, r, len = 32) => {
@@ -13,26 +13,35 @@ window.openReceiptPreview = () => {
     return l + (p > 0 ? ' '.repeat(p) : ' ') + r;
   };
 
-  let h = `<div class="text-center font-bold" style="font-size:13px;margin-bottom:2px;">${esc(sN)}</div>${sW ? `<div class="text-center" style="margin-bottom:4px;">WA: ${esc(sW)}</div>` : ''}<div class="border-b border-dashed border-black my-2"></div><div style="white-space:pre;">Order: #${o.orderId}</div><div style="white-space:pre;">Tgl : ${d}</div><div style="white-space:pre;">Plg : ${esc(o.customer.name || 'Guest').substring(0, 20)}</div><div style="white-space:pre;">Tipe : ${o.customer.deliveryMethod === 'delivery' ? 'Kurir' : 'Toko'}</div><div class="border-b border-dashed border-black my-2"></div>${o.customer.note ? `<div style="white-space:pre-wrap;word-break:break-all;">Cat: ${esc(o.customer.note)}</div><div class="border-b border-dashed border-black my-2"></div>` : ''}`;
+  let h = `<div class="text-center font-bold" style="font-size:13px;margin-bottom:2px;">${esc(sN)}</div>${sW ? `<div class="text-center" style="margin-bottom:4px;">WA: ${esc(sW)}</div>` : ''}<div class="border-b border-dashed border-black my-2"></div><div style="white-space:pre;">Order: #${o.orderId || o.id}</div><div style="white-space:pre;">Tgl : ${d}</div><div style="white-space:pre;">Plg : ${esc(o.customer?.name || 'Guest').substring(0, 20)}</div>${o.cashier ? `<div style="white-space:pre;">Kasir: ${esc(o.cashier)}</div>` : ''}<div style="white-space:pre;">Tipe : ${o.type === 'pos' ? 'POS Kasir' : (o.customer?.deliveryMethod === 'delivery' ? 'Kurir' : 'Toko')}</div><div class="border-b border-dashed border-black my-2"></div>${o.customer?.note ? `<div style="white-space:pre-wrap;word-break:break-all;">Cat: ${esc(o.customer.note)}</div><div class="border-b border-dashed border-black my-2"></div>` : ''}`;
 
-  o.items.forEach(i => {
+  (o.items || []).forEach(i => {
     const n = (esc(i.name) + (i.variantName ? ` (${esc(i.variantName)})` : '')).substring(0, 32);
-    const q = `${i.qty}${i.unit ? ' ' + i.unit : ''} x ${i.effectivePrice.toLocaleString('id-ID')}`;
-    const t = (i.qty * i.effectivePrice).toLocaleString('id-ID');
+    const effP = i.effectivePrice || i.price || 0;
+    const q = `${i.qty}${i.unit ? ' ' + i.unit : ''} x ${effP.toLocaleString('id-ID')}`;
+    const t = (i.qty * effP).toLocaleString('id-ID');
     h += `<div style="white-space:pre-wrap;font-weight:bold;word-break:break-all;">${n}</div><div style="white-space:pre;font-size:11px;">${pL(q, t)}</div>`;
   });
 
-  h += `<div class="border-b border-dashed border-black my-2"></div><div style="white-space:pre;">${pL('Subtotal', (o.payment?.subtotal || 0).toLocaleString('id-ID'))}</div>`;
+  const sub = o.payment?.subtotal || o.subtotal || 0;
+  const grand = o.payment?.grandTotal || o.total || 0;
+  h += `<div class="border-b border-dashed border-black my-2"></div><div style="white-space:pre;">${pL('Subtotal', sub.toLocaleString('id-ID'))}</div>`;
   if (o.payment?.productDiscount) {
     h += `<div style="white-space:pre;">${pL('Diskon', `-${o.payment.productDiscount.toLocaleString('id-ID')}`)}</div>`;
   }
-  if (o.customer?.deliveryMethod !== 'pickup') {
+  if (o.customer?.deliveryMethod !== 'pickup' && o.type !== 'pos') {
     h += `<div style="white-space:pre;">${pL('Ongkir', (o.payment?.shippingCost || 0).toLocaleString('id-ID'))}</div>`;
   }
   if (o.payment?.shippingDiscount) {
     h += `<div style="white-space:pre;">${pL('Pot.Ongkir', `-${o.payment.shippingDiscount.toLocaleString('id-ID')}`)}</div>`;
   }
-  h += `<div class="border-b border-dashed border-black my-2"></div><div style="white-space:pre;font-weight:bold;font-size:12px;">${pL('TOTAL', 'Rp ' + (o.payment?.grandTotal || 0).toLocaleString('id-ID'))}</div><div style="white-space:pre;">${pL('Bayar:', String(o.payment?.method || '').toUpperCase())}</div><div class="border-b border-dashed border-black my-2"></div><div class="text-center my-2" style="font-size:10px;">Terima Kasih</div><div class="border-b border-dashed border-black my-2"></div><div style="height:15px;"></div>`;
+  h += `<div class="border-b border-dashed border-black my-2"></div><div style="white-space:pre;font-weight:bold;font-size:12px;">${pL('TOTAL', 'Rp ' + grand.toLocaleString('id-ID'))}</div>`;
+  h += `<div style="white-space:pre;">${pL('Bayar:', String(o.payment?.method || '').toUpperCase())}</div>`;
+  if (o.payment?.cashReceived) {
+    h += `<div style="white-space:pre;">${pL('Tunai:', (o.payment.cashReceived).toLocaleString('id-ID'))}</div>`;
+    h += `<div style="white-space:pre;">${pL('Kembali:', (o.payment.change || 0).toLocaleString('id-ID'))}</div>`;
+  }
+  h += `<div class="border-b border-dashed border-black my-2"></div><div class="text-center my-2" style="font-size:10px;">Terima Kasih Atas Kunjungan Anda</div><div class="border-b border-dashed border-black my-2"></div><div style="height:15px;"></div>`;
 
   setH('receipt-paper-content', h);
   show('receipt-preview-modal');

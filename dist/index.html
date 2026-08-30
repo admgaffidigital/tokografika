@@ -1601,46 +1601,58 @@ html.dark .badge-counter {
 </div>
 
   <!-- ========================================================================= -->
-<!-- VIEW: ADMIN LOGIN                                                         -->
+<!-- VIEW: ADMIN & KASIR LOGIN                                                 -->
 <!-- ========================================================================= -->
 <div class='view-section flex items-center justify-center fade-in bg-slate-900 dark:bg-[#020617] z-50 relative hidden min-h-screen' id='view-admin-login'>
   <div class='absolute inset-0 bg-slate-900 pointer-events-none'></div>
   <div class='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none'></div>
 
-  <div class='w-full max-w-[360px] p-4 relative z-10 mx-auto'>
-    <div class='bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-200/50 dark:border-slate-700/50 p-8 shadow-2xl relative flex flex-col items-center text-center'>
-      <button class='absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700/50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all duration-300' onclick='changeView(&apos;view-catalog&apos;)'>
+  <div class='w-full max-w-[390px] p-4 relative z-10 mx-auto'>
+    <div class='bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-200/60 dark:border-slate-700/60 p-6 sm:p-8 shadow-2xl relative flex flex-col items-center text-center'>
+      <button class='absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700/50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all duration-300' onclick='changeView(&apos;view-catalog&apos;)' title='Tutup'>
         <i class='fa-solid fa-xmark'></i>
       </button>
-      
-      <div class='w-16 h-16 text-white rounded-2xl flex items-center justify-center mb-5 text-3xl shadow-lg' style='background-color:var(--clr-p);box-shadow:0 8px 24px var(--clr-p-25)'>
-        <i class='fa-solid fa-shield-halved'></i>
+
+      <!-- 2-Tab Switcher (Admin vs Kasir) -->
+      <div class='w-full bg-slate-100 dark:bg-slate-900 p-1 rounded-2xl flex items-center mb-6 border border-slate-200 dark:border-slate-800' id='login-tab-container'>
+        <button class='flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm' id='tab-login-admin' onclick='switchLoginTab(&quot;admin&quot;)'>
+          <i class='fa-solid fa-shield-halved text-xs'></i>
+          <span>Admin Master</span>
+        </button>
+        <button class='flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' id='tab-login-cashier' onclick='switchLoginTab(&quot;cashier&quot;)'>
+          <i class='fa-solid fa-cash-register text-xs'></i>
+          <span>POS Kasir</span>
+        </button>
       </div>
       
-      <h2 class='text-2xl font-black tracking-tight text-slate-900 dark:text-white mb-1'>Admin Panel</h2>
-      <p class='text-xs font-semibold text-slate-500 dark:text-slate-400 mb-8'>Portal masuk Admin &amp; Kasir</p>
+      <div class='w-16 h-16 text-white rounded-2xl flex items-center justify-center mb-4 text-3xl shadow-lg transition-all duration-300' id='login-icon-box' style='background-color:var(--clr-p);box-shadow:0 8px 24px var(--clr-p-25)'>
+        <i class='fa-solid fa-shield-halved' id='login-icon'></i>
+      </div>
       
-      <div class='space-y-4 w-full text-left'>
+      <h2 class='text-2xl font-black tracking-tight text-slate-900 dark:text-white mb-1' id='login-title'>Admin Panel</h2>
+      <p class='text-xs font-semibold text-slate-500 dark:text-slate-400 mb-6' id='login-subtitle'>Portal masuk ke CMS Toko</p>
+      
+      <form class='space-y-4 w-full text-left' onsubmit='event.preventDefault(); processAdminLogin();'>
         <div class='relative'>
           <div class='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
-            <i class='fa-solid fa-user text-slate-400 dark:text-slate-500'></i>
+            <i class='fa-solid fa-user text-slate-400 dark:text-slate-500 text-sm' id='login-user-icon'></i>
           </div>
-          <input class='w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:border-theme-primary transition-all placeholder:text-slate-400' id='login-username' placeholder='Username' type='text' style='box-sizing:border-box;'/>
+          <input class='w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:border-theme-primary transition-all placeholder:text-slate-400' id='login-username' placeholder='Username Admin' type='text' autocomplete='username' style='box-sizing:border-box;' required/>
         </div>
         
         <div class='relative'>
           <div class='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
-            <i class='fa-solid fa-lock text-slate-400 dark:text-slate-500'></i>
+            <i class='fa-solid fa-lock text-slate-400 dark:text-slate-500 text-sm'></i>
           </div>
-          <input class='w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:border-theme-primary transition-all placeholder:text-slate-400' id='login-password' placeholder='Password' type='password' style='box-sizing:border-box;'/>
+          <input class='w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:border-theme-primary transition-all placeholder:text-slate-400' id='login-password' placeholder='Password Admin' type='password' autocomplete='current-password' style='box-sizing:border-box;' required/>
         </div>
         
-        <div class='pt-4'>
-          <button class='btn-primary w-full !py-3.5 !text-sm hover:-translate-y-0.5' onclick='processAdminLogin()'>
+        <div class='pt-2'>
+          <button class='btn-primary w-full !py-3.5 !text-sm hover:-translate-y-0.5 shadow-lg' id='btn-submit-login' type='submit'>
             Masuk Sistem
           </button>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </div>
@@ -1750,6 +1762,208 @@ html.dark .badge-counter {
   </div>
 </div>
 <input accept='.json' class='hidden' id='restore-file' onchange='restoreData(event)' type='file'/>
+
+  <!-- ========================================================================= -->
+<!-- VIEW: POS KASIR (POINT OF SALE)                                           -->
+<!-- ========================================================================= -->
+<div class='view-section flex flex-col fade-in bg-slate-100 dark:bg-[#090e1a] z-50 hidden min-h-screen' id='view-pos'>
+  <!-- POS Top Glass Header -->
+  <div class='glass-header shrink-0 px-3 sm:px-6 py-2.5 flex items-center justify-between sticky top-0 z-30 shadow-md'>
+    <div class='flex items-center gap-3'>
+      <div class='w-10 h-10 rounded-xl bg-white/20 text-white flex items-center justify-center shadow-md border border-white/30 shrink-0'>
+        <i class='fa-solid fa-cash-register text-lg'></i>
+      </div>
+      <div>
+        <div class='flex items-center gap-2'>
+          <h1 class='text-sm sm:text-base font-extrabold tracking-tight text-white' id='pos-store-name'>POS Kasir</h1>
+          <span class='bg-white/20 text-white border border-white/30 text-[9px] font-bold px-2 py-0.5 rounded-full' id='pos-role-badge'>KASIR</span>
+        </div>
+        <p class='text-[10px] font-semibold text-white/90 flex items-center gap-1.5'>
+          <i class='fa-solid fa-user-circle text-xs'></i>
+          <span id='pos-cashier-name'>Petugas Kasir</span>
+          <span class='opacity-50'>•</span>
+          <span id='pos-clock' class='font-mono'>00:00:00</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- POS Top Actions -->
+    <div class='flex items-center gap-2'>
+      <button class='w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white flex items-center justify-center text-sm transition-all shadow-sm active:scale-95' onclick='openCameraScanner()' title='Scan Barcode Kamera'>
+        <i class='fa-solid fa-qrcode'></i>
+      </button>
+      <button class='hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-sm active:scale-95' id='btn-pos-to-admin' onclick='changeView(&quot;view-admin&quot;); openAdminMenu();' title='Buka CMS Pengaturan'>
+        <i class='fa-solid fa-gear text-xs'></i>
+        <span>CMS Toko</span>
+      </button>
+      <button class='px-3 py-2 rounded-xl bg-rose-500/90 hover:bg-rose-600 border border-rose-400/40 text-white text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 active:scale-95' onclick='logoutAdmin()' title='Keluar / Ganti Kasir'>
+        <i class='fa-solid fa-power-off text-xs'></i>
+        <span class='hidden sm:inline'>Tutup Kasir</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- POS Main Body (2 Columns on Desktop/Tablet, Responsive on Mobile) -->
+  <div class='flex-1 flex flex-col lg:flex-row overflow-hidden relative'>
+    
+    <!-- LEFT PANE: PRODUCT CATALOG & SEARCH -->
+    <div class='flex-1 flex flex-col min-w-0 border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0b1329] overflow-hidden'>
+      <!-- Search & Filter Bar -->
+      <div class='p-3 sm:p-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm shrink-0 flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center'>
+        <div class='relative flex-1'>
+          <i class='fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs'></i>
+          <input class='w-full pl-10 pr-9 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:border-theme-primary text-slate-800 dark:text-white placeholder:text-slate-400 transition-all' id='pos-search-input' placeholder='Cari nama atau ketik/scan barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)'/>
+          <button class='absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 hidden' id='pos-btn-clear-search' onclick='clearPosSearch()'>
+            <i class='fa-solid fa-xmark text-sm'></i>
+          </button>
+        </div>
+        <!-- POS Categories -->
+        <div class='flex items-center gap-1.5 overflow-x-auto hide-scrollbar py-0.5' id='pos-categories-container'></div>
+      </div>
+
+      <!-- POS Product Grid -->
+      <div class='flex-1 overflow-y-auto p-3 sm:p-4 custom-scrollbar' id='pos-products-scroll'>
+        <div class='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-3.5' id='pos-product-grid'></div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANE: POS CART & ORDER TOTAL -->
+    <div class='w-full lg:w-[380px] xl:w-[420px] shrink-0 bg-white dark:bg-slate-900 flex flex-col border-t lg:border-t-0 shadow-lg z-20'>
+      <!-- Cart Header -->
+      <div class='p-3 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50/50 dark:bg-slate-900/50'>
+        <div class='flex items-center gap-2'>
+          <i class='fa-solid fa-cart-shopping text-emerald-600 dark:text-emerald-400 text-sm'></i>
+          <h2 class='font-bold text-sm text-slate-900 dark:text-white'>Keranjang Transaksi</h2>
+          <span class='badge badge-xs badge-emerald font-extrabold' id='pos-cart-count'>0 Item</span>
+        </div>
+        <button class='text-xs font-bold text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1 transition-colors' onclick='clearPosCart()'>
+          <i class='fa-solid fa-trash-can text-[11px]'></i> Kosongkan
+        </button>
+      </div>
+
+      <!-- Cart Item List -->
+      <div class='flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar min-h-[160px] lg:min-h-0' id='pos-cart-items-container'>
+        <div class='h-full flex flex-col items-center justify-center text-center p-6 text-slate-400 dark:text-slate-500' id='pos-cart-empty'>
+          <i class='fa-solid fa-basket-shopping text-4xl mb-2 opacity-40'></i>
+          <p class='text-xs font-bold'>Keranjang Masih Kosong</p>
+          <p class='text-[10px] mt-0.5 opacity-80'>Klik produk di katalog atau scan barcode untuk menambah</p>
+        </div>
+      </div>
+
+      <!-- Cart Summary & Payment Action -->
+      <div class='p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0b1329] space-y-3 shrink-0'>
+        <div class='space-y-1.5 text-xs font-semibold'>
+          <div class='flex justify-between text-slate-600 dark:text-slate-400'>
+            <span>Subtotal</span>
+            <span class='font-bold text-slate-900 dark:text-white' id='pos-summary-subtotal'>Rp 0</span>
+          </div>
+          <div class='flex justify-between text-slate-600 dark:text-slate-400'>
+            <span>Diskon Grosir / Promo</span>
+            <span class='font-bold text-emerald-600 dark:text-emerald-400' id='pos-summary-discount'>Rp 0</span>
+          </div>
+          <div class='pt-2 border-t border-slate-200 dark:border-slate-800 flex justify-between items-baseline'>
+            <span class='text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wide'>Total Bayar</span>
+            <span class='text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400' id='pos-summary-total'>Rp 0</span>
+          </div>
+        </div>
+
+        <button class='btn-primary w-full !py-3.5 !text-base !font-extrabold shadow-xl hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:pointer-events-none' id='btn-pos-pay' onclick='openPosPaymentModal()' disabled>
+          <i class='fa-solid fa-money-bill-wave mr-1'></i> Bayar Sekarang
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MODAL: POS QUICK PAYMENT (PEMBAYARAN KILAT KASIR)                         -->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[80] bg-slate-900/70 hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-3 sm:p-5' id='pos-payment-modal' onclick='if(event.target===this) closePosPaymentModal()'>
+  <div class='w-full max-w-lg bg-white dark:bg-slate-800 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col transform scale-95 transition-transform duration-300' id='pos-payment-box'>
+    
+    <!-- Modal Header -->
+    <div class='px-6 py-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between'>
+      <div class='flex items-center gap-2.5'>
+        <div class='w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold'>
+          <i class='fa-solid fa-wallet'></i>
+        </div>
+        <h3 class='font-bold text-sm sm:text-base text-slate-900 dark:text-white'>Pembayaran Kasir</h3>
+      </div>
+      <button class='w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-rose-500 hover:text-white flex items-center justify-center text-xs transition-colors' onclick='closePosPaymentModal()'>
+        <i class='fa-solid fa-xmark'></i>
+      </button>
+    </div>
+
+    <!-- Modal Content -->
+    <div class='p-5 sm:p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar'>
+      <!-- Total Tagihan -->
+      <div class='bg-emerald-50 dark:bg-emerald-950/40 p-4 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 text-center'>
+        <p class='text-[10px] font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-widest mb-1'>Total Tagihan</p>
+        <h2 class='text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400' id='pos-modal-total-display'>Rp 0</h2>
+      </div>
+
+      <!-- Pilihan Metode Pembayaran -->
+      <div>
+        <label class='text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 block uppercase tracking-wider'>Metode Pembayaran</label>
+        <div class='grid grid-cols-2 sm:grid-cols-4 gap-2' id='pos-payment-method-selector'>
+          <button type='button' class='p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1.5 transition-all pos-method-btn active-method border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300' data-method='cash' onclick='setPosPaymentMethod(&quot;cash&quot;)'>
+            <i class='fa-solid fa-money-bill-wave text-base text-emerald-600'></i>
+            <span>Tunai</span>
+          </button>
+          <button type='button' class='p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1.5 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300' data-method='qris' onclick='setPosPaymentMethod(&quot;qris&quot;)'>
+            <i class='fa-solid fa-qrcode text-base text-slate-500'></i>
+            <span>QRIS</span>
+          </button>
+          <button type='button' class='p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1.5 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300' data-method='transfer' onclick='setPosPaymentMethod(&quot;transfer&quot;)'>
+            <i class='fa-solid fa-building-columns text-base text-slate-500'></i>
+            <span>Transfer</span>
+          </button>
+          <button type='button' class='p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1.5 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300' data-method='edc' onclick='setPosPaymentMethod(&quot;edc&quot;)'>
+            <i class='fa-solid fa-credit-card text-base text-slate-500'></i>
+            <span>Debit/EDC</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Section Khusus Tunai (Input Cash & Kembalian) -->
+      <div id='pos-cash-input-section' class='space-y-3 pt-2'>
+        <div>
+          <label class='text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 block uppercase tracking-wider'>Uang Diterima (Rp)</label>
+          <input type='number' id='pos-cash-received-input' class='w-full text-lg sm:text-xl font-black px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white' placeholder='0' oninput='calculatePosChange()'/>
+        </div>
+
+        <!-- Quick Cash Buttons -->
+        <div class='flex flex-wrap gap-1.5' id='pos-quick-cash-buttons'>
+          <button type='button' class='px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(&quot;exact&quot;)'>Uang Pas</button>
+          <button type='button' class='px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(10000)'>10.000</button>
+          <button type='button' class='px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(20000)'>20.000</button>
+          <button type='button' class='px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(50000)'>50.000</button>
+          <button type='button' class='px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(100000)'>100.000</button>
+        </div>
+
+        <!-- Kembalian Display -->
+        <div class='p-3.5 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between'>
+          <span class='text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider'>Kembalian</span>
+          <span class='text-lg font-black text-emerald-600 dark:text-emerald-400' id='pos-change-display'>Rp 0</span>
+        </div>
+      </div>
+
+      <!-- Nama Pembeli / Pelanggan POS (Opsional) -->
+      <div>
+        <label class='text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 block uppercase tracking-wider'>Nama Pelanggan (Opsional)</label>
+        <input type='text' id='pos-customer-name' class='w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white' placeholder='Pelanggan Umum (Walk-in)'/>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class='p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 flex gap-2.5'>
+      <button type='button' class='px-4 py-3 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold hover:bg-slate-300 transition-colors' onclick='closePosPaymentModal()'>Batal</button>
+      <button type='button' class='btn-primary flex-1 !py-3 !text-sm !font-bold' id='btn-pos-submit-order' onclick='submitPosTransaction()'>
+        <i class='fa-solid fa-check mr-1'></i> Simpan &amp; Cetak Struk
+      </button>
+    </div>
+  </div>
+</div>
 
 </div>
 
@@ -3561,20 +3775,55 @@ window.processAdminLogin = () => {
     return; 
   }
 
-  // 2. JALUR ADMIN UTAMA
+  // 2. JALUR TAB KASIR (Direct to POS Mode)
+  if (typeof currentLoginTab !== 'undefined' && currentLoginTab === 'cashier') {
+    const kasir = (appData.accounts || []).find(a => a.username === u && a.password === p && a.isActive !== 'false' && a.isActive !== false);
+    if (kasir) {
+      ssL('_fm_la', '0');
+      isAdm = !0;
+      cRole = 'cashier';
+      cPerms = kasir.permissions || [];
+      activeCashier = kasir;
+      showToast(`Selamat bertugas, ${kasir.name}! 🛒`);
+      if (typeof initPosView === 'function') initPosView();
+      else changeView('view-pos');
+      return;
+    } else if (u === appData.auth.username && p === appData.auth.password) {
+      // Master Admin juga bisa membuka POS Kasir
+      ssL('_fm_la', '0');
+      isAdm = !0;
+      cRole = 'admin';
+      cPerms = ['all'];
+      activeCashier = { name: 'Admin Master' };
+      showToast("Membuka POS Kasir (Mode Admin) 🛒");
+      if (typeof initPosView === 'function') initPosView();
+      else changeView('view-pos');
+      return;
+    } else {
+      const fa = parseInt(sL('_fm_la') || '0') + 1;
+      ssL('_fm_la', fa.toString());
+      ssL('_fm_lf', Date.now().toString());
+      showToast("Akun kasir tidak ditemukan / password salah!");
+      return;
+    }
+  }
+
+  // 3. JALUR TAB ADMIN (Master CMS Toko)
   if (u === appData.auth.username && p === appData.auth.password) {
     ssL('_fm_la', '0');
     isAdm = !0; 
     cRole = 'admin'; cPerms = ['all'];
+    activeCashier = { name: 'Admin Master' };
     setH('admin-pro-badge', isPro ? '<span class="badge badge-xs badge-solid-amber"><i class="fa-solid fa-crown"></i> PRO</span>' : '<span class="badge badge-xs badge-solid-slate">FREE</span>');
     changeView('view-admin'); 
     openAdminMenu();
   } else {
-    // 3. JALUR KASIR
+    // Jalur Kasir dengan Izin Akses CMS
     const kasir = (appData.accounts || []).find(a => a.username === u && a.password === p && a.isActive !== 'false' && a.isActive !== false);
     if (kasir) {
       isAdm = !0; 
       cRole = 'cashier'; cPerms = kasir.permissions || [];
+      activeCashier = kasir;
       setH('admin-pro-badge', '<span class="badge badge-xs badge-solid-blue"><i class="fa-solid fa-user-tie"></i> KASIR</span>');
       changeView('view-admin'); 
       openAdminMenu(); 
@@ -3583,7 +3832,7 @@ window.processAdminLogin = () => {
       const fa = parseInt(sL('_fm_la') || '0') + 1;
       ssL('_fm_la', fa.toString()); 
       ssL('_fm_lf', Date.now().toString());
-      showToast("Data Tidak Ditemukan / Akun Nonaktif!");
+      showToast("Data Admin Tidak Ditemukan / Password Salah!");
     }
   }
 };
@@ -4689,7 +4938,507 @@ window.toggleProductStatus = async (id, toActive) => {
 };
 
 
-// 8. Barcode Scanner & Hardware Hybrid Bridge
+// 8. POS Kasir (Point of Sale) & Cashier Engine
+// =============================================================================
+// POS KASIR (POINT OF SALE) & LOGIN SWITCHER MODULE
+// =============================================================================
+
+let posCart = [];
+let activeCashier = null;
+let currentLoginTab = 'admin';
+let posActiveCategory = 'Semua Produk';
+let posSearchQuery = '';
+let posPaymentMethod = 'cash';
+let posClockInterval = null;
+
+// -----------------------------------------------------------------------------
+// 1. LOGIN TAB SWITCHER & AUTHENTICATION
+// -----------------------------------------------------------------------------
+window.switchLoginTab = (tab) => {
+  currentLoginTab = tab;
+  const btnAdmin = el('tab-login-admin');
+  const btnCashier = el('tab-login-cashier');
+  const icon = el('login-icon');
+  const title = el('login-title');
+  const subtitle = el('login-subtitle');
+  const uInput = el('login-username');
+  const pInput = el('login-password');
+  const submitBtn = el('btn-submit-login');
+
+  if (tab === 'admin') {
+    if (btnAdmin) {
+      btnAdmin.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700';
+    }
+    if (btnCashier) {
+      btnCashier.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300';
+    }
+    if (icon) icon.className = 'fa-solid fa-shield-halved';
+    if (title) title.innerText = 'Admin Master';
+    if (subtitle) subtitle.innerText = 'Portal masuk ke CMS Toko';
+    if (uInput) uInput.placeholder = 'Username Admin';
+    if (pInput) pInput.placeholder = 'Password Admin';
+    if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-shield-halved mr-1"></i> Masuk Sebagai Admin';
+  } else {
+    if (btnAdmin) {
+      btnAdmin.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300';
+    }
+    if (btnCashier) {
+      btnCashier.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700';
+    }
+    if (icon) icon.className = 'fa-solid fa-cash-register';
+    if (title) title.innerText = 'POS Kasir';
+    if (subtitle) subtitle.innerText = 'Portal transaksi staf kasir';
+    if (uInput) uInput.placeholder = 'Username / Kode Kasir';
+    if (pInput) pInput.placeholder = 'Password / PIN Kasir';
+    if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-cash-register mr-1"></i> Buka POS Kasir';
+  }
+};
+
+window.checkAdminAccess = () => {
+  if (isAdm) {
+    if (cRole === 'cashier') {
+      initPosView();
+    } else {
+      changeView('view-admin');
+      openAdminMenu();
+    }
+  } else {
+    changeView('view-admin-login');
+    switchLoginTab('admin');
+  }
+};
+
+// -----------------------------------------------------------------------------
+// 2. POS VIEW INITIALIZATION & CLOCK
+// -----------------------------------------------------------------------------
+window.initPosView = () => {
+  changeView('view-pos');
+  
+  // Set Kasir Name & Store Name
+  const storeName = appData.store?.name || 'FreshMart Store';
+  setIn('pos-store-name', storeName);
+  
+  const cashierName = activeCashier?.name || (cRole === 'admin' ? 'Admin Master' : 'Kasir Toko');
+  setIn('pos-cashier-name', cashierName);
+  
+  const roleBadge = el('pos-role-badge');
+  if (roleBadge) {
+    roleBadge.innerText = cRole === 'admin' ? 'MASTER' : 'KASIR';
+    roleBadge.className = cRole === 'admin' 
+      ? 'bg-amber-500/30 text-amber-200 border border-amber-400/40 text-[9px] font-black px-2 py-0.5 rounded-full'
+      : 'bg-white/20 text-white border border-white/30 text-[9px] font-bold px-2 py-0.5 rounded-full';
+  }
+
+  // Tombol ke CMS jika kasir memiliki permission atau admin master
+  const btnCms = el('btn-pos-to-admin');
+  if (btnCms) {
+    const hasAdminPerm = cRole === 'admin' || (cPerms && cPerms.length > 0);
+    btnCms.classList.toggle('hidden', !hasAdminPerm);
+  }
+
+  // Start Realtime POS Clock
+  if (posClockInterval) clearInterval(posClockInterval);
+  updatePosClock();
+  posClockInterval = setInterval(updatePosClock, 1000);
+
+  // Render Categories & Catalog
+  renderPosCategories();
+  renderPosProducts();
+  renderPosCart();
+};
+
+const updatePosClock = () => {
+  const clockEl = el('pos-clock');
+  if (clockEl) {
+    const now = new Date();
+    clockEl.innerText = now.toLocaleTimeString('id-ID', { hour12: false });
+  }
+};
+
+// -----------------------------------------------------------------------------
+// 3. POS CATALOG & PRODUCT SELECTION
+// -----------------------------------------------------------------------------
+const renderPosCategories = () => {
+  const container = el('pos-categories-container');
+  if (!container) return;
+
+  const categories = ['Semua Produk', ...(appData.categories || []).map(c => c.name)];
+  
+  container.innerHTML = categories.map(cat => `
+    <button type="button" onclick="filterPosCategory('${esc(cat)}')" class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${posActiveCategory === cat ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'}">
+      ${esc(cat)}
+    </button>
+  `).join('');
+};
+
+window.filterPosCategory = (cat) => {
+  posActiveCategory = cat;
+  renderPosCategories();
+  renderPosProducts();
+};
+
+window.handlePosSearch = (val) => {
+  posSearchQuery = (val || '').trim();
+  const clearBtn = el('pos-btn-clear-search');
+  if (clearBtn) clearBtn.classList.toggle('hidden', !posSearchQuery);
+  renderPosProducts();
+};
+
+window.clearPosSearch = () => {
+  const input = el('pos-search-input');
+  if (input) input.value = '';
+  posSearchQuery = '';
+  const clearBtn = el('pos-btn-clear-search');
+  if (clearBtn) clearBtn.classList.add('hidden');
+  renderPosProducts();
+};
+
+const renderPosProducts = () => {
+  const grid = el('pos-product-grid');
+  if (!grid) return;
+
+  const filtered = (appData.products || []).filter(p => {
+    if (posActiveCategory !== 'Semua Produk' && p.category !== posActiveCategory) return false;
+    if (!posSearchQuery) return true;
+    const q = posSearchQuery.toLowerCase();
+    return (p.name || '').toLowerCase().includes(q) ||
+      (p.sku || '').toLowerCase().includes(q) ||
+      (p.variants && p.variants.some(v => (v.sku || '').toLowerCase().includes(q)));
+  });
+
+  if (!filtered.length) {
+    grid.innerHTML = `
+      <div class="col-span-full py-16 text-center text-slate-400 dark:text-slate-500 font-bold text-xs bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+        <i class="fa-solid fa-box-open text-3xl mb-2 block opacity-40"></i>
+        Produk tidak ditemukan
+      </div>
+    `;
+    return;
+  }
+
+  const svgPlaceholder = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==";
+
+  grid.innerHTML = filtered.map(p => {
+    const isActive = p.isActive !== 'false' && p.isActive !== false;
+    return `
+      <div class="bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl p-2 sm:p-3 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all cursor-pointer shadow-sm group flex flex-col justify-between active:scale-95" onclick="addPosItem(${p.id})">
+        <div class="relative aspect-square w-full rounded-lg sm:rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 mb-2">
+          <img src="${esc(p.img || '')}" onerror="window.imgErrRetry(this,'No Image',200)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${!isActive ? 'grayscale opacity-50' : ''}"/>
+          ${!isActive ? '<div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center"><span class="badge badge-solid-rose text-[8px] font-bold">KOSONG</span></div>' : ''}
+          ${p.wholesale?.length ? '<span class="absolute top-1.5 left-1.5 bg-amber-500 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded shadow"><i class="fa-solid fa-tags"></i> Grosir</span>' : ''}
+        </div>
+        <div class="flex-1 flex flex-col justify-between min-w-0">
+          <h4 class="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
+          <div class="flex items-baseline justify-between gap-1 mt-auto pt-1">
+            <span class="text-xs sm:text-sm font-extrabold text-emerald-600 dark:text-emerald-400">${fCur(p.price)}</span>
+            ${p.unit ? `<span class="text-[8px] sm:text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">/${esc(p.unit)}</span>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+};
+
+// -----------------------------------------------------------------------------
+// 4. POS CART MANAGEMENT
+// -----------------------------------------------------------------------------
+window.addPosItem = (productId, variantIndex = 0) => {
+  const p = (appData.products || []).find(x => x.id === productId);
+  if (!p) return;
+
+  const isActive = p.isActive !== 'false' && p.isActive !== false;
+  if (!isActive) {
+    showToast("Produk sedang kosong!");
+    return;
+  }
+
+  const v = p.variants?.[variantIndex];
+  const vName = v?.name || null;
+  const price = v?.price ?? p.price;
+
+  const existing = posCart.find(item => item.id === p.id && item.variantName === vName);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    posCart.push({
+      id: p.id,
+      name: p.name,
+      variantName: vName,
+      price: price,
+      img: v?.img || p.img,
+      qty: 1,
+      unit: p.unit || '',
+      wholesale: p.wholesale || []
+    });
+  }
+
+  renderPosCart();
+};
+
+window.updatePosQty = (index, delta) => {
+  if (!posCart[index]) return;
+  posCart[index].qty += delta;
+  if (posCart[index].qty <= 0) {
+    posCart.splice(index, 1);
+  }
+  renderPosCart();
+};
+
+window.removePosItem = (index) => {
+  if (!posCart[index]) return;
+  posCart.splice(index, 1);
+  renderPosCart();
+};
+
+window.clearPosCart = () => {
+  if (!posCart.length) return;
+  showConfirm("Kosongkan Keranjang", "Batalkan seluruh item di transaksi kasir saat ini?", () => {
+    posCart = [];
+    renderPosCart();
+    showToast("Keranjang transaksi dikosongkan");
+  });
+};
+
+const renderPosCart = () => {
+  const container = el('pos-cart-items-container');
+  const emptyState = el('pos-cart-empty');
+  const countEl = el('pos-cart-count');
+  const btnPay = el('btn-pos-pay');
+
+  const totalQty = posCart.reduce((acc, item) => acc + item.qty, 0);
+  if (countEl) countEl.innerText = `${totalQty} Item`;
+
+  if (!posCart.length) {
+    if (container) container.innerHTML = '';
+    if (emptyState) emptyState.classList.remove('hidden');
+    if (container) container.appendChild(emptyState);
+    if (btnPay) btnPay.disabled = true;
+
+    setIn('pos-summary-subtotal', 'Rp 0');
+    setIn('pos-summary-discount', 'Rp 0');
+    setIn('pos-summary-total', 'Rp 0');
+    return;
+  }
+
+  if (emptyState) emptyState.classList.add('hidden');
+  if (btnPay) btnPay.disabled = false;
+
+  let subtotal = 0;
+  let totalDiscount = 0;
+
+  container.innerHTML = posCart.map((item, idx) => {
+    const origPrice = item.price;
+    const effPrice = getEffP(item);
+    const itemSubtotal = effPrice * item.qty;
+    const isWholesale = effPrice < origPrice;
+
+    subtotal += origPrice * item.qty;
+    totalDiscount += (origPrice - effPrice) * item.qty;
+
+    return `
+      <div class="bg-slate-50 dark:bg-[#0b1329] p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shadow-sm">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-1.5">
+            <h5 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">${esc(item.name)}</h5>
+            ${isWholesale ? '<span class="badge badge-xs badge-amber font-bold">GROSIR</span>' : ''}
+          </div>
+          <div class="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+            <span>${fCur(effPrice)}</span>
+            ${item.unit ? `<span>/ ${esc(item.unit)}</span>` : ''}
+            <span>•</span>
+            <span class="font-extrabold text-slate-800 dark:text-slate-200">${fCur(itemSubtotal)}</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1 shrink-0">
+          <div class="flex bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg h-7 overflow-hidden">
+            <button class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, -1)">
+              <i class="fa-solid fa-minus text-[9px]"></i>
+            </button>
+            <span class="w-7 flex items-center justify-center text-xs font-extrabold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900">${item.qty}</span>
+            <button class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, 1)">
+              <i class="fa-solid fa-plus text-[9px]"></i>
+            </button>
+          </div>
+          <button class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors" onclick="removePosItem(${idx})">
+            <i class="fa-solid fa-trash-can text-xs"></i>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const grandTotal = subtotal - totalDiscount;
+  setIn('pos-summary-subtotal', fCur(subtotal));
+  setIn('pos-summary-discount', totalDiscount > 0 ? `- ${fCur(totalDiscount)}` : 'Rp 0');
+  setIn('pos-summary-total', fCur(grandTotal));
+};
+
+// -----------------------------------------------------------------------------
+// 5. POS PAYMENT MODAL & CHECKOUT
+// -----------------------------------------------------------------------------
+window.openPosPaymentModal = () => {
+  if (!posCart.length) return;
+
+  const total = posCart.reduce((sum, item) => sum + (getEffP(item) * item.qty), 0);
+  setIn('pos-modal-total-display', fCur(total));
+  
+  // Default to Tunai
+  setPosPaymentMethod('cash');
+  
+  const cashInput = el('pos-cash-received-input');
+  if (cashInput) {
+    cashInput.value = total;
+    calculatePosChange();
+  }
+
+  const modal = el('pos-payment-modal');
+  const box = el('pos-payment-box');
+  if (modal && box) {
+    show('pos-payment-modal');
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      box.classList.remove('scale-95');
+      if (cashInput) cashInput.focus();
+    }, 10);
+  }
+};
+
+window.closePosPaymentModal = () => {
+  const modal = el('pos-payment-modal');
+  const box = el('pos-payment-box');
+  if (modal && box) {
+    modal.classList.add('opacity-0');
+    box.classList.add('scale-95');
+    setTimeout(() => hide('pos-payment-modal'), 300);
+  }
+};
+
+window.setPosPaymentMethod = (method) => {
+  posPaymentMethod = method;
+  
+  const buttons = document.querySelectorAll('.pos-method-btn');
+  buttons.forEach(btn => {
+    const isSelected = btn.getAttribute('data-method') === method;
+    if (isSelected) {
+      btn.className = 'p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1.5 transition-all pos-method-btn border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300';
+    } else {
+      btn.className = 'p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1.5 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300';
+    }
+  });
+
+  const cashSection = el('pos-cash-input-section');
+  if (cashSection) {
+    cashSection.classList.toggle('hidden', method !== 'cash');
+  }
+};
+
+window.setQuickCash = (amount) => {
+  const total = posCart.reduce((sum, item) => sum + (getEffP(item) * item.qty), 0);
+  const input = el('pos-cash-received-input');
+  if (!input) return;
+
+  if (amount === 'exact') {
+    input.value = total;
+  } else {
+    input.value = amount;
+  }
+  calculatePosChange();
+};
+
+window.calculatePosChange = () => {
+  const total = posCart.reduce((sum, item) => sum + (getEffP(item) * item.qty), 0);
+  const received = parseFloat(el('pos-cash-received-input')?.value || '0');
+  const change = received - total;
+
+  const changeDisplay = el('pos-change-display');
+  if (changeDisplay) {
+    if (change < 0) {
+      changeDisplay.innerText = `Kurang ${fCur(Math.abs(change))}`;
+      changeDisplay.className = 'text-lg font-black text-rose-500';
+    } else {
+      changeDisplay.innerText = fCur(change);
+      changeDisplay.className = 'text-lg font-black text-emerald-600 dark:text-emerald-400';
+    }
+  }
+};
+
+window.submitPosTransaction = async () => {
+  if (!posCart.length) return;
+
+  const total = posCart.reduce((sum, item) => sum + (getEffP(item) * item.qty), 0);
+  const received = parseFloat(el('pos-cash-received-input')?.value || '0');
+
+  if (posPaymentMethod === 'cash' && received < total) {
+    showToast("Uang yang diterima kurang dari total tagihan!");
+    return;
+  }
+
+  const custName = (el('pos-customer-name')?.value || '').trim() || 'Pelanggan Umum (Walk-in)';
+  const cashierName = activeCashier?.name || (cRole === 'admin' ? 'Admin Master' : 'Kasir Toko');
+  const orderId = `POS-${Date.now().toString().slice(-6)}`;
+
+  const orderData = {
+    id: orderId,
+    type: 'pos',
+    source: 'POS Kasir',
+    customer: {
+      name: custName,
+      phone: '-',
+      address: 'Transaksi Langsung di Kasir',
+      method: 'Ambil di Toko / POS Kasir'
+    },
+    items: posCart.map(item => ({
+      id: item.id,
+      name: item.name,
+      variantName: item.variantName || null,
+      price: getEffP(item),
+      qty: item.qty,
+      unit: item.unit || ''
+    })),
+    subtotal: total,
+    total: total,
+    payment: {
+      method: posPaymentMethod === 'cash' ? 'Tunai (Kasir)' : (posPaymentMethod === 'qris' ? 'QRIS E-Wallet' : (posPaymentMethod === 'transfer' ? 'Transfer Bank' : 'Debit/EDC')),
+      status: 'Lunas',
+      cashReceived: posPaymentMethod === 'cash' ? received : total,
+      change: posPaymentMethod === 'cash' ? (received - total) : 0
+    },
+    status: 'Selesai',
+    cashier: cashierName,
+    createdAt: new Date().toISOString()
+  };
+
+  sLoad("Menyimpan Transaksi POS...");
+
+  try {
+    if (typeof db !== 'undefined' && db.collection) {
+      await db.collection('orders').doc(orderId).set(orderData);
+    }
+    
+    hLoad();
+    closePosPaymentModal();
+    showToast("Transaksi Berhasil Disimpan! 🎉");
+
+    // Buka Modal Cetak Struk Instan
+    if (typeof openReceiptPreview === 'function') {
+      openReceiptPreview(orderData);
+    }
+
+    // Reset Form & Keranjang
+    posCart = [];
+    renderPosCart();
+    if (el('pos-customer-name')) el('pos-customer-name').value = '';
+    
+  } catch (error) {
+    console.error('[FreshMart POS] Error submitting transaction:', error);
+    hLoad();
+    showToast("Gagal menyimpan transaksi POS: " + error.message);
+  }
+};
+
+
+// 9. Barcode Scanner & Hardware Hybrid Bridge
 // =============================================================================
 // FRESHMART SCANNER & HYBRID APP BRIDGE (KODULAR / APP INVENTOR)
 // =============================================================================
@@ -4793,10 +5542,10 @@ window.terimaGambarDariKodular = (targetInputId, base64Url, varIndex) => {
 // FRESHMART PRINT & PDF ENGINE (58MM THERMAL & A4 INVOICE / SURAT JALAN)
 // =============================================================================
 
-window.openReceiptPreview = () => {
-  const o = gOrds.find(x => x.orderId === cVOrd);
+window.openReceiptPreview = (directOrder = null) => {
+  const o = directOrder || gOrds.find(x => x.orderId === cVOrd);
   if (!o) return;
-  const d = o.dateString ? new Date(o.dateString).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+  const d = (o.dateString || o.createdAt) ? new Date(o.dateString || o.createdAt).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
   const sN = appData.store.name || "Toko";
   const sW = appData.store.wa || "";
   const pL = (l, r, len = 32) => {
@@ -4804,26 +5553,35 @@ window.openReceiptPreview = () => {
     return l + (p > 0 ? ' '.repeat(p) : ' ') + r;
   };
 
-  let h = `<div class="text-center font-bold" style="font-size:13px;margin-bottom:2px;">${esc(sN)}</div>${sW ? `<div class="text-center" style="margin-bottom:4px;">WA: ${esc(sW)}</div>` : ''}<div class="border-b border-dashed border-black my-2"></div><div style="white-space:pre;">Order: #${o.orderId}</div><div style="white-space:pre;">Tgl : ${d}</div><div style="white-space:pre;">Plg : ${esc(o.customer.name || 'Guest').substring(0, 20)}</div><div style="white-space:pre;">Tipe : ${o.customer.deliveryMethod === 'delivery' ? 'Kurir' : 'Toko'}</div><div class="border-b border-dashed border-black my-2"></div>${o.customer.note ? `<div style="white-space:pre-wrap;word-break:break-all;">Cat: ${esc(o.customer.note)}</div><div class="border-b border-dashed border-black my-2"></div>` : ''}`;
+  let h = `<div class="text-center font-bold" style="font-size:13px;margin-bottom:2px;">${esc(sN)}</div>${sW ? `<div class="text-center" style="margin-bottom:4px;">WA: ${esc(sW)}</div>` : ''}<div class="border-b border-dashed border-black my-2"></div><div style="white-space:pre;">Order: #${o.orderId || o.id}</div><div style="white-space:pre;">Tgl : ${d}</div><div style="white-space:pre;">Plg : ${esc(o.customer?.name || 'Guest').substring(0, 20)}</div>${o.cashier ? `<div style="white-space:pre;">Kasir: ${esc(o.cashier)}</div>` : ''}<div style="white-space:pre;">Tipe : ${o.type === 'pos' ? 'POS Kasir' : (o.customer?.deliveryMethod === 'delivery' ? 'Kurir' : 'Toko')}</div><div class="border-b border-dashed border-black my-2"></div>${o.customer?.note ? `<div style="white-space:pre-wrap;word-break:break-all;">Cat: ${esc(o.customer.note)}</div><div class="border-b border-dashed border-black my-2"></div>` : ''}`;
 
-  o.items.forEach(i => {
+  (o.items || []).forEach(i => {
     const n = (esc(i.name) + (i.variantName ? ` (${esc(i.variantName)})` : '')).substring(0, 32);
-    const q = `${i.qty}${i.unit ? ' ' + i.unit : ''} x ${i.effectivePrice.toLocaleString('id-ID')}`;
-    const t = (i.qty * i.effectivePrice).toLocaleString('id-ID');
+    const effP = i.effectivePrice || i.price || 0;
+    const q = `${i.qty}${i.unit ? ' ' + i.unit : ''} x ${effP.toLocaleString('id-ID')}`;
+    const t = (i.qty * effP).toLocaleString('id-ID');
     h += `<div style="white-space:pre-wrap;font-weight:bold;word-break:break-all;">${n}</div><div style="white-space:pre;font-size:11px;">${pL(q, t)}</div>`;
   });
 
-  h += `<div class="border-b border-dashed border-black my-2"></div><div style="white-space:pre;">${pL('Subtotal', (o.payment?.subtotal || 0).toLocaleString('id-ID'))}</div>`;
+  const sub = o.payment?.subtotal || o.subtotal || 0;
+  const grand = o.payment?.grandTotal || o.total || 0;
+  h += `<div class="border-b border-dashed border-black my-2"></div><div style="white-space:pre;">${pL('Subtotal', sub.toLocaleString('id-ID'))}</div>`;
   if (o.payment?.productDiscount) {
     h += `<div style="white-space:pre;">${pL('Diskon', `-${o.payment.productDiscount.toLocaleString('id-ID')}`)}</div>`;
   }
-  if (o.customer?.deliveryMethod !== 'pickup') {
+  if (o.customer?.deliveryMethod !== 'pickup' && o.type !== 'pos') {
     h += `<div style="white-space:pre;">${pL('Ongkir', (o.payment?.shippingCost || 0).toLocaleString('id-ID'))}</div>`;
   }
   if (o.payment?.shippingDiscount) {
     h += `<div style="white-space:pre;">${pL('Pot.Ongkir', `-${o.payment.shippingDiscount.toLocaleString('id-ID')}`)}</div>`;
   }
-  h += `<div class="border-b border-dashed border-black my-2"></div><div style="white-space:pre;font-weight:bold;font-size:12px;">${pL('TOTAL', 'Rp ' + (o.payment?.grandTotal || 0).toLocaleString('id-ID'))}</div><div style="white-space:pre;">${pL('Bayar:', String(o.payment?.method || '').toUpperCase())}</div><div class="border-b border-dashed border-black my-2"></div><div class="text-center my-2" style="font-size:10px;">Terima Kasih</div><div class="border-b border-dashed border-black my-2"></div><div style="height:15px;"></div>`;
+  h += `<div class="border-b border-dashed border-black my-2"></div><div style="white-space:pre;font-weight:bold;font-size:12px;">${pL('TOTAL', 'Rp ' + grand.toLocaleString('id-ID'))}</div>`;
+  h += `<div style="white-space:pre;">${pL('Bayar:', String(o.payment?.method || '').toUpperCase())}</div>`;
+  if (o.payment?.cashReceived) {
+    h += `<div style="white-space:pre;">${pL('Tunai:', (o.payment.cashReceived).toLocaleString('id-ID'))}</div>`;
+    h += `<div style="white-space:pre;">${pL('Kembali:', (o.payment.change || 0).toLocaleString('id-ID'))}</div>`;
+  }
+  h += `<div class="border-b border-dashed border-black my-2"></div><div class="text-center my-2" style="font-size:10px;">Terima Kasih Atas Kunjungan Anda</div><div class="border-b border-dashed border-black my-2"></div><div style="height:15px;"></div>`;
 
   setH('receipt-paper-content', h);
   show('receipt-preview-modal');

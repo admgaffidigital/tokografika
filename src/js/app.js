@@ -26,7 +26,10 @@
 // 7. Admin Panel CMS & Order Management
 // @include modules/admin.js
 
-// 8. Barcode Scanner & Hardware Hybrid Bridge
+// 8. POS Kasir (Point of Sale) & Cashier Engine
+// @include modules/pos.js
+
+// 9. Barcode Scanner & Hardware Hybrid Bridge
 // @include modules/scanner.js
 
 // 9. Printing Engine (58mm Thermal & A4 Invoices)

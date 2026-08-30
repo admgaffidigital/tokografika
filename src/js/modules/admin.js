@@ -98,20 +98,55 @@ window.processAdminLogin = () => {
     return; 
   }
 
-  // 2. JALUR ADMIN UTAMA
+  // 2. JALUR TAB KASIR (Direct to POS Mode)
+  if (typeof currentLoginTab !== 'undefined' && currentLoginTab === 'cashier') {
+    const kasir = (appData.accounts || []).find(a => a.username === u && a.password === p && a.isActive !== 'false' && a.isActive !== false);
+    if (kasir) {
+      ssL('_fm_la', '0');
+      isAdm = !0;
+      cRole = 'cashier';
+      cPerms = kasir.permissions || [];
+      activeCashier = kasir;
+      showToast(`Selamat bertugas, ${kasir.name}! 🛒`);
+      if (typeof initPosView === 'function') initPosView();
+      else changeView('view-pos');
+      return;
+    } else if (u === appData.auth.username && p === appData.auth.password) {
+      // Master Admin juga bisa membuka POS Kasir
+      ssL('_fm_la', '0');
+      isAdm = !0;
+      cRole = 'admin';
+      cPerms = ['all'];
+      activeCashier = { name: 'Admin Master' };
+      showToast("Membuka POS Kasir (Mode Admin) 🛒");
+      if (typeof initPosView === 'function') initPosView();
+      else changeView('view-pos');
+      return;
+    } else {
+      const fa = parseInt(sL('_fm_la') || '0') + 1;
+      ssL('_fm_la', fa.toString());
+      ssL('_fm_lf', Date.now().toString());
+      showToast("Akun kasir tidak ditemukan / password salah!");
+      return;
+    }
+  }
+
+  // 3. JALUR TAB ADMIN (Master CMS Toko)
   if (u === appData.auth.username && p === appData.auth.password) {
     ssL('_fm_la', '0');
     isAdm = !0; 
     cRole = 'admin'; cPerms = ['all'];
+    activeCashier = { name: 'Admin Master' };
     setH('admin-pro-badge', isPro ? '<span class="badge badge-xs badge-solid-amber"><i class="fa-solid fa-crown"></i> PRO</span>' : '<span class="badge badge-xs badge-solid-slate">FREE</span>');
     changeView('view-admin'); 
     openAdminMenu();
   } else {
-    // 3. JALUR KASIR
+    // Jalur Kasir dengan Izin Akses CMS
     const kasir = (appData.accounts || []).find(a => a.username === u && a.password === p && a.isActive !== 'false' && a.isActive !== false);
     if (kasir) {
       isAdm = !0; 
       cRole = 'cashier'; cPerms = kasir.permissions || [];
+      activeCashier = kasir;
       setH('admin-pro-badge', '<span class="badge badge-xs badge-solid-blue"><i class="fa-solid fa-user-tie"></i> KASIR</span>');
       changeView('view-admin'); 
       openAdminMenu(); 
@@ -120,7 +155,7 @@ window.processAdminLogin = () => {
       const fa = parseInt(sL('_fm_la') || '0') + 1;
       ssL('_fm_la', fa.toString()); 
       ssL('_fm_lf', Date.now().toString());
-      showToast("Data Tidak Ditemukan / Akun Nonaktif!");
+      showToast("Data Admin Tidak Ditemukan / Password Salah!");
     }
   }
 };
