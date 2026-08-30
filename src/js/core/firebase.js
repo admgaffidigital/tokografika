@@ -6,15 +6,22 @@ firebase.initializeApp(fbC);
 const db = firebase.firestore(); 
 const auth = firebase.auth(); 
 
-// Gunakan merge: true agar tidak memicu peringatan override host di Firestore 10.8.1
-db.settings({ ignoreUndefinedProperties: true, merge: true });
-
-// Aktifkan offline persistence untuk performa query lokal instan & multi-tab
+// Konfigurasi cache Firestore (dukung FirestoreSettings.cache modern jika tersedia, fallback gracefully)
 try {
-  db.enablePersistence({ synchronizeTabs: true }).catch(err => {
-    // Abaikan jika browser tidak mendukung multi-tab persistence
-  });
-} catch(e) {}
+  if (firebase.firestore.persistentLocalCache && firebase.firestore.persistentMultipleTabManager) {
+    db.settings({
+      ignoreUndefinedProperties: true,
+      localCache: firebase.firestore.persistentLocalCache({
+        tabManager: firebase.firestore.persistentMultipleTabManager()
+      })
+    });
+  } else {
+    db.settings({ ignoreUndefinedProperties: true });
+    db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+  }
+} catch (e) {
+  try { db.settings({ ignoreUndefinedProperties: true }); } catch (_) {}
+}
 
 // Helper timeout untuk Firestore agar tidak hang jika offline / koneksi lambat
 const withTimeout = (promise, timeoutMs = 3500) => {

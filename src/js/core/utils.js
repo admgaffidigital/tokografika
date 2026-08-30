@@ -112,18 +112,25 @@ const fixD = v => {
   return v;
 };
 
-// Helper retry gambar cerdas: jika gambar Google Drive/eksternal gagal, otomatis coba via wsrv.nl proxy sebelum placeholder
+// Helper retry gambar cerdas: jika gambar Google Drive/eksternal gagal, otomatis coba via wsrv.nl proxy sebelum fallback SVG inline
 window.imgErrRetry = (imgEl, fallbackText = 'No Image', w = 400) => {
   if (!imgEl) return;
   const original = (imgEl.dataset.src || imgEl.src || '').trim();
-  if (!imgEl.dataset.retried && original && /^https?:\/\//i.test(original) && !original.includes('placehold.co') && !original.includes('wsrv.nl')) {
+  const svgFallback = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${w}" viewBox="0 0 ${w} ${w}"><rect width="100%" height="100%" fill="%23f8fafc"/><circle cx="${w/2}" cy="${w/2 - 12}" r="${w/8}" fill="%23e2e8f0"/><path d="M${w/4} ${w*0.8} Q ${w/2} ${w*0.5} ${w*0.75} ${w*0.8} Z" fill="%23cbd5e1"/><text x="50%" y="${w*0.9}" font-family="sans-serif" font-weight="700" font-size="12" fill="%2394a3b8" dominant-baseline="middle" text-anchor="middle">${encodeURIComponent(fallbackText)}</text></svg>`;
+
+  if (!imgEl.dataset.retried && original && /^https?:\/\//i.test(original) && !original.includes('wsrv.nl') && !original.includes('data:')) {
     imgEl.dataset.retried = '1';
+    imgEl.onerror = () => {
+      imgEl.onerror = null;
+      imgEl.classList.remove('opacity-0');
+      imgEl.src = svgFallback;
+    };
     imgEl.src = `https://wsrv.nl/?url=${encodeURIComponent(original)}&w=${w}`;
     imgEl.onload = () => imgEl.classList.remove('opacity-0');
   } else {
     imgEl.onerror = null;
     imgEl.classList.remove('opacity-0');
-    imgEl.src = `https://placehold.co/${w}?text=${encodeURIComponent(fallbackText)}`;
+    imgEl.src = svgFallback;
   }
 };
 
