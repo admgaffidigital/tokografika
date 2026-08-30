@@ -100,6 +100,14 @@ html.dark .glass-nav {
     background-color: var(--clr-p) !important;
 }
 
+.bg-emerald-50 {
+    background-color: var(--clr-p-bg) !important;
+}
+
+.bg-emerald-100 {
+    background-color: var(--clr-p-10) !important;
+}
+
 .btn-theme-primary:hover,
 .hover\:bg-emerald-600:hover,
 .hover\:bg-emerald-700:hover {
@@ -113,10 +121,21 @@ html.dark .glass-nav {
     color: var(--clr-p) !important;
 }
 
+.text-emerald-800,
+.text-emerald-900 {
+    color: var(--clr-p-dark) !important;
+}
+
 .border-theme-primary,
+.border-emerald-400,
 .border-emerald-500,
 .border-emerald-600 {
     border-color: var(--clr-p) !important;
+}
+
+.border-emerald-200,
+.border-emerald-300 {
+    border-color: var(--clr-p-25) !important;
 }
 
 .admin-input {

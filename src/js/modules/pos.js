@@ -38,9 +38,11 @@ window.switchLoginTab = (tab) => {
   if (tab === 'admin') {
     if (btnAdmin) {
       btnAdmin.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700';
+      btnAdmin.innerHTML = '<i class="fa-solid fa-shield-halved text-xs" style="color:var(--clr-p)"></i> <span>Admin</span>';
     }
     if (btnCashier) {
       btnCashier.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200';
+      btnCashier.innerHTML = '<i class="fa-solid fa-cash-register text-xs"></i> <span>POS Kasir</span>';
     }
     if (icon) icon.className = 'fa-solid fa-shield-halved';
     if (title) title.innerText = 'Admin Master';
@@ -53,9 +55,11 @@ window.switchLoginTab = (tab) => {
   } else {
     if (btnAdmin) {
       btnAdmin.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200';
+      btnAdmin.innerHTML = '<i class="fa-solid fa-shield-halved text-xs"></i> <span>Admin</span>';
     }
     if (btnCashier) {
       btnCashier.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700';
+      btnCashier.innerHTML = '<i class="fa-solid fa-cash-register text-xs" style="color:var(--clr-p)"></i> <span>POS Kasir</span>';
     }
     if (icon) icon.className = 'fa-solid fa-cash-register';
     if (title) title.innerText = 'POS Kasir';
