@@ -1211,7 +1211,7 @@ html.dark .badge-counter {
       </button>
     </div>
     <div class='p-4 sm:p-6 overflow-y-auto flex-1 bg-slate-200 dark:bg-slate-950 flex justify-center items-start custom-scrollbar'>
-      <div class='w-full max-w-[650px] mx-auto py-2'>
+      <div class='w-full max-w-[680px] mx-auto py-2 space-y-6' id='preview-pages-container'>
         <img class='w-full h-auto shadow-[0_15px_35px_rgba(0,0,0,0.25)] rounded-sm border border-slate-300 dark:border-slate-700 bg-white block mx-auto' id='preview-img-result' src='' alt='Preview A4'/>
       </div>
     </div>
@@ -10055,28 +10055,13 @@ window.executeDownloadPdf = () => {
   const a4Width = 210;
   const a4Height = 297;
 
-  if (tempPdfData.canvas) {
-    const canvas = tempPdfData.canvas;
-    const pageCanvasHeight = Math.floor(canvas.width * (297 / 210));
-    const totalPages = Math.ceil(canvas.height / pageCanvasHeight);
-
-    for (let page = 0; page < totalPages; page++) {
-      const currentY = page * pageCanvasHeight;
-      const sliceHeight = Math.min(pageCanvasHeight, canvas.height - currentY);
-
-      const pageCanvas = document.createElement('canvas');
-      pageCanvas.width = canvas.width;
-      pageCanvas.height = pageCanvasHeight;
-      const ctx = pageCanvas.getContext('2d');
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-      ctx.drawImage(canvas, 0, currentY, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
-
-      const pageImgData = pageCanvas.toDataURL('image/png');
-      if (page > 0) pdf.addPage('a4', 'portrait');
+  if (tempPdfData.pageCanvases && tempPdfData.pageCanvases.length > 0) {
+    tempPdfData.pageCanvases.forEach((canvas, idx) => {
+      const pageImgData = canvas.toDataURL('image/png');
+      if (idx > 0) pdf.addPage('a4', 'portrait');
       pdf.addImage(pageImgData, 'PNG', 0, 0, a4Width, a4Height, undefined, 'FAST');
-    }
-  } else {
+    });
+  } else if (tempPdfData.imgData) {
     pdf.addImage(tempPdfData.imgData, 'PNG', 0, 0, a4Width, a4Height, undefined, 'FAST');
   }
 
@@ -10087,10 +10072,33 @@ window.executeDownloadPdf = () => {
 
 window.executeDownloadImage = () => {
   if (!tempPdfData) return;
-  const link = document.createElement('a');
-  link.download = tempPdfData.fileName.replace('.pdf', '.png'); 
-  link.href = tempPdfData.imgData;
-  link.click();
+  if (tempPdfData.pageCanvases && tempPdfData.pageCanvases.length > 1) {
+    // If multi-page, stitch vertically for single image download
+    const firstCanvas = tempPdfData.pageCanvases[0];
+    const totalHeight = tempPdfData.pageCanvases.reduce((sum, c) => sum + c.height, 0);
+    const stitchCanvas = document.createElement('canvas');
+    stitchCanvas.width = firstCanvas.width;
+    stitchCanvas.height = totalHeight;
+    const ctx = stitchCanvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, stitchCanvas.width, stitchCanvas.height);
+    
+    let currentY = 0;
+    tempPdfData.pageCanvases.forEach(c => {
+      ctx.drawImage(c, 0, currentY);
+      currentY += c.height;
+    });
+
+    const link = document.createElement('a');
+    link.download = tempPdfData.fileName.replace('.pdf', '.png');
+    link.href = stitchCanvas.toDataURL('image/png');
+    link.click();
+  } else {
+    const link = document.createElement('a');
+    link.download = tempPdfData.fileName.replace('.pdf', '.png'); 
+    link.href = tempPdfData.imgData;
+    link.click();
+  }
   showToast('Gambar A4 berhasil disimpan!');
   closePreviewModal();
 };
@@ -10161,6 +10169,391 @@ const _urlToBase64 = async (rawUrl) => {
   return result;
 };
 
+// =============================================================================
+// DISCRETE A4 PAGES GENERATOR (PREVENTING SQUEEZED / SQUISHED TEXT)
+// =============================================================================
+
+const _buildInvoicePages = ({ o, formattedDate, themeClr, base64Logo, storeName, storeAddress, storeWa, footerText }) => {
+  const items = o.items || [];
+  const totalItems = items.length;
+  const pages = [];
+
+  if (totalItems <= 12) {
+    pages.push({ isFirst: true, isLast: true, items: items });
+  } else {
+    // Page 1: first 12 items
+    pages.push({ isFirst: true, isLast: false, items: items.slice(0, 12) });
+    let cursor = 12;
+
+    while (cursor < totalItems) {
+      const remaining = totalItems - cursor;
+      if (remaining <= 10) {
+        pages.push({ isFirst: false, isLast: true, items: items.slice(cursor, cursor + remaining) });
+        cursor += remaining;
+      } else if (remaining <= 20) {
+        pages.push({ isFirst: false, isLast: false, items: items.slice(cursor, cursor + (remaining - 10)) });
+        cursor += (remaining - 10);
+      } else {
+        pages.push({ isFirst: false, isLast: false, items: items.slice(cursor, cursor + 18) });
+        cursor += 18;
+      }
+    }
+  }
+
+  const totalPages = pages.length;
+
+  return pages.map((pg, idx) => {
+    const pageNum = idx + 1;
+    let topSection = '';
+
+    if (pg.isFirst) {
+      topSection = `
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, ${themeClr} 0%, #0284c7 100%);"></div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 14px; max-width: 430px;">
+            <div style="width: 54px; height: 54px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background-color: ${themeClr}; color: #ffffff; overflow: hidden; flex-shrink: 0; border: 1px solid #e2e8f0;">
+              ${base64Logo ? `<img src="${base64Logo}" style="width: 100%; height: 100%; object-fit: contain;" alt="Logo" />` : `<svg style="width: 32px; height: 32px; fill: #ffffff;" viewBox="0 0 24 24"><path d="M4 4h16l1 5v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2 2 2 0 0 1-2 2 2 2 0 0 1-2-2 2 2 0 0 1-2 2 2 2 0 0 1-2-2V9L4 4zm1 9.5a1.5 1.5 0 0 0 3 0V11H5v2.5zm4 0a1.5 1.5 0 0 0 3 0V11H9v2.5zm4 0a1.5 1.5 0 0 0 3 0V11h-3v2.5zm4 0a1.5 1.5 0 0 0 3 0V11h-3v2.5zM5 18h14v2H5v-2z" fill="#ffffff"/></svg>`}
+            </div>
+            <div>
+              <h1 style="font-size: 19px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.1; text-transform: uppercase; letter-spacing: -0.02em;">${esc(storeName)}</h1>
+              <p style="font-size: 10.5px; font-weight: 500; color: #64748b; margin: 4px 0 0 0; line-height: 1.35;">${esc(storeAddress)}</p>
+              <p style="font-size: 10.5px; font-weight: 700; color: #334155; margin: 3px 0 0 0;"><i class="fa-brands fa-whatsapp" style="color: #10b981; margin-right: 4px;"></i>WA: ${esc(storeWa)}</p>
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <div style="display: inline-block; padding: 4px 12px; background-color: #0f172a; color: #ffffff; border-radius: 8px; font-size: 11px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;">
+              FAKTUR / INVOICE
+            </div>
+            <p style="font-size: 13.5px; font-weight: 900; color: #0f172a; margin: 2px 0 0 0; font-family: monospace;">#${esc(o.orderId)}</p>
+            <p style="font-size: 10.5px; font-weight: 600; color: #64748b; margin: 2px 0 0 0;">${formattedDate}</p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+          <div style="padding: 12px 14px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <p style="font-size: 8.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 4px 0;">DITAGIHKAN KEPADA:</p>
+            <h3 style="font-size: 12px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">${esc(o.customer?.name || 'Pelanggan')}</h3>
+            <p style="font-size: 10px; font-weight: 500; color: #475569; margin: 4px 0 0 0; line-height: 1.35;">${esc(o.customer?.address || '-')}</p>
+          </div>
+          <div style="padding: 12px 14px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <p style="font-size: 8.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 4px 0;">METODE & STATUS BAYAR:</p>
+              <div style="display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+                <span style="padding: 2px 8px; border-radius: 6px; font-size: 9.5px; font-weight: 900; background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; text-transform: uppercase;">
+                  ${esc(o.payment?.method || 'CASH')}
+                </span>
+                <span style="padding: 2px 6px; border-radius: 6px; font-size: 9.5px; font-weight: 700; background-color: #e2e8f0; color: #334155;">DOKUMEN SAH</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      topSection = `
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, ${themeClr} 0%, #0284c7 100%);"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background-color: ${themeClr}; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 12px;">
+              ${base64Logo ? `<img src="${base64Logo}" style="width: 100%; height: 100%; object-fit: contain;" alt="Logo" />` : 'TG'}
+            </div>
+            <div>
+              <h2 style="font-size: 13px; font-weight: 800; color: #0f172a; margin: 0; text-transform: uppercase;">${esc(storeName)}</h2>
+              <p style="font-size: 9.5px; color: #64748b; margin: 0;">Faktur Penjualan #${esc(o.orderId)} (Lanjutan)</p>
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <span style="padding: 3px 8px; border-radius: 6px; background-color: #f1f5f9; border: 1px solid #e2e8f0; font-size: 9.5px; font-weight: 700; color: #475569;">
+              Halaman ${pageNum} dari ${totalPages}
+            </span>
+          </div>
+        </div>
+      `;
+    }
+
+    const tableHtml = `
+      <div style="border-radius: 10px; border: 1px solid #cbd5e1; overflow: hidden; margin-bottom: 16px;">
+        <table style="width: 100%; text-align: left; border-collapse: collapse; table-layout: fixed;">
+          <thead>
+            <tr style="background-color: #f1f5f9; border-bottom: 1.5px solid #cbd5e1; color: #334155;">
+              <th style="padding: 8px 12px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; width: 22%;">Qty &amp; Satuan</th>
+              <th style="padding: 8px 10px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; width: 38%;">Nama Barang &amp; Varian</th>
+              <th style="padding: 8px 10px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; text-align: right; width: 20%;">Harga Satuan</th>
+              <th style="padding: 8px 12px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; text-align: right; width: 20%;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${pg.items.map((item, iIdx) => {
+              const isGrosir = item.effectivePrice < item.price;
+              const varKeterangan = [item.variantName, (isGrosir ? 'Grosir' : '')].filter(Boolean).join(' · ');
+              return `
+              <tr style="border-bottom: 1px solid #e2e8f0; font-size: 10.5px; color: #0f172a; background-color: ${iIdx % 2 === 1 ? '#f8fafc' : '#ffffff'};">
+                <td style="padding: 7px 12px; font-weight: 800; vertical-align: middle; white-space: nowrap;">
+                  <span style="display:inline-block; padding: 2px 6px; background:#f1f5f9; border-radius: 5px; border: 1px solid #e2e8f0; font-size: 10px;">
+                    ${item.qty} <span style="color:${themeClr}; font-weight:700;">${esc(item.unit || 'Pcs')}</span>
+                  </span>
+                </td>
+                <td style="padding: 7px 10px; vertical-align: middle; line-height: 1.35; word-break: break-word;">
+                  <div style="font-weight: 700; color: #0f172a;">${esc(item.name)}</div>
+                  ${varKeterangan ? `<div style="font-size: 9px; color: #64748b; font-weight: 600; margin-top: 1px;"><i class="fa-solid fa-tag" style="font-size: 7.5px; margin-right: 3px;"></i>${esc(varKeterangan)}</div>` : ''}
+                </td>
+                <td style="padding: 7px 10px; text-align: right; vertical-align: middle; font-weight: 600; color: #475569;">
+                  ${fCur(item.effectivePrice)}
+                </td>
+                <td style="padding: 7px 12px; text-align: right; font-weight: 800; color: #0f172a; vertical-align: middle; font-family: monospace; font-size: 11px;">
+                  ${fCur(item.effectivePrice * item.qty)}
+                </td>
+              </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    let bottomSection = '';
+    if (pg.isLast) {
+      bottomSection = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 16px;">
+          <div style="flex: 1; max-width: 350px; font-size: 9.5px; color: #64748b; line-height: 1.4;">
+            <p style="font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 4px 0; font-size: 9px;">Catatan &amp; Kebijakan:</p>
+            <p style="margin: 0 0 3px 0;">1. Bukti pembayaran ini sah dan diterbitkan secara digital oleh sistem kasir toko.</p>
+            <p style="margin: 0;">2. Harap simpan invoice ini sebagai bukti transaksi dan klaim garansi yang berlaku.</p>
+          </div>
+
+          <div style="width: 280px; background-color: #f8fafc; padding: 12px 14px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 11px;">
+            <div style="display: flex; justify-content: space-between; color: #475569; margin-bottom: 5px;">
+              <span style="font-weight: 500;">Subtotal Produk:</span>
+              <span style="font-weight: 700; color: #0f172a;">${fCur(o.payment?.subtotal || 0)}</span>
+            </div>
+            ${o.payment?.productDiscount ? `
+            <div style="display: flex; justify-content: space-between; color: #e11d48; margin-bottom: 5px;">
+              <span style="font-weight: 500;">Diskon Promo:</span>
+              <span style="font-weight: 700;">-${fCur(o.payment.productDiscount)}</span>
+            </div>
+            ` : ''}
+            ${o.customer?.deliveryMethod !== 'pickup' ? `
+            <div style="display: flex; justify-content: space-between; color: #475569; margin-bottom: 5px;">
+              <span style="font-weight: 500;">Ongkos Kirim:</span>
+              <span style="font-weight: 700; color: #0f172a;">${fCur(o.payment?.shippingCost || 0)}</span>
+            </div>
+            ` : ''}
+            ${o.payment?.shippingDiscount ? `
+            <div style="display: flex; justify-content: space-between; color: #e11d48; margin-bottom: 5px;">
+              <span style="font-weight: 500;">Potongan Ongkir:</span>
+              <span style="font-weight: 700;">-${fCur(o.payment.shippingDiscount)}</span>
+            </div>
+            ` : ''}
+            <div style="padding-top: 8px; border-top: 2px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+              <span style="font-size: 11px; font-weight: 900; color: #0f172a; text-transform: uppercase; letter-spacing: 0.05em;">TOTAL AKHIR:</span>
+              <span style="font-size: 15px; font-weight: 900; color: #047857; font-family: monospace;">${fCur(o.payment?.grandTotal || 0)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    const footerHtml = `
+      <div style="border-top: 1.5px solid #e2e8f0; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 9.5px; color: #94a3b8;">
+        <p style="margin: 0; font-weight: 500;">${esc(footerText || 'Terima kasih atas kunjungan dan kepercayaan Anda.')}</p>
+        <p style="margin: 0; font-weight: 700; color: #64748b;">Halaman ${pageNum} dari ${totalPages}</p>
+      </div>
+    `;
+
+    return `
+      <div class="a4-page-sheet" data-page="${pageNum}" style="width: 794px; min-width: 794px; max-width: 794px; height: 1123px; min-height: 1123px; max-height: 1123px; padding: 40px 48px; font-family: 'Plus Jakarta Sans', Arial, sans-serif; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background-color: #ffffff; position: relative; overflow: hidden;">
+        <div>
+          ${topSection}
+          ${tableHtml}
+          ${bottomSection}
+        </div>
+        ${footerHtml}
+      </div>
+    `;
+  });
+};
+
+const _buildSuratJalanPages = ({ o, formattedDate, themeClr, base64Logo, storeName, storeAddress, storeWa }) => {
+  const items = o.items || [];
+  const totalItems = items.length;
+  const pages = [];
+
+  if (totalItems <= 14) {
+    pages.push({ isFirst: true, isLast: true, items: items });
+  } else {
+    pages.push({ isFirst: true, isLast: false, items: items.slice(0, 14) });
+    let cursor = 14;
+
+    while (cursor < totalItems) {
+      const remaining = totalItems - cursor;
+      if (remaining <= 10) {
+        pages.push({ isFirst: false, isLast: true, items: items.slice(cursor, cursor + remaining) });
+        cursor += remaining;
+      } else if (remaining <= 20) {
+        pages.push({ isFirst: false, isLast: false, items: items.slice(cursor, cursor + (remaining - 10)) });
+        cursor += (remaining - 10);
+      } else {
+        pages.push({ isFirst: false, isLast: false, items: items.slice(cursor, cursor + 18) });
+        cursor += 18;
+      }
+    }
+  }
+
+  const totalPages = pages.length;
+
+  return pages.map((pg, idx) => {
+    const pageNum = idx + 1;
+    let topSection = '';
+
+    if (pg.isFirst) {
+      topSection = `
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, #0284c7 0%, #38bdf8 100%);"></div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 14px; max-width: 430px;">
+            <div style="width: 54px; height: 54px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background-color: #0284c7; color: #ffffff; overflow: hidden; flex-shrink: 0; border: 1px solid #e2e8f0;">
+              ${base64Logo ? `<img src="${base64Logo}" style="width: 100%; height: 100%; object-fit: contain;" alt="Logo" />` : `<svg style="width: 32px; height: 32px; fill: #ffffff;" viewBox="0 0 24 24"><path d="M4 4h16l1 5v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2 2 2 0 0 1-2 2 2 2 0 0 1-2-2 2 2 0 0 1-2-2V9L4 4zm1 9.5a1.5 1.5 0 0 0 3 0V11H5v2.5zm4 0a1.5 1.5 0 0 0 3 0V11H9v2.5zm4 0a1.5 1.5 0 0 0 3 0V11h-3v2.5zm4 0a1.5 1.5 0 0 0 3 0V11h-3v2.5zM5 18h14v2H5v-2z" fill="#ffffff"/></svg>`}
+            </div>
+            <div>
+              <h1 style="font-size: 19px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.1; text-transform: uppercase; letter-spacing: -0.02em;">${esc(storeName)}</h1>
+              <p style="font-size: 10.5px; font-weight: 500; color: #64748b; margin: 4px 0 0 0; line-height: 1.35;">${esc(storeAddress)}</p>
+              <p style="font-size: 10.5px; font-weight: 700; color: #334155; margin: 3px 0 0 0;"><i class="fa-brands fa-whatsapp" style="color: #0284c7; margin-right: 4px;"></i>WA: ${esc(storeWa)}</p>
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <div style="display: inline-block; padding: 4px 12px; background-color: #0369a1; color: #ffffff; border-radius: 8px; font-size: 11px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;">
+              SURAT JALAN PENGIRIMAN
+            </div>
+            <p style="font-size: 13.5px; font-weight: 900; color: #0f172a; margin: 2px 0 0 0; font-family: monospace;">#SJ-${esc(o.orderId)}</p>
+            <p style="font-size: 10.5px; font-weight: 600; color: #64748b; margin: 2px 0 0 0;">${formattedDate}</p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+          <div style="padding: 12px 14px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <p style="font-size: 8.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 4px 0;">PENGIRIM (ASAL BARANG):</p>
+            <h3 style="font-size: 12px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">${esc(storeName)}</h3>
+            <p style="font-size: 10px; font-weight: 500; color: #475569; margin: 4px 0 0 0; line-height: 1.35;">Pengiriman logistik resmi &amp; serah terima barang</p>
+          </div>
+          <div style="padding: 12px 14px; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <p style="font-size: 8.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 4px 0;">PENERIMA (TUJUAN LOKASI):</p>
+            <h3 style="font-size: 12px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.2;">${esc(o.customer?.name || 'Pelanggan')}</h3>
+            <p style="font-size: 10px; font-weight: 500; color: #475569; margin: 4px 0 0 0; line-height: 1.35;">${esc(o.customer?.address || '-')}</p>
+            ${o.customer?.note ? `<p style="font-size: 9.5px; font-weight: 700; color: #075985; margin: 6px 0 0 0; background: #e0f2fe; border: 1px solid #bae6fd; padding: 3px 8px; border-radius: 6px;">Catatan: ${esc(o.customer.note)}</p>` : ''}
+          </div>
+        </div>
+      `;
+    } else {
+      topSection = `
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, #0284c7 0%, #38bdf8 100%);"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background-color: #0284c7; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 12px;">
+              ${base64Logo ? `<img src="${base64Logo}" style="width: 100%; height: 100%; object-fit: contain;" alt="Logo" />` : 'TG'}
+            </div>
+            <div>
+              <h2 style="font-size: 13px; font-weight: 800; color: #0f172a; margin: 0; text-transform: uppercase;">${esc(storeName)}</h2>
+              <p style="font-size: 9.5px; color: #64748b; margin: 0;">Surat Jalan Pengiriman #SJ-${esc(o.orderId)} (Lanjutan)</p>
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <span style="padding: 3px 8px; border-radius: 6px; background-color: #f1f5f9; border: 1px solid #e2e8f0; font-size: 9.5px; font-weight: 700; color: #475569;">
+              Halaman ${pageNum} dari ${totalPages}
+            </span>
+          </div>
+        </div>
+      `;
+    }
+
+    const tableHtml = `
+      <div style="border-radius: 10px; border: 1px solid #cbd5e1; overflow: hidden; margin-bottom: 16px;">
+        <table style="width: 100%; text-align: left; border-collapse: collapse; table-layout: fixed;">
+          <thead>
+            <tr style="background-color: #f1f5f9; border-bottom: 1.5px solid #cbd5e1; color: #334155;">
+              <th style="padding: 8px 12px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; width: 48%; border-right: 1px solid #cbd5e1;">Nama Barang / Deskripsi</th>
+              <th style="padding: 8px 10px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; width: 20%; border-right: 1px solid #cbd5e1;">Qty / Satuan</th>
+              <th style="padding: 8px 10px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; width: 22%; border-right: 1px solid #cbd5e1;">Varian / Spesifikasi</th>
+              <th style="padding: 8px 8px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; width: 10%;">Cek</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${pg.items.map((item, iIdx) => {
+              const isGrosir = item.effectivePrice < item.price;
+              const varKeterangan = [item.variantName, (isGrosir ? 'Grosir' : '')].filter(Boolean).join(' · ');
+              return `
+              <tr style="border-bottom: 1px solid #e2e8f0; font-size: 10.5px; color: #0f172a; background-color: ${iIdx % 2 === 1 ? '#f8fafc' : '#ffffff'};">
+                <td style="padding: 7px 12px; font-weight: 700; vertical-align: middle; border-right: 1px solid #e2e8f0; line-height: 1.35; word-break: break-word;">
+                  ${esc(item.name)}
+                </td>
+                <td style="padding: 7px 10px; text-align: center; vertical-align: middle; font-weight: 800; border-right: 1px solid #e2e8f0; white-space: nowrap;">
+                  <span style="display:inline-block; padding: 2px 8px; background:#f0f9ff; border-radius: 5px; border: 1px solid #bae6fd; color:#0369a1; font-size: 10px;">
+                    ${item.qty} ${esc(item.unit || 'Pcs')}
+                  </span>
+                </td>
+                <td style="padding: 7px 10px; color: #475569; vertical-align: middle; border-right: 1px solid #e2e8f0; font-size: 9.5px; font-weight: 600;">
+                  ${varKeterangan ? esc(varKeterangan) : '<span style="color:#cbd5e1;">-</span>'}
+                </td>
+                <td style="padding: 7px 8px; text-align: center; vertical-align: middle;">
+                  <span style="display:inline-block; width: 14px; height: 14px; border: 1.5px solid #94a3b8; border-radius: 3px;"></span>
+                </td>
+              </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    let bottomSection = '';
+    if (pg.isLast) {
+      bottomSection = `
+        <div style="margin-bottom: 16px;">
+          <p style="font-size: 8.5px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 8px 0; text-align: center;">SERAH TERIMA &amp; VALIDASI DOKUMEN (3 PIHAK)</p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; text-align: center;">
+            <div style="padding: 10px; background-color: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; height: 110px; box-sizing: border-box;">
+              <p style="font-size: 9.5px; font-weight: 700; color: #475569; text-transform: uppercase; margin: 0;">Penerima Barang</p>
+              <div>
+                <p style="font-size: 10.5px; font-weight: 700; color: #0f172a; border-bottom: 1px dashed #cbd5e1; padding-bottom: 2px; margin: 0 0 2px 0;">( ................................ )</p>
+                <p style="font-size: 8.5px; color: #94a3b8; margin: 0;">Tgl: ...... / ...... / 202...</p>
+              </div>
+            </div>
+            <div style="padding: 10px; background-color: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; height: 110px; box-sizing: border-box;">
+              <p style="font-size: 9.5px; font-weight: 700; color: #475569; text-transform: uppercase; margin: 0;">Kurir / Pengantar</p>
+              <div>
+                <p style="font-size: 10.5px; font-weight: 700; color: #0f172a; border-bottom: 1px dashed #cbd5e1; padding-bottom: 2px; margin: 0 0 2px 0;">( ................................ )</p>
+                <p style="font-size: 8.5px; color: #94a3b8; margin: 0;">No. Polisi Kendaraan</p>
+              </div>
+            </div>
+            <div style="padding: 10px; background-color: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; justify-content: space-between; height: 110px; box-sizing: border-box;">
+              <p style="font-size: 9.5px; font-weight: 700; color: #475569; text-transform: uppercase; margin: 0;">Hormat Kami (Gudang)</p>
+              <div>
+                <p style="font-size: 10.5px; font-weight: 700; color: #0f172a; border-bottom: 1px dashed #cbd5e1; padding-bottom: 2px; margin: 0 0 2px 0;">${esc(storeName)}</p>
+                <p style="font-size: 8.5px; color: #94a3b8; margin: 0;">Cap Toko &amp; Tanda Tangan</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    const footerHtml = `
+      <div style="border-top: 1.5px solid #e2e8f0; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 9.5px; color: #94a3b8;">
+        <p style="margin: 0; font-weight: 500;">Surat Jalan Pengiriman Resmi &bull; Dokumen Sah Logistik &amp; Serah Terima Barang.</p>
+        <p style="margin: 0; font-weight: 700; color: #64748b;">Halaman ${pageNum} dari ${totalPages}</p>
+      </div>
+    `;
+
+    return `
+      <div class="a4-page-sheet" data-page="${pageNum}" style="width: 794px; min-width: 794px; max-width: 794px; height: 1123px; min-height: 1123px; max-height: 1123px; padding: 40px 48px; font-family: 'Plus Jakarta Sans', Arial, sans-serif; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background-color: #ffffff; position: relative; overflow: hidden;">
+        <div>
+          ${topSection}
+          ${tableHtml}
+          ${bottomSection}
+        </div>
+        ${footerHtml}
+      </div>
+    `;
+  });
+};
+
 window.generateA4Document = async (type, directOrder = null) => {
   if (isSaving) return;
   if (directOrder) {
@@ -10189,232 +10582,88 @@ window.generateA4Document = async (type, directOrder = null) => {
       base64Logo = await _urlToBase64(logoVal);
     }
 
-    if (type === 'invoice') {
-      setIn('inv-store-name', appData.store.name || 'TOKO GRAFIKA');
-      setIn('inv-store-address', appData.store.address || 'Alamat Toko');
-      setH('inv-store-wa', `<i class='fa-brands fa-whatsapp text-emerald-600 mr-1'></i> WA: ${esc(appData.store.wa || '-')}`);
-      setIn('inv-id', '#' + o.orderId);
-      setIn('inv-date', formattedDate);
-      setIn('inv-cust-name', o.customer?.name || 'Pelanggan');
-      setIn('inv-cust-address', o.customer?.address || '-');
-      setIn('inv-method', (o.payment?.method || 'CASH').toUpperCase());
-      
-      const invLogoBox = el('inv-logo-box');
-      const invLogoImg = el('inv-logo-img');
-      const invLogoSvg = el('inv-logo-svg');
+    const storeName = appData.store.name || 'TOKO GRAFIKA';
+    const storeAddress = appData.store.address || 'Alamat Toko';
+    const storeWa = appData.store.wa || '-';
+    const footerText = appData.store.footerText || 'Terima kasih atas kunjungan dan kepercayaan Anda.';
 
-      if (invLogoBox) invLogoBox.style.backgroundColor = themeClr;
+    // Generate discrete A4 pages
+    const pagesHtml = type === 'invoice' 
+      ? _buildInvoicePages({ o, formattedDate, themeClr, base64Logo, storeName, storeAddress, storeWa, footerText })
+      : _buildSuratJalanPages({ o, formattedDate, themeClr, base64Logo, storeName, storeAddress, storeWa });
 
-      if (base64Logo) {
-        if (invLogoImg) {
-          invLogoImg.src = base64Logo;
-          invLogoImg.style.display = 'block';
-          invLogoImg.classList.remove('hidden');
-        }
-        if (invLogoSvg) {
-          invLogoSvg.style.display = 'none';
-          invLogoSvg.classList.add('hidden');
-        }
-      } else {
-        if (invLogoImg) {
-          invLogoImg.style.display = 'none';
-          invLogoImg.classList.add('hidden');
-        }
-        if (invLogoSvg) {
-          invLogoSvg.style.display = 'block';
-          invLogoSvg.classList.remove('hidden');
-        }
-      }
-      
-      let itemsHtml = (o.items || []).map((item, index) => {
-        const isGrosir = item.effectivePrice < item.price;
-        const varKeterangan = [item.variantName, (isGrosir ? 'Grosir' : '')].filter(Boolean).join(' · ');
-
-        return `
-        <tr style="border-bottom: 1px solid #e2e8f0; font-size: 11px; color: #1e293b; background-color: ${index % 2 === 1 ? '#f8fafc' : '#ffffff'};">
-          <td style="padding: 10px 14px; font-weight: 800; color: #0f172a; vertical-align: middle; width: 22%; white-space: nowrap;">
-            <span style="display:inline-block; padding: 2px 6px; background:#f1f5f9; border-radius: 6px; border: 1px solid #e2e8f0;">
-              ${item.qty} <span style="color:${themeClr}; font-weight:700;">${esc(item.unit || 'Pcs')}</span>
-            </span>
-          </td>
-          <td style="padding: 10px 12px; vertical-align: middle; width: 38%; word-break: break-word; line-height: 1.4;">
-            <div style="font-weight: 700; color: #0f172a;">${esc(item.name)}</div>
-            ${varKeterangan ? `<div style="font-size:9.5px; color:#64748b; font-weight:600; margin-top:2px;"><i class="fa-solid fa-tag" style="font-size:8px; margin-right:3px;"></i>${esc(varKeterangan)}</div>` : ''}
-          </td>
-          <td style="padding: 10px 12px; text-align: right; vertical-align: middle; width: 20%; word-break: break-word; font-weight: 600; color: #475569;">
-            ${fCur(item.effectivePrice)}
-          </td>
-          <td style="padding: 10px 14px; text-align: right; font-weight: 800; color: #0f172a; vertical-align: middle; width: 20%; word-break: break-word; font-family: monospace; font-size: 11.5px;">
-            ${fCur(item.effectivePrice * item.qty)}
-          </td>
-        </tr>
-        `;
-      }).join('');
-      setH('inv-items', itemsHtml);
-      
-      setIn('inv-subtotal', fCur(o.payment?.subtotal || 0));
-      if (o.payment?.productDiscount) {
-        show('inv-discount-row');
-        setIn('inv-discount', '-' + fCur(o.payment.productDiscount));
-      } else hide('inv-discount-row');
-      
-      if (o.customer?.deliveryMethod !== 'pickup') {
-        show('inv-shipping-row');
-        setIn('inv-shipping', fCur(o.payment?.shippingCost || 0));
-      } else hide('inv-shipping-row');
-
-      if (o.payment?.shippingDiscount) {
-        show('inv-shipping-discount-row');
-        setIn('inv-shipping-discount', '-' + fCur(o.payment.shippingDiscount));
-      } else hide('inv-shipping-discount-row');
-      
-      setIn('inv-grandtotal', fCur(o.payment?.grandTotal || 0));
-      setIn('inv-footer-text', appData.store.footerText || 'Terima kasih atas kunjungan dan kepercayaan Anda.');
-      
-    } else {
-      setIn('sj-store-name', appData.store.name || 'TOKO GRAFIKA');
-      setIn('sj-store-address', appData.store.address || '-');
-      setIn('sj-store-wa', 'WA: ' + (appData.store.wa || '-'));
-      setIn('sj-id', '#SJ-' + o.orderId);
-      setIn('sj-date', formattedDate);
-      setIn('sj-sender-name', appData.store.name || 'TOKO GRAFIKA');
-      setIn('sj-cust-name', o.customer?.name || 'Anonim');
-      setIn('sj-cust-address', o.customer?.address || '-');
-      setIn('sj-sign-store', appData.store.name || 'Pihak Toko');
-      
-      const sjLogoBox = el('sj-logo-box');
-      const sjLogoImg = el('sj-logo-img');
-      const sjLogoSvg = el('sj-logo-svg');
-
-      if (sjLogoBox) sjLogoBox.style.backgroundColor = themeClr;
-
-      if (base64Logo) {
-        if (sjLogoImg) {
-          sjLogoImg.src = base64Logo;
-          sjLogoImg.style.display = 'block';
-          sjLogoImg.classList.remove('hidden');
-        }
-        if (sjLogoSvg) {
-          sjLogoSvg.style.display = 'none';
-          sjLogoSvg.classList.add('hidden');
-        }
-      } else {
-        if (sjLogoImg) {
-          sjLogoImg.style.display = 'none';
-          sjLogoImg.classList.add('hidden');
-        }
-        if (sjLogoSvg) {
-          sjLogoSvg.style.display = 'block';
-          sjLogoSvg.classList.remove('hidden');
-        }
-      }
-
-      if (o.customer?.note) {
-        show('sj-cust-note');
-        setIn('sj-cust-note', 'Catatan: ' + o.customer.note);
-      } else hide('sj-cust-note');
-      
-      let itemsHtml = (o.items || []).map((item, index) => {
-        const isGrosir = item.effectivePrice < item.price;
-        const varKeterangan = [item.variantName, (isGrosir ? 'Grosir' : '')].filter(Boolean).join(' · ');
-        const varHtml = varKeterangan ? `<span style="font-size:9.5px; font-weight:600; color:#475569;">${esc(varKeterangan)}</span>` : '<span style="color:#cbd5e1;">-</span>';
-
-        return `
-        <tr style="border-bottom: 1px solid #e2e8f0; font-size: 11px; font-weight: 600; color: #1e293b; background-color: ${index % 2 === 1 ? '#f8fafc' : '#ffffff'};">
-          <td style="padding: 10px 14px; border-right: 1px solid #e2e8f0; vertical-align: middle; width: 48%; word-break: break-word; line-height: 1.4;">
-            <div style="font-weight: 700; color: #0f172a;">${esc(item.name)}</div>
-          </td>
-          <td style="padding: 10px 12px; border-right: 1px solid #e2e8f0; text-align: center; vertical-align: middle; font-weight: 800; color: #0f172a; width: 20%; word-break: break-word;">
-            <span style="display:inline-block; padding: 2px 8px; background:#f0f9ff; border-radius: 6px; border: 1px solid #bae6fd; color:#0369a1;">
-              ${item.qty} ${esc(item.unit || 'Pcs')}
-            </span>
-          </td>
-          <td style="padding: 10px 12px; border-right: 1px solid #e2e8f0; color: #475569; vertical-align: middle; width: 22%; word-break: break-word; font-size: 10px;">
-            ${varHtml}
-          </td>
-          <td style="padding: 10px 8px; text-align: center; vertical-align: middle; width: 10%;">
-            <span style="display:inline-block; width:15px; height:15px; border:1.5px solid #94a3b8; border-radius:3px;"></span>
-          </td>
-        </tr>
-        `;
-      }).join('');
-      setH('sj-items', itemsHtml);
-    }
-    
-    const targetId = type === 'invoice' ? 'template-invoice' : 'template-surat-jalan';
-    const element = document.getElementById(targetId);
-    
+    // Render each page into an offscreen container to create high-res canvases
     const tempContainer = document.createElement('div');
     tempContainer.style.position = 'fixed';
     tempContainer.style.top = '0';
-    tempContainer.style.left = '-9999px'; 
-    tempContainer.style.width = '794px'; 
-    tempContainer.style.minWidth = '794px';
-    tempContainer.style.maxWidth = '794px';
+    tempContainer.style.left = '-9999px';
+    tempContainer.style.width = '794px';
     tempContainer.style.backgroundColor = '#ffffff';
-    tempContainer.style.zIndex = '-9999'; 
-    tempContainer.style.overflow = 'hidden';
-    
-    const clone = element.cloneNode(true);
-    clone.style.display = 'flex';
-    clone.style.width = '794px'; 
-    clone.style.minHeight = '1123px';
-    clone.style.margin = '0';
-    clone.style.boxSizing = 'border-box';
-    
-    const cloneImg = clone.querySelector(type === 'invoice' ? '#inv-logo-img' : '#sj-logo-img');
-    const cloneSvg = clone.querySelector(type === 'invoice' ? '#inv-logo-svg' : '#sj-logo-svg');
-    if (base64Logo) {
-      if (cloneImg) {
-        cloneImg.src = base64Logo;
-        cloneImg.style.display = 'block';
-        cloneImg.style.width = '100%';
-        cloneImg.style.height = '100%';
-        cloneImg.style.objectFit = 'contain';
-        cloneImg.classList.remove('hidden');
-      }
-      if (cloneSvg) cloneSvg.remove();
-    } else {
-      if (cloneImg) cloneImg.remove();
-      if (cloneSvg) {
-        cloneSvg.style.display = 'block';
-        cloneSvg.classList.remove('hidden');
-      }
-    }
-    
-    tempContainer.appendChild(clone);
+    tempContainer.style.zIndex = '-9999';
     document.body.appendChild(tempContainer);
-    
-    const canvas = await html2canvas(clone, {
-      scale: 2,
-      backgroundColor: '#ffffff',
-      useCORS: true,
-      allowTaint: true,
-      imageTimeout: 1500,
-      logging: false,
-      width: 794,
-      windowWidth: 794,
-      scrollX: 0, 
-      scrollY: 0
-    });
-    
+
+    const pageCanvases = [];
+    for (let i = 0; i < pagesHtml.length; i++) {
+      tempContainer.innerHTML = pagesHtml[i];
+      const sheetElement = tempContainer.querySelector('.a4-page-sheet');
+      
+      const canvas = await html2canvas(sheetElement, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        allowTaint: true,
+        imageTimeout: 1500,
+        logging: false,
+        width: 794,
+        height: 1123,
+        windowWidth: 794,
+        windowHeight: 1123,
+        scrollX: 0,
+        scrollY: 0
+      });
+      pageCanvases.push(canvas);
+    }
+
     document.body.removeChild(tempContainer);
-    
-    const imgData = canvas.toDataURL('image/png');
-    
+
+    // Save multi-page canvases in tempPdfData
+    const firstImgData = pageCanvases[0].toDataURL('image/png');
     tempPdfData = {
-      imgData: imgData,
-      canvas: canvas,
-      width: canvas.width,
-      height: canvas.height,
+      imgData: firstImgData,
+      pageCanvases: pageCanvases,
+      width: pageCanvases[0].width,
+      height: pageCanvases[0].height,
       type: type,
       fileName: type === 'invoice' ? `Invoice_${o.orderId}.pdf` : `Surat_Jalan_${o.orderId}.pdf`
     };
 
-    document.getElementById('preview-img-result').src = imgData;
+    // Populate preview container with all page sheets and clear boundary separators
+    const previewContainer = el('preview-pages-container');
+    if (previewContainer) {
+      previewContainer.innerHTML = pageCanvases.map((c, idx) => {
+        const pageImg = c.toDataURL('image/png');
+        return `
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400 px-1">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-file-lines text-emerald-500"></i> Halaman ${idx + 1} dari ${pageCanvases.length}</span>
+            <span class="text-[10px] uppercase tracking-wider bg-white dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700 shadow-xs">Standar A4 (210 x 297 mm)</span>
+          </div>
+          <div class="bg-white rounded-md shadow-2xl border border-slate-300 dark:border-slate-700 overflow-hidden">
+            <img class="w-full h-auto block" src="${pageImg}" alt="Halaman ${idx + 1}" />
+          </div>
+        </div>
+        `;
+      }).join('');
+    } else {
+      const prevImg = el('preview-img-result');
+      if (prevImg) prevImg.src = firstImgData;
+    }
+
     const previewModal = document.getElementById('pdf-preview-modal');
-    previewModal.classList.remove('hidden');
-    previewModal.classList.add('flex');
+    if (previewModal) {
+      previewModal.classList.remove('hidden');
+      previewModal.classList.add('flex');
+    }
     
     const btnPdf = el('btn-download-pdf-a4');
     if (btnPdf) btnPdf.style.backgroundColor = themeClr;
