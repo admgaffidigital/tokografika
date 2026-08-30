@@ -1,20 +1,18 @@
 {
-  "name": "grafika-blogger-pwa-template",
+  "name": "tokografika-pwa-app",
   "version": "1.0.0",
-  "description": "Modular Development & Live Preview Workflow for Blogger PWA Theme with Vite",
+  "description": "Modern PWA Online Store & Point of Sale with Firebase and Vite",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:xml": "node scripts/build.js",
     "preview": "vite preview",
-    "test": "node scripts/validate-xml.js && node scripts/audit-bugs.js"
+    "test": "node scripts/audit-bugs.js"
   },
   "keywords": [
-    "blogger",
-    "blogspot",
     "pwa",
-    "theme",
-    "template",
+    "ecommerce",
+    "point-of-sale",
+    "firebase",
     "vite"
   ],
   "author": "",

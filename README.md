@@ -1,13 +1,13 @@
-# Freshmart Blogger PWA Template
+# Toko Grafika - Modern PWA Online Store & POS
 
-Tema Blogger PWA Modern & Modular dengan integrasi Firebase Firestore, Tailwind CSS, dan workflow development berbasis **Vite**.
+Aplikasi Web Toko Online & Kasir (Point of Sale) Modern berbasis **Progressive Web App (PWA)** dengan integrasi Firebase Firestore, Tailwind CSS, dan workflow development **Vite**.
 
 ## 🚀 Fitur Utama
 - ⚡ **Vite Powered**: Development server super cepat dengan live reload otomatis.
-- 📱 **PWA Ready**: Dukungan Progressive Web App (manifest dinamis, service worker ready, installable di Android/iOS/Desktop).
+- 📱 **PWA Ready**: Dukungan Progressive Web App (manifest dinamis, installable di Android/iOS/Desktop).
 - 🔥 **Firebase Firestore**: Sinkronisasi data katalog produk, keranjang, dan pesanan secara realtime.
 - 📑 **Invoice & Surat Jalan**: Generator cetak struk/nota ukuran thermal dan dokumen invoice A4 otomatis.
-- 🎨 **100% Modular Architecture**: Pemisahan komponen CSS, JS, dan HTML yang sangat rapi di dalam direktori `src/`.
+- 🎨 **100% Modular Architecture**: Pemisahan komponen CSS, JS, dan HTML yang rapi di dalam direktori `src/`.
 
 ---
 
@@ -16,10 +16,9 @@ Tema Blogger PWA Modern & Modular dengan integrasi Firebase Firestore, Tailwind 
 | Perintah | Deskripsi |
 |---|---|
 | `npm run dev` | Menjalankan Vite dev server di `http://localhost:3000` dengan auto-reload |
-| `npm run build` | Mengompilasi seluruh kode modular menjadi `dist/theme.xml` dan `dist/index.html` |
-| `npm run build:xml` | Menjalankan builder XML Blogger secara mandiri |
+| `npm run build` | Mengompilasi aplikasi web produksi menjadi `dist/index.html` |
 | `npm run preview` | Menjalankan local preview server untuk hasil build produksi |
-| `npm test` | Menjalankan audit bug dan validasi kepatuhan sintaks XML Blogger |
+| `npm test` | Menjalankan audit bug konsistensi DOM dan event handler JS |
 
 ---
 
@@ -27,16 +26,14 @@ Tema Blogger PWA Modern & Modular dengan integrasi Firebase Firestore, Tailwind 
 
 ```
 ├── dist/                  # Output build produksi (ringkas & bersih)
-│   ├── index.html         # Web preview untuk deployment (Vercel)
-│   └── theme.xml          # XML Theme siap pakai untuk Blogger
+│   └── index.html         # Web app bundle siap pakai untuk hosting (Vercel)
 ├── docs/                  # Dokumentasi & konfigurasi eksternal
 │   ├── FIREBASE_CONFIG.md # Kredensial Firebase SDK
 │   ├── FIRESTORE_RULES.txt# Aturan keamanan Cloud Firestore
 │   └── GOOGLE_APPS_SCRIPT.gs # Skrip uploader Google Drive
 ├── scripts/               # Utilitas build & testing
 │   ├── audit-bugs.js      # Audit konsistensi ID DOM dan event handler JS
-│   ├── build.js           # Engine compiler modular @include
-│   └── validate-xml.js    # Validator kepatuhan sintaks Blogger XML 1.0
+│   └── build.js           # Engine compiler modular @include
 ├── src/                   # Source code modular
 │   ├── components/        # Komponen HTML
 │   │   ├── modals/        # Modal dialog (admin, order, product, pdf, receipt, scanner, confirm)
@@ -65,7 +62,7 @@ Tema Blogger PWA Modern & Modular dengan integrasi Firebase Firestore, Tailwind 
 │   │   │   └── sync.js    # Sinkronisasi harga & stok realtime
 │   │   ├── bootstrap.js   # Routing & event listeners awal
 │   │   └── app.js         # Master JS orchestrator entry point
-│   └── template.xml       # Master template Blogger
+│   └── index.html         # Master HTML template
 ├── index.html             # Entry point Vite dev server
 ├── vercel.json            # Konfigurasi deployment Vercel
 └── vite.config.mjs        # Konfigurasi & custom plugin Vite
@@ -77,14 +74,5 @@ Tema Blogger PWA Modern & Modular dengan integrasi Firebase Firestore, Tailwind 
 
 1. Buka [Vercel Dashboard](https://vercel.com).
 2. Pilih **Import Git Repository** (`admgaffidigital/tokografika`).
-3. Vercel akan otomatis mengenali konfigurasi `vite` dan output `dist/`.
+3. Vercel akan otomatis mengenali konfigurasi `vite` dan output `dist/index.html`.
 4. Klik **Deploy**.
-
----
-
-## 📝 Cara Pasang ke Blogger
-
-1. Buka dashboard **Blogger** > Menu **Tema (Theme)**.
-2. Klik ikon panah ke bawah di sebelah tombol **Sesuaikan (Customize)** > Pilih **Edit HTML**.
-3. Buka file [`dist/theme.xml`](dist/theme.xml), salin seluruh isinya, lalu tempelkan (paste) menggantikan seluruh kode di editor Blogger.
-4. Klik **Simpan (Save)**.

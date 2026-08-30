@@ -48,69 +48,40 @@ function resolveIncludes(filePath, baseDir = srcDir, visited = new Set()) {
   return content;
 }
 
-function generateThemeXml() {
-  const entryTemplate = path.join(srcDir, 'template.xml');
+function generateHtml() {
+  const entryTemplate = path.join(srcDir, 'index.html');
   if (!fs.existsSync(entryTemplate)) {
-    throw new Error('src/template.xml not found!');
+    throw new Error('src/index.html not found!');
   }
-
-  let finalXml = resolveIncludes('template.xml', srcDir);
-  
-  // XML 1.0 Compliance: Double hyphen (--) is strictly forbidden inside comments
-  finalXml = finalXml.replace(/<!--([\s\S]*?)-->/g, (match, commentBody) => {
-    let clean = commentBody;
-    while (clean.includes('--')) {
-      clean = clean.replace(/--/g, '==');
-    }
-    return `<!--${clean}-->`;
-  });
-
-  return finalXml;
-}
-
-function generatePreviewHtml(xmlContent) {
-  const finalXml = xmlContent || generateThemeXml();
-  let previewHtml = finalXml;
-  // Remove Blogger XML declaration & namespace for browser preview compatibility
-  previewHtml = previewHtml.replace(/<\?xml[^>]*\?>/i, '');
-  // Replace <data:blog.pageTitle/> with sample title
-  previewHtml = previewHtml.replace(/<data:blog\.pageTitle\s*\/>/gi, 'Freshmart PWA - Local Preview');
-  return previewHtml;
+  return resolveIncludes('index.html', srcDir);
 }
 
 function build() {
-  console.log('🚀 Starting Blogger Theme Build...');
+  console.log('🚀 Starting Web App Build...');
   const startTime = Date.now();
 
-  const finalXml = generateThemeXml();
-  const themeXmlPath = path.join(distDir, 'theme.xml');
-  fs.writeFileSync(themeXmlPath, finalXml, 'utf8');
-
-  const lines = finalXml.split('\n').length;
-  const sizeKB = (Buffer.byteLength(finalXml, 'utf8') / 1024).toFixed(2);
-  console.log(`✅ [dist/theme.xml] built successfully! (${lines} lines, ${sizeKB} KB)`);
-
-  const previewHtml = generatePreviewHtml(finalXml);
+  const finalHtml = generateHtml();
   const indexPath = path.join(distDir, 'index.html');
-  fs.writeFileSync(indexPath, previewHtml, 'utf8');
-  console.log(`✅ [dist/index.html] generated for web preview!`);
+  fs.writeFileSync(indexPath, finalHtml, 'utf8');
+
+  const lines = finalHtml.split('\n').length;
+  const sizeKB = (Buffer.byteLength(finalHtml, 'utf8') / 1024).toFixed(2);
+  console.log(`✅ [dist/index.html] generated successfully! (${lines} lines, ${sizeKB} KB)`);
 
   const elapsed = Date.now() - startTime;
   console.log(`✨ Build finished in ${elapsed}ms\n`);
 
-  return { finalXml, previewHtml };
+  return finalHtml;
 }
-
-module.exports = { 
-  build, 
-  generateThemeXml, 
-  generatePreviewHtml, 
-  resolveIncludes,
-  srcDir,
-  distDir,
-  rootDir
-};
 
 if (require.main === module) {
   build();
 }
+
+module.exports = {
+  build,
+  generateHtml,
+  resolveIncludes,
+  srcDir,
+  distDir
+};

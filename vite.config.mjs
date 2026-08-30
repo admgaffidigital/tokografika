@@ -8,16 +8,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const require = createRequire(import.meta.url);
 
-const { build: buildXml, generatePreviewHtml } = require('./scripts/build.js');
+const { build: buildHtml, generateHtml } = require('./scripts/build.js');
 
-function bloggerPlugin() {
+function webAppPlugin() {
   return {
-    name: 'vite-plugin-blogger-theme',
+    name: 'vite-plugin-pwa-app',
     
     // Initial build when Vite starts or builds
     buildStart() {
       try {
-        buildXml();
+        buildHtml();
       } catch (err) {
         this.error(err);
       }
@@ -25,14 +25,14 @@ function bloggerPlugin() {
 
     // Configure Dev Server
     configureServer(server) {
-      // Rebuild on file changes in src/
+      // Watch changes in src/
       server.watcher.add(path.resolve(__dirname, 'src'));
 
       server.watcher.on('change', (changedPath) => {
         if (changedPath.includes(path.sep + 'src' + path.sep)) {
-          console.log(`\n🔄 [File Modified] ${path.relative(__dirname, changedPath)} -> Rebuilding Blogger Theme...`);
+          console.log(`\n🔄 [File Modified] ${path.relative(__dirname, changedPath)} -> Rebuilding Web App...`);
           try {
-            buildXml();
+            buildHtml();
             server.ws.send({ type: 'full-reload', path: '*' });
           } catch (err) {
             console.error('❌ Build failed:', err.message);
@@ -44,10 +44,9 @@ function bloggerPlugin() {
     // Transform index.html on the fly during dev and build
     transformIndexHtml(html) {
       try {
-        const preview = generatePreviewHtml();
-        return preview;
+        return generateHtml();
       } catch (err) {
-        console.error('Error generating preview HTML:', err);
+        console.error('Error generating HTML:', err);
         return html;
       }
     }
@@ -55,7 +54,7 @@ function bloggerPlugin() {
 }
 
 export default defineConfig({
-  plugins: [bloggerPlugin()],
+  plugins: [webAppPlugin()],
   root: '.',
   server: {
     port: 3000,

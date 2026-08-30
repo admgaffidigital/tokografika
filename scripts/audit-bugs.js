@@ -4,7 +4,7 @@ const { resolveIncludes, srcDir } = require('./build');
 
 const htmlContent = resolveIncludes('components/body.html', srcDir);
 const jsContent = resolveIncludes('js/app.js', srcDir);
-const xmlContent = resolveIncludes('template.xml', srcDir);
+const mainHtmlContent = resolveIncludes('index.html', srcDir);
 
 console.log('=== 1. AUDIT: EVENT HANDLERS IN HTML VS JS FUNCTIONS ===');
 const inlineEventRegex = /on(?:click|change|submit|input|keydown|keyup|keypress|load|error)=['"]([^'"]+)['"]/gi;
@@ -60,9 +60,9 @@ while ((match = getElementRegex.exec(jsContent)) !== null) {
 
 const missingIds = [];
 referencedIds.forEach(id => {
-  // Search for id="..." in HTML and template.xml
+  // Search for id="..." in HTML and index.html
   const idPattern = new RegExp(`id=['"]${id}['"]`, 'i');
-  if (!idPattern.test(htmlContent) && !idPattern.test(xmlContent)) {
+  if (!idPattern.test(htmlContent) && !idPattern.test(mainHtmlContent)) {
     // Check if dynamically created or known
     missingIds.push(id);
   }

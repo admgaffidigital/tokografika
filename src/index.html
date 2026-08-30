@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>Toko Grafika - Freshmart PWA</title>
+    
+    <!-- ============================================================ -->
+    <!-- PWA META TAGS — Android, iOS, Desktop                        -->
+    <!-- ============================================================ -->
+    <meta content="#059669" id="pwa-theme-color" name="theme-color"/>
+    <meta content="yes" name="mobile-web-app-capable"/>
+    <meta content="yes" name="apple-mobile-web-app-capable"/>
+    <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+    <meta content="Toko Grafika" id="pwa-app-name-ios" name="apple-mobile-web-app-title"/>
+    
+    <!-- Favicon & Touch Icons (Dinamis dari Logo Toko) -->
+    <link href="data:," id="pwa-favicon" rel="icon" type="image/png"/>
+    <link href="data:," id="pwa-favicon-shortcut" rel="shortcut icon" type="image/png"/>
+    <link href="data:," id="pwa-apple-touch-icon" rel="apple-touch-icon"/>
+    <link href="data:," id="pwa-apple-touch-icon-76" rel="apple-touch-icon" sizes="76x76"/>
+    <link href="data:," id="pwa-apple-touch-icon-120" rel="apple-touch-icon" sizes="120x120"/>
+    <link href="data:," id="pwa-apple-touch-icon-152" rel="apple-touch-icon" sizes="152x152"/>
+    <link href="data:," id="pwa-apple-touch-icon-180" rel="apple-touch-icon" sizes="180x180"/>
+    
+    <!-- Web App Manifest (Dibuat otomatis oleh JS) -->
+    <link id="pwa-manifest-link" rel="manifest"/>
+
+    <!-- ============================================================ -->
+    <!-- PRECONNECT & SPEED OPTIMIZATION                              -->
+    <!-- ============================================================ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com"/>
+    <link rel="preconnect" href="https://www.gstatic.com"/>
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net"/>
+    <link rel="dns-prefetch" href="https://wsrv.nl"/>
+    <link rel="dns-prefetch" href="https://lh3.googleusercontent.com"/>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    
+    <!-- External CDN Scripts & Libraries -->
+    <script>
+      (function(){
+        const origWarn = console.warn;
+        console.warn = function(...args) {
+          if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) return;
+          origWarn.apply(console, args);
+        };
+      })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { darkMode: 'class' };
+    </script>
+    <script>
+      if (localStorage.getItem('freshmart_theme') === 'dark' || (!('freshmart_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) { 
+        document.documentElement.classList.add('dark'); 
+      }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+    
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>    
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>    
+    
+    <!-- Utility Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Master CSS -->
+    <style type="text/css">
+/* @include css/main.css */
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between select-none">
+
+<!-- @include components/body.html -->
+
+    <!-- Master JavaScript -->
+    <script type="text/javascript">
+// @include js/app.js
+    </script>
+</body>
+</html>
