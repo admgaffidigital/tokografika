@@ -1183,6 +1183,65 @@ window.openOrderDetail = i => {
         <span class="text-lg font-bold text-emerald-400">${fCur(o.payment?.grandTotal)}</span>
       </div>
     </div>
+
+    <!-- Hub Cetak Dokumen Pesanan (Supermarket POS & Bisnis) -->
+    <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+      <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-2.5">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-bold border border-emerald-200 dark:border-emerald-800">
+            <i class="fa-solid fa-print"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-slate-800 dark:text-white text-xs">Cetak Dokumen Pesanan</h4>
+            <p class="text-[10px] text-slate-400 font-medium">Pilih format cetak struk kasir atau dokumen A4</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+        <!-- Tombol 1: Struk Kasir Thermal -->
+        <button type="button" onclick="openReceiptPreview()" class="p-3.5 rounded-xl border-2 border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/50 dark:bg-emerald-950/20 hover:bg-emerald-100/60 dark:hover:bg-emerald-900/40 hover:border-emerald-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
+          <div class="flex items-center justify-between">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-xs shadow-sm group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-receipt"></i>
+            </div>
+            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-emerald-200/80 dark:bg-emerald-800/60 text-emerald-800 dark:text-emerald-200 uppercase tracking-wider">POS</span>
+          </div>
+          <div>
+            <div class="text-xs font-bold text-slate-800 dark:text-white leading-tight">Struk Kasir</div>
+            <div class="text-[10px] text-emerald-700 dark:text-emerald-300 font-semibold mt-0.5">Thermal 58 / 80mm</div>
+          </div>
+        </button>
+
+        <!-- Tombol 2: Invoice Tagihan A4 -->
+        <button type="button" onclick="generateA4Document('invoice')" class="p-3.5 rounded-xl border-2 border-blue-200 dark:border-blue-800/60 bg-blue-50/50 dark:bg-blue-950/20 hover:bg-blue-100/60 dark:hover:bg-blue-900/40 hover:border-blue-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
+          <div class="flex items-center justify-between">
+            <div class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center text-xs shadow-sm group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-file-invoice"></i>
+            </div>
+            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-blue-200/80 dark:bg-blue-800/60 text-blue-800 dark:text-blue-200 uppercase tracking-wider">PDF A4</span>
+          </div>
+          <div>
+            <div class="text-xs font-bold text-slate-800 dark:text-white leading-tight">Faktur / Invoice</div>
+            <div class="text-[10px] text-blue-700 dark:text-blue-300 font-semibold mt-0.5">Tagihan Resmi Bisnis</div>
+          </div>
+        </button>
+
+        <!-- Tombol 3: Surat Jalan A4 -->
+        <button type="button" onclick="generateA4Document('surat-jalan')" class="p-3.5 rounded-xl border-2 border-rose-200 dark:border-rose-800/60 bg-rose-50/50 dark:bg-rose-950/20 hover:bg-rose-100/60 dark:hover:bg-rose-900/40 hover:border-rose-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
+          <div class="flex items-center justify-between">
+            <div class="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center text-xs shadow-sm group-hover:scale-110 transition-transform">
+              <i class="fa-solid fa-truck"></i>
+            </div>
+            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-rose-200/80 dark:bg-rose-800/60 text-rose-800 dark:text-rose-200 uppercase tracking-wider">PDF A4</span>
+          </div>
+          <div>
+            <div class="text-xs font-bold text-slate-800 dark:text-white leading-tight">Surat Jalan</div>
+            <div class="text-[10px] text-rose-700 dark:text-rose-300 font-semibold mt-0.5">Ekspedisi & Logistik</div>
+          </div>
+        </button>
+      </div>
+    </div>
   </div>
   `);
   
