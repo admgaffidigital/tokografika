@@ -135,7 +135,9 @@ if (isPwaInstalled()) {
 // Register PWA Service Worker untuk caching instan dan performa super cepat
 if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
+    navigator.serviceWorker.register('/sw.js').then(reg => {
+      reg.update().catch(() => {});
+    }).catch(() => {});
   });
 }
 
