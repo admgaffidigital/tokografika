@@ -32,9 +32,17 @@ const withTimeout = (promise, timeoutMs = 3500) => {
 };
 
 window.verifyLicenseInDb = async (keyCode, expectedType) => {
-  const codeToCheck = keyCode || localStorage.getItem('freshmart_cache_' + expectedType);
+  const codeToCheck = (keyCode || localStorage.getItem('freshmart_cache_' + expectedType) || '').trim().toUpperCase();
   if (!codeToCheck) return false;
 
+  // 1. MASTER DEVELOPER KEYS (Langsung Aktif Instan)
+  const masterKeys = ['TOKOGRAFIKA2026', 'GRAFIKA-PRO-2026', 'GRAFIKA-MASTER-PRO', 'PRO-DEV-2026'];
+  if (masterKeys.includes(codeToCheck)) {
+    localStorage.setItem('freshmart_cache_' + expectedType, codeToCheck);
+    return true;
+  }
+
+  // 2. FIRESTORE DATABASE LICENSES LOOKUP (Untuk Klien SaaS)
   try {
     const doc = await withTimeout(db.collection("freshmart_licenses").doc(codeToCheck).get(), 3000);
     const isValid = doc.exists && doc.data().isActive === true && doc.data().type === expectedType;
