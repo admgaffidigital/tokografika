@@ -1,0 +1,67 @@
+<!-- ========================================================================= -->
+<!-- MODAL: BUKU PANDUAN BELANJA & CARA PESAN ONLINE (STOREFRONT)             -->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[105] bg-slate-900/70 hidden flex items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300' id='buyer-guide-modal' onclick='if(event.target===this) closeBuyerGuide()'>
+  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-2xl sm:max-w-3xl md:max-w-4xl max-h-[92dvh] flex flex-col hide-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform scale-95 transition-transform duration-300 overflow-hidden' id='buyer-guide-modal-box'>
+    
+    <!-- Modal Header -->
+    <div class='sticky top-0 bg-white dark:bg-slate-800 px-5 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center z-20 shrink-0'>
+      <div class='flex items-center gap-3'>
+        <div class='w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
+          <i class='fa-solid fa-circle-question'></i>
+        </div>
+        <div>
+          <h3 class='font-black text-slate-900 dark:text-white text-base tracking-tight'>Panduan Belanja & Cara Pesan</h3>
+          <p class='text-[10px] sm:text-xs font-semibold text-slate-400'>Panduan lengkap cara pesan, multi-varian, harga grosir, hingga pembayaran</p>
+        </div>
+      </div>
+      <button class='w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-500 dark:hover:text-rose-400 transition-all border border-slate-200 dark:border-slate-600' onclick='closeBuyerGuide()' title='Tutup'>
+        <i class='fa-solid fa-xmark'></i>
+      </button>
+    </div>
+
+    <!-- Topic Navigation Pills -->
+    <div class='bg-slate-50 dark:bg-slate-900/60 px-4 py-2.5 border-b border-slate-200 dark:border-slate-700/80 overflow-x-auto no-scrollbar flex items-center gap-2 shrink-0'>
+      <button type='button' onclick='showBuyerGuideTopic("order_flow")' id='bguide-btn-order_flow' class='bguide-topic-btn px-3 py-1.5 rounded-lg text-xs font-black transition-all shrink-0 flex items-center gap-1.5'>
+        <i class='fa-solid fa-cart-shopping text-emerald-500'></i> <span>Cara Pesan Online</span>
+      </button>
+      <button type='button' onclick='showBuyerGuideTopic("variants")' id='bguide-btn-variants' class='bguide-topic-btn px-3 py-1.5 rounded-lg text-xs font-black transition-all shrink-0 flex items-center gap-1.5'>
+        <i class='fa-solid fa-layer-group text-blue-500'></i> <span>Pilih Multi-Varian</span>
+      </button>
+      <button type='button' onclick='showBuyerGuideTopic("wholesale")' id='bguide-btn-wholesale' class='bguide-topic-btn px-3 py-1.5 rounded-lg text-xs font-black transition-all shrink-0 flex items-center gap-1.5'>
+        <i class='fa-solid fa-tags text-amber-500'></i> <span>Harga Grosir</span>
+      </button>
+      <button type='button' onclick='showBuyerGuideTopic("decimal")' id='bguide-btn-decimal' class='bguide-topic-btn px-3 py-1.5 rounded-lg text-xs font-black transition-all shrink-0 flex items-center gap-1.5'>
+        <i class='fa-solid fa-scale-balanced text-indigo-500'></i> <span>Qty Koma / Kiloan</span>
+      </button>
+      <button type='button' onclick='showBuyerGuideTopic("voucher")' id='bguide-btn-voucher' class='bguide-topic-btn px-3 py-1.5 rounded-lg text-xs font-black transition-all shrink-0 flex items-center gap-1.5'>
+        <i class='fa-solid fa-ticket text-purple-500'></i> <span>Kupon Diskon</span>
+      </button>
+      <button type='button' onclick='showBuyerGuideTopic("shipping")' id='bguide-btn-shipping' class='bguide-topic-btn px-3 py-1.5 rounded-lg text-xs font-black transition-all shrink-0 flex items-center gap-1.5'>
+        <i class='fa-solid fa-motorcycle text-cyan-500'></i> <span>Pengiriman & GPS</span>
+      </button>
+      <button type='button' onclick='showBuyerGuideTopic("payment")' id='bguide-btn-payment' class='bguide-topic-btn px-3 py-1.5 rounded-lg text-xs font-black transition-all shrink-0 flex items-center gap-1.5'>
+        <i class='fa-solid fa-wallet text-emerald-500'></i> <span>Pembayaran (QRIS/COD)</span>
+      </button>
+      <button type='button' onclick='showBuyerGuideTopic("tracking")' id='bguide-btn-tracking' class='bguide-topic-btn px-3 py-1.5 rounded-lg text-xs font-black transition-all shrink-0 flex items-center gap-1.5'>
+        <i class='fa-solid fa-truck-ramp-box text-rose-500'></i> <span>Lacak & CS WhatsApp</span>
+      </button>
+    </div>
+
+    <!-- Guide Content Area -->
+    <div class='p-5 sm:p-6 overflow-y-auto flex-1 space-y-6 text-slate-700 dark:text-slate-200' id='buyer-guide-content'>
+      <!-- Content populated dynamically by JavaScript -->
+    </div>
+
+    <!-- Footer Modal -->
+    <div class='p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3 shrink-0'>
+      <span class='text-[10px] text-slate-400 font-bold flex items-center gap-1'>
+        <i class='fa-solid fa-circle-check text-emerald-500'></i> Belanja mudah, cepat, dan aman langsung dari toko resmi.
+      </span>
+      <button type='button' onclick='closeBuyerGuide()' class='px-4 py-2 bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition-all shadow-sm'>
+        Mengerti, Tutup Panduan
+      </button>
+    </div>
+
+  </div>
+</div>

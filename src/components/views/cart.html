@@ -4,26 +4,47 @@
 <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 hidden' id='view-cart'>
   <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-catalog&apos;)'>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-catalog&apos;)'>
         <i class='fa-solid fa-arrow-left text-sm'></i>
       </button>
       <h1 class='text-sm font-semibold text-slate-900 dark:text-white tracking-tight'>Keranjang Belanja</h1>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-50 dark:bg-rose-900/30 border-2 border-rose-200 dark:border-rose-800 text-rose-500 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-all shadow-sm hidden' id='btn-clear-cart' onclick='clearCart()'>
-        <i class='fa-solid fa-trash-can text-xs'></i>
-      </button>
+      <div class='flex items-center gap-1.5'>
+        <button class='px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 text-slate-600 dark:text-slate-300 hover:text-emerald-600 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1' onclick='openBuyerGuide("wholesale")' title='Panduan Grosir & Belanja'>
+          <i class='fa-solid fa-circle-question text-amber-500'></i> <span class='hidden sm:inline'>Panduan</span>
+        </button>
+        <button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-500 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-all shadow-sm hidden' id='btn-clear-cart' onclick='clearCart()' title='Kosongkan Keranjang'>
+          <i class='fa-solid fa-trash-can text-xs'></i>
+        </button>
+      </div>
       <div class='w-9 hidden' id='spacer-cart'></div>
     </div>
   </div>
   
   <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-[calc(7rem+env(safe-area-inset-bottom))]'>
     <div class='flex flex-col items-center justify-center h-[50vh] hidden px-5 text-center max-w-xs mx-auto' id='cart-empty-state'>
-      <div class='w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 text-slate-300 dark:text-slate-600 border-2 border-slate-200 dark:border-slate-700'>
+      <div class='w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 text-slate-300 dark:text-slate-600 border border-slate-200 dark:border-slate-700'>
         <i class='fa-solid fa-cart-arrow-down text-4xl'></i>
       </div>
       <h3 class='font-bold text-slate-800 dark:text-white text-base mb-1'>Keranjang Kosong</h3>
       <p class='text-slate-500 dark:text-slate-400 text-xs mb-6 font-medium'>Belum ada produk yang dipilih.</p>
       <button class='btn-primary px-8 py-3 text-xs' onclick='changeView(&apos;view-catalog&apos;)'>Belanja Sekarang</button>
     </div>
+
+    <!-- Quick Cart Helper Banner -->
+    <div class='px-4 max-w-3xl lg:max-w-4xl mx-auto w-full mb-3'>
+      <div class='bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/70 dark:border-amber-800/40 rounded-2xl p-3 flex items-center justify-between gap-2.5 text-xs'>
+        <div class='flex items-center gap-2.5 min-w-0'>
+          <i class='fa-solid fa-tags text-amber-500 text-sm shrink-0'></i>
+          <p class='text-[11px] font-semibold text-slate-700 dark:text-slate-300 truncate'>
+            Beli lebih banyak untuk dapat <b>Harga Grosir</b> otomatis!
+          </p>
+        </div>
+        <button type='button' onclick='openBuyerGuide("wholesale")' class='text-[10px] font-bold text-amber-700 dark:text-amber-400 hover:underline shrink-0 flex items-center gap-1'>
+          <span>Info Grosir</span> <i class='fa-solid fa-chevron-right text-[7px]'></i>
+        </button>
+      </div>
+    </div>
+
     <div class='px-4 space-y-3 max-w-3xl lg:max-w-4xl mx-auto w-full' id='cart-items-container'></div>
   </div>
   

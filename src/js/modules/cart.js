@@ -156,7 +156,11 @@ const renderCart = () => {
 };
 
 window.updCQty = (i, c) => {
-  if (cart[i].qty + c > 0) cart[i].qty += c; 
+  let current = cart[i].qty;
+  let isDecimal = !Number.isInteger(current) || current < 1;
+  let step = (cart[i].unit && ['kg', 'gram', 'ons', 'meter', 'liter', 'm', 'l'].includes(cart[i].unit.toLowerCase()) && isDecimal) ? 0.25 : 1;
+  let next = parseFloat((current + (c * step)).toFixed(2));
+  if (next > 0) cart[i].qty = next; 
   else cart.splice(i, 1); 
   renderCart(); 
   updCart(); 

@@ -16,6 +16,9 @@
         </div>
       </div>
       <div class='flex gap-2 items-center'>
+        <button class='px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shadow-sm text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center gap-1.5 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all active:scale-95' onclick='openBuyerGuide()' title='Panduan Cara Pesan & Belanja'>
+          <i class='fa-solid fa-circle-question text-amber-500'></i> <span class='hidden sm:inline'>Panduan</span>
+        </button>
         <button class='w-9 h-9 sm:w-10 sm:h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-600 dark:text-slate-300 rounded-full flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all' onclick='checkAdminAccess()' title='Akun / Admin'>
           <i class='fa-solid fa-user text-sm'></i>
         </button>
@@ -53,7 +56,7 @@
     
     <!-- Dynamic Categories -->
     <div class='w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5'>
-      <div class='bg-white dark:bg-slate-800 rounded-[1.25rem] p-4 sm:p-5 shadow-sm border-2 border-slate-200 dark:border-slate-700'>
+      <div class='bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 dark:border-slate-700/80'>
         <div class='flex items-center gap-2 mb-3'>
           <i class='fa-solid fa-layer-group text-emerald-500 dark:text-emerald-400 text-xs'></i>
           <h3 class='font-bold text-slate-800 dark:text-white text-xs tracking-widest uppercase'>Kategori</h3>
@@ -62,6 +65,30 @@
       </div>
     </div>
     
+    <!-- Quick Buyer Guide Banner -->
+    <div class='w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5'>
+      <div class='bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 dark:from-slate-800 dark:via-slate-800/90 dark:to-slate-800 rounded-2xl p-4 sm:p-4.5 border border-emerald-200/80 dark:border-emerald-700/50 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 relative overflow-hidden'>
+        <div class='flex items-center gap-3.5 relative z-10'>
+          <div class='w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-lg shrink-0 shadow-md shadow-emerald-500/20'>
+            <i class='fa-solid fa-book-open'></i>
+          </div>
+          <div>
+            <h4 class='text-xs sm:text-sm font-black text-slate-900 dark:text-white flex items-center gap-2'>
+              <span>Panduan Belanja & Cara Pesan</span>
+              <span class='bg-emerald-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider'>Mudah & Cepat</span>
+            </h4>
+            <p class='text-[10px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5'>
+              Pelajari cara pilih varian, dapatkan diskon grosir, isi desimal/kiloan, hingga bayar via QRIS/COD.
+            </p>
+          </div>
+        </div>
+        <button type='button' onclick='openBuyerGuide()' class='w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 active:scale-95 shrink-0 relative z-10'>
+          <i class='fa-solid fa-circle-question text-amber-300'></i>
+          <span>Buka Panduan</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Dynamic Vouchers -->
     <div class='w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5 hidden' id='voucher-section'>
       <div class='flex items-center gap-2 mb-3 px-1'>
@@ -73,7 +100,7 @@
     
     <!-- Search, Sort & View Controls -->
     <div class='px-4 sm:px-6 lg:px-8 pt-5 w-full max-w-7xl mx-auto'>
-      <div class='flex flex-col sm:flex-row gap-3 mb-5 items-center justify-between bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-[1.25rem] border border-slate-200 dark:border-slate-700 shadow-sm'>
+      <div class='flex flex-col sm:flex-row gap-3 mb-5 items-center justify-between bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm'>
         <div class='relative w-full sm:w-80 md:w-96 flex items-center'>
           <i class='fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs'></i>
           <input class='w-full pl-10 pr-[5rem] py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:border-emerald-500 transition-all text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500' id='search-input' name='search_catalog_query' type='search' autocomplete='off' readonly='readonly' onfocus='this.removeAttribute(&quot;readonly&quot;)' autocorrect='off' autocapitalize='off' spellcheck='false' oninput='handleSearch(this.value)' placeholder='Cari nama atau scan...'/>
