@@ -233,6 +233,7 @@ window.filterCategory = c => {
   rDyn(); 
   const s = el('catalog-scroll'); 
   if (s) s.scrollTo({ top: 0, behavior: 'smooth' }); 
+  if (window.updateStoreSeo) updateStoreSeo(c === 'Semua Produk' ? '' : `Kategori ${c}`);
 };
 
 window.handleSearch = v => {
@@ -373,6 +374,7 @@ window.openProductModal = i => {
   cProd = p; cVar = 0; cQty = 1; 
   setV('modal-qty-input', 1); 
   rProdMod();
+  if (window.updateStoreSeo) updateStoreSeo(p.name, p.desc, p.img, p);
   
   const m = el('product-modal'), c = el('product-modal-content');
   if (m && c) {
@@ -401,6 +403,7 @@ window.closeProductModal = (fH = !1) => {
     m.classList.add('opacity-0');
     c.classList.add('translate-y-full', 'sm:translate-y-5');
     setTimeout(() => hide('product-modal'), 300);
+    if (window.updateStoreSeo) updateStoreSeo();
   }
 };
 

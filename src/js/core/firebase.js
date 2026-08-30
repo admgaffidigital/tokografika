@@ -198,6 +198,7 @@ const loadAppData = async () => {
       if (_si) { _si.value = ''; el('btn-search-clear')?.classList.add('hidden'); }
       rDyn();
       applyGlobalTheme();
+      if (window.updateStoreSeo) updateStoreSeo();
       
       try {
         let savedProKey = (appData.licenseKey || localStorage.getItem('freshmart_cache_PRO') || '').trim().toUpperCase();

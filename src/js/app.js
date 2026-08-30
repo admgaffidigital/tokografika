@@ -38,8 +38,11 @@
 // 10. Progressive Web App (PWA) Engine & Manifest
 // @include modules/pwa.js
 
-// 11. Realtime Price & Inventory Synchronization
+// 11. Search Engine Optimization (SEO) & Schema.org JSON-LD
+// @include modules/seo.js
+
+// 12. Realtime Price & Inventory Synchronization
 // @include modules/sync.js
 
-// 12. Routing, History, & App Bootstrap
+// 13. Routing, History, & App Bootstrap
 // @include bootstrap.js
