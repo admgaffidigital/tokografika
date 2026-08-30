@@ -1,5 +1,5 @@
 // =============================================================================
-// POS KASIR (POINT OF SALE) ENGINE - UNIVERSAL FLOATING CART SYSTEM
+// POS KASIR (POINT OF SALE) ENGINE - 3-STEP WIZARD + FULL PRINT SUPPORT
 // =============================================================================
 
 let posCart = [];
@@ -12,6 +12,12 @@ let posClockInterval = null;
 let posViewMode = 'grid'; // 'grid' | 'list'
 let currentEditingCartIndex = null;
 let currentSelectedVariantProduct = null;
+
+// Wizard State
+let posCurrentStep = 1;
+let posDeliveryMethod = 'pickup'; // 'pickup' | 'delivery'
+let posShippingCost = 0;
+let posLastOrder = null; // holds completed order for printing
 
 // -----------------------------------------------------------------------------
 // 1. LOGIN TAB SWITCHER & AUTHENTICATION
@@ -150,11 +156,11 @@ window.setPosViewMode = (mode) => {
   const btnList = el('btn-pos-view-list');
   
   if (mode === 'grid') {
-    if (btnGrid) btnGrid.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-900 shadow-sm';
-    if (btnList) btnList.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-slate-400 hover:text-slate-700 dark:hover:text-slate-200';
+    if (btnGrid) btnGrid.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-white bg-white/30 shadow-sm';
+    if (btnList) btnList.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-white/60 hover:text-white';
   } else {
-    if (btnGrid) btnGrid.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-slate-400 hover:text-slate-700 dark:hover:text-slate-200';
-    if (btnList) btnList.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-900 shadow-sm';
+    if (btnGrid) btnGrid.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-white/60 hover:text-white';
+    if (btnList) btnList.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-white bg-white/30 shadow-sm';
   }
 
   renderPosProducts();
@@ -199,274 +205,279 @@ const renderPosProducts = () => {
   }
 
   if (posViewMode === 'grid') {
-    container.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2.5 sm:gap-4';
-    container.innerHTML = filtered.map(p => {
-      const isActive = p.isActive !== 'false' && p.isActive !== false;
-      const hasVariants = p.variants && p.variants.length > 0;
-      return `
-        <div class="card-modern bg-white dark:bg-slate-900 rounded-2xl p-2 sm:p-3 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all cursor-pointer shadow-sm group flex flex-col justify-between active:scale-95 select-none" onclick="handlePosProductClick(${p.id})">
-          <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 mb-2 border border-slate-200/50 dark:border-slate-700/50">
-            <img src="${esc(p.img || '')}" onerror="window.imgErrRetry(this,'No Image',200)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${!isActive ? 'grayscale opacity-40' : ''}"/>
-            ${!isActive ? '<div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center"><span class="badge badge-solid-rose text-[8px] font-bold">KOSONG</span></div>' : ''}
-            ${hasVariants ? '<span class="absolute top-1.5 right-1.5 bg-indigo-600 text-white text-[7px] sm:text-[8px] font-bold px-1.5 py-0.5 rounded shadow"><i class="fa-solid fa-layer-group"></i> Varian</span>' : ''}
-            ${p.wholesale?.length ? '<span class="absolute top-1.5 left-1.5 bg-amber-500 text-white text-[7px] sm:text-[8px] font-extrabold px-1.5 py-0.5 rounded shadow"><i class="fa-solid fa-tags"></i> Grosir</span>' : ''}
-          </div>
-          <div class="flex-1 flex flex-col justify-between min-w-0 px-0.5">
-            <h4 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
-            <div class="flex items-baseline justify-between gap-1 mt-auto pt-1">
-              <span class="text-xs sm:text-base font-black text-emerald-600 dark:text-emerald-400 leading-none">${fCur(p.price)}</span>
-              ${p.unit ? `<span class="text-[8px] sm:text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">/${esc(p.unit)}</span>` : ''}
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
+    container.className = 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-3';
+    container.innerHTML = filtered.map(p => renderPosProductCardGrid(p)).join('');
   } else {
-    // List View
-    container.className = 'flex flex-col gap-2 max-w-4xl mx-auto';
-    container.innerHTML = filtered.map(p => {
-      const isActive = p.isActive !== 'false' && p.isActive !== false;
-      const hasVariants = p.variants && p.variants.length > 0;
-      return `
-        <div class="card-modern bg-white dark:bg-slate-900 rounded-xl p-2.5 sm:p-3 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all cursor-pointer shadow-sm flex items-center justify-between gap-3 active:scale-98 select-none" onclick="handlePosProductClick(${p.id})">
-          <div class="flex items-center gap-3 min-w-0">
-            <div class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-200/50 dark:border-slate-700/50">
-              <img src="${esc(p.img || '')}" onerror="window.imgErrRetry(this,'No Image',100)" class="w-full h-full object-cover"/>
-              ${!isActive ? '<div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center text-[7px] text-white font-bold">KOSONG</div>' : ''}
-            </div>
-            <div class="min-w-0">
-              <div class="flex items-center gap-1.5">
-                <h4 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 truncate">${esc(p.name)}</h4>
-                ${hasVariants ? '<span class="badge badge-xs badge-indigo">Varian</span>' : ''}
-                ${p.wholesale?.length ? '<span class="badge badge-xs badge-amber">Grosir</span>' : ''}
-              </div>
-              <p class="text-[10px] sm:text-xs text-slate-400 font-semibold mt-0.5 truncate">${esc(p.sku || '-')}</p>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-3 shrink-0">
-            <div class="text-right">
-              <p class="text-xs sm:text-base font-black text-emerald-600 dark:text-emerald-400">${fCur(p.price)}</p>
-              ${p.unit ? `<p class="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase">/${esc(p.unit)}</p>` : ''}
-            </div>
-            <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-bold hover:bg-emerald-500 hover:text-white transition-all shadow-sm">
-              <i class="fa-solid fa-plus"></i>
-            </button>
-          </div>
-        </div>
-      `;
-    }).join('');
+    container.className = 'space-y-2';
+    container.innerHTML = filtered.map(p => renderPosProductCardList(p)).join('');
   }
 };
 
-// -----------------------------------------------------------------------------
-// 4. POS PRODUCT SELECTION & MULTI-VARIANT MODAL
-// -----------------------------------------------------------------------------
-window.handlePosProductClick = (productId) => {
-  const p = (appData.products || []).find(x => x.id === productId);
-  if (!p) return;
+const getEffP = (item) => item.effectivePrice || item.price || 0;
 
-  const isActive = p.isActive !== 'false' && p.isActive !== false;
-  if (!isActive) {
-    showToast("Produk sedang kosong!");
-    return;
-  }
-
+const _getPosMainPrice = (p) => {
   if (p.variants && p.variants.length > 0) {
-    openPosVariantModal(productId);
-  } else {
-    addPosItemDirect(p, null, p.price);
+    const prices = p.variants.map(v => v.price || 0);
+    return Math.min(...prices);
   }
+  return p.salePrice > 0 ? p.salePrice : (p.price || 0);
 };
 
-window.openPosVariantModal = (productId) => {
-  const p = (appData.products || []).find(x => x.id === productId);
-  if (!p) return;
+const renderPosProductCardGrid = (p) => {
+  const isOutOfStock = p.stock !== undefined && p.stock <= 0 && !p.variants;
+  const hasVariants = p.variants && p.variants.length > 0;
+  const price = _getPosMainPrice(p);
+  const imgUrl = (p.images && p.images[0]) ? p.images[0] : '';
+  const cartQty = posCart.filter(c => c.id === p.id).reduce((s, c) => s + c.qty, 0);
+  const isGrosir = p.wholesalePrice > 0 && p.wholesaleMinQty > 0;
 
-  currentSelectedVariantProduct = p;
-  setIn('pos-variant-prod-name', p.name);
-  setIn('pos-variant-prod-sku', `SKU: ${p.sku || '-'}`);
-  
-  const imgEl = el('pos-variant-prod-img');
-  if (imgEl) imgEl.src = p.img || '';
+  return `
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isOutOfStock ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 hover:shadow-md'} overflow-hidden transition-all cursor-pointer group flex flex-col" onclick="${isOutOfStock ? '' : (hasVariants ? `openPosVariantModal('${p.id}')` : `addToCartPos('${p.id}', null, 1)`)}" title="${esc(p.name)}">
+      <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 overflow-hidden">
+        ${imgUrl ? `<img src="${esc(imgUrl)}" alt="${esc(p.name)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.style.display='none'"/>` : `<div class="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600"><i class="fa-solid fa-image text-2xl"></i></div>`}
+        ${cartQty > 0 ? `<div class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center shadow-md border-2 border-white">${cartQty}</div>` : ''}
+        ${isGrosir ? `<div class="absolute top-1.5 left-1.5 bg-amber-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full">GROSIR</div>` : ''}
+        ${hasVariants ? `<div class="absolute bottom-1.5 right-1.5 bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 text-[8px] font-black px-1.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">${p.variants.length} varian</div>` : ''}
+        ${isOutOfStock ? `<div class="absolute inset-0 bg-white/60 dark:bg-black/60 flex items-center justify-center"><span class="text-[10px] font-black text-rose-600 bg-white/90 dark:bg-slate-900/90 px-2 py-1 rounded-full">Habis</span></div>` : ''}
+      </div>
+      <div class="p-2.5 flex flex-col flex-1">
+        <p class="text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight line-clamp-2 flex-1">${esc(p.name)}</p>
+        <p class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 mt-1.5">${hasVariants ? 'Mulai ' : ''}${price > 0 ? fCur(price) : 'Lihat Varian'}</p>
+      </div>
+    </div>
+  `;
+};
 
-  const optionsContainer = el('pos-variant-options-list');
-  if (optionsContainer) {
-    optionsContainer.innerHTML = p.variants.map((v, vIdx) => `
-      <button type="button" class="w-full p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 flex items-center justify-between gap-2 transition-all active:scale-98 group text-left" onclick="selectPosVariant(${vIdx})">
-        <div class="flex items-center gap-2.5 min-w-0">
-          <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 overflow-hidden shrink-0 border border-slate-200 dark:border-slate-600">
-            <img src="${esc(v.img || p.img || '')}" class="w-full h-full object-cover"/>
-          </div>
-          <div class="min-w-0">
-            <h5 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover:text-emerald-600">${esc(v.name)}</h5>
-            <p class="text-[10px] text-slate-400 font-semibold">${esc(v.sku || '-')}</p>
-          </div>
+const renderPosProductCardList = (p) => {
+  const isOutOfStock = p.stock !== undefined && p.stock <= 0 && !p.variants;
+  const hasVariants = p.variants && p.variants.length > 0;
+  const price = _getPosMainPrice(p);
+  const imgUrl = (p.images && p.images[0]) ? p.images[0] : '';
+  const cartQty = posCart.filter(c => c.id === p.id).reduce((s, c) => s + c.qty, 0);
+  const isGrosir = p.wholesalePrice > 0 && p.wholesaleMinQty > 0;
+
+  return `
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isOutOfStock ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 hover:shadow-md'} p-3 flex items-center gap-3 transition-all cursor-pointer" onclick="${isOutOfStock ? '' : (hasVariants ? `openPosVariantModal('${p.id}')` : `addToCartPos('${p.id}', null, 1)`)}" title="${esc(p.name)}">
+      <div class="w-14 h-14 rounded-xl bg-slate-100 dark:bg-slate-800 overflow-hidden shrink-0 flex items-center justify-center">
+        ${imgUrl ? `<img src="${esc(imgUrl)}" alt="${esc(p.name)}" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'"/>` : `<i class="fa-solid fa-image text-slate-300 dark:text-slate-600 text-lg"></i>`}
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-bold text-slate-800 dark:text-slate-200 truncate">${esc(p.name)}</p>
+        <div class="flex items-center gap-2 mt-0.5">
+          ${isGrosir ? `<span class="text-[8px] font-black bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 px-1.5 py-0.5 rounded-full">GROSIR</span>` : ''}
+          ${hasVariants ? `<span class="text-[8px] font-black bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded-full">${p.variants.length} varian</span>` : ''}
+          ${isOutOfStock ? `<span class="text-[10px] font-black text-rose-600">Habis</span>` : ''}
         </div>
-        <div class="text-right shrink-0">
-          <span class="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400">${fCur(v.price ?? p.price)}</span>
-          ${p.unit ? `<span class="text-[8px] font-bold text-slate-400 block uppercase">/${esc(p.unit)}</span>` : ''}
-        </div>
-      </button>
-    `).join('');
-  }
-
-  const modal = el('pos-variant-modal');
-  const box = el('pos-variant-box');
-  if (modal && box) {
-    show('pos-variant-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('scale-95');
-    }, 10);
-  }
-};
-
-window.closePosVariantModal = () => {
-  const modal = el('pos-variant-modal');
-  const box = el('pos-variant-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('scale-95');
-    setTimeout(() => hide('pos-variant-modal'), 300);
-  }
-};
-
-window.selectPosVariant = (variantIndex) => {
-  if (!currentSelectedVariantProduct) return;
-  const p = currentSelectedVariantProduct;
-  const v = p.variants[variantIndex];
-  addPosItemDirect(p, v.name, v.price ?? p.price, v.img || p.img);
-  closePosVariantModal();
-};
-
-const addPosItemDirect = (product, variantName = null, price = 0, variantImg = null) => {
-  const existing = posCart.find(item => item.id === product.id && item.variantName === variantName);
-  if (existing) {
-    existing.qty = Math.round((existing.qty + 1) * 100) / 100;
-  } else {
-    posCart.push({
-      id: product.id,
-      name: product.name,
-      variantName: variantName,
-      price: price || product.price,
-      img: variantImg || product.img,
-      qty: 1,
-      unit: product.unit || '',
-      wholesale: product.wholesale || []
-    });
-  }
-
-  renderPosCart();
+        <p class="text-sm font-black text-emerald-600 dark:text-emerald-400 mt-1">${hasVariants ? 'Mulai ' : ''}${price > 0 ? fCur(price) : 'Lihat Varian'}</p>
+      </div>
+      <div class="flex items-center gap-1.5 shrink-0">
+        ${cartQty > 0 ? `<span class="w-6 h-6 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center">${cartQty}</span>` : ''}
+        ${!isOutOfStock ? `
+          <button type="button" class="w-8 h-8 rounded-xl flex items-center justify-center font-black transition-all text-white shadow-sm active:scale-95" style="background-color:var(--clr-p)" onclick="event.stopPropagation(); ${hasVariants ? `openPosVariantModal('${p.id}')` : `addToCartPos('${p.id}', null, 1)`}">
+            <i class="fa-solid fa-plus text-xs"></i>
+          </button>` : ''}
+      </div>
+    </div>
+  `;
 };
 
 // -----------------------------------------------------------------------------
-// 5. UNIVERSAL FLOATING CART MANAGEMENT & DRAWER
+// 4. ADD TO CART
 // -----------------------------------------------------------------------------
-window.openPosCartDrawer = () => {
-  const modal = el('pos-cart-drawer-modal');
-  const box = el('pos-cart-drawer-box');
-  if (modal && box) {
-    show('pos-cart-drawer-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-full');
-      box.classList.remove('sm:translate-x-full');
-    }, 10);
-  }
-};
+window.addToCartPos = (productId, variantId, qty = 1) => {
+  const product = (appData.products || []).find(p => p.id === productId);
+  if (!product) return;
 
-window.closePosCartDrawer = () => {
-  const modal = el('pos-cart-drawer-modal');
-  const box = el('pos-cart-drawer-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-full');
-    box.classList.add('sm:translate-x-full');
-    setTimeout(() => hide('pos-cart-drawer-modal'), 300);
-  }
-};
-
-window.updatePosQty = (index, delta) => {
-  if (!posCart[index]) return;
-  const newQty = Math.round((posCart[index].qty + delta) * 100) / 100;
-  if (newQty <= 0) {
-    posCart.splice(index, 1);
+  let cartItem;
+  if (variantId) {
+    const variant = (product.variants || []).find(v => v.id === variantId || v.name === variantId);
+    if (!variant) return;
+    
+    const existingIdx = posCart.findIndex(c => c.id === productId && c.variantId === variantId);
+    if (existingIdx > -1) {
+      posCart[existingIdx].qty = Math.round((posCart[existingIdx].qty + qty) * 100) / 100;
+    } else {
+      const basePrice = variant.price || 0;
+      const isWholesale = product.wholesaleMinQty > 0 && (qty >= product.wholesaleMinQty);
+      const effectivePrice = isWholesale ? (product.wholesalePrice || basePrice) : (product.salePrice > 0 ? product.salePrice : basePrice);
+      
+      posCart.push({
+        id: productId,
+        variantId: variantId,
+        name: product.name,
+        variantName: variant.name || variantId,
+        price: basePrice,
+        effectivePrice,
+        unit: variant.unit || product.unit || '',
+        qty,
+        image: (product.images && product.images[0]) || '',
+        wholesaleMinQty: product.wholesaleMinQty || 0,
+        wholesalePrice: product.wholesalePrice || 0
+      });
+    }
   } else {
-    posCart[index].qty = newQty;
+    const existingIdx = posCart.findIndex(c => c.id === productId && !c.variantId);
+    if (existingIdx > -1) {
+      const newQty = Math.round((posCart[existingIdx].qty + qty) * 100) / 100;
+      posCart[existingIdx].qty = newQty;
+      // Re-check wholesale
+      if (product.wholesaleMinQty > 0) {
+        posCart[existingIdx].effectivePrice = newQty >= product.wholesaleMinQty ? (product.wholesalePrice || product.price) : (product.salePrice > 0 ? product.salePrice : product.price);
+      }
+    } else {
+      const basePrice = product.salePrice > 0 ? product.salePrice : (product.price || 0);
+      const isWholesale = product.wholesaleMinQty > 0 && (qty >= product.wholesaleMinQty);
+      const effectivePrice = isWholesale ? (product.wholesalePrice || basePrice) : basePrice;
+      
+      posCart.push({
+        id: productId,
+        variantId: null,
+        name: product.name,
+        variantName: null,
+        price: basePrice,
+        effectivePrice,
+        unit: product.unit || '',
+        qty,
+        image: (product.images && product.images[0]) || '',
+        wholesaleMinQty: product.wholesaleMinQty || 0,
+        wholesalePrice: product.wholesalePrice || 0
+      });
+    }
   }
+
   renderPosCart();
+  renderPosProducts();
+  showToast(`${product.name} ditambahkan!`);
 };
 
-window.removePosItem = (index) => {
-  if (!posCart[index]) return;
+window.removeFromPosCart = (index) => {
   posCart.splice(index, 1);
   renderPosCart();
+  renderPosProducts();
 };
 
 window.clearPosCart = () => {
   if (!posCart.length) return;
-  showConfirm("Kosongkan Keranjang", "Batalkan seluruh item di transaksi kasir saat ini?", () => {
-    posCart = [];
-    renderPosCart();
-    closePosCartDrawer();
-    showToast("Keranjang transaksi dikosongkan");
-  });
+  posCart = [];
+  renderPosCart();
+  renderPosProducts();
 };
 
-// Modal Edit Kuantitas Desimal
-window.openPosQtyModal = (cartIndex) => {
-  if (!posCart[cartIndex]) return;
-  currentEditingCartIndex = cartIndex;
-  const item = posCart[cartIndex];
+window.changePosQty = (index, delta) => {
+  if (!posCart[index]) return;
+  const item = posCart[index];
+  const newQty = Math.round((item.qty + delta) * 100) / 100;
+  if (newQty <= 0) {
+    posCart.splice(index, 1);
+  } else {
+    posCart[index].qty = newQty;
+    // Re-check wholesale
+    if (item.wholesaleMinQty > 0) {
+      posCart[index].effectivePrice = newQty >= item.wholesaleMinQty ? (item.wholesalePrice || item.price) : item.price;
+    }
+  }
+  renderPosCart();
+  renderPosProducts();
+};
 
-  setIn('pos-qty-prod-name', `${item.name}${item.variantName ? ` (${item.variantName})` : ''}`);
+// -----------------------------------------------------------------------------
+// 5. VARIANT MODAL
+// -----------------------------------------------------------------------------
+window.openPosVariantModal = (productId) => {
+  currentSelectedVariantProduct = (appData.products || []).find(p => p.id === productId);
+  if (!currentSelectedVariantProduct || !currentSelectedVariantProduct.variants) return;
+
+  const p = currentSelectedVariantProduct;
+  const imgUrl = (p.images && p.images[0]) ? p.images[0] : '';
+  if (el('pos-variant-prod-img')) el('pos-variant-prod-img').src = imgUrl;
+  setIn('pos-variant-prod-name', p.name);
+  setIn('pos-variant-prod-sku', 'SKU: ' + (p.sku || '-'));
+
+  const list = el('pos-variant-options-list');
+  if (list) {
+    list.innerHTML = (p.variants || []).map(v => {
+      const cartQty = posCart.filter(c => c.id === p.id && c.variantId === v.id).reduce((s, c) => s + c.qty, 0);
+      const isOut = v.stock !== undefined && v.stock <= 0;
+      return `
+        <button type="button" onclick="addToCartPos('${p.id}', '${v.id || v.name}', 1); closePosVariantModal();" 
+          class="w-full flex items-center justify-between p-3 rounded-xl border ${isOut ? 'border-slate-200 dark:border-slate-800 opacity-50 cursor-not-allowed' : 'border-slate-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 active:scale-95'} transition-all"
+          ${isOut ? 'disabled' : ''}>
+          <div class="text-left">
+            <p class="text-sm font-bold text-slate-800 dark:text-slate-200">${esc(v.name)}</p>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">SKU: ${esc(v.sku || '-')} · Stok: ${v.stock !== undefined ? v.stock : '∞'} ${esc(v.unit || '')}</p>
+          </div>
+          <div class="flex items-center gap-2.5">
+            ${cartQty > 0 ? `<span class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-full">${cartQty} di keranjang</span>` : ''}
+            <span class="text-sm font-black text-emerald-600 dark:text-emerald-400">${fCur(v.price || 0)}</span>
+          </div>
+        </button>
+      `;
+    }).join('');
+  }
+
+  show('pos-variant-modal');
+  setTimeout(() => {
+    el('pos-variant-modal').classList.remove('opacity-0');
+    el('pos-variant-box').classList.remove('scale-95');
+  }, 10);
+};
+
+window.closePosVariantModal = () => {
+  el('pos-variant-modal').classList.add('opacity-0');
+  el('pos-variant-box').classList.add('scale-95');
+  setTimeout(() => hide('pos-variant-modal'), 300);
+};
+
+// -----------------------------------------------------------------------------
+// 6. QTY DECIMAL MODAL
+// -----------------------------------------------------------------------------
+window.openPosQtyModal = (index) => {
+  currentEditingCartIndex = index;
+  const item = posCart[index];
+  if (!item) return;
+  setIn('pos-qty-modal-title', `Ubah Jumlah: ${item.name}`);
+  setIn('pos-qty-prod-name', item.variantName ? `${item.name} (${item.variantName})` : item.name);
   setIn('pos-qty-modal-unit', item.unit || 'PCS');
+  if (el('pos-qty-modal-input')) el('pos-qty-modal-input').value = item.qty;
 
-  const input = el('pos-qty-modal-input');
-  if (input) {
-    input.value = item.qty;
-  }
-
-  const modal = el('pos-qty-modal');
-  const box = el('pos-qty-box');
-  if (modal && box) {
-    show('pos-qty-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('scale-95');
-      if (input) { input.focus(); input.select(); }
-    }, 10);
-  }
+  show('pos-qty-modal');
+  setTimeout(() => {
+    el('pos-qty-modal').classList.remove('opacity-0');
+    el('pos-qty-box').classList.remove('scale-95');
+    el('pos-qty-modal-input')?.focus();
+    el('pos-qty-modal-input')?.select();
+  }, 10);
 };
 
 window.closePosQtyModal = () => {
-  const modal = el('pos-qty-modal');
-  const box = el('pos-qty-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('scale-95');
-    setTimeout(() => hide('pos-qty-modal'), 300);
-  }
+  el('pos-qty-modal').classList.add('opacity-0');
+  el('pos-qty-box').classList.add('scale-95');
+  setTimeout(() => hide('pos-qty-modal'), 300);
 };
 
-window.setPosQtyPreset = (amount) => {
-  const input = el('pos-qty-modal-input');
-  if (input) input.value = amount;
+window.setPosQtyPreset = (val) => {
+  if (el('pos-qty-modal-input')) el('pos-qty-modal-input').value = val;
 };
 
 window.savePosQtyModal = () => {
-  if (currentEditingCartIndex === null || !posCart[currentEditingCartIndex]) return;
   const val = parseFloat(el('pos-qty-modal-input')?.value || '1');
   if (val <= 0 || isNaN(val)) {
     posCart.splice(currentEditingCartIndex, 1);
   } else {
     posCart[currentEditingCartIndex].qty = Math.round(val * 100) / 100;
+    const item = posCart[currentEditingCartIndex];
+    if (item.wholesaleMinQty > 0) {
+      item.effectivePrice = item.qty >= item.wholesaleMinQty ? (item.wholesalePrice || item.price) : item.price;
+    }
   }
   closePosQtyModal();
   renderPosCart();
+  renderPosProducts();
 };
 
+// -----------------------------------------------------------------------------
+// 7. RENDER CART
+// -----------------------------------------------------------------------------
 const renderPosCart = () => {
   const drawerContainer = el('pos-drawer-cart-items-container');
   const floatDock = el('pos-floating-cart-dock');
@@ -478,6 +489,9 @@ const renderPosCart = () => {
   const totalItems = posCart.length;
   const totalQty = posCart.reduce((acc, item) => acc + item.qty, 0);
   const formattedQty = Math.round(totalQty * 100) / 100;
+  const subtotal = posCart.reduce((acc, item) => acc + (getEffP(item) * item.qty), 0);
+  const origTotal = posCart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+  const discount = origTotal - subtotal;
 
   if (topBadge) {
     topBadge.innerText = formattedQty;
@@ -485,6 +499,11 @@ const renderPosCart = () => {
   }
   if (floatDockCount) floatDockCount.innerText = `${totalItems} Item (${formattedQty})`;
   if (drawerCount) drawerCount.innerText = `${totalItems} Produk (${formattedQty} Unit)`;
+
+  setIn('pos-drawer-summary-subtotal', fCur(subtotal));
+  setIn('pos-drawer-summary-discount', discount > 0 ? `-${fCur(discount)}` : fCur(0));
+  setIn('pos-drawer-summary-total', fCur(subtotal));
+  if (floatDockTotal) floatDockTotal.innerText = fCur(subtotal);
 
   if (!posCart.length) {
     if (drawerContainer) {
@@ -501,107 +520,104 @@ const renderPosCart = () => {
     if (floatDock) {
       floatDock.classList.add('translate-y-28', 'opacity-0', 'pointer-events-none');
     }
-
-    setIn('pos-drawer-summary-subtotal', 'Rp 0');
-    setIn('pos-drawer-summary-discount', 'Rp 0');
-    setIn('pos-drawer-summary-total', 'Rp 0');
-    if (floatDockTotal) floatDockTotal.innerText = 'Rp 0';
     return;
   }
 
-  // Show Floating Cart Dock
   if (floatDock) {
     floatDock.classList.remove('translate-y-28', 'opacity-0', 'pointer-events-none');
   }
 
-  let subtotal = 0;
-  let totalDiscount = 0;
+  if (drawerContainer) {
+    drawerContainer.innerHTML = posCart.map((item, idx) => {
+      const effPrice = getEffP(item);
+      const isGrosir = item.wholesaleMinQty > 0 && item.qty >= item.wholesaleMinQty;
+      const lineTotal = effPrice * item.qty;
+      const isDecimal = item.unit && ['kg', 'gram', 'liter', 'ml', 'ons', 'm', 'cm'].some(u => item.unit.toLowerCase().includes(u));
 
-  const itemsHtml = posCart.map((item, idx) => {
-    const origPrice = item.price;
-    const effPrice = getEffP(item);
-    const itemSubtotal = effPrice * item.qty;
-    const isWholesale = effPrice < origPrice;
-
-    subtotal += origPrice * item.qty;
-    totalDiscount += (origPrice - effPrice) * item.qty;
-
-    return `
-      <div class="bg-white dark:bg-[#0b1329] p-3 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2.5 shadow-sm">
-        <div class="flex-1 min-w-0">
-          <div class="flex items-center gap-1.5">
-            <h5 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">${esc(item.name)}</h5>
-            ${item.variantName ? `<span class="badge badge-xs badge-slate font-bold">${esc(item.variantName)}</span>` : ''}
-            ${isWholesale ? '<span class="badge badge-xs badge-amber font-bold">GROSIR</span>' : ''}
-          </div>
-          <div class="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 mt-1">
-            <span>${fCur(effPrice)}</span>
-            ${item.unit ? `<span>/ ${esc(item.unit)}</span>` : ''}
-            <span>•</span>
-            <span class="font-black text-slate-800 dark:text-slate-200">${fCur(itemSubtotal)}</span>
+      return `
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3 flex items-start gap-3 shadow-sm">
+          ${item.image ? `<img src="${esc(item.image)}" class="w-12 h-12 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-slate-700" onerror="this.style.display='none'"/>` : `<div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 shrink-0 flex items-center justify-center"><i class="fa-solid fa-image text-slate-300 dark:text-slate-600"></i></div>`}
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight truncate">${esc(item.name)}${item.variantName ? ` <span class="text-slate-500">(${esc(item.variantName)})</span>` : ''}</p>
+            <div class="flex items-center gap-1.5 mt-0.5">
+              ${isGrosir ? `<span class="text-[8px] font-black bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 px-1.5 py-0.5 rounded-full">GROSIR</span>` : ''}
+              <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400">${fCur(effPrice)} × ${item.qty}${item.unit ? ' ' + item.unit : ''}</span>
+            </div>
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-sm font-black text-emerald-600 dark:text-emerald-400">${fCur(lineTotal)}</span>
+              <div class="flex items-center gap-1.5">
+                <button type="button" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-all active:scale-95" onclick="changePosQty(${idx}, -${isDecimal ? 0.5 : 1})">
+                  <i class="fa-solid fa-minus text-[10px] text-slate-600 dark:text-slate-400"></i>
+                </button>
+                <button type="button" class="min-w-[32px] text-center text-xs font-black text-slate-900 dark:text-white px-2 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg cursor-pointer hover:border-emerald-500 transition-colors" onclick="openPosQtyModal(${idx})">
+                  ${item.qty}
+                </button>
+                <button type="button" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-all active:scale-95" onclick="changePosQty(${idx}, ${isDecimal ? 0.5 : 1})">
+                  <i class="fa-solid fa-plus text-[10px] text-slate-600 dark:text-slate-400"></i>
+                </button>
+                <button type="button" class="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 flex items-center justify-center transition-all active:scale-95" onclick="removeFromPosCart(${idx})">
+                  <i class="fa-solid fa-trash-can text-[10px] text-rose-500"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div class="flex items-center gap-1.5 shrink-0">
-          <div class="flex bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl h-8 overflow-hidden">
-            <button type="button" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold transition-colors" onclick="updatePosQty(${idx}, -1)">
-              <i class="fa-solid fa-minus text-[8px]"></i>
-            </button>
-            <button type="button" class="min-w-[32px] px-1.5 flex items-center justify-center text-xs font-black text-slate-800 dark:text-white bg-white dark:bg-slate-900 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors" onclick="openPosQtyModal(${idx})" title="Klik untuk ubah desimal">
-              ${item.qty}
-            </button>
-            <button type="button" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold transition-colors" onclick="updatePosQty(${idx}, 1)">
-              <i class="fa-solid fa-plus text-[8px]"></i>
-            </button>
-          </div>
-          <button type="button" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-xl transition-colors" onclick="removePosItem(${idx})" title="Hapus Item">
-            <i class="fa-solid fa-trash-can text-xs"></i>
-          </button>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  if (drawerContainer) drawerContainer.innerHTML = itemsHtml;
-
-  const grandTotal = subtotal - totalDiscount;
-  const fSubtotal = fCur(subtotal);
-  const fDiscount = totalDiscount > 0 ? `- ${fCur(totalDiscount)}` : 'Rp 0';
-  const fGrand = fCur(grandTotal);
-
-  setIn('pos-drawer-summary-subtotal', fSubtotal);
-  setIn('pos-drawer-summary-discount', fDiscount);
-  setIn('pos-drawer-summary-total', fGrand);
-  if (floatDockTotal) floatDockTotal.innerText = fGrand;
+      `;
+    }).join('');
+  }
 };
 
 // -----------------------------------------------------------------------------
-// 6. POS QUICK PAYMENT MODAL & CHECKOUT
+// 8. CART DRAWER
 // -----------------------------------------------------------------------------
-window.openPosPaymentModal = () => {
-  if (!posCart.length) return;
-
-  const total = posCart.reduce((sum, item) => sum + (getEffP(item) * item.qty), 0);
-  setIn('pos-modal-total-display', fCur(total));
-  
-  setPosPaymentMethod('cash');
-  
-  const cashInput = el('pos-cash-received-input');
-  if (cashInput) {
-    cashInput.value = total;
-    calculatePosChange();
+window.openPosCartDrawer = () => {
+  const modal = el('pos-cart-drawer-modal');
+  const box = el('pos-cart-drawer-box');
+  if (modal && box) {
+    show('pos-cart-drawer-modal');
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      box.classList.remove('translate-y-full', 'sm:translate-x-full');
+    }, 10);
   }
+};
+
+window.closePosCartDrawer = () => {
+  const modal = el('pos-cart-drawer-modal');
+  const box = el('pos-cart-drawer-box');
+  if (modal && box) {
+    modal.classList.add('opacity-0');
+    box.classList.add('translate-y-full', 'sm:translate-x-full');
+    setTimeout(() => hide('pos-cart-drawer-modal'), 300);
+  }
+};
+
+// -----------------------------------------------------------------------------
+// 9. PAYMENT WIZARD
+// -----------------------------------------------------------------------------
+const _getPosSubtotal = () => posCart.reduce((s, i) => s + (getEffP(i) * i.qty), 0);
+const _getPosGrandTotal = () => _getPosSubtotal() + posShippingCost;
+
+window.openPosPaymentModal = () => {
+  if (!posCart.length) { showToast('Keranjang masih kosong!'); return; }
+  
+  // Reset wizard state
+  posDeliveryMethod = 'pickup';
+  posShippingCost = 0;
+  posPaymentMethod = 'cash';
+  posCurrentStep = 1;
+
+  _renderPosStep1();
+  goPosStep(1);
 
   const modal = el('pos-payment-modal');
   const box = el('pos-payment-box');
-  if (modal && box) {
-    show('pos-payment-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('scale-95');
-      if (cashInput) cashInput.focus();
-    }, 10);
-  }
+  show('pos-payment-modal');
+  setTimeout(() => {
+    modal.classList.remove('opacity-0');
+    box.classList.remove('translate-y-full', 'sm:scale-95');
+    box.classList.add('sm:scale-100');
+  }, 10);
 };
 
 window.closePosPaymentModal = () => {
@@ -609,107 +625,323 @@ window.closePosPaymentModal = () => {
   const box = el('pos-payment-box');
   if (modal && box) {
     modal.classList.add('opacity-0');
-    box.classList.add('scale-95');
+    box.classList.add('translate-y-full');
+    box.classList.remove('sm:scale-100');
+    box.classList.add('sm:scale-95');
     setTimeout(() => hide('pos-payment-modal'), 300);
   }
+};
+
+// Make posCurrentStep accessible from window
+window.posCurrentStep = posCurrentStep;
+
+window.goPosStep = (step) => {
+  // Validate current step before proceeding
+  if (step > posCurrentStep) {
+    if (posCurrentStep === 3) return; // Can't go beyond step 3
+  }
+  
+  // Validation
+  if (step === 3 && posCurrentStep === 2) {
+    // Validate delivery step
+    if (posDeliveryMethod === 'delivery') {
+      const addr = el('pos-delivery-address')?.value?.trim();
+      if (!addr) { showToast('Masukkan alamat pengiriman terlebih dahulu!'); return; }
+    }
+    posShippingCost = posDeliveryMethod === 'delivery' ? (parseFloat(el('pos-shipping-cost')?.value || '0') || 0) : 0;
+  }
+
+  posCurrentStep = step;
+
+  // Hide all steps
+  ['pos-step-1', 'pos-step-2', 'pos-step-3'].forEach(id => {
+    const el2 = el(id);
+    if (el2) el2.classList.add('hidden');
+  });
+
+  // Show current step
+  const currentStepEl = el(`pos-step-${step}`);
+  if (currentStepEl) currentStepEl.classList.remove('hidden');
+
+  // Update step dots
+  for (let i = 1; i <= 3; i++) {
+    const dot = document.querySelector(`.pos-step-dot-${i}`);
+    const label = document.querySelector(`.pos-step-label-${i}`);
+    if (dot) {
+      if (i < step) {
+        dot.className = `w-7 h-7 rounded-full flex items-center justify-center text-xs font-black transition-all pos-step-dot-${i} bg-emerald-600 text-white`;
+        dot.innerHTML = '<i class="fa-solid fa-check text-[10px]"></i>';
+      } else if (i === step) {
+        dot.className = `w-7 h-7 rounded-full flex items-center justify-center text-xs font-black transition-all pos-step-dot-${i} bg-emerald-600 text-white shadow-md`;
+        dot.innerHTML = String(i);
+      } else {
+        dot.className = `w-7 h-7 rounded-full flex items-center justify-center text-xs font-black transition-all pos-step-dot-${i} bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400`;
+        dot.innerHTML = String(i);
+      }
+    }
+    if (label) {
+      label.className = `text-[10px] font-bold pos-step-label-${i} hidden sm:block ${i <= step ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}`;
+    }
+  }
+
+  // Update step lines
+  const line12 = document.querySelector('.pos-step-line-12');
+  const line23 = document.querySelector('.pos-step-line-23');
+  if (line12) line12.className = `h-px w-8 transition-all pos-step-line-12 ${step > 1 ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-700'}`;
+  if (line23) line23.className = `h-px w-8 transition-all pos-step-line-23 ${step > 2 ? 'bg-emerald-500' : 'bg-slate-200 dark:bg-slate-700'}`;
+
+  // Update title & subtitle
+  const titles = {
+    1: ['Ringkasan Belanja', 'Periksa item & data pelanggan'],
+    2: ['Metode Pengiriman', 'Pilih cara penyerahan barang'],
+    3: ['Metode Pembayaran', 'Pilih cara pembayaran pelanggan']
+  };
+  setIn('pos-wizard-title', titles[step][0]);
+  setIn('pos-wizard-subtitle', titles[step][1]);
+
+  // Update nav buttons
+  const btnPrev = el('pos-btn-prev');
+  const btnNext = el('pos-btn-next');
+  const btnLabel = el('pos-btn-next-label');
+  const btnIcon = btnNext?.querySelector('i');
+
+  if (btnPrev) btnPrev.classList.toggle('hidden', step === 1);
+
+  if (step === 3) {
+    if (btnLabel) btnLabel.innerText = 'Proses Pembayaran';
+    if (btnIcon) { btnIcon.className = 'fa-solid fa-check text-xs'; }
+    if (btnNext) btnNext.onclick = submitPosTransaction;
+    _renderPosStep3();
+  } else {
+    if (btnLabel) btnLabel.innerText = 'Lanjut';
+    if (btnIcon) { btnIcon.className = 'fa-solid fa-arrow-right text-xs'; }
+    if (btnNext) btnNext.onclick = () => goPosStep(posCurrentStep + 1);
+    if (step === 2) _renderPosStep2();
+  }
+};
+
+const _renderPosStep1 = () => {
+  const subtotal = _getPosSubtotal();
+  const totalQty = posCart.reduce((s, i) => s + i.qty, 0);
+  setIn('pos-modal-total-display', fCur(subtotal));
+  setIn('pos-modal-items-count', `${posCart.length} item · ${Math.round(totalQty * 100) / 100} unit`);
+
+  const listEl = el('pos-step1-items-list');
+  if (listEl) {
+    listEl.innerHTML = posCart.map(item => {
+      const effP = getEffP(item);
+      const isGrosir = item.wholesaleMinQty > 0 && item.qty >= item.wholesaleMinQty;
+      return `
+        <div class="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800 last:border-0">
+          <div class="flex-1 min-w-0 mr-3">
+            <p class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">${esc(item.name)}${item.variantName ? ` <span class="text-slate-400">(${esc(item.variantName)})</span>` : ''}</p>
+            <p class="text-[10px] font-semibold text-slate-500 dark:text-slate-400">${item.qty}${item.unit ? ' ' + item.unit : ''} × ${fCur(effP)} ${isGrosir ? '<span class="text-amber-600 font-black">Grosir</span>' : ''}</p>
+          </div>
+          <span class="text-sm font-black text-slate-900 dark:text-white shrink-0">${fCur(effP * item.qty)}</span>
+        </div>
+      `;
+    }).join('');
+  }
+};
+
+const _renderPosStep2 = () => {
+  setPosDeliveryMethod(posDeliveryMethod);
+};
+
+const _renderPosStep3 = () => {
+  const subtotal = _getPosSubtotal();
+  const grandTotal = subtotal + posShippingCost;
+
+  setIn('pos-pay-subtotal', fCur(subtotal));
+  setIn('pos-pay-grand-total', fCur(grandTotal));
+
+  const shippingRow = el('pos-pay-shipping-row');
+  if (shippingRow) {
+    if (posDeliveryMethod === 'delivery') {
+      shippingRow.classList.remove('hidden');
+      const courier = el('pos-courier-name')?.value?.trim() || '';
+      setIn('pos-pay-shipping-label', courier ? `Ongkir (${courier})` : 'Ongkir');
+      setIn('pos-pay-shipping-cost', fCur(posShippingCost));
+    } else {
+      shippingRow.classList.add('hidden');
+    }
+  }
+
+  setPosPaymentMethod(posPaymentMethod);
+  if (el('pos-cash-received-input')) el('pos-cash-received-input').value = '';
+  setIn('pos-change-display', 'Rp 0');
+  const changeBox = el('pos-change-display-box');
+  if (changeBox) changeBox.className = 'p-3.5 rounded-2xl border-2 border-dashed flex items-center justify-between transition-all border-slate-200 dark:border-slate-700';
+};
+
+window.setPosDeliveryMethod = (method) => {
+  posDeliveryMethod = method;
+  const pickupBtn = el('pos-delivery-pickup-btn');
+  const sendBtn = el('pos-delivery-send-btn');
+  const detailsSection = el('pos-delivery-details-section');
+  const pickupInfo = el('pos-pickup-info-section');
+
+  const activeClass = 'p-4 rounded-2xl border-2 font-bold text-xs flex flex-col items-center gap-2 transition-all border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 shadow-sm';
+  const inactiveClass = 'p-4 rounded-2xl border-2 font-bold text-xs flex flex-col items-center gap-2 transition-all border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300';
+
+  if (method === 'pickup') {
+    if (pickupBtn) pickupBtn.className = activeClass;
+    if (sendBtn) sendBtn.className = inactiveClass;
+    if (detailsSection) detailsSection.classList.add('hidden');
+    if (pickupInfo) pickupInfo.classList.remove('hidden');
+  } else {
+    if (pickupBtn) pickupBtn.className = inactiveClass;
+    if (sendBtn) sendBtn.className = activeClass;
+    if (detailsSection) detailsSection.classList.remove('hidden');
+    if (pickupInfo) pickupInfo.classList.add('hidden');
+  }
+};
+
+window.recalcPosTotal = () => {
+  posShippingCost = parseFloat(el('pos-shipping-cost')?.value || '0') || 0;
 };
 
 window.setPosPaymentMethod = (method) => {
   posPaymentMethod = method;
   
-  const buttons = document.querySelectorAll('.pos-method-btn');
-  buttons.forEach(btn => {
-    const isSelected = btn.getAttribute('data-method') === method;
-    if (isSelected) {
-      btn.className = 'p-2 sm:p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1 transition-all pos-method-btn border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300';
-    } else {
-      btn.className = 'p-2 sm:p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300';
-    }
+  document.querySelectorAll('.pos-method-btn').forEach(btn => {
+    const m = btn.getAttribute('data-method');
+    const isSelected = m === method;
+    btn.className = `pos-method-btn p-2.5 rounded-xl border-2 font-bold text-[10px] flex flex-col items-center gap-1.5 transition-all ${isSelected ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300'} ${btn.className.includes('col-span') ? 'col-span-3 sm:col-span-1' : ''}`;
   });
 
   const cashSection = el('pos-cash-input-section');
-  if (cashSection) {
-    cashSection.classList.toggle('hidden', method !== 'cash');
+  const noncashSection = el('pos-noncash-info-section');
+  
+  if (cashSection) cashSection.classList.toggle('hidden', method !== 'cash');
+  if (noncashSection) noncashSection.classList.toggle('hidden', method === 'cash');
+
+  const noncashText = el('pos-noncash-info-text');
+  if (noncashText) {
+    const texts = {
+      qris: 'Arahkan pelanggan untuk scan QRIS. Pastikan notifikasi pembayaran sudah masuk sebelum menekan proses.',
+      transfer: 'Pastikan transfer bank sudah diterima dan terkonfirmasi di rekening toko sebelum menekan proses.',
+      edc: 'Gesek atau tap kartu debit/kredit pelanggan di mesin EDC. Pastikan struk EDC tercetak sebelum proses.',
+      cod: 'Pembayaran dilakukan saat barang diterima oleh pelanggan di tujuan pengiriman.'
+    };
+    noncashText.innerText = texts[method] || 'Pastikan pembayaran sudah dikonfirmasi sebelum menekan tombol proses.';
   }
 };
 
 window.setQuickCash = (amount) => {
-  const total = posCart.reduce((sum, item) => sum + (getEffP(item) * item.qty), 0);
+  const grand = _getPosGrandTotal();
   const input = el('pos-cash-received-input');
   if (!input) return;
-
   if (amount === 'exact') {
-    input.value = total;
+    input.value = grand;
   } else {
     input.value = amount;
   }
   calculatePosChange();
 };
 
+window.addQuickCash = (amount) => {
+  const input = el('pos-cash-received-input');
+  if (!input) return;
+  const current = parseFloat(input.value || '0') || 0;
+  input.value = current + amount;
+  calculatePosChange();
+};
+
 window.calculatePosChange = () => {
-  const total = posCart.reduce((sum, item) => sum + (getEffP(item) * item.qty), 0);
+  const grand = _getPosGrandTotal();
   const received = parseFloat(el('pos-cash-received-input')?.value || '0');
-  const change = received - total;
+  const change = received - grand;
 
   const changeDisplay = el('pos-change-display');
+  const changeBox = el('pos-change-display-box');
+  
   if (changeDisplay) {
-    if (change < 0) {
+    if (received === 0) {
+      changeDisplay.innerText = 'Rp 0';
+      changeDisplay.className = 'text-xl font-black text-slate-400';
+    } else if (change < 0) {
       changeDisplay.innerText = `Kurang ${fCur(Math.abs(change))}`;
-      changeDisplay.className = 'text-base sm:text-lg font-black text-rose-500';
+      changeDisplay.className = 'text-xl font-black text-rose-500 dark:text-rose-400';
+      if (changeBox) changeBox.className = 'p-3.5 rounded-2xl border-2 border-dashed flex items-center justify-between transition-all border-rose-300 dark:border-rose-700 bg-rose-50 dark:bg-rose-950/30';
     } else {
       changeDisplay.innerText = fCur(change);
-      changeDisplay.className = 'text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400';
+      changeDisplay.className = 'text-xl font-black text-emerald-600 dark:text-emerald-400';
+      if (changeBox) changeBox.className = 'p-3.5 rounded-2xl border-2 border-dashed flex items-center justify-between transition-all border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950/30';
     }
   }
 };
 
+// -----------------------------------------------------------------------------
+// 10. SUBMIT TRANSACTION
+// -----------------------------------------------------------------------------
 window.submitPosTransaction = async () => {
   if (!posCart.length) return;
 
-  const total = posCart.reduce((sum, item) => sum + (getEffP(item) * item.qty), 0);
+  const grand = _getPosGrandTotal();
+  const subtotal = _getPosSubtotal();
   const received = parseFloat(el('pos-cash-received-input')?.value || '0');
 
-  if (posPaymentMethod === 'cash' && received < total) {
-    showToast("Uang yang diterima kurang dari total tagihan!");
+  if (posPaymentMethod === 'cash' && received < grand) {
+    showToast('Uang yang diterima kurang dari total tagihan!');
     return;
   }
 
   const custName = (el('pos-customer-name')?.value || '').trim() || 'Pelanggan Umum (Walk-in)';
+  const custNote = (el('pos-customer-note')?.value || '').trim();
+  const deliveryAddr = (el('pos-delivery-address')?.value || '').trim();
+  const courierName = (el('pos-courier-name')?.value || '').trim();
   const cashierName = activeCashier?.name || (cRole === 'admin' ? 'Admin Master' : 'Kasir Toko');
-  const orderId = `POS-${Date.now().toString().slice(-6)}`;
+  const orderId = `POS-${Date.now().toString().slice(-8)}`;
+
+  const methodLabels = {
+    cash: 'Tunai',
+    qris: 'QRIS',
+    transfer: 'Transfer Bank',
+    edc: 'Debit/EDC',
+    cod: 'COD'
+  };
 
   const orderData = {
     id: orderId,
+    orderId: orderId,
     type: 'pos',
     source: 'POS Kasir',
     customer: {
       name: custName,
       phone: '-',
-      address: 'Transaksi Langsung di Kasir',
-      method: 'Ambil di Toko / POS Kasir'
+      address: posDeliveryMethod === 'delivery' ? deliveryAddr : 'Ambil di Toko (Walk-in)',
+      deliveryMethod: posDeliveryMethod,
+      courier: courierName || null,
+      note: custNote || null,
+      method: posDeliveryMethod === 'pickup' ? 'Ambil di Toko' : 'Dikirim'
     },
     items: posCart.map(item => ({
       id: item.id,
       name: item.name,
       variantName: item.variantName || null,
-      price: getEffP(item),
+      price: item.price,
+      effectivePrice: getEffP(item),
       qty: item.qty,
       unit: item.unit || ''
     })),
-    subtotal: total,
-    total: total,
     payment: {
-      method: posPaymentMethod === 'cash' ? 'Tunai (Kasir)' : (posPaymentMethod === 'qris' ? 'QRIS E-Wallet' : (posPaymentMethod === 'transfer' ? 'Transfer Bank' : 'Debit/EDC')),
+      subtotal: subtotal,
+      shippingCost: posShippingCost,
+      grandTotal: grand,
+      method: methodLabels[posPaymentMethod] || posPaymentMethod,
+      methodKey: posPaymentMethod,
       status: 'Lunas',
-      cashReceived: posPaymentMethod === 'cash' ? received : total,
-      change: posPaymentMethod === 'cash' ? (received - total) : 0
+      cashReceived: posPaymentMethod === 'cash' ? received : grand,
+      change: posPaymentMethod === 'cash' ? Math.max(0, received - grand) : 0
     },
     status: 'Selesai',
     cashier: cashierName,
+    dateString: new Date().toISOString(),
     createdAt: new Date().toISOString()
   };
 
-  sLoad("Menyimpan Transaksi POS...");
+  sLoad('Menyimpan Transaksi...');
 
   try {
     if (typeof db !== 'undefined' && db.collection) {
@@ -718,20 +950,95 @@ window.submitPosTransaction = async () => {
     
     hLoad();
     closePosPaymentModal();
-    closePosCartDrawer();
-    showToast("Transaksi Berhasil Disimpan! 🎉");
 
-    if (typeof openReceiptPreview === 'function') {
-      openReceiptPreview(orderData);
-    }
+    // Store last order for print access
+    posLastOrder = orderData;
+
+    // Open success modal
+    _openPosSuccessModal(orderData);
 
     posCart = [];
     renderPosCart();
+    renderPosProducts();
     if (el('pos-customer-name')) el('pos-customer-name').value = '';
+    if (el('pos-customer-note')) el('pos-customer-note').value = '';
+    if (el('pos-delivery-address')) el('pos-delivery-address').value = '';
+    if (el('pos-courier-name')) el('pos-courier-name').value = '';
+    if (el('pos-shipping-cost')) el('pos-shipping-cost').value = '0';
     
   } catch (error) {
-    console.error('[FreshMart POS] Error submitting transaction:', error);
+    console.error('[FreshMart POS] Transaction error:', error);
     hLoad();
-    showToast("Gagal menyimpan transaksi POS: " + error.message);
+    showToast('Gagal menyimpan transaksi: ' + error.message);
+  }
+};
+
+// -----------------------------------------------------------------------------
+// 11. SUCCESS MODAL
+// -----------------------------------------------------------------------------
+const _openPosSuccessModal = (order) => {
+  setIn('pos-success-order-id', 'ID: ' + order.orderId);
+  setIn('pos-success-total', fCur(order.payment?.grandTotal || 0));
+  setIn('pos-success-method', order.payment?.method || '-');
+  setIn('pos-success-delivery', order.customer?.deliveryMethod === 'delivery' ? `Dikirim${order.customer?.courier ? ' via ' + order.customer.courier : ''}` : 'Ambil di Toko');
+
+  const changeRow = el('pos-success-change-row');
+  if (changeRow) {
+    if (order.payment?.methodKey === 'cash') {
+      changeRow.classList.remove('hidden');
+      setIn('pos-success-change', fCur(order.payment?.change || 0));
+    } else {
+      changeRow.classList.add('hidden');
+    }
+  }
+
+  const modal = el('pos-success-modal');
+  const box = el('pos-success-box');
+  show('pos-success-modal');
+  setTimeout(() => {
+    modal.classList.remove('opacity-0');
+    box.classList.remove('scale-75');
+    box.classList.add('scale-100');
+  }, 10);
+};
+
+window.closePosSuccessModal = () => {
+  const modal = el('pos-success-modal');
+  const box = el('pos-success-box');
+  if (modal && box) {
+    modal.classList.add('opacity-0');
+    box.classList.remove('scale-100');
+    box.classList.add('scale-75');
+    setTimeout(() => hide('pos-success-modal'), 300);
+  }
+};
+
+// -----------------------------------------------------------------------------
+// 12. PRINT FUNCTIONS (called from success modal)
+// -----------------------------------------------------------------------------
+window.printPosReceipt = () => {
+  if (!posLastOrder) { showToast('Tidak ada data transaksi!'); return; }
+  if (typeof openReceiptPreview === 'function') {
+    openReceiptPreview(posLastOrder);
+  } else {
+    showToast('Fungsi cetak struk belum tersedia!');
+  }
+};
+
+window.printPosInvoice = () => {
+  if (!posLastOrder) { showToast('Tidak ada data transaksi!'); return; }
+  if (typeof generatePosA4Document === 'function') {
+    generatePosA4Document('invoice', posLastOrder);
+  } else {
+    showToast('Fungsi cetak invoice belum tersedia!');
+  }
+};
+
+window.printPosSuratJalan = () => {
+  if (!posLastOrder) { showToast('Tidak ada data transaksi!'); return; }
+  if (typeof generatePosA4Document === 'function') {
+    generatePosA4Document('suratjalan', posLastOrder);
+  } else {
+    showToast('Fungsi cetak surat jalan belum tersedia!');
   }
 };

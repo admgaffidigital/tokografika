@@ -156,7 +156,7 @@
       </div>
 
       <button class='btn-primary w-full !py-3.5 !text-sm !font-black shadow-xl hover:-translate-y-0.5 active:scale-95' onclick='closePosCartDrawer(); openPosPaymentModal();'>
-        <i class='fa-solid fa-money-bill-wave mr-1.5'></i> Bayar Sekarang
+        <i class='fa-solid fa-money-bill-wave mr-1.5'></i> Proses Pembayaran
       </button>
     </div>
 
@@ -223,93 +223,347 @@
 </div>
 
 <!-- ========================================================================= -->
-<!-- MODAL: POS QUICK PAYMENT (PEMBAYARAN KILAT KASIR)                         -->
+<!-- MODAL: POS CHECKOUT WIZARD (3-STEP: REVIEW → PENGIRIMAN → PEMBAYARAN)     -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[80] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-3 sm:p-5' id='pos-payment-modal' onclick='if(event.target===this) closePosPaymentModal()'>
-  <div class='w-full max-w-lg bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-95 transition-transform duration-300' id='pos-payment-box'>
+<div class='fixed inset-0 z-[80] bg-slate-900/75 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center sm:p-4' id='pos-payment-modal' onclick='if(event.target===this) closePosPaymentModal()'>
+  <div class='w-full sm:max-w-lg bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 transition-transform duration-300 max-h-[95dvh] sm:max-h-[90vh] overflow-hidden' id='pos-payment-box'>
     
-    <!-- Modal Header -->
-    <div class='px-5 sm:px-6 py-3.5 sm:py-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between'>
-      <div class='flex items-center gap-2.5'>
-        <div class='w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold'>
-          <i class='fa-solid fa-wallet'></i>
+    <!-- Wizard Header: Progress Steps -->
+    <div class='px-5 pt-5 pb-3 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 shrink-0'>
+      <!-- Drag handle for mobile -->
+      <div class='w-10 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mb-4 sm:hidden'></div>
+      
+      <!-- Step Indicator -->
+      <div class='flex items-center justify-center gap-1.5 mb-3'>
+        <!-- Step 1 -->
+        <div class='flex items-center gap-1.5'>
+          <div class='w-7 h-7 rounded-full flex items-center justify-center text-xs font-black transition-all pos-step-dot-1 bg-emerald-600 text-white shadow-md'>1</div>
+          <span class='text-[10px] font-bold pos-step-label-1 text-emerald-600 dark:text-emerald-400 hidden sm:block'>Review</span>
         </div>
-        <div>
-          <h3 class='font-black text-xs sm:text-sm text-slate-900 dark:text-white leading-tight'>Pembayaran Kasir</h3>
-          <p class='text-[10px] text-slate-500 dark:text-slate-400 font-semibold'>Selesaikan transaksi belanja</p>
+        <div class='h-px w-8 bg-slate-200 dark:bg-slate-700 pos-step-line-12'></div>
+        <!-- Step 2 -->
+        <div class='flex items-center gap-1.5'>
+          <div class='w-7 h-7 rounded-full flex items-center justify-center text-xs font-black transition-all pos-step-dot-2 bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400'>2</div>
+          <span class='text-[10px] font-bold pos-step-label-2 text-slate-400 hidden sm:block'>Pengiriman</span>
+        </div>
+        <div class='h-px w-8 bg-slate-200 dark:bg-slate-700 pos-step-line-23'></div>
+        <!-- Step 3 -->
+        <div class='flex items-center gap-1.5'>
+          <div class='w-7 h-7 rounded-full flex items-center justify-center text-xs font-black transition-all pos-step-dot-3 bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400'>3</div>
+          <span class='text-[10px] font-bold pos-step-label-3 text-slate-400 hidden sm:block'>Pembayaran</span>
         </div>
       </div>
-      <button class='w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 flex items-center justify-center text-xs transition-colors' onclick='closePosPaymentModal()'>
-        <i class='fa-solid fa-xmark'></i>
+      
+      <!-- Step Title -->
+      <div class='flex items-center justify-between'>
+        <div>
+          <h3 class='font-black text-sm text-slate-900 dark:text-white leading-tight' id='pos-wizard-title'>Ringkasan Belanja</h3>
+          <p class='text-[10px] text-slate-500 dark:text-slate-400 font-semibold' id='pos-wizard-subtitle'>Periksa item sebelum melanjutkan</p>
+        </div>
+        <button class='w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 flex items-center justify-center text-xs transition-colors' onclick='closePosPaymentModal()'>
+          <i class='fa-solid fa-xmark'></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Wizard Body: Steps Container -->
+    <div class='flex-1 overflow-y-auto custom-scrollbar'>
+
+      <!-- ======================== STEP 1: REVIEW ORDER ======================== -->
+      <div id='pos-step-1' class='p-4 sm:p-5 space-y-4'>
+        
+        <!-- Order Total Highlight -->
+        <div class='bg-gradient-to-br from-emerald-500 to-emerald-700 p-4 rounded-2xl text-white text-center shadow-lg'>
+          <p class='text-xs font-bold uppercase tracking-widest opacity-80 mb-1'>Total Tagihan</p>
+          <h2 class='text-3xl font-black' id='pos-modal-total-display'>Rp 0</h2>
+          <p class='text-[10px] opacity-75 mt-1' id='pos-modal-items-count'>0 item · 0 produk</p>
+        </div>
+
+        <!-- Item Review Mini List -->
+        <div class='space-y-2' id='pos-step1-items-list'></div>
+
+        <!-- Customer Name -->
+        <div>
+          <label class='text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 block'>
+            <i class='fa-solid fa-user mr-1'></i>Nama Pelanggan
+          </label>
+          <input type='text' id='pos-customer-name' 
+            class='w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white transition-colors' 
+            placeholder='Pelanggan Umum (Walk-in)'/>
+        </div>
+
+        <!-- Customer Note -->
+        <div>
+          <label class='text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 block'>
+            <i class='fa-solid fa-note-sticky mr-1'></i>Catatan (Opsional)
+          </label>
+          <textarea id='pos-customer-note' rows='2'
+            class='w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white resize-none transition-colors' 
+            placeholder='Catatan tambahan untuk kasir...'></textarea>
+        </div>
+      </div>
+
+      <!-- ======================== STEP 2: METODE PENGIRIMAN ======================== -->
+      <div id='pos-step-2' class='p-4 sm:p-5 space-y-4 hidden'>
+        
+        <!-- Delivery Method Selector -->
+        <div>
+          <label class='text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 block'>Metode Pengambilan Barang</label>
+          <div class='grid grid-cols-2 gap-3'>
+            <!-- Ambil di Toko -->
+            <button type='button' id='pos-delivery-pickup-btn'
+              onclick='setPosDeliveryMethod(&quot;pickup&quot;)'
+              class='p-4 rounded-2xl border-2 font-bold text-xs flex flex-col items-center gap-2 transition-all border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 shadow-sm'>
+              <div class='w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center'>
+                <i class='fa-solid fa-store text-emerald-600 dark:text-emerald-400 text-base'></i>
+              </div>
+              <div class='text-center'>
+                <p class='font-black text-sm'>Ambil di Toko</p>
+                <p class='text-[10px] font-medium opacity-70 mt-0.5'>Pelanggan datang langsung</p>
+              </div>
+            </button>
+            <!-- Dikirim -->
+            <button type='button' id='pos-delivery-send-btn'
+              onclick='setPosDeliveryMethod(&quot;delivery&quot;)'
+              class='p-4 rounded-2xl border-2 font-bold text-xs flex flex-col items-center gap-2 transition-all border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300'>
+              <div class='w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center'>
+                <i class='fa-solid fa-truck text-slate-500 text-base'></i>
+              </div>
+              <div class='text-center'>
+                <p class='font-black text-sm'>Dikirim</p>
+                <p class='text-[10px] font-medium opacity-70 mt-0.5'>Antar ke alamat pelanggan</p>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Delivery Details (shown when delivery is selected) -->
+        <div id='pos-delivery-details-section' class='space-y-3 hidden'>
+          <div class='h-px bg-slate-100 dark:bg-slate-800'></div>
+          <div>
+            <label class='text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 block'>
+              <i class='fa-solid fa-location-dot mr-1'></i>Alamat Pengiriman
+            </label>
+            <textarea id='pos-delivery-address' rows='3'
+              class='w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white resize-none'
+              placeholder='Masukkan alamat lengkap pelanggan...'></textarea>
+          </div>
+          <div class='grid grid-cols-2 gap-2.5'>
+            <div>
+              <label class='text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 block'>
+                <i class='fa-solid fa-truck-fast mr-1'></i>Kurir / Ekspedisi
+              </label>
+              <input type='text' id='pos-courier-name'
+                class='w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white'
+                placeholder='JNE, Gojek, dll'/>
+            </div>
+            <div>
+              <label class='text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 block'>
+                <i class='fa-solid fa-money-bill mr-1'></i>Ongkir (Rp)
+              </label>
+              <input type='number' id='pos-shipping-cost'
+                class='w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white'
+                placeholder='0' value='0' oninput='recalcPosTotal()'/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pickup Info (shown when pickup is selected) -->
+        <div id='pos-pickup-info-section' class='bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 rounded-2xl p-4'>
+          <div class='flex items-start gap-3'>
+            <div class='w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center shrink-0 mt-0.5'>
+              <i class='fa-solid fa-circle-check text-emerald-600 dark:text-emerald-400 text-sm'></i>
+            </div>
+            <div>
+              <p class='text-xs font-black text-emerald-800 dark:text-emerald-300'>Pelanggan Ambil Sendiri</p>
+              <p class='text-[10px] text-emerald-700 dark:text-emerald-400 mt-0.5 font-medium'>Tidak ada biaya pengiriman. Barang siap diambil langsung di kasir.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ======================== STEP 3: PEMBAYARAN ======================== -->
+      <div id='pos-step-3' class='p-4 sm:p-5 space-y-4 hidden'>
+
+        <!-- Grand Total Display -->
+        <div class='bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 p-4'>
+          <div class='flex items-center justify-between mb-2'>
+            <span class='text-xs font-bold text-slate-500 dark:text-slate-400'>Subtotal</span>
+            <span class='text-xs font-bold text-slate-700 dark:text-slate-300' id='pos-pay-subtotal'>Rp 0</span>
+          </div>
+          <div id='pos-pay-shipping-row' class='hidden flex items-center justify-between mb-2'>
+            <span class='text-xs font-bold text-slate-500 dark:text-slate-400' id='pos-pay-shipping-label'>Ongkir</span>
+            <span class='text-xs font-bold text-slate-700 dark:text-slate-300' id='pos-pay-shipping-cost'>Rp 0</span>
+          </div>
+          <div class='border-t border-slate-200 dark:border-slate-700 pt-2 flex items-center justify-between'>
+            <span class='text-sm font-black text-slate-800 dark:text-white uppercase tracking-wide'>Total Bayar</span>
+            <span class='text-2xl font-black text-emerald-600 dark:text-emerald-400' id='pos-pay-grand-total'>Rp 0</span>
+          </div>
+        </div>
+
+        <!-- Metode Pembayaran -->
+        <div>
+          <label class='text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2 block'>Metode Pembayaran</label>
+          <div class='grid grid-cols-3 sm:grid-cols-5 gap-2'>
+            <button type='button' data-method='cash' onclick='setPosPaymentMethod(&quot;cash&quot;)'
+              class='pos-method-btn p-2.5 rounded-xl border-2 font-bold text-[10px] flex flex-col items-center gap-1.5 transition-all border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300'>
+              <i class='fa-solid fa-money-bill-wave text-base text-emerald-600 dark:text-emerald-400'></i>
+              <span>Tunai</span>
+            </button>
+            <button type='button' data-method='qris' onclick='setPosPaymentMethod(&quot;qris&quot;)'
+              class='pos-method-btn p-2.5 rounded-xl border-2 font-bold text-[10px] flex flex-col items-center gap-1.5 transition-all border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300'>
+              <i class='fa-solid fa-qrcode text-base text-slate-500'></i>
+              <span>QRIS</span>
+            </button>
+            <button type='button' data-method='transfer' onclick='setPosPaymentMethod(&quot;transfer&quot;)'
+              class='pos-method-btn p-2.5 rounded-xl border-2 font-bold text-[10px] flex flex-col items-center gap-1.5 transition-all border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300'>
+              <i class='fa-solid fa-building-columns text-base text-slate-500'></i>
+              <span>Transfer</span>
+            </button>
+            <button type='button' data-method='edc' onclick='setPosPaymentMethod(&quot;edc&quot;)'
+              class='pos-method-btn p-2.5 rounded-xl border-2 font-bold text-[10px] flex flex-col items-center gap-1.5 transition-all border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300'>
+              <i class='fa-solid fa-credit-card text-base text-slate-500'></i>
+              <span>Debit/EDC</span>
+            </button>
+            <button type='button' data-method='cod' onclick='setPosPaymentMethod(&quot;cod&quot;)'
+              class='pos-method-btn p-2.5 rounded-xl border-2 font-bold text-[10px] flex flex-col items-center gap-1.5 transition-all border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300 col-span-3 sm:col-span-1'>
+              <i class='fa-solid fa-handshake text-base text-slate-500'></i>
+              <span>COD</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cash Input Section (Tunai saja) -->
+        <div id='pos-cash-input-section' class='space-y-3'>
+          <div>
+            <label class='text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 block'>Uang Diterima (Rp)</label>
+            <!-- Manual Input -->
+            <div class='relative'>
+              <span class='absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400'>Rp</span>
+              <input type='number' id='pos-cash-received-input' 
+                class='w-full pl-10 pr-4 py-3 text-xl font-black bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white' 
+                placeholder='0' oninput='calculatePosChange()'/>
+            </div>
+          </div>
+
+          <!-- Quick Cash Buttons -->
+          <div>
+            <p class='text-[10px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider'>Nominal Cepat</p>
+            <div class='grid grid-cols-4 gap-1.5'>
+              <button type='button' class='pos-quick-cash-btn px-2 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-400 border border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-black text-slate-700 dark:text-slate-200 transition-all active:scale-95' onclick='setQuickCash(&quot;exact&quot;)'>
+                <i class='fa-solid fa-check text-emerald-600 block text-xs mb-0.5'></i>Uang Pas
+              </button>
+              <button type='button' class='pos-quick-cash-btn px-2 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-400 border border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-black text-slate-700 dark:text-slate-200 transition-all active:scale-95' onclick='addQuickCash(5000)'>+5rb</button>
+              <button type='button' class='pos-quick-cash-btn px-2 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-400 border border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-black text-slate-700 dark:text-slate-200 transition-all active:scale-95' onclick='addQuickCash(10000)'>+10rb</button>
+              <button type='button' class='pos-quick-cash-btn px-2 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-400 border border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-black text-slate-700 dark:text-slate-200 transition-all active:scale-95' onclick='addQuickCash(20000)'>+20rb</button>
+              <button type='button' class='pos-quick-cash-btn px-2 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-400 border border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-black text-slate-700 dark:text-slate-200 transition-all active:scale-95' onclick='setQuickCash(50000)'>50rb</button>
+              <button type='button' class='pos-quick-cash-btn px-2 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-400 border border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-black text-slate-700 dark:text-slate-200 transition-all active:scale-95' onclick='setQuickCash(100000)'>100rb</button>
+              <button type='button' class='pos-quick-cash-btn px-2 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-400 border border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-black text-slate-700 dark:text-slate-200 transition-all active:scale-95' onclick='setQuickCash(200000)'>200rb</button>
+              <button type='button' class='pos-quick-cash-btn px-2 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-400 border border-slate-200 dark:border-slate-700 rounded-xl text-[11px] font-black text-slate-700 dark:text-slate-200 transition-all active:scale-95' onclick='setQuickCash(500000)'>500rb</button>
+            </div>
+          </div>
+
+          <!-- Kembalian Display -->
+          <div class='p-3.5 rounded-2xl border-2 border-dashed flex items-center justify-between transition-all' id='pos-change-display-box'>
+            <div class='flex items-center gap-2'>
+              <i class='fa-solid fa-coins text-slate-400 text-sm'></i>
+              <span class='text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider'>Kembalian</span>
+            </div>
+            <span class='text-xl font-black text-emerald-600 dark:text-emerald-400' id='pos-change-display'>Rp 0</span>
+          </div>
+        </div>
+
+        <!-- Non-cash info panel -->
+        <div id='pos-noncash-info-section' class='hidden bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/50 rounded-2xl p-4'>
+          <div class='flex items-start gap-3'>
+            <i class='fa-solid fa-circle-info text-blue-500 mt-0.5'></i>
+            <p class='text-xs font-semibold text-blue-800 dark:text-blue-300' id='pos-noncash-info-text'>
+              Pastikan pembayaran via QRIS/Transfer/EDC sudah terkonfirmasi sebelum menekan tombol proses.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Wizard Footer: Navigation Buttons -->
+    <div class='p-4 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex gap-2.5 shrink-0'>
+      <button type='button' id='pos-btn-prev' 
+        class='px-4 py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center gap-1.5 hidden'
+        onclick='goPosStep(posCurrentStep - 1)'>
+        <i class='fa-solid fa-arrow-left text-[10px]'></i> Kembali
+      </button>
+      <button type='button' id='pos-btn-next'
+        class='btn-primary flex-1 !py-3 !text-sm !font-black flex items-center justify-center gap-2'
+        onclick='goPosStep(posCurrentStep + 1)'>
+        <span id='pos-btn-next-label'>Lanjut</span>
+        <i class='fa-solid fa-arrow-right text-xs'></i>
       </button>
     </div>
+  </div>
+</div>
 
-    <!-- Modal Content -->
-    <div class='p-4 sm:p-6 space-y-3.5 max-h-[75vh] overflow-y-auto custom-scrollbar'>
-      <!-- Total Tagihan -->
-      <div class='bg-emerald-50 dark:bg-emerald-950/40 p-3 sm:p-4 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 text-center'>
-        <p class='text-[10px] font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-widest mb-0.5'>Total Tagihan</p>
-        <h2 class='text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400' id='pos-modal-total-display'>Rp 0</h2>
+<!-- ========================================================================= -->
+<!-- MODAL: SUKSES TRANSAKSI POS + PILIH CETAK DOKUMEN                        -->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[85] bg-slate-900/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4' id='pos-success-modal'>
+  <div class='w-full max-w-sm bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-75 transition-transform duration-300' id='pos-success-box'>
+    
+    <!-- Success Header -->
+    <div class='px-6 pt-8 pb-5 text-center bg-gradient-to-b from-emerald-50 dark:from-emerald-950/30 to-transparent'>
+      <div class='w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center mx-auto mb-3 shadow-lg'>
+        <i class='fa-solid fa-circle-check text-3xl text-emerald-600 dark:text-emerald-400'></i>
       </div>
-
-      <!-- Pilihan Metode Pembayaran -->
-      <div>
-        <label class='text-[10px] sm:text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1.5 block uppercase tracking-wider'>Metode Pembayaran</label>
-        <div class='grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2' id='pos-payment-method-selector'>
-          <button type='button' class='p-2 sm:p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1 transition-all pos-method-btn active-method border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300' data-method='cash' onclick='setPosPaymentMethod(&quot;cash&quot;)'>
-            <i class='fa-solid fa-money-bill-wave text-sm text-emerald-600'></i>
-            <span>Tunai</span>
-          </button>
-          <button type='button' class='p-2 sm:p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300' data-method='qris' onclick='setPosPaymentMethod(&quot;qris&quot;)'>
-            <i class='fa-solid fa-qrcode text-sm text-slate-500'></i>
-            <span>QRIS</span>
-          </button>
-          <button type='button' class='p-2 sm:p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300' data-method='transfer' onclick='setPosPaymentMethod(&quot;transfer&quot;)'>
-            <i class='fa-solid fa-building-columns text-sm text-slate-500'></i>
-            <span>Transfer</span>
-          </button>
-          <button type='button' class='p-2 sm:p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300' data-method='edc' onclick='setPosPaymentMethod(&quot;edc&quot;)'>
-            <i class='fa-solid fa-credit-card text-sm text-slate-500'></i>
-            <span>Debit/EDC</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Section Khusus Tunai (Input Cash & Kembalian) -->
-      <div id='pos-cash-input-section' class='space-y-2.5 pt-1'>
-        <div>
-          <label class='text-[10px] sm:text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1 block uppercase tracking-wider'>Uang Diterima (Rp)</label>
-          <input type='number' id='pos-cash-received-input' class='w-full text-base sm:text-xl font-black px-3.5 py-2.5 sm:py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white' placeholder='0' oninput='calculatePosChange()'/>
-        </div>
-
-        <!-- Quick Cash Buttons -->
-        <div class='flex flex-wrap gap-1.5' id='pos-quick-cash-buttons'>
-          <button type='button' class='px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-[11px] font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(&quot;exact&quot;)'>Uang Pas</button>
-          <button type='button' class='px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-[11px] font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(10000)'>10.000</button>
-          <button type='button' class='px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-[11px] font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(20000)'>20.000</button>
-          <button type='button' class='px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-[11px] font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(50000)'>50.000</button>
-          <button type='button' class='px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-[11px] font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(100000)'>100.000</button>
-        </div>
-
-        <!-- Kembalian Display -->
-        <div class='p-3 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between'>
-          <span class='text-[10px] sm:text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider'>Kembalian</span>
-          <span class='text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400' id='pos-change-display'>Rp 0</span>
-        </div>
-      </div>
-
-      <!-- Nama Pembeli / Pelanggan POS (Opsional) -->
-      <div>
-        <label class='text-[10px] sm:text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1 block uppercase tracking-wider'>Nama Pelanggan (Opsional)</label>
-        <input type='text' id='pos-customer-name' class='w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white' placeholder='Pelanggan Umum (Walk-in)'/>
-      </div>
+      <h3 class='text-xl font-black text-slate-900 dark:text-white'>Transaksi Berhasil!</h3>
+      <p class='text-xs text-slate-500 dark:text-slate-400 mt-1 font-semibold' id='pos-success-order-id'>ID Pesanan: -</p>
     </div>
 
-    <!-- Modal Footer -->
-    <div class='p-3 sm:p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex gap-2'>
-      <button type='button' class='px-3.5 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors' onclick='closePosPaymentModal()'>Batal</button>
-      <button type='button' class='btn-primary flex-1 !py-2.5 !text-xs sm:!text-sm !font-bold' id='btn-pos-submit-order' onclick='submitPosTransaction()'>
-        <i class='fa-solid fa-check mr-1'></i> Simpan &amp; Cetak Struk
+    <!-- Success Summary -->
+    <div class='px-5 pb-4 space-y-2'>
+      <div class='bg-slate-50 dark:bg-slate-800 rounded-xl p-3.5 text-xs space-y-1.5 font-semibold'>
+        <div class='flex justify-between'>
+          <span class='text-slate-500 dark:text-slate-400'>Total Bayar</span>
+          <span class='font-black text-slate-900 dark:text-white' id='pos-success-total'>Rp 0</span>
+        </div>
+        <div class='flex justify-between'>
+          <span class='text-slate-500 dark:text-slate-400'>Metode Bayar</span>
+          <span class='font-bold text-slate-800 dark:text-slate-200' id='pos-success-method'>-</span>
+        </div>
+        <div class='flex justify-between' id='pos-success-change-row'>
+          <span class='text-slate-500 dark:text-slate-400'>Kembalian</span>
+          <span class='font-black text-emerald-600 dark:text-emerald-400' id='pos-success-change'>Rp 0</span>
+        </div>
+        <div class='flex justify-between'>
+          <span class='text-slate-500 dark:text-slate-400'>Pengiriman</span>
+          <span class='font-bold text-slate-800 dark:text-slate-200' id='pos-success-delivery'>Ambil di Toko</span>
+        </div>
+      </div>
+
+      <!-- Print Options -->
+      <p class='text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center mt-3'>Cetak Dokumen</p>
+      <div class='grid grid-cols-3 gap-2'>
+        <button type='button' onclick='printPosReceipt()' 
+          class='flex flex-col items-center gap-1.5 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-400 transition-all active:scale-95'>
+          <i class='fa-solid fa-receipt text-emerald-600 dark:text-emerald-400 text-base'></i>
+          <span class='text-[10px] font-bold text-slate-700 dark:text-slate-300'>Struk<br/>Thermal</span>
+        </button>
+        <button type='button' onclick='printPosInvoice()' 
+          class='flex flex-col items-center gap-1.5 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950/30 hover:border-blue-400 transition-all active:scale-95'>
+          <i class='fa-solid fa-file-invoice text-blue-600 dark:text-blue-400 text-base'></i>
+          <span class='text-[10px] font-bold text-slate-700 dark:text-slate-300'>Invoice<br/>A4</span>
+        </button>
+        <button type='button' onclick='printPosSuratJalan()' 
+          class='flex flex-col items-center gap-1.5 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-purple-50 dark:hover:bg-purple-950/30 hover:border-purple-400 transition-all active:scale-95'>
+          <i class='fa-solid fa-truck text-purple-600 dark:text-purple-400 text-base'></i>
+          <span class='text-[10px] font-bold text-slate-700 dark:text-slate-300'>Surat<br/>Jalan</span>
+        </button>
+      </div>
+
+      <!-- Done Button -->
+      <button type='button' onclick='closePosSuccessModal()' 
+        class='btn-primary w-full !py-3 !text-sm !font-black mt-1'>
+        <i class='fa-solid fa-cash-register mr-1.5'></i> Transaksi Baru
       </button>
     </div>
   </div>

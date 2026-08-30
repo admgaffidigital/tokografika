@@ -3,6 +3,9 @@
 // =============================================================================
 
 window.openReceiptPreview = (directOrder = null) => {
+  if (directOrder) {
+    cVOrd = directOrder.orderId || directOrder.id;
+  }
   const o = directOrder || gOrds.find(x => x.orderId === cVOrd);
   if (!o) return;
   const d = (o.dateString || o.createdAt) ? new Date(o.dateString || o.createdAt).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
@@ -58,7 +61,7 @@ window.closeReceiptPreviewModal = () => {
 };
 
 window.executePrintReceipt = () => {
-  const o = gOrds.find(x => x.orderId === cVOrd);
+  const o = (typeof posLastOrder !== 'undefined' && posLastOrder && (posLastOrder.orderId === cVOrd || posLastOrder.id === cVOrd)) ? posLastOrder : gOrds.find(x => x.orderId === cVOrd);
   if (!o) return;
   if (window.AppInventor) {
     try {
@@ -317,9 +320,12 @@ const _urlToBase64 = async (rawUrl) => {
   return result;
 };
 
-window.generateA4Document = async (type) => {
+window.generateA4Document = async (type, directOrder = null) => {
   if (isSaving) return;
-  const o = gOrds.find(x => x.orderId === cVOrd);
+  if (directOrder) {
+    cVOrd = directOrder.orderId || directOrder.id;
+  }
+  const o = directOrder || gOrds.find(x => x.orderId === cVOrd);
   if (!o) return;
   
   isSaving = true;
@@ -570,4 +576,8 @@ window.generateA4Document = async (type) => {
     isSaving = false;
     hLoad();
   }
+};
+
+window.generatePosA4Document = (type, orderData) => {
+  return window.generateA4Document(type, orderData);
 };
