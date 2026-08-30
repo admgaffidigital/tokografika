@@ -1,9 +1,9 @@
 <!-- ========================================================================= -->
-<!-- VIEW: POS KASIR (POINT OF SALE) - ULTRA USER-FRIENDLY & RESPONSIVE        -->
+<!-- VIEW: POS KASIR (POINT OF SALE) - ADVANCED & COMPLETE SYSTEM             -->
 <!-- ========================================================================= -->
 <div class='view-section flex flex-col fade-in bg-slate-100 dark:bg-[#070c18] z-50 hidden h-full max-h-screen overflow-hidden' id='view-pos'>
   
-  <!-- POS Top Glass Header -->
+  <!-- POS Top Navigation Bar -->
   <div class='glass-header shrink-0 px-3 sm:px-5 py-2 sm:py-2.5 flex items-center justify-between sticky top-0 z-30 shadow-sm'>
     <div class='flex items-center gap-2.5 min-w-0'>
       <div class='w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/20 text-white flex items-center justify-center shadow-sm border border-white/30 shrink-0'>
@@ -25,9 +25,6 @@
 
     <!-- POS Top Actions -->
     <div class='flex items-center gap-1.5 sm:gap-2 shrink-0'>
-      <button class='w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white flex items-center justify-center text-xs transition-all shadow-sm active:scale-95' onclick='openCameraScanner()' title='Scan Barcode'>
-        <i class='fa-solid fa-qrcode'></i>
-      </button>
       <button class='hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-[11px] font-bold transition-all shadow-sm active:scale-95' id='btn-pos-to-admin' onclick='changeView(&quot;view-admin&quot;); openAdminMenu();' title='Buka CMS Pengaturan'>
         <i class='fa-solid fa-gear text-xs'></i>
         <span>CMS Toko</span>
@@ -39,31 +36,50 @@
     </div>
   </div>
 
-  <!-- POS Main Body Split (Catalog on Mobile/Desktop, Split Sidebar on Tablet/Desktop) -->
+  <!-- POS Main Body (Catalog Left, Cart Right) -->
   <div class='flex-1 flex min-h-0 overflow-hidden relative'>
     
-    <!-- CATALOG PANE (Full Screen on Mobile, Left Column on Desktop >= 1024px) -->
+    <!-- CATALOG PANE (Full Width on Mobile, Left on Desktop) -->
     <div class='flex-1 flex flex-col min-w-0 min-h-0 bg-slate-50 dark:bg-[#0b1329] overflow-hidden' id='pos-catalog-pane'>
       
-      <!-- Search & Category Filter Header -->
-      <div class='p-2.5 sm:p-3 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm shrink-0 flex flex-col gap-2'>
-        <div class='relative w-full'>
-          <i class='fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs'></i>
-          <input class='w-full pl-9 pr-8 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:outline-none focus:border-theme-primary text-slate-800 dark:text-white placeholder:text-slate-400 transition-all' id='pos-search-input' placeholder='Cari produk atau scan barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)'/>
-          <button class='absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 hidden w-6 h-6 flex items-center justify-center' id='pos-btn-clear-search' onclick='clearPosSearch()'>
-            <i class='fa-solid fa-xmark text-xs'></i>
-          </button>
+      <!-- Search, Scanner & View Toggle Header -->
+      <div class='p-2.5 sm:p-3.5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm shrink-0 flex flex-col gap-2.5'>
+        <div class='flex items-center gap-2'>
+          <!-- Unified Search & Scan Input -->
+          <div class='relative flex-1'>
+            <i class='fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs'></i>
+            <input class='w-full pl-9 pr-16 py-2 sm:py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:border-theme-primary text-slate-800 dark:text-white placeholder:text-slate-400 transition-all' id='pos-search-input' placeholder='Cari nama atau ketik/scan barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)'/>
+            
+            <button class='absolute right-9 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 hidden w-6 h-6 flex items-center justify-center' id='pos-btn-clear-search' onclick='clearPosSearch()' title='Hapus Pencarian'>
+              <i class='fa-solid fa-xmark text-xs'></i>
+            </button>
+            
+            <button class='absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all' onclick='openCameraScanner()' title='Scan Barcode Kamera'>
+              <i class='fa-solid fa-qrcode text-xs'></i>
+            </button>
+          </div>
+
+          <!-- Grid vs List View Toggle -->
+          <div class='flex bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-0.5 shrink-0'>
+            <button type='button' class='w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-900 shadow-sm' id='btn-pos-view-grid' onclick='setPosViewMode(&quot;grid&quot;)' title='Tampilan Grid'>
+              <i class='fa-solid fa-border-all'></i>
+            </button>
+            <button type='button' class='w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' id='btn-pos-view-list' onclick='setPosViewMode(&quot;list&quot;)' title='Tampilan List'>
+              <i class='fa-solid fa-list-ul'></i>
+            </button>
+          </div>
         </div>
-        <!-- Category Horizontal Chips -->
-        <div class='flex items-center gap-1.5 overflow-x-auto hide-scrollbar py-0.5' id='pos-categories-container'></div>
+
+        <!-- Category Horizontal Pills Bar -->
+        <div class='flex items-center gap-2 overflow-x-auto hide-scrollbar py-0.5' id='pos-categories-container'></div>
       </div>
 
-      <!-- Product Grid (Touch-Friendly, Spacing, Flexible) -->
+      <!-- Product List / Grid Container -->
       <div class='flex-1 min-h-0 overflow-y-auto p-2.5 sm:p-3.5 pb-24 lg:pb-4 custom-scrollbar' id='pos-products-scroll'>
-        <div class='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 sm:gap-3' id='pos-product-grid'></div>
+        <div id='pos-product-container'></div>
       </div>
 
-      <!-- MOBILE FLOATING CART BAR (Always visible at bottom on Mobile when cart > 0) -->
+      <!-- MOBILE FLOATING CART BAR -->
       <div class='lg:hidden fixed bottom-3 left-3 right-3 z-40 bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md text-white p-3 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center justify-between gap-3 transform translate-y-24 transition-transform duration-300' id='pos-mobile-floating-bar'>
         <div class='flex items-center gap-2.5 min-w-0 cursor-pointer' onclick='openPosCartBottomSheet()'>
           <div class='w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shrink-0 shadow' style='background-color: var(--clr-p);'>
@@ -81,7 +97,7 @@
 
     </div>
 
-    <!-- DESKTOP SIDEBAR CART (Fixed right pane on >= 1024px screens) -->
+    <!-- DESKTOP SIDEBAR CART (>= 1024px) -->
     <div class='hidden lg:flex w-[370px] xl:w-[410px] shrink-0 bg-white dark:bg-slate-900 flex-col min-h-0 shadow-xl z-20 border-l border-slate-200 dark:border-slate-800' id='pos-cart-pane'>
       
       <!-- Cart Header -->
@@ -133,6 +149,65 @@
         </button>
       </div>
 
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MODAL: QUICK VARIANT SELECTOR (PILIH VARIAN PRODUK POS)                   -->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[78] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4' id='pos-variant-modal' onclick='if(event.target===this) closePosVariantModal()'>
+  <div class='w-full max-w-md bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-95 transition-transform duration-300' id='pos-variant-box'>
+    <div class='px-5 py-3.5 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between'>
+      <div class='flex items-center gap-2'>
+        <i class='fa-solid fa-layer-group text-emerald-600 dark:text-emerald-400 text-sm'></i>
+        <h3 class='font-black text-xs sm:text-sm text-slate-900 dark:text-white'>Pilih Varian Produk</h3>
+      </div>
+      <button type='button' class='w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-rose-500 flex items-center justify-center text-xs' onclick='closePosVariantModal()'>
+        <i class='fa-solid fa-xmark'></i>
+      </button>
+    </div>
+    <div class='p-4 space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar'>
+      <div class='flex items-center gap-3 p-2 bg-slate-50 dark:bg-[#0b1329] rounded-xl border border-slate-200/80 dark:border-slate-800'>
+        <img src='' id='pos-variant-prod-img' class='w-12 h-12 object-cover rounded-lg shrink-0 border border-slate-200 dark:border-slate-700'/>
+        <div class='min-w-0'>
+          <h4 class='text-xs font-bold text-slate-900 dark:text-white truncate' id='pos-variant-prod-name'>Nama Produk</h4>
+          <p class='text-[10px] text-slate-500 font-semibold' id='pos-variant-prod-sku'>SKU: -</p>
+        </div>
+      </div>
+      <div class='space-y-1.5' id='pos-variant-options-list'></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MODAL: EDIT DECIMAL QUANTITY (SATUAN DESIMAL / BERAT)                     -->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[79] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4' id='pos-qty-modal' onclick='if(event.target===this) closePosQtyModal()'>
+  <div class='w-full max-w-sm bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-95 transition-transform duration-300' id='pos-qty-box'>
+    <div class='px-5 py-3.5 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between'>
+      <h3 class='font-black text-xs sm:text-sm text-slate-900 dark:text-white' id='pos-qty-modal-title'>Ubah Jumlah Beli</h3>
+      <button type='button' class='w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-rose-500 flex items-center justify-center text-xs' onclick='closePosQtyModal()'>
+        <i class='fa-solid fa-xmark'></i>
+      </button>
+    </div>
+    <div class='p-5 space-y-3.5 text-center'>
+      <p class='text-xs text-slate-500 dark:text-slate-400 font-medium' id='pos-qty-prod-name'>Nama Produk</p>
+      <div class='relative max-w-[200px] mx-auto'>
+        <input type='number' step='0.01' min='0.01' id='pos-qty-modal-input' class='w-full text-center text-2xl font-black px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white'/>
+        <span class='absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400' id='pos-qty-modal-unit'>PCS</span>
+      </div>
+      <!-- Quick Decimal Presets (0.25, 0.5, 1, 2, 5) -->
+      <div class='flex justify-center gap-1.5 flex-wrap'>
+        <button type='button' class='px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold' onclick='setPosQtyPreset(0.25)'>0.25</button>
+        <button type='button' class='px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold' onclick='setPosQtyPreset(0.5)'>0.5</button>
+        <button type='button' class='px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold' onclick='setPosQtyPreset(1)'>1</button>
+        <button type='button' class='px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold' onclick='setPosQtyPreset(2)'>2</button>
+        <button type='button' class='px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold' onclick='setPosQtyPreset(5)'>5</button>
+      </div>
+      <button type='button' class='btn-primary w-full !py-2.5 !text-xs !font-bold mt-2' onclick='savePosQtyModal()'>
+        Simpan Jumlah
+      </button>
     </div>
   </div>
 </div>

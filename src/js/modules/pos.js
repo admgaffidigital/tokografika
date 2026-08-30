@@ -1,5 +1,5 @@
 // =============================================================================
-// POS KASIR (POINT OF SALE) & LOGIN SWITCHER MODULE - MOBILE FIRST & SPACIOUS
+// POS KASIR (POINT OF SALE) ENGINE - ADVANCED & COMPLETE
 // =============================================================================
 
 let posCart = [];
@@ -9,6 +9,9 @@ let posActiveCategory = 'Semua Produk';
 let posSearchQuery = '';
 let posPaymentMethod = 'cash';
 let posClockInterval = null;
+let posViewMode = 'grid'; // 'grid' | 'list'
+let currentEditingCartIndex = null;
+let currentSelectedVariantProduct = null;
 
 // -----------------------------------------------------------------------------
 // 1. LOGIN TAB SWITCHER & AUTHENTICATION
@@ -79,7 +82,6 @@ window.checkAdminAccess = () => {
 window.initPosView = () => {
   changeView('view-pos');
   
-  // Set Kasir Name & Store Name
   const storeName = appData.store?.name || 'FreshMart Store';
   setIn('pos-store-name', storeName);
   
@@ -94,19 +96,16 @@ window.initPosView = () => {
       : 'bg-white/20 text-white border border-white/30 text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-full';
   }
 
-  // Tombol ke CMS jika kasir memiliki permission atau admin master
   const btnCms = el('btn-pos-to-admin');
   if (btnCms) {
     const hasAdminPerm = cRole === 'admin' || (cPerms && cPerms.length > 0);
     btnCms.classList.toggle('hidden', !hasAdminPerm);
   }
 
-  // Start Realtime POS Clock
   if (posClockInterval) clearInterval(posClockInterval);
   updatePosClock();
   posClockInterval = setInterval(updatePosClock, 1000);
 
-  // Render Categories & Catalog
   renderPosCategories();
   renderPosProducts();
   renderPosCart();
@@ -121,7 +120,7 @@ const updatePosClock = () => {
 };
 
 // -----------------------------------------------------------------------------
-// 3. POS CATALOG & PRODUCT SELECTION
+// 3. POS CATALOG & CATEGORY CONTROLS
 // -----------------------------------------------------------------------------
 const renderPosCategories = () => {
   const container = el('pos-categories-container');
@@ -129,16 +128,35 @@ const renderPosCategories = () => {
 
   const categories = ['Semua Produk', ...(appData.categories || []).map(c => c.name)];
   
-  container.innerHTML = categories.map(cat => `
-    <button type="button" onclick="filterPosCategory('${esc(cat)}')" class="shrink-0 px-2.5 sm:px-3 py-1 rounded-xl text-[11px] sm:text-xs font-bold transition-all ${posActiveCategory === cat ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700'}">
-      ${esc(cat)}
-    </button>
-  `).join('');
+  container.innerHTML = categories.map(cat => {
+    const isSelected = posActiveCategory === cat;
+    return `
+      <button type="button" onclick="filterPosCategory('${esc(cat)}')" class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${isSelected ? 'bg-emerald-600 text-white shadow-sm border border-emerald-600' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 border border-slate-200 shadow-sm'}">
+        ${esc(cat)}
+      </button>
+    `;
+  }).join('');
 };
 
 window.filterPosCategory = (cat) => {
   posActiveCategory = cat;
   renderPosCategories();
+  renderPosProducts();
+};
+
+window.setPosViewMode = (mode) => {
+  posViewMode = mode;
+  const btnGrid = el('btn-pos-view-grid');
+  const btnList = el('btn-pos-view-list');
+  
+  if (mode === 'grid') {
+    if (btnGrid) btnGrid.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-900 shadow-sm';
+    if (btnList) btnList.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-slate-400 hover:text-slate-700 dark:hover:text-slate-200';
+  } else {
+    if (btnGrid) btnGrid.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-slate-400 hover:text-slate-700 dark:hover:text-slate-200';
+    if (btnList) btnList.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-900 shadow-sm';
+  }
+
   renderPosProducts();
 };
 
@@ -159,8 +177,8 @@ window.clearPosSearch = () => {
 };
 
 const renderPosProducts = () => {
-  const grid = el('pos-product-grid');
-  if (!grid) return;
+  const container = el('pos-product-container');
+  if (!container) return;
 
   const filtered = (appData.products || []).filter(p => {
     if (posActiveCategory !== 'Semua Produk' && p.category !== posActiveCategory) return false;
@@ -168,44 +186,83 @@ const renderPosProducts = () => {
     const q = posSearchQuery.toLowerCase();
     return (p.name || '').toLowerCase().includes(q) ||
       (p.sku || '').toLowerCase().includes(q) ||
-      (p.variants && p.variants.some(v => (v.sku || '').toLowerCase().includes(q)));
+      (p.variants && p.variants.some(v => (v.sku || '').toLowerCase().includes(q) || (v.name || '').toLowerCase().includes(q)));
   });
 
   if (!filtered.length) {
-    grid.innerHTML = `
-      <div class="col-span-full py-12 sm:py-16 text-center text-slate-400 dark:text-slate-500 font-bold text-xs bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-        <i class="fa-solid fa-box-open text-3xl mb-2 block opacity-40"></i>
-        Produk tidak ditemukan
-      </div>
+    container.className = 'w-full py-16 text-center text-slate-400 dark:text-slate-500 font-bold text-xs bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800';
+    container.innerHTML = `
+      <i class="fa-solid fa-box-open text-3xl mb-2 block opacity-40"></i>
+      Produk tidak ditemukan
     `;
     return;
   }
 
-  grid.innerHTML = filtered.map(p => {
-    const isActive = p.isActive !== 'false' && p.isActive !== false;
-    return `
-      <div class="card-modern bg-white dark:bg-slate-900 rounded-2xl p-2 sm:p-2.5 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all cursor-pointer shadow-sm group flex flex-col justify-between active:scale-95 select-none" onclick="addPosItem(${p.id})">
-        <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 mb-1.5 border border-slate-200/50 dark:border-slate-700/50">
-          <img src="${esc(p.img || '')}" onerror="window.imgErrRetry(this,'No Image',200)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${!isActive ? 'grayscale opacity-40' : ''}"/>
-          ${!isActive ? '<div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center"><span class="badge badge-solid-rose text-[8px] font-bold">KOSONG</span></div>' : ''}
-          ${p.wholesale?.length ? '<span class="absolute top-1 left-1 bg-amber-500 text-white text-[7px] sm:text-[8px] font-extrabold px-1.5 py-0.5 rounded shadow"><i class="fa-solid fa-tags"></i> Grosir</span>' : ''}
-        </div>
-        <div class="flex-1 flex flex-col justify-between min-w-0 px-0.5">
-          <h4 class="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
-          <div class="flex items-baseline justify-between gap-1 mt-auto pt-1">
-            <span class="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400 leading-none">${fCur(p.price)}</span>
-            ${p.unit ? `<span class="text-[8px] sm:text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">/${esc(p.unit)}</span>` : ''}
+  if (posViewMode === 'grid') {
+    container.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5 sm:gap-3.5';
+    container.innerHTML = filtered.map(p => {
+      const isActive = p.isActive !== 'false' && p.isActive !== false;
+      const hasVariants = p.variants && p.variants.length > 0;
+      return `
+        <div class="card-modern bg-white dark:bg-slate-900 rounded-2xl p-2 sm:p-2.5 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all cursor-pointer shadow-sm group flex flex-col justify-between active:scale-95 select-none" onclick="handlePosProductClick(${p.id})">
+          <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 mb-1.5 border border-slate-200/50 dark:border-slate-700/50">
+            <img src="${esc(p.img || '')}" onerror="window.imgErrRetry(this,'No Image',200)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${!isActive ? 'grayscale opacity-40' : ''}"/>
+            ${!isActive ? '<div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center"><span class="badge badge-solid-rose text-[8px] font-bold">KOSONG</span></div>' : ''}
+            ${hasVariants ? '<span class="absolute top-1 right-1 bg-indigo-600 text-white text-[7px] sm:text-[8px] font-bold px-1.5 py-0.5 rounded shadow"><i class="fa-solid fa-layer-group"></i> Varian</span>' : ''}
+            ${p.wholesale?.length ? '<span class="absolute top-1 left-1 bg-amber-500 text-white text-[7px] sm:text-[8px] font-extrabold px-1.5 py-0.5 rounded shadow"><i class="fa-solid fa-tags"></i> Grosir</span>' : ''}
+          </div>
+          <div class="flex-1 flex flex-col justify-between min-w-0 px-0.5">
+            <h4 class="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
+            <div class="flex items-baseline justify-between gap-1 mt-auto pt-1">
+              <span class="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400 leading-none">${fCur(p.price)}</span>
+              ${p.unit ? `<span class="text-[8px] sm:text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">/${esc(p.unit)}</span>` : ''}
+            </div>
           </div>
         </div>
-      </div>
-    `;
-  }).join('');
+      `;
+    }).join('');
+  } else {
+    // List View
+    container.className = 'flex flex-col gap-2';
+    container.innerHTML = filtered.map(p => {
+      const isActive = p.isActive !== 'false' && p.isActive !== false;
+      const hasVariants = p.variants && p.variants.length > 0;
+      return `
+        <div class="card-modern bg-white dark:bg-slate-900 rounded-xl p-2 sm:p-2.5 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all cursor-pointer shadow-sm flex items-center justify-between gap-3 active:scale-98 select-none" onclick="handlePosProductClick(${p.id})">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="relative w-12 h-12 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-200/50 dark:border-slate-700/50">
+              <img src="${esc(p.img || '')}" onerror="window.imgErrRetry(this,'No Image',100)" class="w-full h-full object-cover"/>
+              ${!isActive ? '<div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center text-[7px] text-white font-bold">KOSONG</div>' : ''}
+            </div>
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">${esc(p.name)}</h4>
+                ${hasVariants ? '<span class="badge badge-xs badge-indigo">Varian</span>' : ''}
+                ${p.wholesale?.length ? '<span class="badge badge-xs badge-amber">Grosir</span>' : ''}
+              </div>
+              <p class="text-[10px] text-slate-400 font-semibold mt-0.5 truncate">${esc(p.sku || '-')}</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 shrink-0">
+            <div class="text-right">
+              <p class="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400">${fCur(p.price)}</p>
+              ${p.unit ? `<p class="text-[8px] font-bold text-slate-400 uppercase">/${esc(p.unit)}</p>` : ''}
+            </div>
+            <button type="button" class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-bold hover:bg-emerald-500 hover:text-white transition-all shadow-sm">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
 };
 
 // -----------------------------------------------------------------------------
-// 4. POS CART MANAGEMENT & MOBILE BOTTOM SHEET
+// 4. POS PRODUCT SELECTION & MULTI-VARIANT MODAL
 // -----------------------------------------------------------------------------
-window.addPosItem = (productId, variantIndex = 0) => {
+window.handlePosProductClick = (productId) => {
   const p = (appData.products || []).find(x => x.id === productId);
   if (!p) return;
 
@@ -215,34 +272,104 @@ window.addPosItem = (productId, variantIndex = 0) => {
     return;
   }
 
-  const v = p.variants?.[variantIndex];
-  const vName = v?.name || null;
-  const price = v?.price ?? p.price;
+  if (p.variants && p.variants.length > 0) {
+    openPosVariantModal(productId);
+  } else {
+    addPosItemDirect(p, null, p.price);
+  }
+};
 
-  const existing = posCart.find(item => item.id === p.id && item.variantName === vName);
+window.openPosVariantModal = (productId) => {
+  const p = (appData.products || []).find(x => x.id === productId);
+  if (!p) return;
+
+  currentSelectedVariantProduct = p;
+  setIn('pos-variant-prod-name', p.name);
+  setIn('pos-variant-prod-sku', `SKU: ${p.sku || '-'}`);
+  
+  const imgEl = el('pos-variant-prod-img');
+  if (imgEl) imgEl.src = p.img || '';
+
+  const optionsContainer = el('pos-variant-options-list');
+  if (optionsContainer) {
+    optionsContainer.innerHTML = p.variants.map((v, vIdx) => `
+      <button type="button" class="w-full p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 flex items-center justify-between gap-2 transition-all active:scale-98 group text-left" onclick="selectPosVariant(${vIdx})">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-700 overflow-hidden shrink-0 border border-slate-200 dark:border-slate-600">
+            <img src="${esc(v.img || p.img || '')}" class="w-full h-full object-cover"/>
+          </div>
+          <div class="min-w-0">
+            <h5 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover:text-emerald-600">${esc(v.name)}</h5>
+            <p class="text-[10px] text-slate-400 font-semibold">${esc(v.sku || '-')}</p>
+          </div>
+        </div>
+        <div class="text-right shrink-0">
+          <span class="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400">${fCur(v.price ?? p.price)}</span>
+          ${p.unit ? `<span class="text-[8px] font-bold text-slate-400 block uppercase">/${esc(p.unit)}</span>` : ''}
+        </div>
+      </button>
+    `).join('');
+  }
+
+  const modal = el('pos-variant-modal');
+  const box = el('pos-variant-box');
+  if (modal && box) {
+    show('pos-variant-modal');
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      box.classList.remove('scale-95');
+    }, 10);
+  }
+};
+
+window.closePosVariantModal = () => {
+  const modal = el('pos-variant-modal');
+  const box = el('pos-variant-box');
+  if (modal && box) {
+    modal.classList.add('opacity-0');
+    box.classList.add('scale-95');
+    setTimeout(() => hide('pos-variant-modal'), 300);
+  }
+};
+
+window.selectPosVariant = (variantIndex) => {
+  if (!currentSelectedVariantProduct) return;
+  const p = currentSelectedVariantProduct;
+  const v = p.variants[variantIndex];
+  addPosItemDirect(p, v.name, v.price ?? p.price, v.img || p.img);
+  closePosVariantModal();
+};
+
+const addPosItemDirect = (product, variantName = null, price = 0, variantImg = null) => {
+  const existing = posCart.find(item => item.id === product.id && item.variantName === variantName);
   if (existing) {
-    existing.qty += 1;
+    existing.qty = Math.round((existing.qty + 1) * 100) / 100;
   } else {
     posCart.push({
-      id: p.id,
-      name: p.name,
-      variantName: vName,
-      price: price,
-      img: v?.img || p.img,
+      id: product.id,
+      name: product.name,
+      variantName: variantName,
+      price: price || product.price,
+      img: variantImg || product.img,
       qty: 1,
-      unit: p.unit || '',
-      wholesale: p.wholesale || []
+      unit: product.unit || '',
+      wholesale: product.wholesale || []
     });
   }
 
   renderPosCart();
 };
 
+// -----------------------------------------------------------------------------
+// 5. POS CART MANAGEMENT & DECIMAL QUANTITIES
+// -----------------------------------------------------------------------------
 window.updatePosQty = (index, delta) => {
   if (!posCart[index]) return;
-  posCart[index].qty += delta;
-  if (posCart[index].qty <= 0) {
+  const newQty = Math.round((posCart[index].qty + delta) * 100) / 100;
+  if (newQty <= 0) {
     posCart.splice(index, 1);
+  } else {
+    posCart[index].qty = newQty;
   }
   renderPosCart();
 };
@@ -263,6 +390,59 @@ window.clearPosCart = () => {
   });
 };
 
+// Modal Edit Kuantitas Desimal
+window.openPosQtyModal = (cartIndex) => {
+  if (!posCart[cartIndex]) return;
+  currentEditingCartIndex = cartIndex;
+  const item = posCart[cartIndex];
+
+  setIn('pos-qty-prod-name', `${item.name}${item.variantName ? ` (${item.variantName})` : ''}`);
+  setIn('pos-qty-modal-unit', item.unit || 'PCS');
+
+  const input = el('pos-qty-modal-input');
+  if (input) {
+    input.value = item.qty;
+  }
+
+  const modal = el('pos-qty-modal');
+  const box = el('pos-qty-box');
+  if (modal && box) {
+    show('pos-qty-modal');
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      box.classList.remove('scale-95');
+      if (input) { input.focus(); input.select(); }
+    }, 10);
+  }
+};
+
+window.closePosQtyModal = () => {
+  const modal = el('pos-qty-modal');
+  const box = el('pos-qty-box');
+  if (modal && box) {
+    modal.classList.add('opacity-0');
+    box.classList.add('scale-95');
+    setTimeout(() => hide('pos-qty-modal'), 300);
+  }
+};
+
+window.setPosQtyPreset = (amount) => {
+  const input = el('pos-qty-modal-input');
+  if (input) input.value = amount;
+};
+
+window.savePosQtyModal = () => {
+  if (currentEditingCartIndex === null || !posCart[currentEditingCartIndex]) return;
+  const val = parseFloat(el('pos-qty-modal-input')?.value || '1');
+  if (val <= 0 || isNaN(val)) {
+    posCart.splice(currentEditingCartIndex, 1);
+  } else {
+    posCart[currentEditingCartIndex].qty = Math.round(val * 100) / 100;
+  }
+  closePosQtyModal();
+  renderPosCart();
+};
+
 const renderPosCart = () => {
   const desktopContainer = el('pos-cart-items-container');
   const mobileContainer = el('pos-mob-cart-items-container');
@@ -274,10 +454,13 @@ const renderPosCart = () => {
   const mobBarCount = el('pos-mob-bar-count');
   const mobBarTotal = el('pos-mob-bar-total');
 
+  const totalItems = posCart.length;
   const totalQty = posCart.reduce((acc, item) => acc + item.qty, 0);
-  if (countEl) countEl.innerText = `${totalQty} Item`;
-  if (mobCountEl) mobCountEl.innerText = `${totalQty} Item`;
-  if (mobBarCount) mobBarCount.innerText = `${totalQty} Item`;
+  const formattedQty = Math.round(totalQty * 100) / 100;
+
+  if (countEl) countEl.innerText = `${totalItems} Produk (${formattedQty})`;
+  if (mobCountEl) mobCountEl.innerText = `${totalItems} Produk (${formattedQty})`;
+  if (mobBarCount) mobBarCount.innerText = `${totalItems} Item (${formattedQty})`;
 
   if (!posCart.length) {
     if (desktopContainer) desktopContainer.innerHTML = '';
@@ -316,6 +499,7 @@ const renderPosCart = () => {
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-1.5">
             <h5 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">${esc(item.name)}</h5>
+            ${item.variantName ? `<span class="badge badge-xs badge-slate">${esc(item.variantName)}</span>` : ''}
             ${isWholesale ? '<span class="badge badge-xs badge-amber font-bold">GROSIR</span>' : ''}
           </div>
           <div class="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
@@ -328,15 +512,17 @@ const renderPosCart = () => {
 
         <div class="flex items-center gap-1 shrink-0">
           <div class="flex bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg h-7 overflow-hidden">
-            <button type="button" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, -1)">
-              <i class="fa-solid fa-minus text-[9px]"></i>
+            <button type="button" class="w-6 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, -1)">
+              <i class="fa-solid fa-minus text-[8px]"></i>
             </button>
-            <span class="w-7 flex items-center justify-center text-xs font-extrabold text-slate-800 dark:text-white bg-white dark:bg-slate-900">${item.qty}</span>
-            <button type="button" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, 1)">
-              <i class="fa-solid fa-plus text-[9px]"></i>
+            <button type="button" class="min-w-[28px] px-1 flex items-center justify-center text-xs font-extrabold text-slate-800 dark:text-white bg-white dark:bg-slate-900 hover:bg-emerald-50 dark:hover:bg-emerald-950/40" onclick="openPosQtyModal(${idx})" title="Klik untuk ubah desimal">
+              ${item.qty}
+            </button>
+            <button type="button" class="w-6 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, 1)">
+              <i class="fa-solid fa-plus text-[8px]"></i>
             </button>
           </div>
-          <button type="button" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors" onclick="removePosItem(${idx})">
+          <button type="button" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors" onclick="removePosItem(${idx})" title="Hapus Item">
             <i class="fa-solid fa-trash-can text-xs"></i>
           </button>
         </div>
@@ -386,7 +572,7 @@ window.closePosCartBottomSheet = () => {
 };
 
 // -----------------------------------------------------------------------------
-// 5. POS PAYMENT MODAL & CHECKOUT
+// 6. POS QUICK PAYMENT MODAL & CHECKOUT
 // -----------------------------------------------------------------------------
 window.openPosPaymentModal = () => {
   if (!posCart.length) return;
@@ -394,7 +580,6 @@ window.openPosPaymentModal = () => {
   const total = posCart.reduce((sum, item) => sum + (getEffP(item) * item.qty), 0);
   setIn('pos-modal-total-display', fCur(total));
   
-  // Default to Tunai
   setPosPaymentMethod('cash');
   
   const cashInput = el('pos-cash-received-input');
@@ -532,12 +717,10 @@ window.submitPosTransaction = async () => {
     closePosCartBottomSheet();
     showToast("Transaksi Berhasil Disimpan! 🎉");
 
-    // Buka Modal Cetak Struk Instan
     if (typeof openReceiptPreview === 'function') {
       openReceiptPreview(orderData);
     }
 
-    // Reset Form & Keranjang
     posCart = [];
     renderPosCart();
     if (el('pos-customer-name')) el('pos-customer-name').value = '';
