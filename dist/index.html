@@ -1735,6 +1735,16 @@ html.dark .badge-counter {
         </div>
         
         <div class='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 pb-8'>
+          <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border-2 border-emerald-200 dark:border-emerald-800/60 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group relative overflow-hidden' onclick='initPosView()'>
+            <div class='absolute top-2 right-2 bg-emerald-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm'>
+              POS
+            </div>
+            <div class='w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400'>
+              <i class='fa-solid fa-cash-register text-2xl'></i>
+            </div>
+            <span class='text-[11px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider'>POS Kasir</span>
+          </button>
+
           <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' onclick='openAdminTab(&apos;orders&apos;)'>
             <div class='w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
               <i class='fa-solid fa-receipt text-2xl'></i>
