@@ -2714,6 +2714,12 @@ html.dark .badge-counter {
 
       <!-- Right: Action Buttons -->
       <div class='flex items-center gap-2 shrink-0'>
+        <!-- Pricetag & Barcode Quick Button -->
+        <button type='button' class='flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-sm active:scale-95' onclick='openPricetagBarcodeModal()' title='Cetak Pricetag Rak & Label Barcode'>
+          <i class='fa-solid fa-tags text-emerald-200'></i>
+          <span class='hidden sm:inline'>Pricetag</span>
+        </button>
+
         <!-- Panduan Kasir Quick Button -->
         <button type='button' class='flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-sm active:scale-95' onclick='openCmsGuide("pos")' title='Panduan Cara Pakai POS Kasir'>
           <i class='fa-solid fa-circle-question text-amber-300'></i>
