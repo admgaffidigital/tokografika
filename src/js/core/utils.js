@@ -238,8 +238,10 @@ window.showToast = m => {
   const t = el('toast'); 
   if (t) { 
     clearTimeout(toastT); 
-    t.style.top = '20px'; 
-    toastT = setTimeout(() => t.style.top = '-100px', 3000); 
+    t.style.top = '24px'; 
+    toastT = setTimeout(() => {
+      t.style.top = '-120px';
+    }, 3000); 
   } 
 };
 

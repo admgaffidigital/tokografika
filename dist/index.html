@@ -699,9 +699,9 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- NOTIFICATIONS & GLOBAL LOADERS                                            -->
 <!-- ========================================================================= -->
-<div class='bg-slate-900 text-white px-6 py-3 rounded-full border-2 border-slate-700 flex items-center gap-3' id='toast'>
-  <i class='fa-solid fa-bell' style='color:var(--clr-p)'></i>
-  <span class='font-bold text-sm tracking-wide' id='toast-message'>Notifikasi</span>
+<div class='fixed left-1/2 -translate-x-1/2 z-[99999] bg-slate-900/95 text-white px-6 py-3 rounded-full border-2 border-slate-700 shadow-2xl flex items-center gap-3 transition-all duration-300 pointer-events-none' id='toast' style='top: -120px;'>
+  <i class='fa-solid fa-bell text-sm' style='color:var(--clr-p)'></i>
+  <span class='font-bold text-xs sm:text-sm tracking-wide' id='toast-message'>Notifikasi</span>
 </div>
 
 <div class='fixed inset-0 z-[9999] bg-slate-900 flex flex-col items-center justify-center text-white hidden transition-opacity duration-300' id='global-loader'>
@@ -2111,8 +2111,10 @@ window.showToast = m => {
   const t = el('toast'); 
   if (t) { 
     clearTimeout(toastT); 
-    t.style.top = '20px'; 
-    toastT = setTimeout(() => t.style.top = '-100px', 3000); 
+    t.style.top = '24px'; 
+    toastT = setTimeout(() => {
+      t.style.top = '-120px';
+    }, 3000); 
   } 
 };
 
