@@ -1649,28 +1649,28 @@ html.dark .badge-counter {
 <!-- VIEW: ADMIN DASHBOARD & POS                                               -->
 <!-- ========================================================================= -->
 <div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-[#0b1120] z-50 hidden min-h-screen' id='view-admin'>
-  <div class='bg-white dark:bg-slate-900 shrink-0 px-4 py-3 flex items-center justify-center z-30 border-b border-slate-200/80 dark:border-slate-800 shadow-sm sticky top-0'>
+  <div class='glass-header shrink-0 px-4 py-3 flex items-center justify-center z-30 sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-5xl'>
       <div class='flex items-center gap-3'>
-        <button class='hidden w-9 h-9 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all shadow-sm' id='btn-admin-back' onclick='history.back()' style='--hover-color:var(--clr-p)'>
-          <i class='fa-solid fa-arrow-left text-sm'></i>
+        <button class='hidden w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm' id='btn-admin-back' onclick='history.back()'>
+          <i class='fa-solid fa-arrow-left text-sm text-white'></i>
         </button>
-        <div class='w-10 h-10 rounded-xl text-white flex items-center justify-center shadow-md transition-all' id='admin-logo-box' style='background-color:var(--clr-p);box-shadow:0 4px 12px var(--clr-p-25)'>
+        <div class='w-10 h-10 rounded-xl bg-white/20 text-white flex items-center justify-center shadow-md border border-white/30 transition-all' id='admin-logo-box'>
           <i class='fa-solid fa-layer-group text-sm'></i>
         </div>
         <div>
           <div class='flex items-center gap-2'>
-            <h1 class='text-sm font-semibold tracking-tight text-slate-900 dark:text-white' id='admin-header-title'>CMS Toko</h1>
+            <h1 class='text-sm sm:text-base font-bold tracking-tight text-white' id='admin-header-title'>CMS Toko</h1>
             <div id='admin-pro-badge'></div>
           </div>
-          <p class='text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest'>Mode Admin</p>
+          <p class='text-[9px] sm:text-[10px] font-bold text-white/85 uppercase tracking-widest'>Mode Admin</p>
         </div>
       </div>
       <div class='flex items-center gap-2'>
-        <button class='px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-[10px] font-bold hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-emerald-600 transition-all shadow-sm flex items-center gap-1.5' onclick='changeView(&apos;view-catalog&apos;)'>
+        <button class='px-3 py-2 bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl text-[10px] font-bold transition-all shadow-sm flex items-center gap-1.5 backdrop-blur-sm active:scale-95' onclick='changeView(&apos;view-catalog&apos;)'>
           <i class='fa-solid fa-eye'></i> <span class='hidden sm:inline'>Lihat Toko</span>
         </button>
-        <button class='px-3 py-2 bg-rose-50 dark:bg-rose-900/30 border-2 border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 rounded-lg text-[10px] font-bold hover:bg-rose-600 hover:text-white dark:hover:bg-rose-500 dark:hover:text-white transition-all shadow-sm flex items-center gap-1.5' onclick='logoutAdmin()'>
+        <button class='px-3 py-2 bg-rose-500/90 hover:bg-rose-600 border border-rose-400/40 text-white rounded-xl text-[10px] font-bold transition-all shadow-sm flex items-center gap-1.5 backdrop-blur-sm active:scale-95' onclick='logoutAdmin()'>
           <i class='fa-solid fa-power-off'></i> <span class='hidden sm:inline'>Keluar</span>
         </button>
       </div>
