@@ -2,12 +2,18 @@
 // FRESHMART ADMIN DASHBOARD & CMS MODULE
 // =============================================================================
 
+window.canViewCostPrice = () => {
+  if (cRole === 'admin') return true;
+  return Array.isArray(cPerms) && cPerms.includes('view_cost_price');
+};
+
 const aF = {
   products: [
     { key: 'name', label: 'Nama Produk', type: 'text' }, 
     { key: 'sku', label: 'Barcode / SKU (Bisa Auto / Manual)', type: 'sku' },
     { key: 'price', label: 'Harga Jual Dasar (Rp)', type: 'number' }, 
-    { key: 'costPrice', label: 'Harga Modal / HPP (Rp)', type: 'number' }, 
+    { key: 'costPrice', label: 'Harga Modal / HPP (Rp)', type: 'costPrice' }, 
+    { key: 'stock', label: 'Stok Tersedia (Jumlah)', type: 'stock' }, 
     { key: 'unit', label: 'Satuan (cth: pcs, kg, lusin)', type: 'unit_selector' },
     { key: 'img', label: 'URL Gambar', type: 'text' },
     { key: 'category', label: 'Kategori', type: 'dynamic_select_category' }, 
@@ -26,7 +32,7 @@ const aF = {
     { key: 'username', label: 'Username Login', type: 'text' }, 
     { key: 'password', label: 'Password Login', type: 'text' },
     { key: 'isActive', label: 'Status Akun', type: 'select', options: [{ val: 'true', text: 'Aktif' }, { val: 'false', text: 'Ditangguhkan' }] },
-    { key: 'permissions', label: 'Hak Akses Fitur (Dicentang = Boleh)', type: 'permissions_builder' }
+    { key: 'permissions', label: 'Hak Akses Kasir (Dicentang = Boleh)', type: 'permissions_builder' }
   ]
 };
 
@@ -962,7 +968,7 @@ window.oAEd = (t, id) => {
 
   const getIcon = (key) => {
     const icons = {
-      name: 'fa-box-open', sku: 'fa-barcode', price: 'fa-tag', costPrice: 'fa-coins', unit: 'fa-ruler', img: 'fa-image',
+      name: 'fa-box-open', sku: 'fa-barcode', price: 'fa-tag', costPrice: 'fa-coins', stock: 'fa-boxes-stacked', unit: 'fa-ruler', img: 'fa-image',
       category: 'fa-layer-group', tag: 'fa-hashtag', isActive: 'fa-power-off',
       desc: 'fa-align-left', wholesale: 'fa-boxes-stacked', variants: 'fa-sitemap',
       code: 'fa-ticket', type: 'fa-filter', value: 'fa-coins',
@@ -1011,16 +1017,22 @@ window.oAEd = (t, id) => {
       h += `<div id="wholesale-builder-container" class="bg-amber-50/50 dark:bg-amber-900/10 p-4 sm:p-5 rounded-[1.25rem] border-2 border-amber-100 dark:border-amber-800/30 shadow-inner"></div>`;
     } else if (k.type === 'permissions_builder') {
       const availPerms = [
-        {id: 'orders', name: 'Kelola Pesanan'}, {id: 'products', name: 'Kelola Produk'},
-        {id: 'categories', name: 'Kategori'}, {id: 'vouchers', name: 'Voucher'}, {id: 'banners', name: 'Banner'}
+        { id: 'orders', name: 'Kelola Pesanan' },
+        { id: 'products', name: 'Kelola Produk' },
+        { id: 'categories', name: 'Kelola Kategori' },
+        { id: 'vouchers', name: 'Kelola Voucher' },
+        { id: 'banners', name: 'Kelola Banner' },
+        { id: 'view_cost_price', name: '🔓 Boleh Lihat Harga Modal (HPP)' },
+        { id: 'edit_stock', name: '📦 Boleh Ubah Stok Produk' },
+        { id: 'view_reports', name: '📊 Boleh Lihat Laporan Keuntungan' }
       ];
       let vArr = Array.isArray(v) ? v : [];
-      h += `<div class="grid grid-cols-2 gap-2 mt-1">`;
+      h += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">`;
       availPerms.forEach(p => {
         const isChecked = vArr.includes(p.id) ? 'checked' : '';
-        h += `<label class="flex items-center gap-2 text-[11px] font-bold text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-emerald-400 transition-all shadow-sm"><input type="checkbox" value="${p.id}" class="perm-checkbox w-4 h-4 text-emerald-600 rounded border-gray-300" ${isChecked}/> ${p.name}</label>`;
+        h += `<label class="flex items-center gap-2 text-[11px] font-bold text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-emerald-400 transition-all shadow-sm"><input type="checkbox" value="${p.id}" class="perm-checkbox w-4 h-4 text-emerald-600 rounded border-gray-300" ${isChecked}/> <span>${p.name}</span></label>`;
       });
-      h += `</div><p class="text-[9px] text-slate-400 mt-2 italic font-medium">*Pengaturan Toko, Rekening, dan Kelola Akun otomatis terkunci untuk Kasir.</p>`;
+      h += `</div><p class="text-[9px] text-slate-400 mt-2 italic font-medium">*Secara default, Kasir TIDAK BISA melihat harga modal/HPP dan pengaturan toko kecuali dicentang oleh Admin.</p>`;
     } else if (k.key === 'sku') {
       h += `<div class="relative flex items-center gap-1.5">
         <div class="relative flex-1">
@@ -1034,9 +1046,21 @@ window.oAEd = (t, id) => {
         <input type="number" min="0" step="1" id="af-${k.key}" value="${esc(v)}" oninput="updateProductMarginPreview()" class="admin-input !py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full focus:bg-white dark:focus:bg-slate-800 transition-all font-bold" placeholder="Masukkan harga jual..."/>
       </div>`;
     } else if (k.key === 'costPrice') {
+      if (!window.canViewCostPrice()) {
+        h += `<div class="p-3 bg-slate-100 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-2.5 text-slate-400 font-bold text-xs">
+          <i class="fa-solid fa-lock text-amber-500 text-sm"></i>
+          <span>Harga Modal (HPP) Terkunci (Khusus Akun Admin & Kasir Berizin)</span>
+        </div>`;
+      } else {
+        h += `<div class="relative">
+          <input type="number" min="0" step="1" id="af-${k.key}" value="${esc(v)}" oninput="updateProductMarginPreview()" class="admin-input !py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full focus:bg-white dark:focus:bg-slate-800 transition-all font-bold" placeholder="Masukkan harga modal (HPP)..."/>
+          <div id="product-margin-preview" class="mt-2 text-[11px] font-bold"></div>
+        </div>`;
+      }
+    } else if (k.key === 'stock') {
       h += `<div class="relative">
-        <input type="number" min="0" step="1" id="af-${k.key}" value="${esc(v)}" oninput="updateProductMarginPreview()" class="admin-input !py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full focus:bg-white dark:focus:bg-slate-800 transition-all font-bold" placeholder="Masukkan harga modal (HPP)..."/>
-        <div id="product-margin-preview" class="mt-2 text-[11px] font-bold"></div>
+        <input type="number" min="0" step="1" id="af-${k.key}" value="${v !== undefined && v !== '' ? esc(v) : '100'}" class="admin-input !py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full focus:bg-white dark:focus:bg-slate-800 transition-all font-bold" placeholder="Jumlah stok produk (cth: 100)..."/>
+        <p class="text-[10px] text-slate-400 font-semibold mt-1 italic">*Stok otomatis berkurang saat transaksi kasir berhasil</p>
       </div>`;
     } else if (k.key === 'img') {
       h += `<div class="flex flex-col sm:flex-row gap-2">
@@ -1056,7 +1080,7 @@ window.oAEd = (t, id) => {
   if (t === 'products') { 
     rVarsB(); 
     rWholB(); 
-    setTimeout(updateProductMarginPreview, 50);
+    if (window.canViewCostPrice()) setTimeout(updateProductMarginPreview, 50);
   }
   show('admin-modal');
   setTimeout(() => { 
@@ -1087,6 +1111,7 @@ window.generateAutoVarSku = (index) => {
 };
 
 window.updateProductMarginPreview = () => {
+  if (!window.canViewCostPrice()) return;
   const price = parseFloat(getV('af-price')) || 0;
   const cost = parseFloat(getV('af-costPrice')) || 0;
   const container = el('product-margin-preview');
@@ -1109,6 +1134,7 @@ window.updateProductMarginPreview = () => {
 };
 
 window.rVarsB = () => {
+  const isCostPriceAllowed = window.canViewCostPrice();
   let h = `<div class="space-y-3 mb-4">` + tVars.map((v, i) => {
     const profit = (parseFloat(v.price) || 0) - (parseFloat(v.costPrice) || 0);
     const marginPct = (v.price > 0 && profit > 0) ? Math.round((profit / v.price) * 100) : 0;
@@ -1117,19 +1143,26 @@ window.rVarsB = () => {
       <div class="flex items-center justify-between mb-3 border-b-2 border-slate-50 dark:border-slate-700 pb-2">
         <div class="flex items-center gap-2 flex-wrap">
           <span class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-1.5"><i class="fa-solid fa-sitemap"></i> Varian ${i+1}</span>
-          ${(parseFloat(v.costPrice) || 0) > 0 ? `<span class="text-[9px] px-2 py-0.5 rounded-full font-black ${profit >= 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-rose-50 text-rose-700'}">Laba: ${fCur(profit)} (${marginPct}%)</span>` : ''}
+          ${isCostPriceAllowed && (parseFloat(v.costPrice) || 0) > 0 ? `<span class="text-[9px] px-2 py-0.5 rounded-full font-black ${profit >= 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-rose-50 text-rose-700'}">Laba: ${fCur(profit)} (${marginPct}%)</span>` : ''}
         </div>
         <button onclick="rmVar(${i})" class="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center" title="Hapus Varian"><i class="fa-solid fa-xmark text-sm"></i></button>
       </div>
       
       <div class="space-y-2.5">
-        <!-- Row 1: Nama Varian -->
-        <div>
-          <input placeholder="Nama Varian (Cth: 22 Oz / Merah / 1 Kg)" class="admin-input !py-2.5 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold w-full" value="${esc(v.name)}" onchange="uVar(${i},'name',this.value)"/>
+        <!-- Row 1: Nama Varian & Stok Varian -->
+        <div class="grid grid-cols-3 gap-2">
+          <div class="col-span-2">
+            <label class="text-[9px] font-bold text-slate-500 block mb-1">NAMA VARIAN</label>
+            <input placeholder="Cth: 22 Oz / Merah / 1 Kg" class="admin-input !py-2.5 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold w-full" value="${esc(v.name)}" onchange="uVar(${i},'name',this.value)"/>
+          </div>
+          <div>
+            <label class="text-[9px] font-bold text-slate-500 block mb-1">STOK</label>
+            <input placeholder="Stok" type="number" min="0" class="admin-input !py-2.5 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold text-center w-full" value="${v.stock !== undefined && v.stock !== '' ? v.stock : '100'}" oninput="uVar(${i},'stock',this.value)"/>
+          </div>
         </div>
 
         <!-- Row 2: Harga Jual & Harga Modal / HPP -->
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-${isCostPriceAllowed ? '2' : '1'} gap-2">
           <div>
             <label class="text-[9px] font-bold text-slate-500 block mb-1">HARGA JUAL (Rp)</label>
             <div class="relative">
@@ -1137,13 +1170,14 @@ window.rVarsB = () => {
               <input placeholder="0" type="number" min="0" class="admin-input !py-2 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold" value="${v.price || ''}" oninput="uVar(${i},'price',this.value); rVarsB();"/>
             </div>
           </div>
+          ${isCostPriceAllowed ? `
           <div>
             <label class="text-[9px] font-bold text-slate-500 block mb-1">MODAL / HPP (Rp)</label>
             <div class="relative">
               <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">Rp</span>
               <input placeholder="0" type="number" min="0" class="admin-input !py-2 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold" value="${v.costPrice || ''}" oninput="uVar(${i},'costPrice',this.value); rVarsB();"/>
             </div>
-          </div>
+          </div>` : ''}
         </div>
 
         <!-- Row 3: SKU with Auto Generator & Foto Varian -->
@@ -1167,10 +1201,10 @@ window.rVarsB = () => {
   setH('variants-builder-container', h);
 };
 
-window.addVar = () => { tVars.push({ name: '', price: 0, costPrice: 0, sku: '', img: '' }); rVarsB(); };
+window.addVar = () => { tVars.push({ name: '', price: 0, costPrice: 0, stock: 100, sku: '', img: '' }); rVarsB(); };
 window.rmVar = i => { tVars.splice(i, 1); rVarsB(); };
 window.uVar = (i, k, v) => { 
-  tVars[i][k] = (k === 'price' || k === 'costPrice') ? parseFloat(v) || 0 : (k === 'img' ? fixD(v) : v); 
+  tVars[i][k] = (k === 'price' || k === 'costPrice' || k === 'stock') ? parseFloat(v) || 0 : (k === 'img' ? fixD(v) : v); 
 };
 
 window.rWholB = () => {
