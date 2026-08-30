@@ -1,146 +1,232 @@
 <!-- ========================================================================= -->
-<!-- PRINT TEMPLATES (A4 INVOICE & SURAT JALAN)                                -->
+<!-- PRINT TEMPLATES (A4 INVOICE & SURAT JALAN STANDAR PROFESIONAL)              -->
 <!-- ========================================================================= -->
 <div class='hidden' id='document-templates'>
   <!-- TEMPLATE STANDAR A4: INVOICE -->
-  <div class='bg-white text-slate-800 box-border' id='template-invoice' style='width: 794px; min-width: 794px; max-width: 794px; min-height: 1123px; padding: 50px 56px; font-family: &apos;Plus Jakarta Sans&apos;, Arial, sans-serif; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background-color: #ffffff;'>
+  <div class='bg-white text-slate-800 box-border' id='template-invoice' style='width: 794px; min-width: 794px; max-width: 794px; min-height: 1123px; padding: 44px 50px; font-family: &apos;Plus Jakarta Sans&apos;, Arial, sans-serif; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background-color: #ffffff; position: relative;'>
+    
+    <!-- Top Decorative Accent Bar -->
+    <div style='position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--clr-p, #059669) 0%, #0284c7 100%);'></div>
+
     <div>
       <!-- KOP SURAT / HEADER -->
-      <div class='flex justify-between items-start border-b border-slate-200 pb-5 mb-6'>
-        <div class='flex items-start gap-4 max-w-[440px]'>
-          <div class='w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl shadow-sm overflow-hidden shrink-0' id='inv-logo-box' style='background-color: var(--clr-p, #059669);'>
-            <svg class='w-7 h-7 text-white fill-white' id='inv-logo-svg' viewBox='0 0 24 24'>
+      <div class='flex justify-between items-start border-b-2 border-slate-100 pb-5 mb-5'>
+        <div class='flex items-center gap-3.5 max-w-[430px]'>
+          <div class='w-14 h-14 rounded-2xl flex items-center justify-center text-white text-2xl shadow-sm overflow-hidden shrink-0 border border-slate-100' id='inv-logo-box' style='background-color: var(--clr-p, #059669);'>
+            <svg class='w-8 h-8 text-white fill-white' id='inv-logo-svg' viewBox='0 0 24 24'>
               <path d='M4 4h16l1 5v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2 2 2 0 0 1-2 2 2 2 0 0 1-2-2 2 2 0 0 1-2 2 2 2 0 0 1-2-2V9L4 4zm1 9.5a1.5 1.5 0 0 0 3 0V11H5v2.5zm4 0a1.5 1.5 0 0 0 3 0V11H9v2.5zm4 0a1.5 1.5 0 0 0 3 0V11h-3v2.5zm4 0a1.5 1.5 0 0 0 3 0V11h-3v2.5zM5 18h14v2H5v-2z' fill='#ffffff'/>
             </svg>
             <img class='w-full h-full object-contain hidden' id='inv-logo-img' src='' alt='Logo Toko' />
           </div>
           <div>
-            <h1 class='text-xl font-bold text-slate-900 tracking-tight leading-tight' id='inv-store-name'>NAMA TOKO</h1>
-            <p class='text-[11px] text-slate-500 mt-1 leading-relaxed' id='inv-store-address'>Alamat Toko</p>
-            <p class='text-[11px] font-bold text-slate-600 mt-0.5' id='inv-store-wa'>WA: 08123456789</p>
+            <h1 class='text-xl font-extrabold text-slate-900 tracking-tight leading-none uppercase' id='inv-store-name'>NAMA TOKO</h1>
+            <p class='text-[10.5px] font-medium text-slate-500 mt-1.5 leading-snug line-clamp-2' id='inv-store-address'>Alamat Toko</p>
+            <p class='text-[10.5px] font-bold text-slate-700 mt-1 flex items-center gap-1.5' id='inv-store-wa'>
+              <i class='fa-brands fa-whatsapp text-emerald-600'></i> WA: 08123456789
+            </p>
           </div>
         </div>
-        <div class='text-right'>
-          <h2 class='text-2xl font-black text-slate-300 uppercase tracking-widest whitespace-nowrap' id='inv-doc-title'>INVOICE</h2>
-          <p class='text-sm font-bold text-slate-800 mt-1.5 whitespace-nowrap' id='inv-id'>#ORD123456</p>
-          <p class='text-[11px] font-semibold text-slate-500 mt-0.5 whitespace-nowrap' id='inv-date'>13/06/2026</p>
+        
+        <div class='text-right flex flex-col items-end'>
+          <div class='inline-block px-3 py-1 bg-slate-900 text-white rounded-lg text-xs font-black tracking-widest uppercase shadow-xs mb-1.5' id='inv-doc-title'>
+            FAKTUR / INVOICE
+          </div>
+          <p class='text-sm font-black text-slate-800 tracking-wide font-mono' id='inv-id'>#ORD123456</p>
+          <p class='text-[10.5px] font-semibold text-slate-500 mt-0.5' id='inv-date'>13/06/2026</p>
         </div>
       </div>
 
-      <!-- INFO PELANGGAN -->
-      <div class='mb-6'>
-        <p class='text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5'>DITAGIHKAN KEPADA:</p>
-        <h3 class='text-sm font-semibold text-slate-800' id='inv-cust-name'>Nama Pelanggan</h3>
-        <p class='text-[11px] font-medium text-slate-500 mt-1 max-w-[340px] leading-relaxed' id='inv-cust-address'>Alamat Pelanggan</p>
-        <div class='mt-2 inline-block px-2.5 py-0.5 bg-slate-50 border border-slate-200 rounded text-[10px] font-bold text-slate-600'>
-          METODE: <span class='uppercase text-slate-800 font-extrabold' id='inv-method'>TRANSFER</span>
+      <!-- INFO DITAGIHKAN & METODE BAYAR (2-COLUMN CARDS) -->
+      <div class='grid grid-cols-2 gap-4 mb-6'>
+        <!-- Card 1: Penerima Tagihan -->
+        <div class='p-3.5 bg-slate-50/80 rounded-xl border border-slate-200/80 flex flex-col justify-between'>
+          <div>
+            <p class='text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1'>DITAGIHKAN KEPADA:</p>
+            <h3 class='text-xs font-bold text-slate-900 leading-snug' id='inv-cust-name'>Nama Pelanggan</h3>
+            <p class='text-[10.5px] font-medium text-slate-600 mt-1 leading-relaxed' id='inv-cust-address'>Alamat Pelanggan</p>
+          </div>
+        </div>
+
+        <!-- Card 2: Rincian Pembayaran -->
+        <div class='p-3.5 bg-slate-50/80 rounded-xl border border-slate-200/80 flex flex-col justify-between'>
+          <div>
+            <p class='text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1'>STATUS & METODE BAYAR:</p>
+            <div class='flex items-center gap-2 mt-1'>
+              <span class='px-2.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300' id='inv-method'>TRANSFER BANK</span>
+              <span class='px-2 py-0.5 rounded text-[10px] font-bold bg-slate-200 text-slate-700'>RESMI</span>
+            </div>
+            <p class='text-[10px] font-medium text-slate-400 mt-2'>Dokumen penagihan sah dan tercatat di sistem toko.</p>
+          </div>
         </div>
       </div>
 
-      <!-- TABEL PRODUK -->
-      <table class='w-full text-left border-collapse mb-8' style='table-layout: fixed; width: 100%;'>
-        <thead>
-          <tr class='border-b-2 border-slate-200'>
-            <th class='py-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest' style='width: 26%;'>Qty &amp; Satuan</th>
-            <th class='py-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest' style='width: 34%;'>Nama Barang</th>
-            <th class='py-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right' style='width: 20%;'>Harga Satuan</th>
-            <th class='py-2.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right' style='width: 20%;'>Total</th>
-          </tr>
-        </thead>
-        <tbody id='inv-items'></tbody>
-      </table>
+      <!-- TABEL PRODUK INVOICE -->
+      <div class='rounded-xl border border-slate-200/90 overflow-hidden mb-6'>
+        <table class='w-full text-left border-collapse' style='table-layout: fixed; width: 100%;'>
+          <thead>
+            <tr class='bg-slate-100/90 border-b border-slate-200 text-slate-600'>
+              <th class='py-2.5 px-3.5 text-[9.5px] font-extrabold uppercase tracking-wider' style='width: 22%;'>Qty &amp; Satuan</th>
+              <th class='py-2.5 px-3 text-[9.5px] font-extrabold uppercase tracking-wider' style='width: 38%;'>Nama Barang &amp; Varian</th>
+              <th class='py-2.5 px-3 text-[9.5px] font-extrabold uppercase tracking-wider text-right' style='width: 20%;'>Harga Satuan</th>
+              <th class='py-2.5 px-3.5 text-[9.5px] font-extrabold uppercase tracking-wider text-right' style='width: 20%;'>Total</th>
+            </tr>
+          </thead>
+          <tbody id='inv-items'></tbody>
+        </table>
+      </div>
 
-      <!-- RINGKASAN PEMBAYARAN -->
-      <div class='flex justify-end mb-10'>
-        <div class='w-72 space-y-2.5 text-[11px]'>
-          <div class='flex justify-between text-slate-500'><span class='font-semibold'>Subtotal:</span> <span class='font-bold text-slate-700 whitespace-nowrap' id='inv-subtotal'>Rp 0</span></div>
-          <div class='flex justify-between text-rose-500 hidden' id='inv-discount-row'><span class='font-semibold'>Total Diskon:</span> <span class='font-bold whitespace-nowrap' id='inv-discount'>-Rp 0</span></div>
-          <div class='flex justify-between text-slate-500' id='inv-shipping-row'><span class='font-semibold'>Ongkos Kirim:</span> <span class='font-bold text-slate-700 whitespace-nowrap' id='inv-shipping'>Rp 0</span></div>
-          <div class='flex justify-between text-rose-500 hidden' id='inv-shipping-discount-row'><span class='font-semibold'>Diskon Ongkir:</span> <span class='font-bold whitespace-nowrap' id='inv-shipping-discount'>-Rp 0</span></div>
-          <div class='flex justify-between text-slate-900 font-bold text-base pt-3 border-t border-slate-200 mt-2'><span class='uppercase tracking-widest text-xs self-center'>Total:</span> <span class='whitespace-nowrap font-black' id='inv-grandtotal'>Rp 0</span></div>
+      <!-- RINGKASAN PEMBAYARAN & REKENING TOKO -->
+      <div class='flex justify-between items-start gap-6 mb-8'>
+        <!-- Catatan / Info Tambahan -->
+        <div class='flex-1 max-w-[340px] text-[10px] text-slate-500 space-y-1.5'>
+          <p class='font-bold text-slate-700 uppercase tracking-wider text-[9px]'>Catatan &amp; Kebijakan:</p>
+          <p class='leading-relaxed text-slate-500'>1. Bukti pembayaran ini sah dan diterbitkan secara digital oleh sistem kasir toko.</p>
+          <p class='leading-relaxed text-slate-500'>2. Harap simpan invoice ini sebagai bukti transaksi dan klaim garansi yang berlaku.</p>
+        </div>
+
+        <!-- Kolom Kalkulasi Total -->
+        <div class='w-72 bg-slate-50/90 p-4 rounded-xl border border-slate-200/80 space-y-2 text-xs'>
+          <div class='flex justify-between text-slate-600'>
+            <span class='font-medium text-[11px]'>Subtotal Produk:</span>
+            <span class='font-bold text-slate-800' id='inv-subtotal'>Rp 0</span>
+          </div>
+          <div class='flex justify-between text-rose-600 hidden' id='inv-discount-row'>
+            <span class='font-medium text-[11px]'>Diskon Promo:</span>
+            <span class='font-bold' id='inv-discount'>-Rp 0</span>
+          </div>
+          <div class='flex justify-between text-slate-600' id='inv-shipping-row'>
+            <span class='font-medium text-[11px]'>Ongkos Kirim:</span>
+            <span class='font-bold text-slate-800' id='inv-shipping'>Rp 0</span>
+          </div>
+          <div class='flex justify-between text-rose-600 hidden' id='inv-shipping-discount-row'>
+            <span class='font-medium text-[11px]'>Potongan Ongkir:</span>
+            <span class='font-bold' id='inv-shipping-discount'>-Rp 0</span>
+          </div>
+          
+          <div class='pt-2.5 border-t-2 border-slate-200 flex justify-between items-center mt-2'>
+            <span class='text-xs font-black text-slate-900 uppercase tracking-widest'>TOTAL AKHIR:</span>
+            <span class='text-base font-black text-emerald-700 font-mono' id='inv-grandtotal'>Rp 0</span>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- FOOTER STANDAR A4 -->
-    <div class='border-t border-slate-100 pt-4 text-center'>
-      <p class='text-[10px] font-semibold text-slate-400' id='inv-footer-text'>Terima kasih telah berbelanja.</p>
+    <div class='border-t border-slate-200 pt-3.5 flex justify-between items-center text-[10px] text-slate-400'>
+      <p class='font-medium' id='inv-footer-text'>Terima kasih atas kunjungan dan kepercayaan Anda.</p>
+      <p class='font-semibold'>Dicetak Otomatis &bull; Halaman 1 dari 1</p>
     </div>
   </div>
 
   <!-- TEMPLATE STANDAR A4: SURAT JALAN -->
-  <div class='bg-white text-slate-800 box-border' id='template-surat-jalan' style='width: 794px; min-width: 794px; max-width: 794px; min-height: 1123px; padding: 50px 56px; font-family: &apos;Plus Jakarta Sans&apos;, Arial, sans-serif; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background-color: #ffffff;'>
+  <div class='bg-white text-slate-800 box-border' id='template-surat-jalan' style='width: 794px; min-width: 794px; max-width: 794px; min-height: 1123px; padding: 44px 50px; font-family: &apos;Plus Jakarta Sans&apos;, Arial, sans-serif; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background-color: #ffffff; position: relative;'>
+    
+    <!-- Top Decorative Accent Bar -->
+    <div style='position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, #0284c7 0%, #38bdf8 100%);'></div>
+
     <div>
       <!-- KOP SURAT / HEADER -->
-      <div class='flex justify-between items-start border-b border-slate-200 pb-5 mb-6'>
-        <div class='flex items-start gap-4 max-w-[440px]'>
-          <div class='w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl shadow-sm overflow-hidden shrink-0' id='sj-logo-box' style='background-color: #0284c7;'>
-            <svg class='w-7 h-7 text-white fill-white' id='sj-logo-svg' viewBox='0 0 24 24'>
+      <div class='flex justify-between items-start border-b-2 border-slate-100 pb-5 mb-5'>
+        <div class='flex items-center gap-3.5 max-w-[430px]'>
+          <div class='w-14 h-14 rounded-2xl flex items-center justify-center text-white text-2xl shadow-sm overflow-hidden shrink-0 border border-slate-100' id='sj-logo-box' style='background-color: #0284c7;'>
+            <svg class='w-8 h-8 text-white fill-white' id='sj-logo-svg' viewBox='0 0 24 24'>
               <path d='M4 4h16l1 5v2a2 2 0 0 1-2 2 2 2 0 0 1-2-2 2 2 0 0 1-2 2 2 2 0 0 1-2-2 2 2 0 0 1-2 2 2 2 0 0 1-2-2V9L4 4zm1 9.5a1.5 1.5 0 0 0 3 0V11H5v2.5zm4 0a1.5 1.5 0 0 0 3 0V11H9v2.5zm4 0a1.5 1.5 0 0 0 3 0V11h-3v2.5zm4 0a1.5 1.5 0 0 0 3 0V11h-3v2.5zM5 18h14v2H5v-2z' fill='#ffffff'/>
             </svg>
             <img class='w-full h-full object-contain hidden' id='sj-logo-img' src='' alt='Logo Toko' />
           </div>
           <div>
-            <h1 class='text-xl font-bold text-slate-900 tracking-tight leading-tight' id='sj-store-name'>NAMA TOKO</h1>
-            <p class='text-[11px] text-slate-500 mt-1 leading-relaxed' id='sj-store-address'>Alamat Toko</p>
-            <p class='text-[11px] font-bold text-slate-600 mt-0.5' id='sj-store-wa'>WA: 08123456789</p>
+            <h1 class='text-xl font-extrabold text-slate-900 tracking-tight leading-none uppercase' id='sj-store-name'>NAMA TOKO</h1>
+            <p class='text-[10.5px] font-medium text-slate-500 mt-1.5 leading-snug line-clamp-2' id='sj-store-address'>Alamat Toko</p>
+            <p class='text-[10.5px] font-bold text-slate-700 mt-1 flex items-center gap-1.5' id='sj-store-wa'>
+              <i class='fa-brands fa-whatsapp text-sky-600'></i> WA: 08123456789
+            </p>
           </div>
         </div>
-        <div class='text-right'>
-          <h2 class='text-2xl font-black text-slate-300 uppercase tracking-widest whitespace-nowrap' id='sj-doc-title'>Surat Jalan</h2>
-          <p class='text-sm font-bold text-slate-800 mt-1.5 whitespace-nowrap' id='sj-id'>#SJ-ORD123456</p>
-          <p class='text-[11px] font-semibold text-slate-500 mt-0.5 whitespace-nowrap' id='sj-date'>13/06/2026</p>
+        
+        <div class='text-right flex flex-col items-end'>
+          <div class='inline-block px-3 py-1 bg-sky-700 text-white rounded-lg text-xs font-black tracking-widest uppercase shadow-xs mb-1.5' id='sj-doc-title'>
+            SURAT JALAN PENGIRIMAN
+          </div>
+          <p class='text-sm font-black text-slate-800 tracking-wide font-mono' id='sj-id'>#SJ-ORD123456</p>
+          <p class='text-[10.5px] font-semibold text-slate-500 mt-0.5' id='sj-date'>13/06/2026</p>
         </div>
       </div>
 
-      <!-- INFO PENGIRIM & PENERIMA -->
-      <div class='mb-8 grid grid-cols-2 gap-10'>
-        <div>
-          <p class='text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5'>Pengirim:</p>
-          <h3 class='text-sm font-semibold text-slate-800' id='sj-sender-name'>Nama Toko</h3>
+      <!-- INFO PENGIRIM & PENERIMA (2-COLUMN CARDS) -->
+      <div class='grid grid-cols-2 gap-4 mb-6'>
+        <!-- Card 1: Pengirim (Gudang/Toko) -->
+        <div class='p-3.5 bg-slate-50/80 rounded-xl border border-slate-200/80 flex flex-col justify-between'>
+          <div>
+            <p class='text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1'>PENGIRIM (ASAL BARANG):</p>
+            <h3 class='text-xs font-bold text-slate-900' id='sj-sender-name'>Nama Toko</h3>
+            <p class='text-[10.5px] font-medium text-slate-600 mt-1'>Pengiriman logistik resmi &amp; serah terima barang</p>
+          </div>
         </div>
-        <div>
-          <p class='text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5'>Penerima (Tujuan):</p>
-          <h3 class='text-sm font-semibold text-slate-800' id='sj-cust-name'>Nama Pelanggan</h3>
-          <p class='text-[11px] font-medium text-slate-500 mt-1 leading-relaxed' id='sj-cust-address'>Alamat Lengkap</p>
-          <p class='text-[10px] font-bold text-slate-700 mt-2 bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded hidden' id='sj-cust-note'></p>
+
+        <!-- Card 2: Penerima (Tujuan Pengiriman) -->
+        <div class='p-3.5 bg-slate-50/80 rounded-xl border border-slate-200/80 flex flex-col justify-between'>
+          <div>
+            <p class='text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1'>PENERIMA (TUJUAN LOKASI):</p>
+            <h3 class='text-xs font-bold text-slate-900' id='sj-cust-name'>Nama Pelanggan</h3>
+            <p class='text-[10.5px] font-medium text-slate-600 mt-1 leading-relaxed' id='sj-cust-address'>Alamat Lengkap</p>
+            <p class='text-[10px] font-bold text-sky-800 mt-2 bg-sky-50 border border-sky-200 px-2.5 py-1 rounded hidden' id='sj-cust-note'></p>
+          </div>
         </div>
       </div>
 
       <!-- TABEL BARANG SURAT JALAN -->
-      <div class='border border-slate-200 rounded-lg overflow-hidden mb-12'>
+      <div class='rounded-xl border border-slate-200/90 overflow-hidden mb-8'>
         <table class='w-full text-left border-collapse' style='table-layout: fixed; width: 100%;'>
           <thead>
-            <tr class='bg-slate-50 border-b border-slate-200'>
-              <th class='py-2.5 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-r border-slate-200' style='width: 48%;'>Nama Barang</th>
-              <th class='py-2.5 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-r border-slate-200 text-center' style='width: 20%;'>Qty / Satuan</th>
-              <th class='py-2.5 px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest' style='width: 32%;'>Varian / Ket</th>
+            <tr class='bg-slate-100/90 border-b border-slate-200 text-slate-600'>
+              <th class='py-2.5 px-3.5 text-[9.5px] font-extrabold uppercase tracking-wider' style='width: 48%;'>Nama Barang / Deskripsi</th>
+              <th class='py-2.5 px-3 text-[9.5px] font-extrabold uppercase tracking-wider text-center' style='width: 20%;'>Qty / Satuan</th>
+              <th class='py-2.5 px-3 text-[9.5px] font-extrabold uppercase tracking-wider' style='width: 22%;'>Varian / Spesifikasi</th>
+              <th class='py-2.5 px-3 text-[9.5px] font-extrabold uppercase tracking-wider text-center' style='width: 10%;'>Cek</th>
             </tr>
           </thead>
           <tbody id='sj-items'></tbody>
         </table>
       </div>
 
-      <!-- TANDA TANGAN 3 PIHAK -->
-      <div class='grid grid-cols-3 gap-4 text-center mt-8'>
-        <div>
-          <p class='text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-10'>Penerima</p>
-          <p class='text-xs font-bold text-slate-800 border-b border-slate-300 inline-block px-2 pb-1 whitespace-nowrap' id='sj-sign-cust'>( ........................ )</p>
-        </div>
-        <div>
-          <p class='text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-10'>Kurir / Ekspedisi</p>
-          <p class='text-xs font-bold text-slate-800 border-b border-slate-300 inline-block px-2 pb-1 whitespace-nowrap'>( ........................ )</p>
-        </div>
-        <div>
-          <p class='text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-10'>Hormat Kami</p>
-          <p class='text-xs font-bold text-slate-800 border-b border-slate-300 inline-block px-2 pb-1 whitespace-nowrap' id='sj-sign-store'>Toko Kita</p>
+      <!-- TANDA TANGAN 3 PIHAK STANDAR EKSPEDISI LOGISTIK -->
+      <div class='mb-6'>
+        <p class='text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 text-center'>SERAH TERIMA &amp; VALIDASI DOKUMEN (3 PIHAK)</p>
+        <div class='grid grid-cols-3 gap-3.5 text-center'>
+          <!-- Pihak 1: Penerima -->
+          <div class='p-3 bg-slate-50/60 rounded-xl border border-slate-200/80 flex flex-col justify-between h-36'>
+            <p class='text-[10px] font-bold text-slate-500 uppercase tracking-wider'>Penerima Barang</p>
+            <div class='space-y-1'>
+              <p class='text-[11px] font-bold text-slate-800 border-b border-dashed border-slate-300 pb-1 whitespace-nowrap' id='sj-sign-cust'>( ................................ )</p>
+              <p class='text-[9px] text-slate-400 font-medium'>Tgl: ...... / ...... / 202...</p>
+            </div>
+          </div>
+
+          <!-- Pihak 2: Kurir / Driver -->
+          <div class='p-3 bg-slate-50/60 rounded-xl border border-slate-200/80 flex flex-col justify-between h-36'>
+            <p class='text-[10px] font-bold text-slate-500 uppercase tracking-wider'>Kurir / Pengantar</p>
+            <div class='space-y-1'>
+              <p class='text-[11px] font-bold text-slate-800 border-b border-dashed border-slate-300 pb-1 whitespace-nowrap'>( ................................ )</p>
+              <p class='text-[9px] text-slate-400 font-medium'>No. Pol / Kendaraan</p>
+            </div>
+          </div>
+
+          <!-- Pihak 3: Toko / Gudang -->
+          <div class='p-3 bg-slate-50/60 rounded-xl border border-slate-200/80 flex flex-col justify-between h-36'>
+            <p class='text-[10px] font-bold text-slate-500 uppercase tracking-wider'>Hormat Kami (Gudang)</p>
+            <div class='space-y-1'>
+              <p class='text-[11px] font-bold text-slate-800 border-b border-dashed border-slate-300 pb-1 whitespace-nowrap' id='sj-sign-store'>Toko Kita</p>
+              <p class='text-[9px] text-slate-400 font-medium'>Cap Toko &amp; Tanda Tangan</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- FOOTER STANDAR A4 -->
-    <div class='border-t border-slate-100 pt-4 text-center'>
-      <p class='text-[10px] font-semibold text-slate-400'>Surat Jalan Pengiriman Resmi &#8226; Dokumen Sah Logistik</p>
+    <div class='border-t border-slate-200 pt-3.5 flex justify-between items-center text-[10px] text-slate-400'>
+      <p class='font-medium'>Surat Jalan Pengiriman Resmi &bull; Dokumen Sah Logistik &amp; Serah Terima Barang.</p>
+      <p class='font-semibold'>Halaman 1 dari 1</p>
     </div>
   </div>
 </div>
