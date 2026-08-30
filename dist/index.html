@@ -37,10 +37,10 @@
     <link rel="dns-prefetch" href="https://wsrv.nl"/>
     <link rel="dns-prefetch" href="https://lh3.googleusercontent.com"/>
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts dengan font-display=swap untuk rendering instan -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     
-    <!-- External CDN Scripts & Libraries -->
+    <!-- Tailwind CSS JIT & Dark Mode -->
     <script>
       (function(){
         const origWarn = console.warn;
@@ -61,16 +61,16 @@
     </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
     
-    <!-- Firebase SDK (Compat) -->
+    <!-- Core Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>    
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>    
     
-    <!-- Utility Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Heavy On-Demand Libraries (Deferred untuk 0ms initial block) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <!-- Master CSS -->
     <style type="text/css">
@@ -2392,6 +2392,13 @@ const auth = firebase.auth();
 // Gunakan merge: true agar tidak memicu peringatan override host di Firestore 10.8.1
 db.settings({ ignoreUndefinedProperties: true, merge: true });
 
+// Aktifkan offline persistence untuk performa query lokal instan & multi-tab
+try {
+  db.enablePersistence({ synchronizeTabs: true }).catch(err => {
+    // Abaikan jika browser tidak mendukung multi-tab persistence
+  });
+} catch(e) {}
+
 // Helper timeout untuk Firestore agar tidak hang jika offline / koneksi lambat
 const withTimeout = (promise, timeoutMs = 3500) => {
   return Promise.race([
@@ -2496,7 +2503,7 @@ const loadAppData = async () => {
       delete copyData.products;
       ssL('freshmart_cms_data', JSON.stringify(copyData));
     }
-  } catch (e) {
+  } catch (e) { 
     console.warn('[FreshMart] 2c. Firestore offline or failed:', e.message); 
     if (!hasLocalData) {
       const l = JSON.parse(sL('freshmart_cms_data') || 'null'); 
@@ -6125,6 +6132,13 @@ window.addEventListener('appinstalled', () => {
 
 if (isPwaInstalled()) {
   sessionStorage.setItem('pwa_banner_dismissed', '1');
+}
+
+// Register PWA Service Worker untuk caching instan dan performa super cepat
+if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
 }
 
 // Inisialisasi Aplikasi FreshMart

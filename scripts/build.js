@@ -4,6 +4,7 @@ const path = require('path');
 const rootDir = path.resolve(__dirname, '..');
 const srcDir = path.join(rootDir, 'src');
 const distDir = path.join(rootDir, 'dist');
+const publicDir = path.join(rootDir, 'public');
 
 if (!fs.existsSync(distDir)) {
   fs.mkdirSync(distDir, { recursive: true });
@@ -56,6 +57,19 @@ function generateHtml() {
   return resolveIncludes('index.html', srcDir);
 }
 
+function copyPublicAssets() {
+  if (fs.existsSync(publicDir)) {
+    const files = fs.readdirSync(publicDir);
+    files.forEach(file => {
+      const srcFile = path.join(publicDir, file);
+      const destFile = path.join(distDir, file);
+      if (fs.statSync(srcFile).isFile()) {
+        fs.copyFileSync(srcFile, destFile);
+      }
+    });
+  }
+}
+
 function build() {
   console.log('🚀 Starting Web App Build...');
   const startTime = Date.now();
@@ -64,9 +78,14 @@ function build() {
   const indexPath = path.join(distDir, 'index.html');
   fs.writeFileSync(indexPath, finalHtml, 'utf8');
 
+  copyPublicAssets();
+
   const lines = finalHtml.split('\n').length;
   const sizeKB = (Buffer.byteLength(finalHtml, 'utf8') / 1024).toFixed(2);
   console.log(`✅ [dist/index.html] generated successfully! (${lines} lines, ${sizeKB} KB)`);
+  if (fs.existsSync(path.join(distDir, 'sw.js'))) {
+    console.log(`✅ [dist/sw.js] Service Worker cached & deployed!`);
+  }
 
   const elapsed = Date.now() - startTime;
   console.log(`✨ Build finished in ${elapsed}ms\n`);

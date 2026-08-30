@@ -132,6 +132,13 @@ if (isPwaInstalled()) {
   sessionStorage.setItem('pwa_banner_dismissed', '1');
 }
 
+// Register PWA Service Worker untuk caching instan dan performa super cepat
+if ('serviceWorker' in navigator && (window.location.protocol === 'https:' || window.location.hostname === 'localhost')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+
 // Inisialisasi Aplikasi FreshMart
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {

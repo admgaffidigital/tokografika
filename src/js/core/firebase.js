@@ -9,6 +9,13 @@ const auth = firebase.auth();
 // Gunakan merge: true agar tidak memicu peringatan override host di Firestore 10.8.1
 db.settings({ ignoreUndefinedProperties: true, merge: true });
 
+// Aktifkan offline persistence untuk performa query lokal instan & multi-tab
+try {
+  db.enablePersistence({ synchronizeTabs: true }).catch(err => {
+    // Abaikan jika browser tidak mendukung multi-tab persistence
+  });
+} catch(e) {}
+
 // Helper timeout untuk Firestore agar tidak hang jika offline / koneksi lambat
 const withTimeout = (promise, timeoutMs = 3500) => {
   return Promise.race([
@@ -113,7 +120,7 @@ const loadAppData = async () => {
       delete copyData.products;
       ssL('freshmart_cms_data', JSON.stringify(copyData));
     }
-  } catch (e) {
+  } catch (e) { 
     console.warn('[FreshMart] 2c. Firestore offline or failed:', e.message); 
     if (!hasLocalData) {
       const l = JSON.parse(sL('freshmart_cms_data') || 'null'); 
