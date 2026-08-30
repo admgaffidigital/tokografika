@@ -10054,20 +10054,32 @@ window.executeDownloadPdf = () => {
   const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const a4Width = 210;
   const a4Height = 297;
-  const imgRatio = tempPdfData.width / tempPdfData.height;
-  const a4Ratio = a4Width / a4Height;
-  let renderW = a4Width;
-  let renderH = a4Height;
-  let offsetX = 0;
-  let offsetY = 0;
-  if (imgRatio > a4Ratio) {
-    renderH = a4Width / imgRatio;
-    offsetY = (a4Height - renderH) / 2;
+
+  if (tempPdfData.canvas) {
+    const canvas = tempPdfData.canvas;
+    const pageCanvasHeight = Math.floor(canvas.width * (297 / 210));
+    const totalPages = Math.ceil(canvas.height / pageCanvasHeight);
+
+    for (let page = 0; page < totalPages; page++) {
+      const currentY = page * pageCanvasHeight;
+      const sliceHeight = Math.min(pageCanvasHeight, canvas.height - currentY);
+
+      const pageCanvas = document.createElement('canvas');
+      pageCanvas.width = canvas.width;
+      pageCanvas.height = pageCanvasHeight;
+      const ctx = pageCanvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+      ctx.drawImage(canvas, 0, currentY, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight);
+
+      const pageImgData = pageCanvas.toDataURL('image/png');
+      if (page > 0) pdf.addPage('a4', 'portrait');
+      pdf.addImage(pageImgData, 'PNG', 0, 0, a4Width, a4Height, undefined, 'FAST');
+    }
   } else {
-    renderW = a4Height * imgRatio;
-    offsetX = (a4Width - renderW) / 2;
+    pdf.addImage(tempPdfData.imgData, 'PNG', 0, 0, a4Width, a4Height, undefined, 'FAST');
   }
-  pdf.addImage(tempPdfData.imgData, 'PNG', offsetX, offsetY, renderW, renderH, undefined, 'FAST');
+
   pdf.save(tempPdfData.fileName);
   showToast(tempPdfData.type === 'invoice' ? 'Invoice A4 berhasil diunduh!' : 'Surat Jalan A4 berhasil diunduh!');
   closePreviewModal();
@@ -10392,6 +10404,7 @@ window.generateA4Document = async (type, directOrder = null) => {
     
     tempPdfData = {
       imgData: imgData,
+      canvas: canvas,
       width: canvas.width,
       height: canvas.height,
       type: type,
