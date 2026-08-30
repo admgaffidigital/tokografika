@@ -29,6 +29,12 @@
 
       <!-- Right: Action Buttons -->
       <div class='flex items-center gap-2 shrink-0'>
+        <!-- Panduan Kasir Quick Button -->
+        <button type='button' class='flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-sm active:scale-95' onclick='openCmsGuide("pos")' title='Panduan Cara Pakai POS Kasir'>
+          <i class='fa-solid fa-circle-question text-amber-300'></i>
+          <span class='hidden sm:inline'>Panduan</span>
+        </button>
+
         <!-- CMS Quick Shortcut -->
         <button type='button' class='hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-sm active:scale-95' id='btn-pos-to-admin' onclick='changeView(&quot;view-admin&quot;); openAdminMenu();' title='Buka CMS Pengaturan'>
           <i class='fa-solid fa-gear text-xs'></i>
