@@ -267,14 +267,14 @@ const rAdmOrd = () => {
   const s = () => {
     if (aOrdLst) { aOrdLst(); aOrdLst = null; }
     
-    aOrdLst = db.collection("freshmart_orders").orderBy("timestamp", "desc").limit(300).onSnapshot(p => {
+    aOrdLst = db.collection("freshmart_orders").orderBy("timestamp", "desc").limit(50).onSnapshot(p => {
       gOrds = [];
       if (p.empty) {
         setH('admin-orders-list', `<div class="col-span-full text-center py-16 text-slate-400 font-bold bg-white dark:bg-slate-800 rounded-[1.5rem] border-2 border-slate-200 dark:border-slate-700 shadow-sm"><i class="fa-solid fa-receipt text-4xl mb-3 opacity-40 block"></i>Belum ada pesanan</div>`);
         setIn('stat-orders', 0);
         return;
       }
-      setIn('stat-orders', p.size + (p.size >= 300 ? '+' : ''));
+      setIn('stat-orders', p.size + (p.size >= 50 ? '+' : ''));
 
       let orderHtml = '';
 
