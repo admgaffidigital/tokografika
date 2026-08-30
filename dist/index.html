@@ -1310,6 +1310,9 @@ html.dark .badge-counter {
       <button type='button' onclick='showGuideTopic("pos")' id='guide-btn-pos' class='guide-topic-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5'>
         <i class='fa-solid fa-cash-register'></i> <span>POS Kasir</span>
       </button>
+      <button type='button' onclick='showGuideTopic("print_docs")' id='guide-btn-print_docs' class='guide-topic-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5'>
+        <i class='fa-solid fa-print text-emerald-500'></i> <span>Cetak Struk & A4</span>
+      </button>
       <button type='button' onclick='showGuideTopic("reports")' id='guide-btn-reports' class='guide-topic-btn px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5'>
         <i class='fa-solid fa-chart-line'></i> <span>Laporan Laba</span>
       </button>
@@ -8123,12 +8126,12 @@ window.getTabHelpBanner = (t) => {
     orders: `
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 pt-1">
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
-          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-bell text-rose-500"></i> 1. Pesanan Baru Masuk</div>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400">Pesanan dari website langsung masuk dengan status <b>Baru</b>. Cek detail pembeli, rincian barang, dan bukti bayar.</p>
+          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-bell text-rose-500"></i> 1. Pesanan Masuk Real-Time</div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Pesanan dari website langsung masuk ke status <b>Baru</b>. Cek rincian barang, kurir, dan bukti pembayaran.</p>
         </div>
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
-          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-truck-fast text-amber-500"></i> 2. Proses & Selesaikan</div>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400">Ubah status ke <b>Diproses</b> saat menyiapkan barang, dan <b>Selesai</b> saat pesanan dikirim/diterima.</p>
+          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-print text-emerald-500"></i> 2. Cetak Dokumen 1-Klik</div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Buka pesanan lalu klik <b>Struk Kasir (58/80mm)</b>, <b>Invoice A4</b>, atau <b>Surat Jalan</b> tanpa ribet.</p>
         </div>
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60 sm:col-span-2 md:col-span-1">
           <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-brands fa-whatsapp text-emerald-500"></i> 3. WhatsApp Otomatis</div>
@@ -8139,16 +8142,16 @@ window.getTabHelpBanner = (t) => {
     settings: `
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 pt-1">
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
-          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-store text-emerald-500"></i> 1. Info Toko & WhatsApp</div>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400">Nama toko, slogan, dan no. WhatsApp tujuan pesanan online dikonfigurasi di sini.</p>
+          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-store text-emerald-500"></i> 1. Profil & WhatsApp</div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Nama toko, slogan, nomor WhatsApp admin, dan alamat fisik toko dikonfigurasi di sini.</p>
         </div>
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
-          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-receipt text-blue-500"></i> 2. Teks Footer Struk</div>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400">Kustomisasi kalimat ucapan terima kasih atau info garansi di bagian bawah struk thermal kasir.</p>
+          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-print text-blue-500"></i> 2. Printer 58mm / 80mm</div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Pilih default lebar kertas printer kasir: <b>58mm (mini)</b> atau <b>80mm (supermarket)</b>.</p>
         </div>
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60 sm:col-span-2 md:col-span-1">
-          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-palette text-purple-500"></i> 3. Pilihan Warna Tema</div>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400">Ubah warna aksen brand toko Anda (Emerald, Biru, Ungu, Teal, dll) secara instan.</p>
+          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-palette text-purple-500"></i> 3. Tema & Background</div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Pilih warna branding toko dan gaya background non-blur yang tajam dan berkelas.</p>
         </div>
       </div>
     `,
@@ -8340,7 +8343,7 @@ const guideTopicsData = {
             <i class="fa-solid fa-bolt"></i> Kasir Cepat, Akurat & Terintegrasi
           </h4>
           <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
-            POS Kasir Toko Grafika dirancang untuk melayani antrian pelanggan dengan cepat, scan barcode, multi pembayaran, cetak struk thermal 58mm / A4, dan otomatis memotong stok barang.
+            POS Kasir Toko Grafika dirancang untuk melayani antrian pelanggan dengan cepat, scan barcode, multi pembayaran, cetak struk thermal 58mm / 80mm & A4, dan otomatis memotong stok barang.
           </p>
         </div>
 
@@ -8359,9 +8362,97 @@ const guideTopicsData = {
 
           <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
             <div class="w-7 h-7 rounded-lg text-white font-bold flex items-center justify-center text-xs shadow-sm" style="background-color:var(--clr-p)">3</div>
-            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Cetak Struk Thermal & PDF</h5>
-            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Cetak struk kasir Bluetooth/USB 58mm atau faktur nota A4 resmi untuk pelanggan.</p>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Cetak Struk 58/80mm & A4</h5>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Cetak struk kasir Bluetooth/USB 58mm atau 80mm, serta faktur nota A4 resmi untuk pelanggan.</p>
           </div>
+        </div>
+      </div>
+    `
+  },
+  print_docs: {
+    title: 'Panduan Cetak Struk Kasir (58mm/80mm) & Dokumen A4 Resmi',
+    icon: 'fa-print',
+    content: `
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06)">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2" style="color:var(--clr-p)">
+            <i class="fa-solid fa-receipt"></i> Standarisasi Struk Kasir & Dokumen Bisnis Modern
+          </h4>
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Toko Grafika mendukung 2 jenis printer thermal kasir (58mm & 80mm) dengan format layaknya supermarket besar, serta dokumen faktur A4 dan surat jalan ekspedisi yang rapi dan presisi.
+          </p>
+        </div>
+
+        <!-- 1. Opsi Printer 58mm vs 80mm -->
+        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 space-y-3">
+          <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+            <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs shadow-sm font-bold bg-emerald-600">1</span>
+            Pilihan Ukuran Kertas Printer Thermal:
+          </h5>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-emerald-200/70 dark:border-emerald-800/40 shadow-xs">
+              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">🖨️ Printer 58mm (Kecil / Portabel)</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Lebar kertas 58mm dengan format <b>32 Karakter</b> per baris. Sangat cocok untuk printer Bluetooth mini kasir, kasir booth, atau kurir keliling.</p>
+            </div>
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-emerald-200/70 dark:border-emerald-800/40 shadow-xs">
+              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">🖨️ Printer 80mm (Standar Supermarket/POS)</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Lebar kertas 80mm dengan format <b>48 Karakter</b> per baris. Kolom lebih lebar dan lega, standar kasir minimarket, resto, dan retail besar.</p>
+            </div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-[11px] text-emerald-800 dark:text-emerald-200 font-medium">
+            💡 <b>Cara Mengatur Default Printer:</b> Masuk ke menu <b>CMS Toko ➜ Pengaturan Toko</b>, lalu pada bagian <i>Ukuran Kertas Printer</i> pilih 58mm atau 80mm dan klik Simpan. Anda juga bisa beralih instan dengan menekan tombol <b>[58mm]</b> atau <b>[80mm]</b> di jendela preview struk!
+          </div>
+        </div>
+
+        <!-- 2. Fitur Struk Kasir Supermarket -->
+        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 space-y-2.5">
+          <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+            <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs shadow-sm font-bold bg-blue-600">2</span>
+            Anatomi Struk Kasir Supermarket Otentik:
+          </h5>
+          <ul class="list-disc list-inside text-xs text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
+            <li><b>Kop Toko Lengkap:</b> Menampilkan Nama Toko, Slogan, Alamat Lengkap, dan No. WhatsApp CS.</li>
+            <li><b>Metadata Transaksi:</b> Nomor struk resmi, waktu hingga detik, nama kasir, dan nama pelanggan.</li>
+            <li><b>Daftar Belanja:</b> Baris nama produk, rincian <code>Qty x Harga</code>, dan subtotal yang sejajar rapi.</li>
+            <li><b>Rekap Jumlah Item:</b> Menghitung total item dan total kuantitas barang belanjaan secara otomatis.</li>
+            <li><b>Banner Hemat Belanja:</b> Menampilkan <code>*** ANDA HEMAT: Rp XX.XXX ***</code> jika transaksi mendapatkan diskon produk atau voucher.</li>
+            <li><b>Barcode Visual Code128:</b> Dilengkapi garis barcode visual modern di bagian bawah struk.</li>
+          </ul>
+        </div>
+
+        <!-- 3. Dokumen A4 Resmi (Faktur & Surat Jalan) -->
+        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 space-y-3">
+          <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+            <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs shadow-sm font-bold bg-purple-600">3</span>
+            Dokumen Bisnis Standar A4 (Multi-Page Presisi):
+          </h5>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
+              <span class="font-bold text-blue-600 dark:text-blue-400 block mb-1">📄 Faktur / Invoice Tagihan</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Dokumen penagihan resmi untuk pelanggan, instansi, atau perusahaan. Memuat kolom Qty angka murni, subtotal, potongan diskon, dan total tagihan.</p>
+            </div>
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
+              <span class="font-bold text-rose-600 dark:text-rose-400 block mb-1">🚚 Surat Jalan Pengiriman</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Dokumen serah terima barang ekspedisi / kurir. Tabel item tanpa nominal harga dan dilengkapi kotak tanda tangan 3-pihak: <i>Penerima, Pengemudi/Kurir, dan Toko</i>.</p>
+            </div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-[11px] text-purple-800 dark:text-purple-200 font-medium">
+            📄 <b>Teknologi Multi-Page Diskrit:</b> Berapapun banyaknya barang (hingga 50+ item), sistem otomatis membaginya menjadi Halaman 1, 2, ... N ukuran A4 penuh tanpa ada baris yang terpotong di tengah jalan.
+          </div>
+        </div>
+
+        <!-- 4. Tombol 1-Klik di Detail Pesanan -->
+        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+          <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+            <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs shadow-sm font-bold bg-amber-600">4</span>
+            Akses Cepat 1-Klik dari Menu Pesanan:
+          </h5>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Pada setiap detail pesanan, Anda dapat langsung mengklik tombol kartu dokumen atau tombol footer di bagian bawah:
+            <br>&bull; <b>Struk Kasir (Hijau)</b>: Membuka preview struk thermal (58mm/80mm).
+            <br>&bull; <b>Invoice (Biru)</b>: Membuka pratinjau faktur tagihan A4 PDF.
+            <br>&bull; <b>Surat Jalan (Amber)</b>: Membuka pratinjau surat jalan ekspedisi A4 PDF.
+          </p>
         </div>
       </div>
     `
