@@ -1,56 +1,75 @@
 <!-- ========================================================================= -->
 <!-- VIEW: ADMIN & KASIR LOGIN                                                 -->
 <!-- ========================================================================= -->
-<div class='view-section flex items-center justify-center fade-in bg-slate-900 dark:bg-[#020617] z-50 relative hidden min-h-screen' id='view-admin-login'>
-  <div class='absolute inset-0 bg-slate-900 pointer-events-none'></div>
-  <div class='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none'></div>
+<div class='view-section flex items-center justify-center fade-in bg-slate-950/80 backdrop-blur-md z-50 relative hidden min-h-screen p-4 sm:p-6' id='view-admin-login'>
+  <!-- Background Glow & Grid -->
+  <div class='absolute inset-0 bg-gradient-to-b from-slate-900/60 to-slate-950 pointer-events-none'></div>
+  <div class='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 sm:w-96 h-80 sm:h-96 rounded-full pointer-events-none blur-[120px] opacity-25' style='background-color: var(--clr-p);'></div>
 
-  <div class='w-full max-w-[390px] p-4 relative z-10 mx-auto'>
-    <div class='bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-200/60 dark:border-slate-700/60 p-6 sm:p-8 shadow-2xl relative flex flex-col items-center text-center'>
-      <button class='absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700/50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all duration-300' onclick='changeView(&apos;view-catalog&apos;)' title='Tutup'>
-        <i class='fa-solid fa-xmark'></i>
+  <div class='w-full max-w-[400px] relative z-10 mx-auto'>
+    <div class='card-modern bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-2xl relative flex flex-col items-center text-center overflow-hidden'>
+      
+      <!-- Close Button -->
+      <button class='absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all shadow-sm' onclick='changeView(&quot;view-catalog&quot;)' title='Kembali ke Toko'>
+        <i class='fa-solid fa-xmark text-sm'></i>
       </button>
 
-      <!-- 2-Tab Switcher (Admin vs Kasir) -->
-      <div class='w-full bg-slate-100 dark:bg-slate-900 p-1 rounded-2xl flex items-center mb-6 border border-slate-200 dark:border-slate-800' id='login-tab-container'>
-        <button class='flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm' id='tab-login-admin' onclick='switchLoginTab(&quot;admin&quot;)'>
-          <i class='fa-solid fa-shield-halved text-xs'></i>
-          <span>Admin Master</span>
+      <!-- Brand / Security Icon -->
+      <div class='w-14 h-14 rounded-2xl text-white flex items-center justify-center mb-3 text-2xl shadow-lg border border-white/20 transition-all duration-300' id='login-icon-box' style='background-color:var(--clr-p);box-shadow:0 8px 20px var(--clr-p-25)'>
+        <i class='fa-solid fa-shield-halved' id='login-icon'></i>
+      </div>
+      
+      <h2 class='text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white' id='login-title'>Portal Masuk</h2>
+      <p class='text-xs font-semibold text-slate-500 dark:text-slate-400 mb-5' id='login-subtitle'>Silakan pilih mode login di bawah ini</p>
+
+      <!-- Segmented Tab Switcher (Admin vs Kasir) -->
+      <div class='w-full bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-2xl flex items-center mb-5 border border-slate-200/80 dark:border-slate-700/80 shadow-inner' id='login-tab-container'>
+        <button type='button' class='flex-1 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700' id='tab-login-admin' onclick='switchLoginTab(&quot;admin&quot;)'>
+          <i class='fa-solid fa-shield-halved text-xs' style='color:var(--clr-p)'></i>
+          <span>Admin</span>
         </button>
-        <button class='flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' id='tab-login-cashier' onclick='switchLoginTab(&quot;cashier&quot;)'>
+        <button type='button' class='flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' id='tab-login-cashier' onclick='switchLoginTab(&quot;cashier&quot;)'>
           <i class='fa-solid fa-cash-register text-xs'></i>
           <span>POS Kasir</span>
         </button>
       </div>
       
-      <div class='w-16 h-16 text-white rounded-2xl flex items-center justify-center mb-4 text-3xl shadow-lg transition-all duration-300' id='login-icon-box' style='background-color:var(--clr-p);box-shadow:0 8px 24px var(--clr-p-25)'>
-        <i class='fa-solid fa-shield-halved' id='login-icon'></i>
-      </div>
-      
-      <h2 class='text-2xl font-black tracking-tight text-slate-900 dark:text-white mb-1' id='login-title'>Admin Panel</h2>
-      <p class='text-xs font-semibold text-slate-500 dark:text-slate-400 mb-6' id='login-subtitle'>Portal masuk ke CMS Toko</p>
-      
-      <form class='space-y-4 w-full text-left' onsubmit='event.preventDefault(); processAdminLogin();'>
-        <div class='relative'>
-          <div class='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
-            <i class='fa-solid fa-user text-slate-400 dark:text-slate-500 text-sm' id='login-user-icon'></i>
+      <!-- Login Form -->
+      <form class='space-y-3.5 w-full text-left' onsubmit='event.preventDefault(); processAdminLogin();'>
+        <div>
+          <label class='text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1 block' id='login-user-label'>Username</label>
+          <div class='relative'>
+            <div class='absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none'>
+              <i class='fa-solid fa-user text-slate-400 dark:text-slate-500 text-xs' id='login-user-icon'></i>
+            </div>
+            <input class='w-full bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl pl-9 pr-3.5 py-3 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-theme-primary transition-all placeholder:text-slate-400' id='login-username' placeholder='Masukkan username...' type='text' autocomplete='username' style='box-sizing:border-box;' required/>
           </div>
-          <input class='w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:border-theme-primary transition-all placeholder:text-slate-400' id='login-username' placeholder='Username Admin' type='text' autocomplete='username' style='box-sizing:border-box;' required/>
         </div>
         
-        <div class='relative'>
-          <div class='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
-            <i class='fa-solid fa-lock text-slate-400 dark:text-slate-500 text-sm'></i>
+        <div>
+          <label class='text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1 block' id='login-pass-label'>Password / PIN</label>
+          <div class='relative'>
+            <div class='absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none'>
+              <i class='fa-solid fa-lock text-slate-400 dark:text-slate-500 text-xs'></i>
+            </div>
+            <input class='w-full bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-xl pl-9 pr-3.5 py-3 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-theme-primary transition-all placeholder:text-slate-400' id='login-password' placeholder='Masukkan password...' type='password' autocomplete='current-password' style='box-sizing:border-box;' required/>
           </div>
-          <input class='w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:border-theme-primary transition-all placeholder:text-slate-400' id='login-password' placeholder='Password Admin' type='password' autocomplete='current-password' style='box-sizing:border-box;' required/>
         </div>
         
         <div class='pt-2'>
-          <button class='btn-primary w-full !py-3.5 !text-sm hover:-translate-y-0.5 shadow-lg' id='btn-submit-login' type='submit'>
-            Masuk Sistem
+          <button class='btn-primary w-full !py-3.5 !text-sm !font-bold shadow-lg hover:-translate-y-0.5 active:scale-95' id='btn-submit-login' type='submit'>
+            <i class='fa-solid fa-right-to-bracket mr-1'></i> Masuk Sebagai Admin
           </button>
         </div>
       </form>
+
+      <!-- Back to Store Link -->
+      <div class='mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 w-full text-center'>
+        <button type='button' class='text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors inline-flex items-center gap-1.5' onclick='changeView(&quot;view-catalog&quot;)'>
+          <i class='fa-solid fa-arrow-left text-[10px]'></i> Kembali ke Belanja
+        </button>
+      </div>
+
     </div>
   </div>
 </div>

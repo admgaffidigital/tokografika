@@ -22,33 +22,39 @@ window.switchLoginTab = (tab) => {
   const subtitle = el('login-subtitle');
   const uInput = el('login-username');
   const pInput = el('login-password');
+  const uLabel = el('login-user-label');
+  const pLabel = el('login-pass-label');
   const submitBtn = el('btn-submit-login');
 
   if (tab === 'admin') {
     if (btnAdmin) {
-      btnAdmin.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700';
+      btnAdmin.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700';
     }
     if (btnCashier) {
-      btnCashier.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300';
+      btnCashier.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200';
     }
     if (icon) icon.className = 'fa-solid fa-shield-halved';
     if (title) title.innerText = 'Admin Master';
-    if (subtitle) subtitle.innerText = 'Portal masuk ke CMS Toko';
-    if (uInput) uInput.placeholder = 'Username Admin';
-    if (pInput) pInput.placeholder = 'Password Admin';
-    if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-shield-halved mr-1"></i> Masuk Sebagai Admin';
+    if (subtitle) subtitle.innerText = 'Portal masuk ke CMS Pengaturan Toko';
+    if (uLabel) uLabel.innerText = 'Username Admin';
+    if (pLabel) pLabel.innerText = 'Password Admin';
+    if (uInput) uInput.placeholder = 'Masukkan username admin...';
+    if (pInput) pInput.placeholder = 'Masukkan password admin...';
+    if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-right-to-bracket mr-1"></i> Masuk Sebagai Admin';
   } else {
     if (btnAdmin) {
-      btnAdmin.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300';
+      btnAdmin.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200';
     }
     if (btnCashier) {
-      btnCashier.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700';
+      btnCashier.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700';
     }
     if (icon) icon.className = 'fa-solid fa-cash-register';
     if (title) title.innerText = 'POS Kasir';
     if (subtitle) subtitle.innerText = 'Portal transaksi staf kasir';
-    if (uInput) uInput.placeholder = 'Username / Kode Kasir';
-    if (pInput) pInput.placeholder = 'Password / PIN Kasir';
+    if (uLabel) uLabel.innerText = 'Username / Kode Kasir';
+    if (pLabel) pLabel.innerText = 'Password / PIN Kasir';
+    if (uInput) uInput.placeholder = 'Masukkan username kasir...';
+    if (pInput) pInput.placeholder = 'Masukkan password kasir...';
     if (submitBtn) submitBtn.innerHTML = '<i class="fa-solid fa-cash-register mr-1"></i> Buka POS Kasir';
   }
 };
