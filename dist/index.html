@@ -11543,9 +11543,10 @@ window.renderPricetagProductList = () => {
   container.innerHTML = filtered.map(p => {
     const isSelected = !!selectedPrintProducts[p.id];
     const qty = selectedPrintProducts[p.id] || 0;
-    const img = p.img 
-      ? `<img src="${esc(p.img)}" onerror="this.onerror=null;this.src='https://placehold.co/80?text=Img'" class="w-10 h-10 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0" />`
-      : `<div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-image"></i></div>`;
+    const cleanImg = p.img ? fixD(p.img) : '';
+    const img = cleanImg 
+      ? `<img src="${esc(cleanImg)}" onerror="this.onerror=null;this.outerHTML='<div class=\\'w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-400 flex items-center justify-center shrink-0 text-sm border border-slate-200 dark:border-slate-700\\'><i class=\\'fa-solid fa-image\\'></i></div>';" class="w-10 h-10 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0" loading="lazy" alt="" />`
+      : `<div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-400 flex items-center justify-center shrink-0 text-sm border border-slate-200 dark:border-slate-700"><i class="fa-solid fa-image"></i></div>`;
 
     return `
       <div class="p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors ${isSelected ? 'border-l-4' : ''}" style="${isSelected ? 'background-color:var(--clr-p-10); border-left-color:var(--clr-p);' : ''}">
