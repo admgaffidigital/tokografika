@@ -224,16 +224,16 @@ const _getPosMainPrice = (p) => {
 };
 
 const renderPosProductCardGrid = (p) => {
-  const isOutOfStock = p.stock !== undefined && p.stock <= 0 && !p.variants;
+  const isOutOfStock = (p.isActive === 'false' || p.isActive === false);
   const hasVariants = p.variants && p.variants.length > 0;
   const price = _getPosMainPrice(p);
   const rawImg = p.img || p.image || (p.images && p.images[0]) || '';
   const imgUrl = rawImg ? (typeof fixD === 'function' ? fixD(rawImg) : rawImg) : '';
-  const cartQty = posCart.filter(c => c.id === p.id).reduce((s, c) => s + c.qty, 0);
+  const cartQty = posCart.filter(c => String(c.id) === String(p.id)).reduce((s, c) => s + c.qty, 0);
   const isGrosir = (p.wholesalePrice > 0 && p.wholesaleMinQty > 0) || (p.wholesale && p.wholesale.length > 0);
 
   return `
-    <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isOutOfStock ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 hover:shadow-md'} overflow-hidden transition-all cursor-pointer group flex flex-col" onclick="${isOutOfStock ? '' : (hasVariants ? `openPosVariantModal('${p.id}')` : `addToCartPos('${p.id}', null, 1)`)}" title="${esc(p.name)}">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isOutOfStock ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 hover:shadow-md'} overflow-hidden transition-all cursor-pointer group flex flex-col active:scale-98" onclick="${isOutOfStock ? '' : (hasVariants ? `openPosVariantModal('${esc(p.id)}')` : `addToCartPos('${esc(p.id)}', null, 1)`)}" title="${esc(p.name)}">
       <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 overflow-hidden">
         ${imgUrl ? `<img src="${esc(imgUrl)}" alt="${esc(p.name)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="if(window.imgErrRetry) window.imgErrRetry(this, 'No Image', 400); else this.style.display='none';"/>` : `<div class="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600"><i class="fa-solid fa-image text-2xl"></i></div>`}
         ${cartQty > 0 ? `<div class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center shadow-md border-2 border-white">${cartQty}</div>` : ''}
@@ -250,16 +250,16 @@ const renderPosProductCardGrid = (p) => {
 };
 
 const renderPosProductCardList = (p) => {
-  const isOutOfStock = p.stock !== undefined && p.stock <= 0 && !p.variants;
+  const isOutOfStock = (p.isActive === 'false' || p.isActive === false);
   const hasVariants = p.variants && p.variants.length > 0;
   const price = _getPosMainPrice(p);
   const rawImg = p.img || p.image || (p.images && p.images[0]) || '';
   const imgUrl = rawImg ? (typeof fixD === 'function' ? fixD(rawImg) : rawImg) : '';
-  const cartQty = posCart.filter(c => c.id === p.id).reduce((s, c) => s + c.qty, 0);
+  const cartQty = posCart.filter(c => String(c.id) === String(p.id)).reduce((s, c) => s + c.qty, 0);
   const isGrosir = (p.wholesalePrice > 0 && p.wholesaleMinQty > 0) || (p.wholesale && p.wholesale.length > 0);
 
   return `
-    <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isOutOfStock ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 hover:shadow-md'} p-3 flex items-center gap-3 transition-all cursor-pointer" onclick="${isOutOfStock ? '' : (hasVariants ? `openPosVariantModal('${p.id}')` : `addToCartPos('${p.id}', null, 1)`)}" title="${esc(p.name)}">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isOutOfStock ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-200 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-600 hover:shadow-md'} p-3 flex items-center gap-3 transition-all cursor-pointer active:scale-98" onclick="${isOutOfStock ? '' : (hasVariants ? `openPosVariantModal('${esc(p.id)}')` : `addToCartPos('${esc(p.id)}', null, 1)`)}" title="${esc(p.name)}">
       <div class="w-14 h-14 rounded-xl bg-slate-100 dark:bg-slate-800 overflow-hidden shrink-0 flex items-center justify-center">
         ${imgUrl ? `<img src="${esc(imgUrl)}" alt="${esc(p.name)}" class="w-full h-full object-cover" loading="lazy" onerror="if(window.imgErrRetry) window.imgErrRetry(this, 'No Image', 400); else this.style.display='none';"/>` : `<i class="fa-solid fa-image text-slate-300 dark:text-slate-600 text-lg"></i>`}
       </div>
@@ -275,7 +275,7 @@ const renderPosProductCardList = (p) => {
       <div class="flex items-center gap-1.5 shrink-0">
         ${cartQty > 0 ? `<span class="w-6 h-6 rounded-full bg-emerald-600 text-white text-[10px] font-black flex items-center justify-center">${cartQty}</span>` : ''}
         ${!isOutOfStock ? `
-          <button type="button" class="w-8 h-8 rounded-xl flex items-center justify-center font-black transition-all text-white shadow-sm active:scale-95" style="background-color:var(--clr-p)" onclick="event.stopPropagation(); ${hasVariants ? `openPosVariantModal('${p.id}')` : `addToCartPos('${p.id}', null, 1)`}">
+          <button type="button" class="w-8 h-8 rounded-xl flex items-center justify-center font-black transition-all text-white shadow-sm active:scale-95" style="background-color:var(--clr-p)" onclick="event.stopPropagation(); ${hasVariants ? `openPosVariantModal('${esc(p.id)}')` : `addToCartPos('${esc(p.id)}', null, 1)`}">
             <i class="fa-solid fa-plus text-xs"></i>
           </button>` : ''}
       </div>
@@ -286,29 +286,31 @@ const renderPosProductCardList = (p) => {
 // -----------------------------------------------------------------------------
 // 4. ADD TO CART
 // -----------------------------------------------------------------------------
-window.addToCartPos = (productId, variantId, qty = 1) => {
-  const product = (appData.products || []).find(p => p.id === productId);
-  if (!product) return;
+window.addToCartPos = (productId, variantId = null, qty = 1) => {
+  const product = (appData.products || []).find(p => String(p.id) === String(productId));
+  if (!product) {
+    console.warn('[POS] Product not found for ID:', productId);
+    return;
+  }
 
-  let cartItem;
   if (variantId) {
-    const variant = (product.variants || []).find(v => v.id === variantId || v.name === variantId);
+    const variant = (product.variants || []).find(v => String(v.id || v.name) === String(variantId));
     if (!variant) return;
     
-    const existingIdx = posCart.findIndex(c => c.id === productId && c.variantId === variantId);
+    const existingIdx = posCart.findIndex(c => String(c.id) === String(productId) && String(c.variantId) === String(variantId));
     if (existingIdx > -1) {
       posCart[existingIdx].qty = Math.round((posCart[existingIdx].qty + qty) * 100) / 100;
     } else {
-      const basePrice = variant.price || 0;
+      const basePrice = parseFloat(variant.price) || 0;
       const isWholesale = product.wholesaleMinQty > 0 && (qty >= product.wholesaleMinQty);
       const effectivePrice = isWholesale ? (product.wholesalePrice || basePrice) : (product.salePrice > 0 ? product.salePrice : basePrice);
       
       const vImg = variant.img || product.img || product.image || '';
       posCart.push({
-        id: productId,
-        variantId: variantId,
+        id: String(productId),
+        variantId: String(variantId),
         name: product.name,
-        variantName: variant.name || variantId,
+        variantName: variant.name || String(variantId),
         price: basePrice,
         effectivePrice,
         unit: variant.unit || product.unit || '',
@@ -319,7 +321,7 @@ window.addToCartPos = (productId, variantId, qty = 1) => {
       });
     }
   } else {
-    const existingIdx = posCart.findIndex(c => c.id === productId && !c.variantId);
+    const existingIdx = posCart.findIndex(c => String(c.id) === String(productId) && !c.variantId);
     if (existingIdx > -1) {
       const newQty = Math.round((posCart[existingIdx].qty + qty) * 100) / 100;
       posCart[existingIdx].qty = newQty;
@@ -328,13 +330,13 @@ window.addToCartPos = (productId, variantId, qty = 1) => {
         posCart[existingIdx].effectivePrice = newQty >= product.wholesaleMinQty ? (product.wholesalePrice || product.price) : (product.salePrice > 0 ? product.salePrice : product.price);
       }
     } else {
-      const basePrice = product.salePrice > 0 ? product.salePrice : (product.price || 0);
+      const basePrice = parseFloat(product.salePrice > 0 ? product.salePrice : (product.price || 0)) || 0;
       const isWholesale = product.wholesaleMinQty > 0 && (qty >= product.wholesaleMinQty);
       const effectivePrice = isWholesale ? (product.wholesalePrice || basePrice) : basePrice;
       const pImg = product.img || product.image || (product.images && product.images[0]) || '';
       
       posCart.push({
-        id: productId,
+        id: String(productId),
         variantId: null,
         name: product.name,
         variantName: null,
@@ -388,7 +390,7 @@ window.changePosQty = (index, delta) => {
 // 5. VARIANT MODAL
 // -----------------------------------------------------------------------------
 window.openPosVariantModal = (productId) => {
-  currentSelectedVariantProduct = (appData.products || []).find(p => p.id === productId);
+  currentSelectedVariantProduct = (appData.products || []).find(p => String(p.id) === String(productId));
   if (!currentSelectedVariantProduct || !currentSelectedVariantProduct.variants) return;
 
   const p = currentSelectedVariantProduct;
@@ -408,15 +410,16 @@ window.openPosVariantModal = (productId) => {
   const list = el('pos-variant-options-list');
   if (list) {
     list.innerHTML = (p.variants || []).map(v => {
-      const cartQty = posCart.filter(c => c.id === p.id && c.variantId === v.id).reduce((s, c) => s + c.qty, 0);
-      const isOut = v.stock !== undefined && v.stock <= 0;
+      const vKey = v.id || v.name;
+      const cartQty = posCart.filter(c => String(c.id) === String(p.id) && String(c.variantId) === String(vKey)).reduce((s, c) => s + c.qty, 0);
+      const isOut = v.isActive === 'false' || v.isActive === false;
       return `
-        <button type="button" onclick="addToCartPos('${p.id}', '${v.id || v.name}', 1); closePosVariantModal();" 
-          class="w-full flex items-center justify-between p-3 rounded-xl border ${isOut ? 'border-slate-200 dark:border-slate-800 opacity-50 cursor-not-allowed' : 'border-slate-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 active:scale-95'} transition-all"
+        <button type="button" onclick="addToCartPos('${esc(p.id)}', '${esc(vKey)}', 1); closePosVariantModal();" 
+          class="w-full flex items-center justify-between p-3 rounded-xl border ${isOut ? 'border-slate-200 dark:border-slate-800 opacity-50 cursor-not-allowed' : 'border-slate-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 active:scale-98'} transition-all cursor-pointer"
           ${isOut ? 'disabled' : ''}>
           <div class="text-left">
             <p class="text-sm font-bold text-slate-800 dark:text-slate-200">${esc(v.name)}</p>
-            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">SKU: ${esc(v.sku || '-')} · Stok: ${v.stock !== undefined ? v.stock : '∞'} ${esc(v.unit || '')}</p>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">SKU: ${esc(v.sku || '-')} · Satuan: ${esc(v.unit || p.unit || 'PCS')}</p>
           </div>
           <div class="flex items-center gap-2.5">
             ${cartQty > 0 ? `<span class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-full">${cartQty} di keranjang</span>` : ''}
