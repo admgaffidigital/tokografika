@@ -1783,201 +1783,286 @@ html.dark .badge-counter {
 <input accept='.json' class='hidden' id='restore-file' onchange='restoreData(event)' type='file'/>
 
   <!-- ========================================================================= -->
-<!-- VIEW: POS KASIR (POINT OF SALE)                                           -->
+<!-- VIEW: POS KASIR (POINT OF SALE) - ULTRA USER-FRIENDLY & RESPONSIVE        -->
 <!-- ========================================================================= -->
-<div class='view-section flex flex-col fade-in bg-slate-100 dark:bg-[#090e1a] z-50 hidden min-h-screen' id='view-pos'>
+<div class='view-section flex flex-col fade-in bg-slate-100 dark:bg-[#070c18] z-50 hidden h-full max-h-screen overflow-hidden' id='view-pos'>
+  
   <!-- POS Top Glass Header -->
-  <div class='glass-header shrink-0 px-3 sm:px-6 py-2.5 flex items-center justify-between sticky top-0 z-30 shadow-md'>
-    <div class='flex items-center gap-3'>
-      <div class='w-10 h-10 rounded-xl bg-white/20 text-white flex items-center justify-center shadow-md border border-white/30 shrink-0'>
-        <i class='fa-solid fa-cash-register text-lg'></i>
+  <div class='glass-header shrink-0 px-3 sm:px-5 py-2 sm:py-2.5 flex items-center justify-between sticky top-0 z-30 shadow-sm'>
+    <div class='flex items-center gap-2.5 min-w-0'>
+      <div class='w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/20 text-white flex items-center justify-center shadow-sm border border-white/30 shrink-0'>
+        <i class='fa-solid fa-cash-register text-sm'></i>
       </div>
-      <div>
-        <div class='flex items-center gap-2'>
-          <h1 class='text-sm sm:text-base font-extrabold tracking-tight text-white' id='pos-store-name'>POS Kasir</h1>
-          <span class='bg-white/20 text-white border border-white/30 text-[9px] font-bold px-2 py-0.5 rounded-full' id='pos-role-badge'>KASIR</span>
+      <div class='min-w-0'>
+        <div class='flex items-center gap-1.5'>
+          <h1 class='text-xs sm:text-sm font-black tracking-tight text-white truncate' id='pos-store-name'>POS Kasir</h1>
+          <span class='bg-white/20 text-white border border-white/30 text-[8px] font-black px-1.5 py-0.2 rounded-full shrink-0' id='pos-role-badge'>KASIR</span>
         </div>
-        <p class='text-[10px] font-semibold text-white/90 flex items-center gap-1.5'>
-          <i class='fa-solid fa-user-circle text-xs'></i>
-          <span id='pos-cashier-name'>Petugas Kasir</span>
+        <p class='text-[9px] sm:text-[10px] font-medium text-white/90 flex items-center gap-1 truncate'>
+          <i class='fa-solid fa-user-circle text-[10px]'></i>
+          <span id='pos-cashier-name' class='font-bold truncate'>Petugas Kasir</span>
           <span class='opacity-50'>•</span>
-          <span id='pos-clock' class='font-mono'>00:00:00</span>
+          <span id='pos-clock' class='font-mono font-bold shrink-0'>00:00:00</span>
         </p>
       </div>
     </div>
 
     <!-- POS Top Actions -->
-    <div class='flex items-center gap-2'>
-      <button class='w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white flex items-center justify-center text-sm transition-all shadow-sm active:scale-95' onclick='openCameraScanner()' title='Scan Barcode Kamera'>
+    <div class='flex items-center gap-1.5 sm:gap-2 shrink-0'>
+      <button class='w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white flex items-center justify-center text-xs transition-all shadow-sm active:scale-95' onclick='openCameraScanner()' title='Scan Barcode'>
         <i class='fa-solid fa-qrcode'></i>
       </button>
-      <button class='hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-sm active:scale-95' id='btn-pos-to-admin' onclick='changeView(&quot;view-admin&quot;); openAdminMenu();' title='Buka CMS Pengaturan'>
+      <button class='hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-[11px] font-bold transition-all shadow-sm active:scale-95' id='btn-pos-to-admin' onclick='changeView(&quot;view-admin&quot;); openAdminMenu();' title='Buka CMS Pengaturan'>
         <i class='fa-solid fa-gear text-xs'></i>
         <span>CMS Toko</span>
       </button>
-      <button class='px-3 py-2 rounded-xl bg-rose-500/90 hover:bg-rose-600 border border-rose-400/40 text-white text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 active:scale-95' onclick='logoutAdmin()' title='Keluar / Ganti Kasir'>
+      <button class='px-2.5 sm:px-3 py-1.5 rounded-xl bg-rose-500/90 hover:bg-rose-600 border border-rose-400/40 text-white text-[10px] sm:text-[11px] font-bold transition-all shadow-sm flex items-center gap-1 active:scale-95' onclick='logoutAdmin()' title='Keluar / Ganti Kasir'>
         <i class='fa-solid fa-power-off text-xs'></i>
         <span class='hidden sm:inline'>Tutup Kasir</span>
       </button>
     </div>
   </div>
 
-  <!-- POS Main Body (2 Columns on Desktop/Tablet, Responsive on Mobile) -->
-  <div class='flex-1 flex flex-col lg:flex-row overflow-hidden relative'>
+  <!-- POS Main Body Split (Catalog on Mobile/Desktop, Split Sidebar on Tablet/Desktop) -->
+  <div class='flex-1 flex min-h-0 overflow-hidden relative'>
     
-    <!-- LEFT PANE: PRODUCT CATALOG & SEARCH -->
-    <div class='flex-1 flex flex-col min-w-0 border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0b1329] overflow-hidden'>
-      <!-- Search & Filter Bar -->
-      <div class='p-3 sm:p-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm shrink-0 flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center'>
-        <div class='relative flex-1'>
-          <i class='fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs'></i>
-          <input class='w-full pl-10 pr-9 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:border-theme-primary text-slate-800 dark:text-white placeholder:text-slate-400 transition-all' id='pos-search-input' placeholder='Cari nama atau ketik/scan barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)'/>
-          <button class='absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 hidden' id='pos-btn-clear-search' onclick='clearPosSearch()'>
-            <i class='fa-solid fa-xmark text-sm'></i>
+    <!-- CATALOG PANE (Full Screen on Mobile, Left Column on Desktop >= 1024px) -->
+    <div class='flex-1 flex flex-col min-w-0 min-h-0 bg-slate-50 dark:bg-[#0b1329] overflow-hidden' id='pos-catalog-pane'>
+      
+      <!-- Search & Category Filter Header -->
+      <div class='p-2.5 sm:p-3 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm shrink-0 flex flex-col gap-2'>
+        <div class='relative w-full'>
+          <i class='fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs'></i>
+          <input class='w-full pl-9 pr-8 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:outline-none focus:border-theme-primary text-slate-800 dark:text-white placeholder:text-slate-400 transition-all' id='pos-search-input' placeholder='Cari produk atau scan barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)'/>
+          <button class='absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 hidden w-6 h-6 flex items-center justify-center' id='pos-btn-clear-search' onclick='clearPosSearch()'>
+            <i class='fa-solid fa-xmark text-xs'></i>
           </button>
         </div>
-        <!-- POS Categories -->
+        <!-- Category Horizontal Chips -->
         <div class='flex items-center gap-1.5 overflow-x-auto hide-scrollbar py-0.5' id='pos-categories-container'></div>
       </div>
 
-      <!-- POS Product Grid -->
-      <div class='flex-1 overflow-y-auto p-3 sm:p-4 custom-scrollbar' id='pos-products-scroll'>
-        <div class='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-3.5' id='pos-product-grid'></div>
+      <!-- Product Grid (Touch-Friendly, Spacing, Flexible) -->
+      <div class='flex-1 min-h-0 overflow-y-auto p-2.5 sm:p-3.5 pb-24 lg:pb-4 custom-scrollbar' id='pos-products-scroll'>
+        <div class='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2 sm:gap-3' id='pos-product-grid'></div>
       </div>
+
+      <!-- MOBILE FLOATING CART BAR (Always visible at bottom on Mobile when cart > 0) -->
+      <div class='lg:hidden fixed bottom-3 left-3 right-3 z-40 bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md text-white p-3 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center justify-between gap-3 transform translate-y-24 transition-transform duration-300' id='pos-mobile-floating-bar'>
+        <div class='flex items-center gap-2.5 min-w-0 cursor-pointer' onclick='openPosCartBottomSheet()'>
+          <div class='w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shrink-0 shadow' style='background-color: var(--clr-p);'>
+            <i class='fa-solid fa-cart-shopping text-sm'></i>
+          </div>
+          <div class='min-w-0'>
+            <p class='text-[10px] text-slate-300 font-bold uppercase tracking-wider' id='pos-mob-bar-count'>0 Item</p>
+            <p class='text-sm sm:text-base font-black text-white truncate' id='pos-mob-bar-total'>Rp 0</p>
+          </div>
+        </div>
+        <button type='button' class='btn-primary !py-2.5 !px-4 !text-xs !font-black !rounded-xl shadow-lg shrink-0' onclick='openPosCartBottomSheet()'>
+          Lihat Struk <i class='fa-solid fa-arrow-up ml-1 text-[10px]'></i>
+        </button>
+      </div>
+
     </div>
 
-    <!-- RIGHT PANE: POS CART & ORDER TOTAL -->
-    <div class='w-full lg:w-[380px] xl:w-[420px] shrink-0 bg-white dark:bg-slate-900 flex flex-col border-t lg:border-t-0 shadow-lg z-20'>
+    <!-- DESKTOP SIDEBAR CART (Fixed right pane on >= 1024px screens) -->
+    <div class='hidden lg:flex w-[370px] xl:w-[410px] shrink-0 bg-white dark:bg-slate-900 flex-col min-h-0 shadow-xl z-20 border-l border-slate-200 dark:border-slate-800' id='pos-cart-pane'>
+      
       <!-- Cart Header -->
-      <div class='p-3 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50/50 dark:bg-slate-900/50'>
+      <div class='px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50 dark:bg-[#0b1329]'>
         <div class='flex items-center gap-2'>
-          <i class='fa-solid fa-cart-shopping text-emerald-600 dark:text-emerald-400 text-sm'></i>
-          <h2 class='font-bold text-sm text-slate-900 dark:text-white'>Keranjang Transaksi</h2>
-          <span class='badge badge-xs badge-emerald font-extrabold' id='pos-cart-count'>0 Item</span>
+          <div class='w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-bold'>
+            <i class='fa-solid fa-receipt'></i>
+          </div>
+          <div>
+            <h2 class='font-black text-xs sm:text-sm text-slate-900 dark:text-white leading-tight'>Struk Transaksi</h2>
+            <p class='text-[10px] text-slate-500 dark:text-slate-400 font-semibold' id='pos-cart-count'>0 Item</p>
+          </div>
         </div>
-        <button class='text-xs font-bold text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 flex items-center gap-1 transition-colors' onclick='clearPosCart()'>
-          <i class='fa-solid fa-trash-can text-[11px]'></i> Kosongkan
+        <button type='button' class='text-[11px] font-bold text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 px-2 py-1 rounded-lg transition-all flex items-center gap-1' onclick='clearPosCart()'>
+          <i class='fa-solid fa-trash-can text-[10px]'></i> Reset
         </button>
       </div>
 
       <!-- Cart Item List -->
-      <div class='flex-1 overflow-y-auto p-3 space-y-2 custom-scrollbar min-h-[160px] lg:min-h-0' id='pos-cart-items-container'>
+      <div class='flex-1 min-h-0 overflow-y-auto p-3 space-y-2 custom-scrollbar bg-slate-50/50 dark:bg-[#070c18]' id='pos-cart-items-container'>
         <div class='h-full flex flex-col items-center justify-center text-center p-6 text-slate-400 dark:text-slate-500' id='pos-cart-empty'>
-          <i class='fa-solid fa-basket-shopping text-4xl mb-2 opacity-40'></i>
-          <p class='text-xs font-bold'>Keranjang Masih Kosong</p>
-          <p class='text-[10px] mt-0.5 opacity-80'>Klik produk di katalog atau scan barcode untuk menambah</p>
+          <div class='w-14 h-14 rounded-full bg-slate-200/60 dark:bg-slate-800/60 flex items-center justify-center mb-2 text-slate-400 dark:text-slate-500'>
+            <i class='fa-solid fa-basket-shopping text-xl'></i>
+          </div>
+          <p class='text-xs font-extrabold text-slate-700 dark:text-slate-300'>Keranjang Kosong</p>
+          <p class='text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 max-w-[180px]'>Pilih produk di katalog atau scan barcode</p>
         </div>
       </div>
 
       <!-- Cart Summary & Payment Action -->
-      <div class='p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0b1329] space-y-3 shrink-0'>
-        <div class='space-y-1.5 text-xs font-semibold'>
+      <div class='p-3.5 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2.5 shrink-0 shadow-lg'>
+        <div class='space-y-1 text-xs font-semibold bg-slate-50 dark:bg-[#0b1329] p-2.5 rounded-xl border border-slate-200 dark:border-slate-800'>
           <div class='flex justify-between text-slate-600 dark:text-slate-400'>
             <span>Subtotal</span>
             <span class='font-bold text-slate-900 dark:text-white' id='pos-summary-subtotal'>Rp 0</span>
           </div>
           <div class='flex justify-between text-slate-600 dark:text-slate-400'>
-            <span>Diskon Grosir / Promo</span>
+            <span>Diskon Grosir</span>
             <span class='font-bold text-emerald-600 dark:text-emerald-400' id='pos-summary-discount'>Rp 0</span>
           </div>
-          <div class='pt-2 border-t border-slate-200 dark:border-slate-800 flex justify-between items-baseline'>
-            <span class='text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wide'>Total Bayar</span>
-            <span class='text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400' id='pos-summary-total'>Rp 0</span>
+          <div class='pt-1.5 border-t border-slate-200 dark:border-slate-800 flex justify-between items-baseline'>
+            <span class='text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wide'>Total Bayar</span>
+            <span class='text-xl font-black text-emerald-600 dark:text-emerald-400' id='pos-summary-total'>Rp 0</span>
           </div>
         </div>
 
-        <button class='btn-primary w-full !py-3.5 !text-base !font-extrabold shadow-xl hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:pointer-events-none' id='btn-pos-pay' onclick='openPosPaymentModal()' disabled>
+        <button class='btn-primary w-full !py-3 !text-sm !font-black shadow-xl hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:pointer-events-none' id='btn-pos-pay' onclick='openPosPaymentModal()' disabled>
           <i class='fa-solid fa-money-bill-wave mr-1'></i> Bayar Sekarang
         </button>
       </div>
+
     </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MODAL / BOTTOM SHEET: POS CART DETAILS FOR MOBILE                         -->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[75] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-end justify-center lg:hidden' id='pos-mobile-cart-modal' onclick='if(event.target===this) closePosCartBottomSheet()'>
+  <div class='w-full max-h-[88dvh] bg-white dark:bg-slate-900 rounded-t-[2rem] shadow-2xl flex flex-col transform translate-y-full transition-transform duration-300 overflow-hidden' id='pos-mobile-cart-box'>
+    
+    <!-- Bottom Sheet Header -->
+    <div class='px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50 dark:bg-[#0b1329]'>
+      <div class='flex items-center gap-2'>
+        <div class='w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-bold'>
+          <i class='fa-solid fa-receipt'></i>
+        </div>
+        <div>
+          <h3 class='font-black text-xs sm:text-sm text-slate-900 dark:text-white leading-tight'>Struk Transaksi Kasir</h3>
+          <p class='text-[10px] text-slate-500 dark:text-slate-400 font-semibold' id='pos-mob-cart-count'>0 Item</p>
+        </div>
+      </div>
+      <div class='flex items-center gap-1.5'>
+        <button type='button' class='text-[11px] font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 px-2 py-1 rounded-lg' onclick='clearPosCart()'>
+          <i class='fa-solid fa-trash-can text-[10px]'></i> Reset
+        </button>
+        <button type='button' class='w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center text-xs' onclick='closePosCartBottomSheet()'>
+          <i class='fa-solid fa-xmark'></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Sheet Cart Items -->
+    <div class='flex-1 min-h-[160px] overflow-y-auto p-3 space-y-2 custom-scrollbar bg-slate-50/50 dark:bg-[#070c18]' id='pos-mob-cart-items-container'></div>
+
+    <!-- Bottom Sheet Summary & Pay Button -->
+    <div class='p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-3 shrink-0'>
+      <div class='space-y-1 text-xs font-semibold bg-slate-50 dark:bg-[#0b1329] p-3 rounded-xl border border-slate-200 dark:border-slate-800'>
+        <div class='flex justify-between text-slate-600 dark:text-slate-400'>
+          <span>Subtotal</span>
+          <span class='font-bold text-slate-900 dark:text-white' id='pos-mob-summary-subtotal'>Rp 0</span>
+        </div>
+        <div class='flex justify-between text-slate-600 dark:text-slate-400'>
+          <span>Diskon Grosir</span>
+          <span class='font-bold text-emerald-600 dark:text-emerald-400' id='pos-mob-summary-discount'>Rp 0</span>
+        </div>
+        <div class='pt-1.5 border-t border-slate-200 dark:border-slate-800 flex justify-between items-baseline'>
+          <span class='text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wide'>Total Bayar</span>
+          <span class='text-xl font-black text-emerald-600 dark:text-emerald-400' id='pos-mob-summary-total'>Rp 0</span>
+        </div>
+      </div>
+
+      <button class='btn-primary w-full !py-3.5 !text-sm !font-black shadow-xl' onclick='closePosCartBottomSheet(); openPosPaymentModal();'>
+        <i class='fa-solid fa-money-bill-wave mr-1'></i> Bayar Sekarang
+      </button>
+    </div>
+
   </div>
 </div>
 
 <!-- ========================================================================= -->
 <!-- MODAL: POS QUICK PAYMENT (PEMBAYARAN KILAT KASIR)                         -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[80] bg-slate-900/70 hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-3 sm:p-5' id='pos-payment-modal' onclick='if(event.target===this) closePosPaymentModal()'>
-  <div class='w-full max-w-lg bg-white dark:bg-slate-800 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col transform scale-95 transition-transform duration-300' id='pos-payment-box'>
+<div class='fixed inset-0 z-[80] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-3 sm:p-5' id='pos-payment-modal' onclick='if(event.target===this) closePosPaymentModal()'>
+  <div class='w-full max-w-lg bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-95 transition-transform duration-300' id='pos-payment-box'>
     
     <!-- Modal Header -->
-    <div class='px-6 py-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between'>
+    <div class='px-5 sm:px-6 py-3.5 sm:py-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between'>
       <div class='flex items-center gap-2.5'>
-        <div class='w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold'>
+        <div class='w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-bold'>
           <i class='fa-solid fa-wallet'></i>
         </div>
-        <h3 class='font-bold text-sm sm:text-base text-slate-900 dark:text-white'>Pembayaran Kasir</h3>
+        <div>
+          <h3 class='font-black text-xs sm:text-sm text-slate-900 dark:text-white leading-tight'>Pembayaran Kasir</h3>
+          <p class='text-[10px] text-slate-500 dark:text-slate-400 font-semibold'>Selesaikan transaksi belanja</p>
+        </div>
       </div>
-      <button class='w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-rose-500 hover:text-white flex items-center justify-center text-xs transition-colors' onclick='closePosPaymentModal()'>
+      <button class='w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 flex items-center justify-center text-xs transition-colors' onclick='closePosPaymentModal()'>
         <i class='fa-solid fa-xmark'></i>
       </button>
     </div>
 
     <!-- Modal Content -->
-    <div class='p-5 sm:p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar'>
+    <div class='p-4 sm:p-6 space-y-3.5 max-h-[75vh] overflow-y-auto custom-scrollbar'>
       <!-- Total Tagihan -->
-      <div class='bg-emerald-50 dark:bg-emerald-950/40 p-4 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 text-center'>
-        <p class='text-[10px] font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-widest mb-1'>Total Tagihan</p>
+      <div class='bg-emerald-50 dark:bg-emerald-950/40 p-3 sm:p-4 rounded-2xl border border-emerald-200 dark:border-emerald-800/60 text-center'>
+        <p class='text-[10px] font-bold text-emerald-800 dark:text-emerald-400 uppercase tracking-widest mb-0.5'>Total Tagihan</p>
         <h2 class='text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400' id='pos-modal-total-display'>Rp 0</h2>
       </div>
 
       <!-- Pilihan Metode Pembayaran -->
       <div>
-        <label class='text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 block uppercase tracking-wider'>Metode Pembayaran</label>
-        <div class='grid grid-cols-2 sm:grid-cols-4 gap-2' id='pos-payment-method-selector'>
-          <button type='button' class='p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1.5 transition-all pos-method-btn active-method border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300' data-method='cash' onclick='setPosPaymentMethod(&quot;cash&quot;)'>
-            <i class='fa-solid fa-money-bill-wave text-base text-emerald-600'></i>
+        <label class='text-[10px] sm:text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1.5 block uppercase tracking-wider'>Metode Pembayaran</label>
+        <div class='grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2' id='pos-payment-method-selector'>
+          <button type='button' class='p-2 sm:p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1 transition-all pos-method-btn active-method border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300' data-method='cash' onclick='setPosPaymentMethod(&quot;cash&quot;)'>
+            <i class='fa-solid fa-money-bill-wave text-sm text-emerald-600'></i>
             <span>Tunai</span>
           </button>
-          <button type='button' class='p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1.5 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300' data-method='qris' onclick='setPosPaymentMethod(&quot;qris&quot;)'>
-            <i class='fa-solid fa-qrcode text-base text-slate-500'></i>
+          <button type='button' class='p-2 sm:p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300' data-method='qris' onclick='setPosPaymentMethod(&quot;qris&quot;)'>
+            <i class='fa-solid fa-qrcode text-sm text-slate-500'></i>
             <span>QRIS</span>
           </button>
-          <button type='button' class='p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1.5 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300' data-method='transfer' onclick='setPosPaymentMethod(&quot;transfer&quot;)'>
-            <i class='fa-solid fa-building-columns text-base text-slate-500'></i>
+          <button type='button' class='p-2 sm:p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300' data-method='transfer' onclick='setPosPaymentMethod(&quot;transfer&quot;)'>
+            <i class='fa-solid fa-building-columns text-sm text-slate-500'></i>
             <span>Transfer</span>
           </button>
-          <button type='button' class='p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1.5 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300' data-method='edc' onclick='setPosPaymentMethod(&quot;edc&quot;)'>
-            <i class='fa-solid fa-credit-card text-base text-slate-500'></i>
+          <button type='button' class='p-2 sm:p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300' data-method='edc' onclick='setPosPaymentMethod(&quot;edc&quot;)'>
+            <i class='fa-solid fa-credit-card text-sm text-slate-500'></i>
             <span>Debit/EDC</span>
           </button>
         </div>
       </div>
 
       <!-- Section Khusus Tunai (Input Cash & Kembalian) -->
-      <div id='pos-cash-input-section' class='space-y-3 pt-2'>
+      <div id='pos-cash-input-section' class='space-y-2.5 pt-1'>
         <div>
-          <label class='text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 block uppercase tracking-wider'>Uang Diterima (Rp)</label>
-          <input type='number' id='pos-cash-received-input' class='w-full text-lg sm:text-xl font-black px-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white' placeholder='0' oninput='calculatePosChange()'/>
+          <label class='text-[10px] sm:text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1 block uppercase tracking-wider'>Uang Diterima (Rp)</label>
+          <input type='number' id='pos-cash-received-input' class='w-full text-base sm:text-xl font-black px-3.5 py-2.5 sm:py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white' placeholder='0' oninput='calculatePosChange()'/>
         </div>
 
         <!-- Quick Cash Buttons -->
         <div class='flex flex-wrap gap-1.5' id='pos-quick-cash-buttons'>
-          <button type='button' class='px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(&quot;exact&quot;)'>Uang Pas</button>
-          <button type='button' class='px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(10000)'>10.000</button>
-          <button type='button' class='px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(20000)'>20.000</button>
-          <button type='button' class='px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(50000)'>50.000</button>
-          <button type='button' class='px-3 py-1.5 bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(100000)'>100.000</button>
+          <button type='button' class='px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-[11px] font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(&quot;exact&quot;)'>Uang Pas</button>
+          <button type='button' class='px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-[11px] font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(10000)'>10.000</button>
+          <button type='button' class='px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-[11px] font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(20000)'>20.000</button>
+          <button type='button' class='px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-[11px] font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(50000)'>50.000</button>
+          <button type='button' class='px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-[11px] font-bold text-slate-700 dark:text-slate-200 transition-colors' onclick='setQuickCash(100000)'>100.000</button>
         </div>
 
         <!-- Kembalian Display -->
-        <div class='p-3.5 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between'>
-          <span class='text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider'>Kembalian</span>
-          <span class='text-lg font-black text-emerald-600 dark:text-emerald-400' id='pos-change-display'>Rp 0</span>
+        <div class='p-3 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between'>
+          <span class='text-[10px] sm:text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider'>Kembalian</span>
+          <span class='text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400' id='pos-change-display'>Rp 0</span>
         </div>
       </div>
 
       <!-- Nama Pembeli / Pelanggan POS (Opsional) -->
       <div>
-        <label class='text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 block uppercase tracking-wider'>Nama Pelanggan (Opsional)</label>
-        <input type='text' id='pos-customer-name' class='w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white' placeholder='Pelanggan Umum (Walk-in)'/>
+        <label class='text-[10px] sm:text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1 block uppercase tracking-wider'>Nama Pelanggan (Opsional)</label>
+        <input type='text' id='pos-customer-name' class='w-full px-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold focus:outline-none focus:border-emerald-500 text-slate-900 dark:text-white' placeholder='Pelanggan Umum (Walk-in)'/>
       </div>
     </div>
 
     <!-- Modal Footer -->
-    <div class='p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 flex gap-2.5'>
-      <button type='button' class='px-4 py-3 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold hover:bg-slate-300 transition-colors' onclick='closePosPaymentModal()'>Batal</button>
-      <button type='button' class='btn-primary flex-1 !py-3 !text-sm !font-bold' id='btn-pos-submit-order' onclick='submitPosTransaction()'>
+    <div class='p-3 sm:p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex gap-2'>
+      <button type='button' class='px-3.5 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors' onclick='closePosPaymentModal()'>Batal</button>
+      <button type='button' class='btn-primary flex-1 !py-2.5 !text-xs sm:!text-sm !font-bold' id='btn-pos-submit-order' onclick='submitPosTransaction()'>
         <i class='fa-solid fa-check mr-1'></i> Simpan &amp; Cetak Struk
       </button>
     </div>
@@ -4959,7 +5044,7 @@ window.toggleProductStatus = async (id, toActive) => {
 
 // 8. POS Kasir (Point of Sale) & Cashier Engine
 // =============================================================================
-// POS KASIR (POINT OF SALE) & LOGIN SWITCHER MODULE
+// POS KASIR (POINT OF SALE) & LOGIN SWITCHER MODULE - MOBILE FIRST & SPACIOUS
 // =============================================================================
 
 let posCart = [];
@@ -5050,8 +5135,8 @@ window.initPosView = () => {
   if (roleBadge) {
     roleBadge.innerText = cRole === 'admin' ? 'MASTER' : 'KASIR';
     roleBadge.className = cRole === 'admin' 
-      ? 'bg-amber-500/30 text-amber-200 border border-amber-400/40 text-[9px] font-black px-2 py-0.5 rounded-full'
-      : 'bg-white/20 text-white border border-white/30 text-[9px] font-bold px-2 py-0.5 rounded-full';
+      ? 'bg-amber-500/30 text-amber-200 border border-amber-400/40 text-[8px] sm:text-[9px] font-black px-2 py-0.5 rounded-full'
+      : 'bg-white/20 text-white border border-white/30 text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-full';
   }
 
   // Tombol ke CMS jika kasir memiliki permission atau admin master
@@ -5090,7 +5175,7 @@ const renderPosCategories = () => {
   const categories = ['Semua Produk', ...(appData.categories || []).map(c => c.name)];
   
   container.innerHTML = categories.map(cat => `
-    <button type="button" onclick="filterPosCategory('${esc(cat)}')" class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${posActiveCategory === cat ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'}">
+    <button type="button" onclick="filterPosCategory('${esc(cat)}')" class="shrink-0 px-2.5 sm:px-3 py-1 rounded-xl text-[11px] sm:text-xs font-bold transition-all ${posActiveCategory === cat ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700'}">
       ${esc(cat)}
     </button>
   `).join('');
@@ -5133,7 +5218,7 @@ const renderPosProducts = () => {
 
   if (!filtered.length) {
     grid.innerHTML = `
-      <div class="col-span-full py-16 text-center text-slate-400 dark:text-slate-500 font-bold text-xs bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+      <div class="col-span-full py-12 sm:py-16 text-center text-slate-400 dark:text-slate-500 font-bold text-xs bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
         <i class="fa-solid fa-box-open text-3xl mb-2 block opacity-40"></i>
         Produk tidak ditemukan
       </div>
@@ -5141,21 +5226,19 @@ const renderPosProducts = () => {
     return;
   }
 
-  const svgPlaceholder = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==";
-
   grid.innerHTML = filtered.map(p => {
     const isActive = p.isActive !== 'false' && p.isActive !== false;
     return `
-      <div class="bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl p-2 sm:p-3 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all cursor-pointer shadow-sm group flex flex-col justify-between active:scale-95" onclick="addPosItem(${p.id})">
-        <div class="relative aspect-square w-full rounded-lg sm:rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 mb-2">
-          <img src="${esc(p.img || '')}" onerror="window.imgErrRetry(this,'No Image',200)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${!isActive ? 'grayscale opacity-50' : ''}"/>
+      <div class="card-modern bg-white dark:bg-slate-900 rounded-2xl p-2 sm:p-2.5 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all cursor-pointer shadow-sm group flex flex-col justify-between active:scale-95 select-none" onclick="addPosItem(${p.id})">
+        <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 mb-1.5 border border-slate-200/50 dark:border-slate-700/50">
+          <img src="${esc(p.img || '')}" onerror="window.imgErrRetry(this,'No Image',200)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${!isActive ? 'grayscale opacity-40' : ''}"/>
           ${!isActive ? '<div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center"><span class="badge badge-solid-rose text-[8px] font-bold">KOSONG</span></div>' : ''}
-          ${p.wholesale?.length ? '<span class="absolute top-1.5 left-1.5 bg-amber-500 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded shadow"><i class="fa-solid fa-tags"></i> Grosir</span>' : ''}
+          ${p.wholesale?.length ? '<span class="absolute top-1 left-1 bg-amber-500 text-white text-[7px] sm:text-[8px] font-extrabold px-1.5 py-0.5 rounded shadow"><i class="fa-solid fa-tags"></i> Grosir</span>' : ''}
         </div>
-        <div class="flex-1 flex flex-col justify-between min-w-0">
+        <div class="flex-1 flex flex-col justify-between min-w-0 px-0.5">
           <h4 class="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
           <div class="flex items-baseline justify-between gap-1 mt-auto pt-1">
-            <span class="text-xs sm:text-sm font-extrabold text-emerald-600 dark:text-emerald-400">${fCur(p.price)}</span>
+            <span class="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400 leading-none">${fCur(p.price)}</span>
             ${p.unit ? `<span class="text-[8px] sm:text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">/${esc(p.unit)}</span>` : ''}
           </div>
         </div>
@@ -5165,7 +5248,7 @@ const renderPosProducts = () => {
 };
 
 // -----------------------------------------------------------------------------
-// 4. POS CART MANAGEMENT
+// 4. POS CART MANAGEMENT & MOBILE BOTTOM SHEET
 // -----------------------------------------------------------------------------
 window.addPosItem = (productId, variantIndex = 0) => {
   const p = (appData.products || []).find(x => x.id === productId);
@@ -5220,38 +5303,51 @@ window.clearPosCart = () => {
   showConfirm("Kosongkan Keranjang", "Batalkan seluruh item di transaksi kasir saat ini?", () => {
     posCart = [];
     renderPosCart();
+    closePosCartBottomSheet();
     showToast("Keranjang transaksi dikosongkan");
   });
 };
 
 const renderPosCart = () => {
-  const container = el('pos-cart-items-container');
+  const desktopContainer = el('pos-cart-items-container');
+  const mobileContainer = el('pos-mob-cart-items-container');
   const emptyState = el('pos-cart-empty');
   const countEl = el('pos-cart-count');
+  const mobCountEl = el('pos-mob-cart-count');
   const btnPay = el('btn-pos-pay');
+  const mobFloatingBar = el('pos-mobile-floating-bar');
+  const mobBarCount = el('pos-mob-bar-count');
+  const mobBarTotal = el('pos-mob-bar-total');
 
   const totalQty = posCart.reduce((acc, item) => acc + item.qty, 0);
   if (countEl) countEl.innerText = `${totalQty} Item`;
+  if (mobCountEl) mobCountEl.innerText = `${totalQty} Item`;
+  if (mobBarCount) mobBarCount.innerText = `${totalQty} Item`;
 
   if (!posCart.length) {
-    if (container) container.innerHTML = '';
-    if (emptyState) emptyState.classList.remove('hidden');
-    if (container) container.appendChild(emptyState);
+    if (desktopContainer) desktopContainer.innerHTML = '';
+    if (mobileContainer) mobileContainer.innerHTML = '<div class="py-12 text-center text-slate-400 text-xs font-bold"><i class="fa-solid fa-basket-shopping text-2xl mb-2 block opacity-40"></i>Keranjang Masih Kosong</div>';
+    if (emptyState && desktopContainer) desktopContainer.appendChild(emptyState);
     if (btnPay) btnPay.disabled = true;
+    if (mobFloatingBar) mobFloatingBar.classList.add('translate-y-24');
 
     setIn('pos-summary-subtotal', 'Rp 0');
     setIn('pos-summary-discount', 'Rp 0');
     setIn('pos-summary-total', 'Rp 0');
+    setIn('pos-mob-summary-subtotal', 'Rp 0');
+    setIn('pos-mob-summary-discount', 'Rp 0');
+    setIn('pos-mob-summary-total', 'Rp 0');
     return;
   }
 
   if (emptyState) emptyState.classList.add('hidden');
   if (btnPay) btnPay.disabled = false;
+  if (mobFloatingBar) mobFloatingBar.classList.remove('translate-y-24');
 
   let subtotal = 0;
   let totalDiscount = 0;
 
-  container.innerHTML = posCart.map((item, idx) => {
+  const itemsHtml = posCart.map((item, idx) => {
     const origPrice = item.price;
     const effPrice = getEffP(item);
     const itemSubtotal = effPrice * item.qty;
@@ -5261,7 +5357,7 @@ const renderPosCart = () => {
     totalDiscount += (origPrice - effPrice) * item.qty;
 
     return `
-      <div class="bg-slate-50 dark:bg-[#0b1329] p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shadow-sm">
+      <div class="bg-white dark:bg-[#0b1329] p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shadow-sm">
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-1.5">
             <h5 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">${esc(item.name)}</h5>
@@ -5276,16 +5372,16 @@ const renderPosCart = () => {
         </div>
 
         <div class="flex items-center gap-1 shrink-0">
-          <div class="flex bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg h-7 overflow-hidden">
-            <button class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, -1)">
+          <div class="flex bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg h-7 overflow-hidden">
+            <button type="button" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, -1)">
               <i class="fa-solid fa-minus text-[9px]"></i>
             </button>
-            <span class="w-7 flex items-center justify-center text-xs font-extrabold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900">${item.qty}</span>
-            <button class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, 1)">
+            <span class="w-7 flex items-center justify-center text-xs font-extrabold text-slate-800 dark:text-white bg-white dark:bg-slate-900">${item.qty}</span>
+            <button type="button" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, 1)">
               <i class="fa-solid fa-plus text-[9px]"></i>
             </button>
           </div>
-          <button class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors" onclick="removePosItem(${idx})">
+          <button type="button" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors" onclick="removePosItem(${idx})">
             <i class="fa-solid fa-trash-can text-xs"></i>
           </button>
         </div>
@@ -5293,10 +5389,45 @@ const renderPosCart = () => {
     `;
   }).join('');
 
+  if (desktopContainer) desktopContainer.innerHTML = itemsHtml;
+  if (mobileContainer) mobileContainer.innerHTML = itemsHtml;
+
   const grandTotal = subtotal - totalDiscount;
-  setIn('pos-summary-subtotal', fCur(subtotal));
-  setIn('pos-summary-discount', totalDiscount > 0 ? `- ${fCur(totalDiscount)}` : 'Rp 0');
-  setIn('pos-summary-total', fCur(grandTotal));
+  const fSubtotal = fCur(subtotal);
+  const fDiscount = totalDiscount > 0 ? `- ${fCur(totalDiscount)}` : 'Rp 0';
+  const fGrand = fCur(grandTotal);
+
+  setIn('pos-summary-subtotal', fSubtotal);
+  setIn('pos-summary-discount', fDiscount);
+  setIn('pos-summary-total', fGrand);
+
+  setIn('pos-mob-summary-subtotal', fSubtotal);
+  setIn('pos-mob-summary-discount', fDiscount);
+  setIn('pos-mob-summary-total', fGrand);
+  if (mobBarTotal) mobBarTotal.innerText = fGrand;
+};
+
+// Mobile Bottom Sheet Controls
+window.openPosCartBottomSheet = () => {
+  const modal = el('pos-mobile-cart-modal');
+  const box = el('pos-mobile-cart-box');
+  if (modal && box) {
+    show('pos-mobile-cart-modal');
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      box.classList.remove('translate-y-full');
+    }, 10);
+  }
+};
+
+window.closePosCartBottomSheet = () => {
+  const modal = el('pos-mobile-cart-modal');
+  const box = el('pos-mobile-cart-box');
+  if (modal && box) {
+    modal.classList.add('opacity-0');
+    box.classList.add('translate-y-full');
+    setTimeout(() => hide('pos-mobile-cart-modal'), 300);
+  }
 };
 
 // -----------------------------------------------------------------------------
@@ -5346,9 +5477,9 @@ window.setPosPaymentMethod = (method) => {
   buttons.forEach(btn => {
     const isSelected = btn.getAttribute('data-method') === method;
     if (isSelected) {
-      btn.className = 'p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1.5 transition-all pos-method-btn border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300';
+      btn.className = 'p-2 sm:p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1 transition-all pos-method-btn border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300';
     } else {
-      btn.className = 'p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1.5 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300';
+      btn.className = 'p-2 sm:p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300';
     }
   });
 
@@ -5380,10 +5511,10 @@ window.calculatePosChange = () => {
   if (changeDisplay) {
     if (change < 0) {
       changeDisplay.innerText = `Kurang ${fCur(Math.abs(change))}`;
-      changeDisplay.className = 'text-lg font-black text-rose-500';
+      changeDisplay.className = 'text-base sm:text-lg font-black text-rose-500';
     } else {
       changeDisplay.innerText = fCur(change);
-      changeDisplay.className = 'text-lg font-black text-emerald-600 dark:text-emerald-400';
+      changeDisplay.className = 'text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400';
     }
   }
 };
@@ -5443,6 +5574,7 @@ window.submitPosTransaction = async () => {
     
     hLoad();
     closePosPaymentModal();
+    closePosCartBottomSheet();
     showToast("Transaksi Berhasil Disimpan! 🎉");
 
     // Buka Modal Cetak Struk Instan

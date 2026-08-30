@@ -1,5 +1,5 @@
 // =============================================================================
-// POS KASIR (POINT OF SALE) & LOGIN SWITCHER MODULE
+// POS KASIR (POINT OF SALE) & LOGIN SWITCHER MODULE - MOBILE FIRST & SPACIOUS
 // =============================================================================
 
 let posCart = [];
@@ -90,8 +90,8 @@ window.initPosView = () => {
   if (roleBadge) {
     roleBadge.innerText = cRole === 'admin' ? 'MASTER' : 'KASIR';
     roleBadge.className = cRole === 'admin' 
-      ? 'bg-amber-500/30 text-amber-200 border border-amber-400/40 text-[9px] font-black px-2 py-0.5 rounded-full'
-      : 'bg-white/20 text-white border border-white/30 text-[9px] font-bold px-2 py-0.5 rounded-full';
+      ? 'bg-amber-500/30 text-amber-200 border border-amber-400/40 text-[8px] sm:text-[9px] font-black px-2 py-0.5 rounded-full'
+      : 'bg-white/20 text-white border border-white/30 text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-full';
   }
 
   // Tombol ke CMS jika kasir memiliki permission atau admin master
@@ -130,7 +130,7 @@ const renderPosCategories = () => {
   const categories = ['Semua Produk', ...(appData.categories || []).map(c => c.name)];
   
   container.innerHTML = categories.map(cat => `
-    <button type="button" onclick="filterPosCategory('${esc(cat)}')" class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${posActiveCategory === cat ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700'}">
+    <button type="button" onclick="filterPosCategory('${esc(cat)}')" class="shrink-0 px-2.5 sm:px-3 py-1 rounded-xl text-[11px] sm:text-xs font-bold transition-all ${posActiveCategory === cat ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200/80 dark:border-slate-700'}">
       ${esc(cat)}
     </button>
   `).join('');
@@ -173,7 +173,7 @@ const renderPosProducts = () => {
 
   if (!filtered.length) {
     grid.innerHTML = `
-      <div class="col-span-full py-16 text-center text-slate-400 dark:text-slate-500 font-bold text-xs bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+      <div class="col-span-full py-12 sm:py-16 text-center text-slate-400 dark:text-slate-500 font-bold text-xs bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
         <i class="fa-solid fa-box-open text-3xl mb-2 block opacity-40"></i>
         Produk tidak ditemukan
       </div>
@@ -181,21 +181,19 @@ const renderPosProducts = () => {
     return;
   }
 
-  const svgPlaceholder = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==";
-
   grid.innerHTML = filtered.map(p => {
     const isActive = p.isActive !== 'false' && p.isActive !== false;
     return `
-      <div class="bg-white dark:bg-slate-900 rounded-xl sm:rounded-2xl p-2 sm:p-3 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all cursor-pointer shadow-sm group flex flex-col justify-between active:scale-95" onclick="addPosItem(${p.id})">
-        <div class="relative aspect-square w-full rounded-lg sm:rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 mb-2">
-          <img src="${esc(p.img || '')}" onerror="window.imgErrRetry(this,'No Image',200)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${!isActive ? 'grayscale opacity-50' : ''}"/>
+      <div class="card-modern bg-white dark:bg-slate-900 rounded-2xl p-2 sm:p-2.5 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all cursor-pointer shadow-sm group flex flex-col justify-between active:scale-95 select-none" onclick="addPosItem(${p.id})">
+        <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 mb-1.5 border border-slate-200/50 dark:border-slate-700/50">
+          <img src="${esc(p.img || '')}" onerror="window.imgErrRetry(this,'No Image',200)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${!isActive ? 'grayscale opacity-40' : ''}"/>
           ${!isActive ? '<div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center"><span class="badge badge-solid-rose text-[8px] font-bold">KOSONG</span></div>' : ''}
-          ${p.wholesale?.length ? '<span class="absolute top-1.5 left-1.5 bg-amber-500 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded shadow"><i class="fa-solid fa-tags"></i> Grosir</span>' : ''}
+          ${p.wholesale?.length ? '<span class="absolute top-1 left-1 bg-amber-500 text-white text-[7px] sm:text-[8px] font-extrabold px-1.5 py-0.5 rounded shadow"><i class="fa-solid fa-tags"></i> Grosir</span>' : ''}
         </div>
-        <div class="flex-1 flex flex-col justify-between min-w-0">
+        <div class="flex-1 flex flex-col justify-between min-w-0 px-0.5">
           <h4 class="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
           <div class="flex items-baseline justify-between gap-1 mt-auto pt-1">
-            <span class="text-xs sm:text-sm font-extrabold text-emerald-600 dark:text-emerald-400">${fCur(p.price)}</span>
+            <span class="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400 leading-none">${fCur(p.price)}</span>
             ${p.unit ? `<span class="text-[8px] sm:text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">/${esc(p.unit)}</span>` : ''}
           </div>
         </div>
@@ -205,7 +203,7 @@ const renderPosProducts = () => {
 };
 
 // -----------------------------------------------------------------------------
-// 4. POS CART MANAGEMENT
+// 4. POS CART MANAGEMENT & MOBILE BOTTOM SHEET
 // -----------------------------------------------------------------------------
 window.addPosItem = (productId, variantIndex = 0) => {
   const p = (appData.products || []).find(x => x.id === productId);
@@ -260,38 +258,51 @@ window.clearPosCart = () => {
   showConfirm("Kosongkan Keranjang", "Batalkan seluruh item di transaksi kasir saat ini?", () => {
     posCart = [];
     renderPosCart();
+    closePosCartBottomSheet();
     showToast("Keranjang transaksi dikosongkan");
   });
 };
 
 const renderPosCart = () => {
-  const container = el('pos-cart-items-container');
+  const desktopContainer = el('pos-cart-items-container');
+  const mobileContainer = el('pos-mob-cart-items-container');
   const emptyState = el('pos-cart-empty');
   const countEl = el('pos-cart-count');
+  const mobCountEl = el('pos-mob-cart-count');
   const btnPay = el('btn-pos-pay');
+  const mobFloatingBar = el('pos-mobile-floating-bar');
+  const mobBarCount = el('pos-mob-bar-count');
+  const mobBarTotal = el('pos-mob-bar-total');
 
   const totalQty = posCart.reduce((acc, item) => acc + item.qty, 0);
   if (countEl) countEl.innerText = `${totalQty} Item`;
+  if (mobCountEl) mobCountEl.innerText = `${totalQty} Item`;
+  if (mobBarCount) mobBarCount.innerText = `${totalQty} Item`;
 
   if (!posCart.length) {
-    if (container) container.innerHTML = '';
-    if (emptyState) emptyState.classList.remove('hidden');
-    if (container) container.appendChild(emptyState);
+    if (desktopContainer) desktopContainer.innerHTML = '';
+    if (mobileContainer) mobileContainer.innerHTML = '<div class="py-12 text-center text-slate-400 text-xs font-bold"><i class="fa-solid fa-basket-shopping text-2xl mb-2 block opacity-40"></i>Keranjang Masih Kosong</div>';
+    if (emptyState && desktopContainer) desktopContainer.appendChild(emptyState);
     if (btnPay) btnPay.disabled = true;
+    if (mobFloatingBar) mobFloatingBar.classList.add('translate-y-24');
 
     setIn('pos-summary-subtotal', 'Rp 0');
     setIn('pos-summary-discount', 'Rp 0');
     setIn('pos-summary-total', 'Rp 0');
+    setIn('pos-mob-summary-subtotal', 'Rp 0');
+    setIn('pos-mob-summary-discount', 'Rp 0');
+    setIn('pos-mob-summary-total', 'Rp 0');
     return;
   }
 
   if (emptyState) emptyState.classList.add('hidden');
   if (btnPay) btnPay.disabled = false;
+  if (mobFloatingBar) mobFloatingBar.classList.remove('translate-y-24');
 
   let subtotal = 0;
   let totalDiscount = 0;
 
-  container.innerHTML = posCart.map((item, idx) => {
+  const itemsHtml = posCart.map((item, idx) => {
     const origPrice = item.price;
     const effPrice = getEffP(item);
     const itemSubtotal = effPrice * item.qty;
@@ -301,7 +312,7 @@ const renderPosCart = () => {
     totalDiscount += (origPrice - effPrice) * item.qty;
 
     return `
-      <div class="bg-slate-50 dark:bg-[#0b1329] p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shadow-sm">
+      <div class="bg-white dark:bg-[#0b1329] p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shadow-sm">
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-1.5">
             <h5 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">${esc(item.name)}</h5>
@@ -316,16 +327,16 @@ const renderPosCart = () => {
         </div>
 
         <div class="flex items-center gap-1 shrink-0">
-          <div class="flex bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg h-7 overflow-hidden">
-            <button class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, -1)">
+          <div class="flex bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg h-7 overflow-hidden">
+            <button type="button" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, -1)">
               <i class="fa-solid fa-minus text-[9px]"></i>
             </button>
-            <span class="w-7 flex items-center justify-center text-xs font-extrabold text-slate-800 dark:text-white bg-slate-50 dark:bg-slate-900">${item.qty}</span>
-            <button class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, 1)">
+            <span class="w-7 flex items-center justify-center text-xs font-extrabold text-slate-800 dark:text-white bg-white dark:bg-slate-900">${item.qty}</span>
+            <button type="button" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, 1)">
               <i class="fa-solid fa-plus text-[9px]"></i>
             </button>
           </div>
-          <button class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors" onclick="removePosItem(${idx})">
+          <button type="button" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors" onclick="removePosItem(${idx})">
             <i class="fa-solid fa-trash-can text-xs"></i>
           </button>
         </div>
@@ -333,10 +344,45 @@ const renderPosCart = () => {
     `;
   }).join('');
 
+  if (desktopContainer) desktopContainer.innerHTML = itemsHtml;
+  if (mobileContainer) mobileContainer.innerHTML = itemsHtml;
+
   const grandTotal = subtotal - totalDiscount;
-  setIn('pos-summary-subtotal', fCur(subtotal));
-  setIn('pos-summary-discount', totalDiscount > 0 ? `- ${fCur(totalDiscount)}` : 'Rp 0');
-  setIn('pos-summary-total', fCur(grandTotal));
+  const fSubtotal = fCur(subtotal);
+  const fDiscount = totalDiscount > 0 ? `- ${fCur(totalDiscount)}` : 'Rp 0';
+  const fGrand = fCur(grandTotal);
+
+  setIn('pos-summary-subtotal', fSubtotal);
+  setIn('pos-summary-discount', fDiscount);
+  setIn('pos-summary-total', fGrand);
+
+  setIn('pos-mob-summary-subtotal', fSubtotal);
+  setIn('pos-mob-summary-discount', fDiscount);
+  setIn('pos-mob-summary-total', fGrand);
+  if (mobBarTotal) mobBarTotal.innerText = fGrand;
+};
+
+// Mobile Bottom Sheet Controls
+window.openPosCartBottomSheet = () => {
+  const modal = el('pos-mobile-cart-modal');
+  const box = el('pos-mobile-cart-box');
+  if (modal && box) {
+    show('pos-mobile-cart-modal');
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      box.classList.remove('translate-y-full');
+    }, 10);
+  }
+};
+
+window.closePosCartBottomSheet = () => {
+  const modal = el('pos-mobile-cart-modal');
+  const box = el('pos-mobile-cart-box');
+  if (modal && box) {
+    modal.classList.add('opacity-0');
+    box.classList.add('translate-y-full');
+    setTimeout(() => hide('pos-mobile-cart-modal'), 300);
+  }
 };
 
 // -----------------------------------------------------------------------------
@@ -386,9 +432,9 @@ window.setPosPaymentMethod = (method) => {
   buttons.forEach(btn => {
     const isSelected = btn.getAttribute('data-method') === method;
     if (isSelected) {
-      btn.className = 'p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1.5 transition-all pos-method-btn border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300';
+      btn.className = 'p-2 sm:p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1 transition-all pos-method-btn border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300';
     } else {
-      btn.className = 'p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1.5 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300';
+      btn.className = 'p-2 sm:p-2.5 rounded-xl border-2 font-bold text-xs flex flex-col items-center gap-1 transition-all pos-method-btn border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:border-slate-300';
     }
   });
 
@@ -420,10 +466,10 @@ window.calculatePosChange = () => {
   if (changeDisplay) {
     if (change < 0) {
       changeDisplay.innerText = `Kurang ${fCur(Math.abs(change))}`;
-      changeDisplay.className = 'text-lg font-black text-rose-500';
+      changeDisplay.className = 'text-base sm:text-lg font-black text-rose-500';
     } else {
       changeDisplay.innerText = fCur(change);
-      changeDisplay.className = 'text-lg font-black text-emerald-600 dark:text-emerald-400';
+      changeDisplay.className = 'text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400';
     }
   }
 };
@@ -483,6 +529,7 @@ window.submitPosTransaction = async () => {
     
     hLoad();
     closePosPaymentModal();
+    closePosCartBottomSheet();
     showToast("Transaksi Berhasil Disimpan! 🎉");
 
     // Buka Modal Cetak Struk Instan
