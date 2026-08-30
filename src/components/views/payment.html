@@ -1,0 +1,155 @@
+<!-- ========================================================================= -->
+<!-- VIEW: PAYMENT                                                             -->
+<!-- ========================================================================= -->
+<div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 hidden' id='view-payment'>
+  <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'>
+    <div class='flex items-center justify-between w-full max-w-4xl lg:max-w-6xl'>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-checkout&apos;)'>
+        <i class='fa-solid fa-arrow-left text-sm'></i>
+      </button>
+      <h1 class='text-sm font-semibold text-slate-900 dark:text-white tracking-tight'>Pembayaran</h1>
+      <div class='w-9'></div>
+    </div>
+  </div>
+  
+  <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-[calc(11rem+env(safe-area-inset-bottom))]'>
+    <div class='px-4 space-y-4 max-w-4xl lg:max-w-6xl mx-auto w-full'>
+      <!-- Cara Bayar -->
+      <div class='card-modern p-5'>
+        <h3 class='font-bold text-slate-900 dark:text-white mb-3 text-sm flex items-center gap-2'>
+          <i class='fa-solid fa-wallet text-emerald-600 dark:text-emerald-400'></i> Cara Bayar
+        </h3>
+        <div class='space-y-3'>
+          <!-- Transfer Bank -->
+          <label class='block cursor-pointer relative'>
+            <input checked='checked' class='peer sr-only custom-radio' name='payment' onchange='togglePaymentDetails()' type='radio' value='transfer'/>
+            <div class='border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl transition-all flex flex-col gap-3 peer-checked:border-emerald-500 peer-checked:bg-white dark:peer-checked:bg-slate-800'>
+              <div class='flex items-center justify-between'>
+                <div class='flex items-center gap-3'>
+                  <i class='fa-solid fa-building-columns text-lg text-slate-400 dark:text-slate-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400'></i>
+                  <span class='font-bold text-sm text-slate-800 dark:text-white'>Transfer Bank</span>
+                </div>
+                <div class='w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center peer-checked:border-emerald-500 peer-checked:bg-emerald-500 transition-all radio-icon'>
+                  <i class='fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100'></i>
+                </div>
+              </div>
+              <div class='pt-3 border-t-2 border-slate-200 dark:border-slate-700' id='detail-transfer'>
+                <div class='space-y-2' id='dynamic-banks-container'></div>
+              </div>
+            </div>
+          </label>
+          
+          <!-- QRIS -->
+          <label class='block cursor-pointer relative'>
+            <input class='peer sr-only custom-radio' name='payment' onchange='togglePaymentDetails()' type='radio' value='qris'/>
+            <div class='border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl transition-all flex flex-col gap-3 peer-checked:border-emerald-500 peer-checked:bg-white dark:peer-checked:bg-slate-800'>
+              <div class='flex items-center justify-between'>
+                <div class='flex items-center gap-3'>
+                  <i class='fa-solid fa-qrcode text-lg text-slate-400 dark:text-slate-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400'></i>
+                  <span class='font-bold text-sm text-slate-800 dark:text-white'>QRIS E-Wallet</span>
+                </div>
+                <div class='w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center peer-checked:border-emerald-500 peer-checked:bg-emerald-500 transition-all radio-icon'>
+                  <i class='fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100'></i>
+                </div>
+              </div>
+              <div class='pt-3 border-t-2 border-slate-200 dark:border-slate-700 hidden' id='detail-qris'>
+                <div class='bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 flex flex-col items-center shadow-sm'>
+                  <p class='text-[10px] text-slate-500 dark:text-slate-400 mb-3 text-center font-bold uppercase tracking-widest'>Scan QR Code:</p>
+                  <div class='p-3 border-2 border-dashed border-emerald-400 rounded-xl bg-emerald-50 dark:bg-emerald-900/20'>
+                    <img alt='QRIS' class='w-40 h-40 object-contain' id='dyn-qris-img' src=''/>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </label>
+          
+          <!-- COD -->
+          <label class='block cursor-pointer relative hidden' id='payment-option-cod'>
+            <input class='peer sr-only custom-radio' name='payment' onchange='togglePaymentDetails()' type='radio' value='cod'/>
+            <div class='border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl transition-all flex flex-col gap-3 peer-checked:border-emerald-500 peer-checked:bg-white dark:peer-checked:bg-slate-800'>
+              <div class='flex items-center justify-between'>
+                <div class='flex items-center gap-3'>
+                  <i class='fa-solid fa-hand-holding-dollar text-lg text-slate-400 dark:text-slate-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400'></i>
+                  <span class='font-bold text-sm text-slate-800 dark:text-white'>Bayar di Tempat (COD)</span>
+                </div>
+                <div class='w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center peer-checked:border-emerald-500 peer-checked:bg-emerald-500 transition-all radio-icon'>
+                  <i class='fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100'></i>
+                </div>
+              </div>
+            </div>
+          </label>
+          
+          <!-- Kasir -->
+          <label class='block cursor-pointer relative hidden' id='payment-option-cashier'>
+            <input class='peer sr-only custom-radio' name='payment' onchange='togglePaymentDetails()' type='radio' value='cashier'/>
+            <div class='border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl transition-all flex flex-col gap-3 peer-checked:border-emerald-500 peer-checked:bg-white dark:peer-checked:bg-slate-800'>
+              <div class='flex items-center justify-between'>
+                <div class='flex items-center gap-3'>
+                  <i class='fa-solid fa-cash-register text-lg text-slate-400 dark:text-slate-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400'></i>
+                  <span class='font-bold text-sm text-slate-800 dark:text-white'>Bayar di Kasir</span>
+                </div>
+                <div class='w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-600 flex items-center justify-center peer-checked:border-emerald-500 peer-checked:bg-emerald-500 transition-all radio-icon'>
+                  <i class='fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100'></i>
+                </div>
+              </div>
+            </div>
+          </label>
+        </div>
+      </div>
+      
+      <!-- Data Pemesan Ringkasan -->
+      <div class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] shadow-sm border-2 border-slate-200 dark:border-slate-700'>
+        <h3 class='font-bold text-slate-900 dark:text-white mb-3 text-sm border-b-2 border-slate-100 dark:border-slate-700 pb-2'>
+          <i class='fa-solid fa-clipboard-list text-emerald-500 mr-1.5'></i> Data Pemesan
+        </h3>
+        <div class='space-y-1.5 text-xs'>
+          <div class='flex justify-between'><span class='text-slate-500 dark:text-slate-400 font-bold'>Nama:</span><span class='font-bold text-slate-800 dark:text-slate-200' id='payment-cust-name'>-</span></div>
+          <div class='flex justify-between'><span class='text-slate-500 dark:text-slate-400 font-bold'>Metode:</span><span class='font-bold text-slate-800 dark:text-slate-200' id='payment-cust-method'>-</span></div>
+          <div class='mt-2 pt-2 border-t border-dashed border-slate-200 dark:border-slate-700'>
+            <span class='text-slate-500 dark:text-slate-400 font-bold block mb-1'>Alamat:</span>
+            <p class='font-bold text-slate-800 dark:text-slate-200 leading-relaxed bg-slate-50 dark:bg-slate-900 p-2 rounded-lg border border-slate-100 dark:border-slate-700' id='payment-cust-address'>-</p>
+          </div>
+          <div class='mt-2 hidden bg-amber-50 dark:bg-amber-900/20 p-2 rounded-lg border border-amber-100 dark:border-amber-800' id='payment-note-preview'>
+            <span class='text-[10px] text-amber-600 font-bold uppercase tracking-widest block mb-0.5'>Catatan Tambahan:</span>
+            <p class='font-bold text-amber-800 dark:text-amber-500 italic' id='payment-note-text'>-</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item Preview -->
+      <div class='space-y-2' id='payment-items-preview'></div>
+
+      <!-- Ringkasan Bayar -->
+      <div class='bg-slate-900 dark:bg-[#020617] p-5 rounded-[1.5rem] text-white shadow-xl border-2 border-slate-800 relative overflow-hidden'>
+        <h3 class='font-semibold text-xs uppercase tracking-widest mb-4 border-b-2 border-slate-700 pb-3 flex items-center gap-2'>
+          <i class='fa-solid fa-receipt text-emerald-400'></i> Ringkasan Bayar
+        </h3>
+        <div class='space-y-3 text-sm font-medium'>
+          <div class='flex justify-between text-slate-300'><span>Subtotal Produk</span><span class='text-white font-bold' id='summary-subtotal'>Rp 0</span></div>
+          <div class='flex justify-between text-emerald-400 hidden' id='summary-product-discount-row'><span>Diskon Brg</span><span class='font-bold' id='summary-product-discount'>- Rp 0</span></div>
+          <div class='flex justify-between text-slate-300 hidden' id='summary-shipping-row'><span>Ongkir <span class='text-[10px] text-slate-500' id='summary-distance'></span></span><span class='text-white font-bold' id='summary-shipping'>Rp 0</span></div>
+          <div class='flex justify-between text-emerald-400 hidden' id='summary-discount-row'><span>Diskon Ongkir</span><span class='font-bold' id='summary-discount'>- Rp 0</span></div>
+        </div>
+        <div class='pt-4 border-t-2 border-slate-700 mt-4 flex justify-between items-end'>
+          <span class='text-xs font-bold text-slate-400'>Total Tagihan</span>
+          <span class='font-black text-2xl text-emerald-400' id='summary-total'>Rp 0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class='absolute bottom-0 left-0 w-full glass-nav p-4 z-30'>
+    <div class='max-w-4xl mx-auto flex flex-col gap-3'>
+      <label class='flex items-center gap-3 cursor-pointer bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700'>
+        <input class='peer sr-only' id='tnc-checkbox' onchange='toggleOrderButton()' type='checkbox'/>
+        <div class='w-5 h-5 border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 rounded flex items-center justify-center peer-checked:bg-emerald-500 peer-checked:border-emerald-500 transition-all shrink-0'>
+          <i class='fa-solid fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100'></i>
+        </div>
+        <span class='text-[11px] font-bold text-slate-600 dark:text-slate-300'>Saya setuju dan data sudah benar.</span>
+      </label>
+      <button class='btn-primary btn-disabled py-3.5 text-sm' id='btn-process-order' onclick='processOrder()'>
+        <i class='fa-brands fa-whatsapp text-lg'></i> Kirim Pesanan ke WA
+      </button>
+    </div>
+  </div>
+</div>

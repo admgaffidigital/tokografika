@@ -1,0 +1,59 @@
+/* ==========================================================================
+   GRAFIKA PWA STORE - PRINT STYLESHEET (THERMAL 58MM & A4)
+   ========================================================================== */
+
+#thermal-print-section {
+    display: none;
+}
+
+@media print {
+    @page {
+        margin: 0;
+        size: 58mm auto;
+    }
+    
+    html, body {
+        background-color: #fff !important;
+        color: #000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 58mm !important;
+    }
+    
+    #app-container,
+    #global-loader,
+    #toast,
+    .fixed,
+    .absolute {
+        display: none !important;
+        height: 0 !important;
+        opacity: 0 !important;
+        overflow: hidden !important;
+    }
+    
+    #thermal-print-section {
+        display: block !important;
+        width: 58mm !important;
+        max-width: 58mm !important;
+        margin: 0 !important;
+        padding: 2mm !important;
+        background-color: #fff !important;
+        color: #000 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    
+    #thermal-print-section * {
+        font-family: 'Courier New', Courier, monospace !important;
+        font-size: 11px !important;
+        font-weight: bold !important;
+        color: #000 !important;
+        line-height: 1.2 !important;
+        box-sizing: border-box !important;
+    }
+    
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}

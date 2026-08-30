@@ -1,0 +1,30 @@
+<!-- ========================================================================= -->
+<!-- MODAL: RECEIPT PREVIEW (58MM THERMAL)                                     -->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[110] bg-slate-900 hidden flex items-center justify-center p-3 opacity-0 transition-opacity duration-300' id='receipt-preview-modal' onclick='if(event.target===this) closeReceiptPreviewModal()'>
+  <div class='bg-slate-100 dark:bg-slate-800 rounded-[1.5rem] w-full max-w-[320px] max-h-[92dvh] overflow-hidden shadow-2xl border-2 border-slate-300 dark:border-slate-700 relative transform scale-95 transition-transform duration-300 flex flex-col' id='receipt-preview-modal-box'>
+    <div class='sticky top-0 bg-white dark:bg-slate-800 px-4 py-3 border-b-2 border-slate-300 dark:border-slate-700 flex justify-between items-center z-20'>
+      <h3 class='font-bold text-slate-900 dark:text-white text-sm'>Preview Struk</h3>
+      <button class='w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300' onclick='closeReceiptPreviewModal()'>
+        <i class='fa-solid fa-xmark'></i>
+      </button>
+    </div>
+    <div class='p-4 flex justify-center bg-slate-200 dark:bg-slate-900 overflow-y-auto' style='flex: 1;'>
+      <div class='bg-white shadow-sm p-4 font-mono text-[11px] font-bold text-black border-2 border-slate-400 rounded w-[260px] leading-tight' id='receipt-paper-content' style='font-family: &apos;Courier New&apos;, Courier, monospace; min-height: 300px; background-color: #ffffff !important; color: #000000 !important;'></div>
+    </div>
+    
+    <div class='p-4 bg-white dark:bg-slate-800 border-t-2 border-slate-300 dark:border-slate-700 z-20 flex flex-col gap-2'>
+      <button class='w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2 border-2 border-emerald-700' onclick='executePrintReceipt()'>
+        <i class='fa-solid fa-print'></i> Print Thermal
+      </button>
+      <div class='flex gap-2 w-full'>
+        <button class='flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2 border-2 border-emerald-700 shadow-sm' onclick='downloadReceiptImage()'>
+          <i class='fa-solid fa-image'></i> Gambar
+        </button>
+        <button class='flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-sm transition-all flex items-center justify-center gap-2 border-2 border-rose-700 shadow-md shadow-rose-500/20' onclick='downloadReceiptPDF()'>
+          <i class='fa-solid fa-file-pdf'></i> PDF
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

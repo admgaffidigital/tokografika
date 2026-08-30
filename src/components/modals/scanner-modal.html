@@ -1,0 +1,21 @@
+<!-- ========================================================================= -->
+<!-- MODAL: BARCODE / QR SCANNER                                               -->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[9999] bg-slate-900 hidden flex-col items-center justify-center p-4 transition-opacity duration-300 opacity-0' id='scanner-modal' onclick='if(event.target===this) closeCameraScanner()'>
+  <div class='bg-white dark:bg-slate-800 rounded-[1.5rem] w-full max-w-md overflow-hidden shadow-2xl border-2 border-slate-200 dark:border-slate-700 relative flex flex-col'>
+    <div class='p-4 border-b-2 border-slate-200 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800'>
+      <h3 class='font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2'>
+        <i class='fa-solid fa-qrcode text-emerald-600 dark:text-emerald-400'></i> Scan Barcode
+      </h3>
+      <button class='w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-600 dark:hover:text-rose-400 flex items-center justify-center transition-all border-2 border-slate-200 dark:border-slate-600' onclick='closeCameraScanner()'>
+        <i class='fa-solid fa-xmark'></i>
+      </button>
+    </div>
+    <div class='p-4 bg-slate-900 dark:bg-slate-950 border-b-2 border-slate-800 dark:border-slate-800'>
+      <div class='w-full overflow-hidden rounded-xl bg-slate-900 dark:bg-slate-950 border-2 border-slate-700 text-white' id='reader' style='min-height: 250px;'></div>
+    </div>
+    <div class='p-4 bg-white dark:bg-slate-800 text-center'>
+      <p class='text-[11px] font-bold text-slate-500 dark:text-slate-400'>Arahkan kamera ke barcode/SKU produk.</p>
+    </div>
+  </div>
+</div>

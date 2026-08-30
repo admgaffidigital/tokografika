@@ -11,11 +11,17 @@ if (!fs.existsSync(distDir)) {
 
 // Function to resolve @include directives recursively
 function resolveIncludes(filePath, baseDir = srcDir, visited = new Set()) {
-  const fullPath = path.isAbsolute(filePath) ? filePath : path.join(baseDir, filePath);
+  let fullPath = path.isAbsolute(filePath) ? filePath : path.join(baseDir, filePath);
   
+  // Fallback: check relative to srcDir if not found in current baseDir
   if (!fs.existsSync(fullPath)) {
-    console.error(`[BUILD ERROR] File not found: ${fullPath}`);
-    return `<!-- FILE NOT FOUND: ${filePath} -->`;
+    const fallbackPath = path.join(srcDir, filePath);
+    if (fs.existsSync(fallbackPath)) {
+      fullPath = fallbackPath;
+    } else {
+      console.error(`[BUILD ERROR] File not found: ${fullPath} (nor at ${fallbackPath})`);
+      return `<!-- FILE NOT FOUND: ${filePath} -->`;
+    }
   }
 
   if (visited.has(fullPath)) {
@@ -27,14 +33,16 @@ function resolveIncludes(filePath, baseDir = srcDir, visited = new Set()) {
   let content = fs.readFileSync(fullPath, 'utf8');
   const currentDir = path.dirname(fullPath);
 
-  // Regex patterns for various include comment styles:
-  // 1. <!-- @include path/to/file -->
-  // 2. /* @include path/to/file */
-  // 3. // @include path/to/file
-  const includeRegex = /(?:<!--|\/\*|\/\/)\s*@include\s+['"]?([^'"\s*>-]+)['"]?\s*(?:-->|\*\/)?/g;
+  // Match:
+  // 1. <!-- @include path/to/file.ext -->
+  // 2. /* @include path/to/file.ext */
+  // 3. // @include path/to/file.ext
+  const includeRegex = /<!--\s*@include\s+['"]?([^'"\r\n]+?)['"]?\s*-->|\/\*\s*@include\s+['"]?([^'"\r\n]+?)['"]?\s*\*\/|\/\/\s*@include\s+['"]?([^\r\n]+)/g;
 
-  content = content.replace(includeRegex, (match, includeTarget) => {
-    return resolveIncludes(includeTarget.trim(), currentDir, new Set(visited));
+  content = content.replace(includeRegex, (match, p1, p2, p3) => {
+    const target = (p1 || p2 || p3 || '').trim();
+    if (!target) return match;
+    return resolveIncludes(target, currentDir, new Set(visited));
   });
 
   return content;

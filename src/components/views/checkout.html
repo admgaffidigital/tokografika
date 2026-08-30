@@ -1,0 +1,101 @@
+<!-- ========================================================================= -->
+<!-- VIEW: CHECKOUT & SHIPPING                                                 -->
+<!-- ========================================================================= -->
+<div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-slate-900 hidden' id='view-checkout'>
+  <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'>
+    <div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-cart&apos;)'>
+        <i class='fa-solid fa-arrow-left text-sm'></i>
+      </button>
+      <h1 class='text-sm font-semibold text-slate-900 dark:text-white tracking-tight'>Pengiriman</h1>
+      <div class='w-9'></div>
+    </div>
+  </div>
+  
+  <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-[calc(7rem+env(safe-area-inset-bottom))]'>
+    <div class='px-4 space-y-4 max-w-3xl lg:max-w-4xl mx-auto w-full'>
+      <!-- Metode Pengiriman -->
+      <div class='card-modern p-5'>
+        <h3 class='font-bold text-slate-900 dark:text-white mb-3 text-sm flex items-center gap-2'>
+          <i class='fa-solid fa-motorcycle text-emerald-600 dark:text-emerald-400'></i> Metode Pengiriman
+        </h3>
+        <p class='text-rose-500 font-bold text-xs hidden mb-3 bg-rose-50 dark:bg-rose-900/30 p-3 rounded-xl border border-rose-200 dark:border-rose-800' id='no-delivery-warning'>
+          Mohon maaf, toko sedang tidak melayani pemesanan online saat ini.
+        </p>
+        <div class='grid grid-cols-2 gap-3' id='delivery-methods-grid'>
+          <label class='cursor-pointer relative' id='delivery-option-container'>
+            <input checked='checked' class='peer sr-only custom-radio' name='delivery-method' onchange='toggleDeliveryMethod()' type='radio' value='delivery'/>
+            <div class='border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl transition-all flex flex-col items-center text-center gap-2 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/20'>
+              <i class='fa-solid fa-motorcycle text-xl text-slate-400 dark:text-slate-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 radio-icon transition-transform'></i>
+              <span class='font-bold text-xs text-slate-800 dark:text-slate-200'>Diantar Kurir</span>
+            </div>
+          </label>
+          <label class='cursor-pointer relative' id='pickup-option-container'>
+            <input class='peer sr-only custom-radio' name='delivery-method' onchange='toggleDeliveryMethod()' type='radio' value='pickup'/><div class='border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl transition-all flex flex-col items-center text-center gap-2 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 dark:peer-checked:bg-emerald-900/20'>
+              <i class='fa-solid fa-store text-xl text-slate-400 dark:text-slate-500 peer-checked:text-emerald-600 dark:peer-checked:text-emerald-400 radio-icon transition-transform'></i>
+              <span class='font-bold text-xs text-slate-800 dark:text-slate-200'>Ambil di Toko</span>
+            </div>
+          </label>
+        </div>
+      </div>
+      
+      <!-- Info Pemesan -->
+      <div class='card-modern p-5'>
+        <h3 class='font-bold text-slate-900 dark:text-white mb-3 text-sm flex items-center gap-2'>
+          <i class='fa-solid fa-user text-emerald-600 dark:text-emerald-400'></i> Info Pemesan
+        </h3>
+        <div class='space-y-3'>
+          <input class='admin-input bg-slate-50 dark:bg-slate-900' id='cust-name' placeholder='Nama Lengkap' type='text'/>
+        </div>
+      </div>
+      
+      <!-- Alamat Pengiriman -->
+      <div class='card-modern p-5 transition-all' id='address-container'>
+        <h3 class='font-bold text-slate-900 dark:text-white mb-3 text-sm flex items-center gap-2'>
+          <i class='fa-solid fa-map-location-dot text-emerald-600 dark:text-emerald-400'></i> Alamat Pengiriman
+        </h3>
+        <div class='space-y-3'>
+          <textarea class='admin-input resize-none bg-slate-50 dark:bg-slate-900' id='cust-address' placeholder='Detail jalan, RT/RW, patokan...' rows='3'></textarea>
+          <div class='flex gap-2 items-center'>
+            <button class='bg-slate-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 active:scale-95 transition-all border-2 border-slate-900' id='btn-location' onclick='getLocation()'>
+              <i class='fa-solid fa-location-crosshairs text-emerald-400'></i> GPS
+            </button>
+            <p class='text-[10px] font-bold text-emerald-700 hidden items-center gap-1 bg-emerald-100 py-2.5 px-3 rounded-xl border-2 border-emerald-200' id='location-status'>
+              <i class='fa-solid fa-check'></i> Diamankan
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Catatan & Voucher -->
+      <div class='grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4'>
+        <div class='card-modern p-5'>
+          <h3 class='font-bold text-slate-900 dark:text-white mb-3 text-sm flex items-center gap-2'>
+            <i class='fa-solid fa-pen- text-emerald-600 dark:text-emerald-400'></i> Catatan
+          </h3>
+          <textarea class='admin-input resize-none bg-slate-50 dark:bg-slate-900' id='cust-note' placeholder='Pesanan khusus...' rows='2'></textarea>
+        </div>
+        <div class='card-modern p-5'>
+          <h3 class='font-bold text-slate-900 dark:text-white mb-3 text-sm flex items-center gap-2'>
+            <i class='fa-solid fa-ticket text-emerald-600 dark:text-emerald-400'></i> Voucher
+          </h3>
+          <div class='flex gap-2'>
+            <input class='admin-input uppercase tracking-widest text-sm font-semibold bg-slate-50 dark:bg-slate-900' id='voucher-input' placeholder='Kode Voucher' type='text'/>
+            <button class='bg-slate-800 text-white px-5 rounded-xl text-xs font-bold active:scale-95 transition-all border-2 border-slate-900' onclick='applyVoucher()'>Klaim</button>
+          </div>
+          <div class='hidden bg-emerald-50 border-2 border-emerald-200 p-3 rounded-xl mt-3 text-center shadow-sm' id='voucher-msg-container'>
+            <p class='text-xs font-bold text-emerald-700' id='voucher-msg'></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class='absolute bottom-0 left-0 w-full glass-nav p-4 z-30'>
+    <div class='max-w-3xl lg:max-w-4xl mx-auto flex justify-end'>
+      <button class='btn-primary w-full py-3.5 text-sm' id='btn-checkout-next' onclick='validateAndGoToPayment()'>
+        Lanjut Pembayaran
+      </button>
+    </div>
+  </div>
+</div>

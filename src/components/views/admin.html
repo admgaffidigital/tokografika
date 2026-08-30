@@ -1,0 +1,105 @@
+<!-- ========================================================================= -->
+<!-- VIEW: ADMIN DASHBOARD & POS                                               -->
+<!-- ========================================================================= -->
+<div class='view-section flex flex-col fade-in bg-slate-50 dark:bg-[#0b1120] z-50 hidden min-h-screen' id='view-admin'>
+  <div class='bg-white dark:bg-slate-900 shrink-0 px-4 py-3 flex items-center justify-center z-30 border-b border-slate-200/80 dark:border-slate-800 shadow-sm sticky top-0'>
+    <div class='flex items-center justify-between w-full max-w-5xl'>
+      <div class='flex items-center gap-3'>
+        <button class='hidden w-9 h-9 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all shadow-sm' id='btn-admin-back' onclick='history.back()' style='--hover-color:var(--clr-p)'>
+          <i class='fa-solid fa-arrow-left text-sm'></i>
+        </button>
+        <div class='w-10 h-10 rounded-xl text-white flex items-center justify-center shadow-md transition-all' id='admin-logo-box' style='background-color:var(--clr-p);box-shadow:0 4px 12px var(--clr-p-25)'>
+          <i class='fa-solid fa-layer-group text-sm'></i>
+        </div>
+        <div>
+          <div class='flex items-center gap-2'>
+            <h1 class='text-sm font-semibold tracking-tight text-slate-900 dark:text-white' id='admin-header-title'>CMS Toko</h1>
+            <div id='admin-pro-badge'></div>
+          </div>
+          <p class='text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest'>Mode Admin</p>
+        </div>
+      </div>
+      <div class='flex items-center gap-2'>
+        <button class='px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-[10px] font-bold hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-emerald-600 transition-all shadow-sm flex items-center gap-1.5' onclick='changeView(&apos;view-catalog&apos;)'>
+          <i class='fa-solid fa-eye'></i> <span class='hidden sm:inline'>Lihat Toko</span>
+        </button>
+        <button class='px-3 py-2 bg-rose-50 dark:bg-rose-900/30 border-2 border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 rounded-lg text-[10px] font-bold hover:bg-rose-600 hover:text-white dark:hover:bg-rose-500 dark:hover:text-white transition-all shadow-sm flex items-center gap-1.5' onclick='logoutAdmin()'>
+          <i class='fa-solid fa-power-off'></i> <span class='hidden sm:inline'>Keluar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <div class='scroll-content flex-1 overflow-y-auto w-full pb-16 relative'>
+    <div class='max-w-5xl mx-auto pt-6 px-4 w-full'>
+      <div class='fade-in-scale block' id='admin-dashboard-view'>
+        <div class='flex items-center justify-between mb-5 px-1'>
+          <h3 class='font-bold text-slate-800 dark:text-white text-lg'>Menu Utama</h3>
+        </div>
+        
+        <div class='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 pb-8'>
+          <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' onclick='openAdminTab(&apos;orders&apos;)'>
+            <div class='w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
+              <i class='fa-solid fa-receipt text-2xl'></i>
+            </div>
+            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Pesanan</span>
+          </button>
+
+          <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:border-slate-300 dark:hover:border-slate-600 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' onclick='openAdminTab(&apos;settings&apos;)'>
+            <div class='w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-slate-200 dark:group-hover:bg-slate-700 transition-all duration-300'>
+              <i class='fa-solid fa-gear text-2xl'></i>
+            </div>
+            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Toko</span>
+          </button>
+
+          <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' onclick='openAdminTab(&apos;products&apos;)'>
+            <div class='w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
+              <i class='fa-solid fa-box-open text-2xl'></i>
+            </div>
+            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Produk</span>
+          </button>
+
+          <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' onclick='openAdminTab(&apos;categories&apos;)'>
+            <div class='w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
+              <i class='fa-solid fa-tags text-2xl'></i>
+            </div>
+            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Kategori</span>
+          </button>
+
+          <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:border-purple-200 dark:hover:border-purple-500/30 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' onclick='openAdminTab(&apos;vouchers&apos;)'>
+            <div class='w-14 h-14 rounded-2xl bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-purple-100 dark:group-hover:bg-purple-500/20 transition-all duration-300'>
+              <i class='fa-solid fa-ticket text-2xl'></i>
+            </div>
+            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Voucher</span>
+          </button>
+
+          <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:border-indigo-200 dark:hover:border-indigo-500/30 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' onclick='openAdminTab(&apos;banks&apos;)'>
+            <div class='w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-indigo-100 dark:group-hover:bg-indigo-500/20 transition-all duration-300'>
+              <i class='fa-solid fa-building-columns text-2xl'></i>
+            </div>
+            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Rekening</span>
+          </button>
+
+          <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:border-pink-200 dark:hover:border-pink-500/30 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' onclick='openAdminTab(&apos;banners&apos;)'>
+            <div class='w-14 h-14 rounded-2xl bg-pink-50 dark:bg-pink-500/10 text-pink-500 dark:text-pink-400 flex items-center justify-center group-hover:scale-110 group-hover:bg-pink-100 dark:group-hover:bg-pink-500/20 transition-all duration-300'>
+              <i class='fa-solid fa-images text-2xl'></i>
+            </div>
+            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Banner</span>
+          </button>
+          
+          <button class='bg-white dark:bg-slate-800 p-5 rounded-[1.5rem] border border-slate-200 dark:border-slate-700/80 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-center gap-3 group' id='btn-menu-accounts' onclick='openAdminTab(&apos;accounts&apos;)'>
+            <div class='w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
+              <i class='fa-solid fa-users-gear text-2xl'></i>
+            </div>
+            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Kasir</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class='hidden fade-in' id='admin-content-view'>
+        <div id='admin-content'></div>
+      </div>
+    </div>
+  </div>
+</div>
+<input accept='.json' class='hidden' id='restore-file' onchange='restoreData(event)' type='file'/>

@@ -1,0 +1,44 @@
+<!-- ========================================================================= -->
+<!-- VIEW: ADMIN LOGIN                                                         -->
+<!-- ========================================================================= -->
+<div class='view-section flex items-center justify-center fade-in bg-slate-900 dark:bg-[#020617] z-50 relative hidden min-h-screen' id='view-admin-login'>
+  <div class='absolute inset-0 bg-slate-900 pointer-events-none'></div>
+  <div class='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none'></div>
+
+  <div class='w-full max-w-[360px] p-4 relative z-10 mx-auto'>
+    <div class='bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-200/50 dark:border-slate-700/50 p-8 shadow-2xl relative flex flex-col items-center text-center'>
+      <button class='absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700/50 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all duration-300' onclick='changeView(&apos;view-catalog&apos;)'>
+        <i class='fa-solid fa-xmark'></i>
+      </button>
+      
+      <div class='w-16 h-16 text-white rounded-2xl flex items-center justify-center mb-5 text-3xl shadow-lg' style='background-color:var(--clr-p);box-shadow:0 8px 24px var(--clr-p-25)'>
+        <i class='fa-solid fa-shield-halved'></i>
+      </div>
+      
+      <h2 class='text-2xl font-black tracking-tight text-slate-900 dark:text-white mb-1'>Admin Panel</h2>
+      <p class='text-xs font-semibold text-slate-500 dark:text-slate-400 mb-8'>Portal masuk Admin &amp; Kasir</p>
+      
+      <div class='space-y-4 w-full text-left'>
+        <div class='relative'>
+          <div class='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
+            <i class='fa-solid fa-user text-slate-400 dark:text-slate-500'></i>
+          </div>
+          <input class='w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:border-theme-primary transition-all placeholder:text-slate-400' id='login-username' placeholder='Username' type='text' style='box-sizing:border-box;'/>
+        </div>
+        
+        <div class='relative'>
+          <div class='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
+            <i class='fa-solid fa-lock text-slate-400 dark:text-slate-500'></i>
+          </div>
+          <input class='w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl pl-11 pr-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:border-theme-primary transition-all placeholder:text-slate-400' id='login-password' placeholder='Password' type='password' style='box-sizing:border-box;'/>
+        </div>
+        
+        <div class='pt-4'>
+          <button class='btn-primary w-full !py-3.5 !text-sm hover:-translate-y-0.5' onclick='processAdminLogin()'>
+            Masuk Sistem
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

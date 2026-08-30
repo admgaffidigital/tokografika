@@ -1,0 +1,15 @@
+<!-- ========================================================================= -->
+<!-- NOTIFICATIONS & GLOBAL LOADERS                                            -->
+<!-- ========================================================================= -->
+<div class='bg-slate-900 text-white px-6 py-3 rounded-full border-2 border-slate-700 flex items-center gap-3' id='toast'>
+  <i class='fa-solid fa-bell' style='color:var(--clr-p)'></i>
+  <span class='font-bold text-sm tracking-wide' id='toast-message'>Notifikasi</span>
+</div>
+
+<div class='fixed inset-0 z-[9999] bg-slate-900 flex flex-col items-center justify-center text-white hidden transition-opacity duration-300' id='global-loader'>
+  <div class='relative w-20 h-20 flex items-center justify-center mb-5'>
+    <div class='absolute inset-0 rounded-full animate-spin' style='border:4px solid var(--clr-p,#059669);border-top-color:transparent;opacity:0.8'></div>
+    <i class='fa-solid fa-store text-2xl' style='color:var(--clr-p,#059669)'></i>
+  </div>
+  <p class='font-bold tracking-widest animate-pulse text-xs uppercase text-white bg-slate-800 px-5 py-2.5 rounded-full shadow-lg border-2 border-slate-700' id='loader-text'>Memuat Data...</p>
+</div>

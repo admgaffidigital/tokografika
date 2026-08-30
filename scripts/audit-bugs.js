@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
+const { resolveIncludes, srcDir } = require('./build');
 
-const srcDir = path.resolve(__dirname, '..', 'src');
-const htmlContent = fs.readFileSync(path.join(srcDir, 'components', 'body.html'), 'utf8');
-const jsContent = fs.readFileSync(path.join(srcDir, 'js', 'app.js'), 'utf8');
-const xmlContent = fs.readFileSync(path.join(srcDir, 'template.xml'), 'utf8');
+const htmlContent = resolveIncludes('components/body.html', srcDir);
+const jsContent = resolveIncludes('js/app.js', srcDir);
+const xmlContent = resolveIncludes('template.xml', srcDir);
 
 console.log('=== 1. AUDIT: EVENT HANDLERS IN HTML VS JS FUNCTIONS ===');
 const inlineEventRegex = /on(?:click|change|submit|input|keydown|keyup|keypress|load|error)=['"]([^'"]+)['"]/gi;

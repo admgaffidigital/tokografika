@@ -1,0 +1,27 @@
+<!-- ========================================================================= -->
+<!-- MODAL: PDF & DOCUMENT PREVIEW                                             -->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[99999] bg-slate-900/90 hidden flex items-center justify-center p-2 sm:p-4 transition-opacity fade-in' id='pdf-preview-modal' onclick='if(event.target===this) closePreviewModal()'>
+  <div class='bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl flex flex-col max-h-[92vh] mx-auto my-auto'>
+    <div class='px-4 py-3.5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800 z-10 shrink-0'>
+      <h3 class='font-bold text-slate-800 dark:text-white text-base flex items-center gap-2'>
+        <i class='fa-solid fa-file-lines text-emerald-500'></i> Preview Dokumen A4
+      </h3>
+      <button class='w-8 h-8 flex items-center justify-center bg-slate-100 dark:bg-slate-700 hover:bg-rose-100 dark:hover:bg-rose-900/30 text-slate-500 dark:text-slate-400 hover:text-rose-500 rounded-full transition-colors' onclick='closePreviewModal()'>
+        <i class='fa-solid fa-xmark'></i>
+      </button>
+    </div>
+    <div class='p-4 sm:p-6 overflow-y-auto flex-1 bg-slate-200 dark:bg-slate-950 flex justify-center items-start custom-scrollbar'>
+      <div class='w-full max-w-[650px] mx-auto py-2'>
+        <img class='w-full h-auto shadow-[0_15px_35px_rgba(0,0,0,0.25)] rounded-sm border border-slate-300 dark:border-slate-700 bg-white block mx-auto' id='preview-img-result' src='' alt='Preview A4'/>
+      </div>
+    </div>
+    <div class='p-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-wrap justify-end gap-2 sm:gap-3 shrink-0'>
+      <button class='px-4 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-xs w-full sm:w-auto border border-slate-200 dark:border-slate-700' onclick='closePreviewModal()'>Tutup</button>
+      <button class='px-4 py-2.5 bg-slate-700 hover:bg-slate-800 text-white rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2 text-xs w-full sm:w-auto' onclick='executeDownloadImage()'><i class='fa-solid fa-image'></i> Simpan Gambar</button>
+      <button class='px-5 py-2.5 text-white rounded-xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 text-xs w-full sm:w-auto' id='btn-download-pdf-a4' style='background-color: var(--clr-p, #059669);' onclick='executeDownloadPdf()'><i class='fa-solid fa-file-pdf'></i> Unduh PDF (A4)</button>
+    </div>
+  </div>
+</div>
+
+<div id='thermal-print-section'></div>
