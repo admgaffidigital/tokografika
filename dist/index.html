@@ -145,6 +145,18 @@
         // PWA & Browser Header Meta Color
         const metaTheme = document.getElementById('pwa-theme-color');
         if (metaTheme) metaTheme.content = t.p;
+
+        let savedBg = localStorage.getItem('freshmart_bg_style');
+        if (!savedBg) {
+          try {
+            const cms = JSON.parse(localStorage.getItem('freshmart_cms_data') || '{}');
+            if (cms?.store?.bgStyle) savedBg = cms.store.bgStyle;
+          } catch(e) {}
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+          const elBg = document.getElementById('app-bg-shapes');
+          if (elBg) elBg.className = 'app-bg-shapes bg-style-' + (savedBg || 'mesh-aurora') + ' pointer-events-none';
+        });
       })();
 
       if (localStorage.getItem('freshmart_theme') === 'dark' || (!('freshmart_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) { 
@@ -372,7 +384,7 @@ code, kbd, samp, pre, .font-mono {
 }
 
 /* --------------------------------------------------------------------------
-   4. Background Shapes & Aesthetic Elements
+   4. Background Shapes, Patterns & Dynamic Variations (CMS Configurable)
    -------------------------------------------------------------------------- */
 .app-bg-shapes {
     position: fixed;
@@ -380,53 +392,145 @@ code, kbd, samp, pre, .font-mono {
     pointer-events: none;
     z-index: 0;
     overflow: hidden;
+    transition: all 0.4s ease;
 }
 
-.shape-grid-pattern {
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(var(--clr-p-10) 1.2px, transparent 1.2px);
-    background-size: 24px 24px;
-    opacity: 0.75;
-}
-
-.shape-blob-1 {
-    position: absolute;
-    top: -80px;
-    right: -80px;
-    width: 320px;
-    height: 320px;
-    background-color: var(--clr-p-10);
-    border-radius: 50% 40% 60% 50% / 60% 50% 50% 60%;
-    transform: rotate(20deg);
-    transition: background-color 0.3s ease;
-    filter: blur(40px);
-}
-
-.shape-blob-2 {
-    position: absolute;
-    top: 40%;
-    left: -90px;
-    width: 260px;
-    height: 260px;
-    background-color: var(--clr-p-10);
-    border-radius: 40% 60% 50% 60% / 50% 40% 60% 50%;
-    transform: rotate(-15deg);
-    transition: background-color 0.3s ease;
-    filter: blur(40px);
-}
-
+/* Base Shapes */
+.shape-grid-pattern,
+.shape-blob-1,
+.shape-blob-2,
 .shape-blob-3 {
     position: absolute;
-    bottom: 5%;
-    right: -70px;
-    width: 300px;
-    height: 300px;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 1. MESH AURORA (Default Modern Dynamic App) */
+.bg-style-mesh-aurora .shape-grid-pattern {
+    inset: 0;
+    background-image: radial-gradient(var(--clr-p-10) 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: 0.65;
+}
+
+.bg-style-mesh-aurora .shape-blob-1 {
+    top: -100px;
+    right: -100px;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, var(--clr-p-25) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(50px);
+    animation: floatBlob1 18s ease-in-out infinite alternate;
+}
+
+.bg-style-mesh-aurora .shape-blob-2 {
+    top: 35%;
+    left: -120px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, var(--clr-p-10) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(45px);
+    animation: floatBlob2 14s ease-in-out infinite alternate;
+}
+
+.bg-style-mesh-aurora .shape-blob-3 {
+    bottom: -60px;
+    right: 10%;
+    width: 340px;
+    height: 340px;
+    background: radial-gradient(circle, var(--clr-p-10) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(50px);
+    animation: floatBlob1 20s ease-in-out infinite alternate-reverse;
+}
+
+/* 2. DOT GRID (Tech & Precision Geometric Matrix) */
+.bg-style-dot-grid .shape-grid-pattern {
+    inset: 0;
+    background-image: radial-gradient(var(--clr-p-25) 1.5px, transparent 1.5px);
+    background-size: 20px 20px;
+    opacity: 0.85;
+}
+.bg-style-dot-grid .shape-blob-1,
+.bg-style-dot-grid .shape-blob-2,
+.bg-style-dot-grid .shape-blob-3 {
+    opacity: 0.12;
+}
+
+/* 3. DIAGONAL GRID (Isometric Structural Lines) */
+.bg-style-diag-grid .shape-grid-pattern {
+    inset: 0;
+    background-image: 
+        linear-gradient(45deg, var(--clr-p-10) 1px, transparent 1px),
+        linear-gradient(-45deg, var(--clr-p-10) 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.7;
+}
+.bg-style-diag-grid .shape-blob-1,
+.bg-style-diag-grid .shape-blob-2,
+.bg-style-diag-grid .shape-blob-3 {
+    opacity: 0.18;
+}
+
+/* 4. GLASS BLOBS (Fluid Organic Translucent Waves) */
+.bg-style-glass-blobs .shape-grid-pattern {
+    display: none;
+}
+.bg-style-glass-blobs .shape-blob-1 {
+    top: 5%;
+    right: -60px;
+    width: 400px;
+    height: 400px;
+    background-color: var(--clr-p-25);
+    border-radius: 60% 40% 70% 30% / 40% 50% 60% 50%;
+    filter: blur(60px);
+    animation: floatBlob1 12s ease-in-out infinite alternate;
+}
+.bg-style-glass-blobs .shape-blob-2 {
+    top: 50%;
+    left: -80px;
+    width: 350px;
+    height: 350px;
     background-color: var(--clr-p-10);
-    border-radius: 60% 40% 50% 50% / 40% 60% 50% 50%;
-    transform: rotate(35deg);
-    transition: background-color 0.3s ease;
-    filter: blur(40px);
+    border-radius: 40% 60% 50% 50% / 60% 30% 70% 40%;
+    filter: blur(55px);
+    animation: floatBlob2 15s ease-in-out infinite alternate;
+}
+.bg-style-glass-blobs .shape-blob-3 {
+    bottom: 2%;
+    right: 20%;
+    width: 360px;
+    height: 360px;
+    background-color: var(--clr-p-10);
+    border-radius: 50% 50% 40% 60% / 40% 60% 50% 50%;
+    filter: blur(55px);
+    animation: floatBlob1 16s ease-in-out infinite alternate;
+}
+
+/* 5. CLEAN MINIMAL (Soft Vignette) */
+.bg-style-clean-minimal .shape-grid-pattern {
+    inset: 0;
+    background-image: radial-gradient(var(--clr-p-10) 0.8px, transparent 0.8px);
+    background-size: 36px 36px;
+    opacity: 0.35;
+}
+.bg-style-clean-minimal .shape-blob-1,
+.bg-style-clean-minimal .shape-blob-2,
+.bg-style-clean-minimal .shape-blob-3 {
+    display: none;
+}
+
+@keyframes floatBlob1 {
+    0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+    50% { transform: translate(-30px, 35px) scale(1.08) rotate(12deg); }
+    100% { transform: translate(25px, -20px) scale(0.95) rotate(-8deg); }
+}
+
+@keyframes floatBlob2 {
+    0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+    50% { transform: translate(35px, -25px) scale(1.05) rotate(-10deg); }
+    100% { transform: translate(-20px, 30px) scale(0.92) rotate(15deg); }
 }
 
 html.dark .shape-grid-pattern {
@@ -436,8 +540,7 @@ html.dark .shape-grid-pattern {
 html.dark .shape-blob-1,
 html.dark .shape-blob-2,
 html.dark .shape-blob-3 {
-    background-color: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    opacity: 0.08 !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -1404,8 +1507,8 @@ html.dark .badge-counter {
 <!-- 4. MAIN APP CONTAINER & MODULAR VIEWS                                     -->
 <!-- ========================================================================= -->
 <div class='w-full relative bg-slate-50 dark:bg-slate-900 min-h-screen' id='app-container'>
-  <!-- Abstract Decorative Background Shapes -->
-  <div class='app-bg-shapes pointer-events-none' aria-hidden='true'>
+  <!-- Abstract Decorative Background Shapes (Storefront & CMS Dynamic) -->
+  <div class='app-bg-shapes bg-style-mesh-aurora pointer-events-none' id='app-bg-shapes' aria-hidden='true'>
     <div class='shape-grid-pattern'></div>
     <div class='shape-blob-1'></div>
     <div class='shape-blob-2'></div>
@@ -3113,6 +3216,32 @@ window.applyGlobalTheme = () => {
   }
 };
 
+window.applyBgStyle = (style) => {
+  const s = style || appData?.store?.bgStyle || localStorage.getItem('freshmart_bg_style') || 'mesh-aurora';
+  const elBg = document.getElementById('app-bg-shapes');
+  if (elBg) {
+    elBg.className = `app-bg-shapes bg-style-${s} pointer-events-none`;
+  }
+};
+
+window.setTempBgStyle = (s) => {
+  setV('set-bg-style', s);
+  document.querySelectorAll('[id^="btn-bg-style-"]').forEach(b => {
+    b.classList.remove('border-emerald-600', 'ring-2', 'ring-emerald-500', 'shadow-md');
+    b.classList.add('border-slate-200', 'dark:border-slate-700');
+  });
+  const active = el('btn-bg-style-' + s);
+  if (active) {
+    active.classList.remove('border-slate-200', 'dark:border-slate-700');
+    active.classList.add('border-emerald-600', 'ring-2', 'ring-emerald-500', 'shadow-md');
+  }
+  if (appData && appData.store) {
+    appData.store.bgStyle = s;
+  }
+  try { localStorage.setItem('freshmart_bg_style', s); } catch(e) {}
+  applyBgStyle(s);
+};
+
 window.setTempTheme = (t) => {
   setV('set-theme-color', t);
   document.querySelectorAll('[id^="btn-theme-"]').forEach(b => {
@@ -3612,6 +3741,7 @@ const loadAppData = async () => {
       if (_si) { _si.value = ''; el('btn-search-clear')?.classList.add('hidden'); }
       rDyn();
       applyGlobalTheme();
+      if (window.applyBgStyle) applyBgStyle(appData.store?.bgStyle);
       if (window.updateStoreSeo) updateStoreSeo();
       
       try {
@@ -6463,6 +6593,39 @@ const rAdmSet = () => {
           <input type="hidden" id="set-theme-color" value="${esc(appData.store.themeColor || 'emerald')}" />
         </div>
 
+        <!-- Background Style Picker (Storefront & CMS) -->
+        <div class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-700">
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+              <i class="fa-solid fa-wand-magic-sparkles text-amber-500 mr-1"></i> Gaya Background Toko & CMS
+            </label>
+            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 uppercase tracking-wider">Interaktif</span>
+          </div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mb-3.5 leading-relaxed">Pilih pola background modern dinamis agar Storefront & CMS tidak polos dan tampil hidup seperti aplikasi native.</p>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+          ${[
+            { id: 'mesh-aurora', name: 'Mesh Aurora', desc: 'Glow ambient halus', icon: 'fa-solid fa-certificate' },
+            { id: 'dot-grid', name: 'Dot Matrix', desc: 'Titik geometric tech', icon: 'fa-solid fa-braille' },
+            { id: 'diag-grid', name: 'Diagonal Grid', desc: 'Garis geometri 3D', icon: 'fa-solid fa-border-none' },
+            { id: 'glass-blobs', name: 'Organic Blobs', desc: 'Gelombang dinamis', icon: 'fa-solid fa-shapes' },
+            { id: 'clean-minimal', name: 'Minimalis', desc: 'Bersih & tenang', icon: 'fa-solid fa-layer-group' }
+          ].map(bg => {
+            const currentBg = appData.store.bgStyle || 'mesh-aurora';
+            const isActive = currentBg === bg.id;
+            return `
+            <button type="button" onclick="setTempBgStyle('${bg.id}')" id="btn-bg-style-${bg.id}" class="p-3 rounded-xl border-2 transition-all flex flex-col items-center text-center gap-1.5 bg-white dark:bg-slate-800 ${isActive ? 'border-emerald-600 ring-2 ring-emerald-500 shadow-md scale-[1.02]' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm'}">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm ${isActive ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}">
+                <i class="${bg.icon}"></i>
+              </div>
+              <span class="text-xs font-bold text-slate-800 dark:text-white leading-tight">${bg.name}</span>
+              <span class="text-[9px] text-slate-400 font-medium leading-tight">${bg.desc}</span>
+            </button>
+            `;
+          }).join('')}
+          </div>
+          <input type="hidden" id="set-bg-style" value="${esc(appData.store.bgStyle || 'mesh-aurora')}" />
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
             <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-list-ul text-emerald-600 mr-1"></i> Desain Menu Kategori</label>
@@ -6599,6 +6762,8 @@ window.saveAdminSettings = async () => {
     appData.store.lng = getV('set-lng');
     
     appData.store.themeColor = getV('set-theme-color');
+    appData.store.bgStyle = getV('set-bg-style') || appData.store.bgStyle || 'mesh-aurora';
+    try { localStorage.setItem('freshmart_bg_style', appData.store.bgStyle); } catch(e) {}
 
     if(!appData.store.social) appData.store.social = {};
     appData.store.social.fb = getV('set-soc-fb');
@@ -6615,6 +6780,7 @@ window.saveAdminSettings = async () => {
     
     updateThemeVars();
     applyGlobalTheme();
+    applyBgStyle(appData.store.bgStyle);
     Object.keys(_pwaIconCache).forEach(k => delete _pwaIconCache[k]);
     try { await buildAndInjectManifest(); } catch(e) {}
     

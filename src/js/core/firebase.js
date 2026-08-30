@@ -198,6 +198,7 @@ const loadAppData = async () => {
       if (_si) { _si.value = ''; el('btn-search-clear')?.classList.add('hidden'); }
       rDyn();
       applyGlobalTheme();
+      if (window.applyBgStyle) applyBgStyle(appData.store?.bgStyle);
       if (window.updateStoreSeo) updateStoreSeo();
       
       try {

@@ -145,6 +145,18 @@
         // PWA & Browser Header Meta Color
         const metaTheme = document.getElementById('pwa-theme-color');
         if (metaTheme) metaTheme.content = t.p;
+
+        let savedBg = localStorage.getItem('freshmart_bg_style');
+        if (!savedBg) {
+          try {
+            const cms = JSON.parse(localStorage.getItem('freshmart_cms_data') || '{}');
+            if (cms?.store?.bgStyle) savedBg = cms.store.bgStyle;
+          } catch(e) {}
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+          const elBg = document.getElementById('app-bg-shapes');
+          if (elBg) elBg.className = 'app-bg-shapes bg-style-' + (savedBg || 'mesh-aurora') + ' pointer-events-none';
+        });
       })();
 
       if (localStorage.getItem('freshmart_theme') === 'dark' || (!('freshmart_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) { 

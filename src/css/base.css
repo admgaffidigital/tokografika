@@ -200,7 +200,7 @@ code, kbd, samp, pre, .font-mono {
 }
 
 /* --------------------------------------------------------------------------
-   4. Background Shapes & Aesthetic Elements
+   4. Background Shapes, Patterns & Dynamic Variations (CMS Configurable)
    -------------------------------------------------------------------------- */
 .app-bg-shapes {
     position: fixed;
@@ -208,53 +208,145 @@ code, kbd, samp, pre, .font-mono {
     pointer-events: none;
     z-index: 0;
     overflow: hidden;
+    transition: all 0.4s ease;
 }
 
-.shape-grid-pattern {
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(var(--clr-p-10) 1.2px, transparent 1.2px);
-    background-size: 24px 24px;
-    opacity: 0.75;
-}
-
-.shape-blob-1 {
-    position: absolute;
-    top: -80px;
-    right: -80px;
-    width: 320px;
-    height: 320px;
-    background-color: var(--clr-p-10);
-    border-radius: 50% 40% 60% 50% / 60% 50% 50% 60%;
-    transform: rotate(20deg);
-    transition: background-color 0.3s ease;
-    filter: blur(40px);
-}
-
-.shape-blob-2 {
-    position: absolute;
-    top: 40%;
-    left: -90px;
-    width: 260px;
-    height: 260px;
-    background-color: var(--clr-p-10);
-    border-radius: 40% 60% 50% 60% / 50% 40% 60% 50%;
-    transform: rotate(-15deg);
-    transition: background-color 0.3s ease;
-    filter: blur(40px);
-}
-
+/* Base Shapes */
+.shape-grid-pattern,
+.shape-blob-1,
+.shape-blob-2,
 .shape-blob-3 {
     position: absolute;
-    bottom: 5%;
-    right: -70px;
-    width: 300px;
-    height: 300px;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 1. MESH AURORA (Default Modern Dynamic App) */
+.bg-style-mesh-aurora .shape-grid-pattern {
+    inset: 0;
+    background-image: radial-gradient(var(--clr-p-10) 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: 0.65;
+}
+
+.bg-style-mesh-aurora .shape-blob-1 {
+    top: -100px;
+    right: -100px;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, var(--clr-p-25) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(50px);
+    animation: floatBlob1 18s ease-in-out infinite alternate;
+}
+
+.bg-style-mesh-aurora .shape-blob-2 {
+    top: 35%;
+    left: -120px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, var(--clr-p-10) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(45px);
+    animation: floatBlob2 14s ease-in-out infinite alternate;
+}
+
+.bg-style-mesh-aurora .shape-blob-3 {
+    bottom: -60px;
+    right: 10%;
+    width: 340px;
+    height: 340px;
+    background: radial-gradient(circle, var(--clr-p-10) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(50px);
+    animation: floatBlob1 20s ease-in-out infinite alternate-reverse;
+}
+
+/* 2. DOT GRID (Tech & Precision Geometric Matrix) */
+.bg-style-dot-grid .shape-grid-pattern {
+    inset: 0;
+    background-image: radial-gradient(var(--clr-p-25) 1.5px, transparent 1.5px);
+    background-size: 20px 20px;
+    opacity: 0.85;
+}
+.bg-style-dot-grid .shape-blob-1,
+.bg-style-dot-grid .shape-blob-2,
+.bg-style-dot-grid .shape-blob-3 {
+    opacity: 0.12;
+}
+
+/* 3. DIAGONAL GRID (Isometric Structural Lines) */
+.bg-style-diag-grid .shape-grid-pattern {
+    inset: 0;
+    background-image: 
+        linear-gradient(45deg, var(--clr-p-10) 1px, transparent 1px),
+        linear-gradient(-45deg, var(--clr-p-10) 1px, transparent 1px);
+    background-size: 32px 32px;
+    opacity: 0.7;
+}
+.bg-style-diag-grid .shape-blob-1,
+.bg-style-diag-grid .shape-blob-2,
+.bg-style-diag-grid .shape-blob-3 {
+    opacity: 0.18;
+}
+
+/* 4. GLASS BLOBS (Fluid Organic Translucent Waves) */
+.bg-style-glass-blobs .shape-grid-pattern {
+    display: none;
+}
+.bg-style-glass-blobs .shape-blob-1 {
+    top: 5%;
+    right: -60px;
+    width: 400px;
+    height: 400px;
+    background-color: var(--clr-p-25);
+    border-radius: 60% 40% 70% 30% / 40% 50% 60% 50%;
+    filter: blur(60px);
+    animation: floatBlob1 12s ease-in-out infinite alternate;
+}
+.bg-style-glass-blobs .shape-blob-2 {
+    top: 50%;
+    left: -80px;
+    width: 350px;
+    height: 350px;
     background-color: var(--clr-p-10);
-    border-radius: 60% 40% 50% 50% / 40% 60% 50% 50%;
-    transform: rotate(35deg);
-    transition: background-color 0.3s ease;
-    filter: blur(40px);
+    border-radius: 40% 60% 50% 50% / 60% 30% 70% 40%;
+    filter: blur(55px);
+    animation: floatBlob2 15s ease-in-out infinite alternate;
+}
+.bg-style-glass-blobs .shape-blob-3 {
+    bottom: 2%;
+    right: 20%;
+    width: 360px;
+    height: 360px;
+    background-color: var(--clr-p-10);
+    border-radius: 50% 50% 40% 60% / 40% 60% 50% 50%;
+    filter: blur(55px);
+    animation: floatBlob1 16s ease-in-out infinite alternate;
+}
+
+/* 5. CLEAN MINIMAL (Soft Vignette) */
+.bg-style-clean-minimal .shape-grid-pattern {
+    inset: 0;
+    background-image: radial-gradient(var(--clr-p-10) 0.8px, transparent 0.8px);
+    background-size: 36px 36px;
+    opacity: 0.35;
+}
+.bg-style-clean-minimal .shape-blob-1,
+.bg-style-clean-minimal .shape-blob-2,
+.bg-style-clean-minimal .shape-blob-3 {
+    display: none;
+}
+
+@keyframes floatBlob1 {
+    0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+    50% { transform: translate(-30px, 35px) scale(1.08) rotate(12deg); }
+    100% { transform: translate(25px, -20px) scale(0.95) rotate(-8deg); }
+}
+
+@keyframes floatBlob2 {
+    0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+    50% { transform: translate(35px, -25px) scale(1.05) rotate(-10deg); }
+    100% { transform: translate(-20px, 30px) scale(0.92) rotate(15deg); }
 }
 
 html.dark .shape-grid-pattern {
@@ -264,8 +356,7 @@ html.dark .shape-grid-pattern {
 html.dark .shape-blob-1,
 html.dark .shape-blob-2,
 html.dark .shape-blob-3 {
-    background-color: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    opacity: 0.08 !important;
 }
 
 /* --------------------------------------------------------------------------

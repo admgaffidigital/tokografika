@@ -1364,6 +1364,39 @@ const rAdmSet = () => {
           <input type="hidden" id="set-theme-color" value="${esc(appData.store.themeColor || 'emerald')}" />
         </div>
 
+        <!-- Background Style Picker (Storefront & CMS) -->
+        <div class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-700">
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+              <i class="fa-solid fa-wand-magic-sparkles text-amber-500 mr-1"></i> Gaya Background Toko & CMS
+            </label>
+            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 uppercase tracking-wider">Interaktif</span>
+          </div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mb-3.5 leading-relaxed">Pilih pola background modern dinamis agar Storefront & CMS tidak polos dan tampil hidup seperti aplikasi native.</p>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+          ${[
+            { id: 'mesh-aurora', name: 'Mesh Aurora', desc: 'Glow ambient halus', icon: 'fa-solid fa-certificate' },
+            { id: 'dot-grid', name: 'Dot Matrix', desc: 'Titik geometric tech', icon: 'fa-solid fa-braille' },
+            { id: 'diag-grid', name: 'Diagonal Grid', desc: 'Garis geometri 3D', icon: 'fa-solid fa-border-none' },
+            { id: 'glass-blobs', name: 'Organic Blobs', desc: 'Gelombang dinamis', icon: 'fa-solid fa-shapes' },
+            { id: 'clean-minimal', name: 'Minimalis', desc: 'Bersih & tenang', icon: 'fa-solid fa-layer-group' }
+          ].map(bg => {
+            const currentBg = appData.store.bgStyle || 'mesh-aurora';
+            const isActive = currentBg === bg.id;
+            return `
+            <button type="button" onclick="setTempBgStyle('${bg.id}')" id="btn-bg-style-${bg.id}" class="p-3 rounded-xl border-2 transition-all flex flex-col items-center text-center gap-1.5 bg-white dark:bg-slate-800 ${isActive ? 'border-emerald-600 ring-2 ring-emerald-500 shadow-md scale-[1.02]' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm'}">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm ${isActive ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}">
+                <i class="${bg.icon}"></i>
+              </div>
+              <span class="text-xs font-bold text-slate-800 dark:text-white leading-tight">${bg.name}</span>
+              <span class="text-[9px] text-slate-400 font-medium leading-tight">${bg.desc}</span>
+            </button>
+            `;
+          }).join('')}
+          </div>
+          <input type="hidden" id="set-bg-style" value="${esc(appData.store.bgStyle || 'mesh-aurora')}" />
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
             <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-list-ul text-emerald-600 mr-1"></i> Desain Menu Kategori</label>
@@ -1500,6 +1533,8 @@ window.saveAdminSettings = async () => {
     appData.store.lng = getV('set-lng');
     
     appData.store.themeColor = getV('set-theme-color');
+    appData.store.bgStyle = getV('set-bg-style') || appData.store.bgStyle || 'mesh-aurora';
+    try { localStorage.setItem('freshmart_bg_style', appData.store.bgStyle); } catch(e) {}
 
     if(!appData.store.social) appData.store.social = {};
     appData.store.social.fb = getV('set-soc-fb');
@@ -1516,6 +1551,7 @@ window.saveAdminSettings = async () => {
     
     updateThemeVars();
     applyGlobalTheme();
+    applyBgStyle(appData.store.bgStyle);
     Object.keys(_pwaIconCache).forEach(k => delete _pwaIconCache[k]);
     try { await buildAndInjectManifest(); } catch(e) {}
     

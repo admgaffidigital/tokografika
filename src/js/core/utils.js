@@ -86,6 +86,32 @@ window.applyGlobalTheme = () => {
   }
 };
 
+window.applyBgStyle = (style) => {
+  const s = style || appData?.store?.bgStyle || localStorage.getItem('freshmart_bg_style') || 'mesh-aurora';
+  const elBg = document.getElementById('app-bg-shapes');
+  if (elBg) {
+    elBg.className = `app-bg-shapes bg-style-${s} pointer-events-none`;
+  }
+};
+
+window.setTempBgStyle = (s) => {
+  setV('set-bg-style', s);
+  document.querySelectorAll('[id^="btn-bg-style-"]').forEach(b => {
+    b.classList.remove('border-emerald-600', 'ring-2', 'ring-emerald-500', 'shadow-md');
+    b.classList.add('border-slate-200', 'dark:border-slate-700');
+  });
+  const active = el('btn-bg-style-' + s);
+  if (active) {
+    active.classList.remove('border-slate-200', 'dark:border-slate-700');
+    active.classList.add('border-emerald-600', 'ring-2', 'ring-emerald-500', 'shadow-md');
+  }
+  if (appData && appData.store) {
+    appData.store.bgStyle = s;
+  }
+  try { localStorage.setItem('freshmart_bg_style', s); } catch(e) {}
+  applyBgStyle(s);
+};
+
 window.setTempTheme = (t) => {
   setV('set-theme-color', t);
   document.querySelectorAll('[id^="btn-theme-"]').forEach(b => {
