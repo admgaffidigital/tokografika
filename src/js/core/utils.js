@@ -37,7 +37,17 @@ const THEME_COLORS = {
 
 // Update CSS variables & meta tag setiap kali tema berubah
 window.updateThemeVars = () => {
-  const tc = appData?.store?.themeColor || 'emerald';
+  let tc = appData?.store?.themeColor;
+  if (!tc) {
+    try {
+      tc = localStorage.getItem('freshmart_theme_color');
+      if (!tc) {
+        const cms = JSON.parse(localStorage.getItem('freshmart_cms_data') || '{}');
+        if (cms?.store?.themeColor) tc = cms.store.themeColor;
+      }
+    } catch(e) {}
+  }
+  tc = tc || 'emerald';
   const t = THEME_COLORS[tc] || THEME_COLORS.emerald;
   const root = document.documentElement;
   root.style.setProperty('--clr-p', t.p);
@@ -46,13 +56,28 @@ window.updateThemeVars = () => {
   root.style.setProperty('--clr-p-10', `rgba(${t.r},${t.g},${t.b},0.10)`);
   root.style.setProperty('--clr-p-25', `rgba(${t.r},${t.g},${t.b},0.25)`);
   root.style.setProperty('--clr-p-35', `rgba(${t.r},${t.g},${t.b},0.35)`);
-  // Sinkronkan meta theme-color untuk PWA toolbar
+  
+  // Sinkronkan SEMUA meta theme-color untuk PWA toolbar, Android Chrome, & iOS status bar
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
+    m.content = t.p;
+  });
   const metaTheme = document.getElementById('pwa-theme-color');
   if (metaTheme) metaTheme.content = t.p;
+
+  // Sinkronkan elemen PWA install banner jika sedang tampil
+  const pwaInner = document.getElementById('pwa-banner-inner');
+  if (pwaInner) {
+    pwaInner.style.backgroundColor = t.p;
+    pwaInner.style.borderColor = t.dark;
+  }
+  const pwaBtn = document.getElementById('pwa-install-btn');
+  if (pwaBtn) {
+    pwaBtn.style.color = t.p;
+  }
 };
 
 window.applyGlobalTheme = () => {
-  const tc = appData?.store?.themeColor || 'emerald';
+  const tc = appData?.store?.themeColor || localStorage.getItem('freshmart_theme_color') || 'emerald';
   updateThemeVars();
   if (tc !== 'emerald') {
     document.querySelectorAll('[class*="emerald"]').forEach(e => {

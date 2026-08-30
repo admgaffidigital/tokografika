@@ -80,6 +80,45 @@
       };
     </script>
     <script>
+      (function() {
+        const THEME_HEX_MAP = {
+          emerald: { p:'#059669', dark:'#047857', bg:'#ecfdf5', r:5, g:150, b:105 },
+          teal: { p:'#0d9488', dark:'#0f766e', bg:'#f0fdfa', r:13, g:148, b:136 },
+          cyan: { p:'#0891b2', dark:'#0e7490', bg:'#ecfeff', r:8, g:145, b:178 },
+          sky: { p:'#0284c7', dark:'#0369a1', bg:'#f0f9ff', r:2, g:132, b:199 },
+          blue: { p:'#2563eb', dark:'#1d4ed8', bg:'#eff6ff', r:37, g:99, b:235 },
+          indigo: { p:'#4f46e5', dark:'#4338ca', bg:'#eef2ff', r:79, g:70, b:229 },
+          violet: { p:'#7c3aed', dark:'#6d28d9', bg:'#f5f3ff', r:124, g:58, b:237 },
+          purple: { p:'#9333ea', dark:'#7e22ce', bg:'#faf5ff', r:147, g:51, b:234 },
+          pink: { p:'#db2777', dark:'#be185d', bg:'#fdf2f8', r:219, g:39, b:119 },
+          rose: { p:'#e11d48', dark:'#be123c', bg:'#fff1f2', r:225, g:29, b:72 },
+          red: { p:'#dc2626', dark:'#b91c1c', bg:'#fef2f2', r:220, g:38, b:38 },
+          orange: { p:'#ea580c', dark:'#c2410c', bg:'#fff7ed', r:234, g:88, b:12 },
+          amber: { p:'#d97706', dark:'#b45309', bg:'#fffbeb', r:217, g:119, b:6 },
+          lime: { p:'#65a30d', dark:'#4d7c0f', bg:'#f7fee7', r:101, g:163, b:13 },
+        };
+        let savedColor = localStorage.getItem('freshmart_theme_color');
+        if (!savedColor) {
+          try {
+            const cms = JSON.parse(localStorage.getItem('freshmart_cms_data') || '{}');
+            if (cms && cms.store && cms.store.themeColor) savedColor = cms.store.themeColor;
+          } catch(e) {}
+        }
+        const tc = savedColor || 'emerald';
+        const t = THEME_HEX_MAP[tc] || THEME_HEX_MAP.emerald;
+        const root = document.documentElement;
+        root.style.setProperty('--clr-p', t.p);
+        root.style.setProperty('--clr-p-dark', t.dark);
+        root.style.setProperty('--clr-p-bg', t.bg);
+        root.style.setProperty('--clr-p-10', 'rgba(' + t.r + ',' + t.g + ',' + t.b + ',0.10)');
+        root.style.setProperty('--clr-p-25', 'rgba(' + t.r + ',' + t.g + ',' + t.b + ',0.25)');
+        root.style.setProperty('--clr-p-35', 'rgba(' + t.r + ',' + t.g + ',' + t.b + ',0.35)');
+        
+        // PWA & Browser Header Meta Color
+        const metaTheme = document.getElementById('pwa-theme-color');
+        if (metaTheme) metaTheme.content = t.p;
+      })();
+
       if (localStorage.getItem('freshmart_theme') === 'dark' || (!('freshmart_theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) { 
         document.documentElement.classList.add('dark'); 
       }
