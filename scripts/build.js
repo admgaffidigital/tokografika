@@ -77,6 +77,7 @@ function build() {
   const finalHtml = generateHtml();
   const indexPath = path.join(distDir, 'index.html');
   fs.writeFileSync(indexPath, finalHtml, 'utf8');
+  fs.writeFileSync(path.join(rootDir, 'index.html'), finalHtml, 'utf8');
 
   copyPublicAssets();
 
