@@ -1088,6 +1088,7 @@ window.submitPosTransaction = async () => {
     },
     status: 'Selesai',
     cashier: cashierName,
+    timestamp: typeof firebase !== 'undefined' && firebase.firestore ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString(),
     dateString: new Date().toISOString(),
     createdAt: new Date().toISOString()
   };
@@ -1096,7 +1097,7 @@ window.submitPosTransaction = async () => {
 
   try {
     if (typeof db !== 'undefined' && db.collection) {
-      await db.collection('orders').doc(orderId).set(orderData);
+      await db.collection('freshmart_orders').doc(orderId).set(orderData);
     }
     
     hLoad();
