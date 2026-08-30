@@ -1,27 +1,22 @@
-// =============================================================================
-// FRESHMART FIREBASE INITIALIZATION & DATA SYNC
-// =============================================================================
-
+// Inisialisasi Firebase & Firestore
 firebase.initializeApp(fbC);
 const db = firebase.firestore(); 
 const auth = firebase.auth(); 
 
-// Konfigurasi cache Firestore (dukung FirestoreSettings.cache modern jika tersedia, fallback gracefully)
-try {
-  if (firebase.firestore.persistentLocalCache && firebase.firestore.persistentMultipleTabManager) {
-    db.settings({
-      ignoreUndefinedProperties: true,
-      localCache: firebase.firestore.persistentLocalCache({
-        tabManager: firebase.firestore.persistentMultipleTabManager()
-      })
-    });
-  } else {
-    db.settings({ ignoreUndefinedProperties: true });
-    db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
-  }
-} catch (e) {
-  try { db.settings({ ignoreUndefinedProperties: true }); } catch (_) {}
+// Set Firestore log level untuk membungkam deprecation warning internal SDK
+if (typeof firebase !== 'undefined' && firebase.firestore && firebase.firestore.setLogLevel) {
+  try { firebase.firestore.setLogLevel('error'); } catch (_) {}
 }
+
+// Konfigurasi Firestore dengan merge: true agar tidak memicu overriding host warning
+try {
+  db.settings({ ignoreUndefinedProperties: true, merge: true });
+} catch (e) {}
+
+// Aktifkan offline persistence multi-tab
+try {
+  db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+} catch (e) {}
 
 // Helper timeout untuk Firestore agar tidak hang jika offline / koneksi lambat
 const withTimeout = (promise, timeoutMs = 3500) => {
