@@ -1158,13 +1158,6 @@ window.showPricetagStep = (step) => {
     if (sPrev) sPrev.classList.add('hidden');
     if (btnProceed) btnProceed.classList.remove('hidden');
     if (prevActions) prevActions.classList.add('hidden');
-    if (previewActions) previewActions.classList.add('hidden');
-  } else {
-    // preview
-    if (stepSelection) stepSelection.classList.add('hidden');
-    if (stepPreview) stepPreview.classList.remove('hidden');
-    if (btnProceed) btnProceed.classList.add('hidden');
-    if (previewActions) previewActions.classList.remove('hidden');
   }
 };
 
