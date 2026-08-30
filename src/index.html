@@ -147,15 +147,22 @@
         if (metaTheme) metaTheme.content = t.p;
 
         let savedBg = localStorage.getItem('freshmart_bg_style');
-        if (!savedBg) {
+        let savedImg = localStorage.getItem('freshmart_bg_image');
+        if (!savedBg || !savedImg) {
           try {
             const cms = JSON.parse(localStorage.getItem('freshmart_cms_data') || '{}');
-            if (cms?.store?.bgStyle) savedBg = cms.store.bgStyle;
+            if (!savedBg && cms?.store?.bgStyle) savedBg = cms.store.bgStyle;
+            if (!savedImg && cms?.store?.bgImage) savedImg = cms.store.bgImage;
           } catch(e) {}
         }
         document.addEventListener('DOMContentLoaded', () => {
           const elBg = document.getElementById('app-bg-shapes');
-          if (elBg) elBg.className = 'app-bg-shapes bg-style-' + (savedBg || 'mesh-aurora') + ' pointer-events-none';
+          if (elBg) elBg.className = 'app-bg-shapes bg-style-' + (savedBg || 'hero-arch') + ' pointer-events-none';
+          const elImg = document.getElementById('app-bg-custom-image');
+          if (elImg && savedImg) {
+            elImg.style.backgroundImage = "url('" + savedImg + "')";
+            elImg.style.display = 'block';
+          }
         });
       })();
 

@@ -88,13 +88,30 @@ window.applyGlobalTheme = () => {
 };
 
 window.applyBgStyle = (style) => {
-  const s = style || appData?.store?.bgStyle || localStorage.getItem('freshmart_bg_style') || 'mesh-aurora';
-  document.body.classList.remove('bg-style-mesh-aurora', 'bg-style-dot-grid', 'bg-style-diag-grid', 'bg-style-glass-blobs', 'bg-style-clean-minimal');
+  const s = style || appData?.store?.bgStyle || localStorage.getItem('freshmart_bg_style') || 'hero-arch';
+  const customImg = appData?.store?.bgImage || localStorage.getItem('freshmart_bg_image') || '';
+  
+  document.body.classList.remove(
+    'bg-style-hero-arch', 'bg-style-geometric-poly', 'bg-style-diagonal-accent', 
+    'bg-style-dual-tone', 'bg-style-solid-clean', 'bg-style-mesh-aurora', 
+    'bg-style-dot-grid', 'bg-style-diag-grid', 'bg-style-glass-blobs', 'bg-style-clean-minimal'
+  );
   document.body.classList.add(`bg-style-${s}`);
   
   const elBg = document.getElementById('app-bg-shapes');
   if (elBg) {
     elBg.className = `app-bg-shapes bg-style-${s} pointer-events-none`;
+  }
+
+  const elImg = document.getElementById('app-bg-custom-image');
+  if (elImg) {
+    if (customImg) {
+      elImg.style.backgroundImage = `url('${customImg}')`;
+      elImg.style.display = 'block';
+    } else {
+      elImg.style.backgroundImage = 'none';
+      elImg.style.display = 'none';
+    }
   }
 };
 
@@ -114,6 +131,15 @@ window.setTempBgStyle = (s) => {
   }
   try { localStorage.setItem('freshmart_bg_style', s); } catch(e) {}
   applyBgStyle(s);
+};
+
+window.previewBgImage = (url) => {
+  const cleanUrl = fixD(url || '');
+  if (appData && appData.store) {
+    appData.store.bgImage = cleanUrl;
+  }
+  try { localStorage.setItem('freshmart_bg_image', cleanUrl); } catch(e) {}
+  applyBgStyle();
 };
 
 window.setTempTheme = (t) => {

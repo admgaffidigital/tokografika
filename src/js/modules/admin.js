@@ -1364,25 +1364,25 @@ const rAdmSet = () => {
           <input type="hidden" id="set-theme-color" value="${esc(appData.store.themeColor || 'emerald')}" />
         </div>
 
-        <!-- Background Style Picker (Storefront & CMS) -->
+        <!-- Background Style Picker (Storefront & CMS - Crisp & Sharp) -->
         <div class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-700">
           <div class="flex items-center justify-between mb-2">
             <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
-              <i class="fa-solid fa-wand-magic-sparkles text-amber-500 mr-1"></i> Gaya Background Toko & CMS
+              <i class="fa-solid fa-shapes text-emerald-500 mr-1"></i> Gaya Background Toko & CMS (Tajam & Nyata)
             </label>
-            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 uppercase tracking-wider">Interaktif</span>
+            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 uppercase tracking-wider">Non-Blur</span>
           </div>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mb-3.5 leading-relaxed">Pilih pola background modern dinamis agar Storefront & CMS tidak polos dan tampil hidup seperti aplikasi native.</p>
-          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mb-3.5 leading-relaxed">Pilih gaya visual background yang tegas, tajam, dan tidak blur agar toko dan CMS terlihat berkelas seperti aplikasi profesional.</p>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 mb-4">
           ${[
-            { id: 'mesh-aurora', name: 'Mesh Aurora', desc: 'Pendaran halus', icon: 'fa-solid fa-certificate' },
-            { id: 'dot-grid', name: 'Spotlight', desc: 'Sorotan ambient', icon: 'fa-solid fa-sun' },
-            { id: 'diag-grid', name: 'Dual Aurora', desc: 'Pendaran 2 sisi', icon: 'fa-solid fa-gem' },
-            { id: 'glass-blobs', name: 'Organic Waves', desc: 'Gelombang cair', icon: 'fa-solid fa-shapes' },
-            { id: 'clean-minimal', name: 'Minimalis', desc: 'Bersih & tenang', icon: 'fa-solid fa-layer-group' }
+            { id: 'hero-arch', name: 'Hero Arch', desc: 'Header lengkung solid', icon: 'fa-solid fa-cloud' },
+            { id: 'geometric-poly', name: 'Geometris 3D', desc: 'Vektor sudut presisi', icon: 'fa-solid fa-cube' },
+            { id: 'diagonal-accent', name: 'Diagonal Skew', desc: 'Aksen garis tegas', icon: 'fa-solid fa-slash' },
+            { id: 'dual-tone', name: 'Dual-Tone', desc: 'Header solid 2 warna', icon: 'fa-solid fa-layer-group' },
+            { id: 'solid-clean', name: 'Minimalis', desc: 'Polos bersih elegan', icon: 'fa-solid fa-square' }
           ].map(bg => {
-            const currentBg = appData.store.bgStyle || 'mesh-aurora';
-            const isActive = currentBg === bg.id;
+            const currentBg = appData.store.bgStyle || 'hero-arch';
+            const isActive = currentBg === bg.id || (currentBg === 'mesh-aurora' && bg.id === 'hero-arch');
             return `
             <button type="button" onclick="setTempBgStyle('${bg.id}')" id="btn-bg-style-${bg.id}" class="p-3 rounded-xl border-2 transition-all flex flex-col items-center text-center gap-1.5 bg-white dark:bg-slate-800 ${isActive ? 'border-emerald-600 ring-2 ring-emerald-500 shadow-md scale-[1.02]' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm'}">
               <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm ${isActive ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}">
@@ -1394,7 +1394,22 @@ const rAdmSet = () => {
             `;
           }).join('')}
           </div>
-          <input type="hidden" id="set-bg-style" value="${esc(appData.store.bgStyle || 'mesh-aurora')}" />
+          <input type="hidden" id="set-bg-style" value="${esc(appData.store.bgStyle || 'hero-arch')}" />
+
+          <!-- Custom Wallpaper Image Upload -->
+          <div class="pt-3 border-t border-slate-200 dark:border-slate-700">
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">
+              <i class="fa-solid fa-image text-indigo-500 mr-1"></i> Gambar / Wallpaper Background Kustom (Opsional)
+            </label>
+            <div class="flex gap-2">
+              <input id="set-bg-image" value="${esc(appData.store.bgImage || '')}" oninput="previewBgImage(this.value)" class="admin-input flex-1 !py-2.5 text-xs" placeholder="URL Gambar Background (Opsional, contoh: https://...)" />
+              <label onclick="if(window.AppInventor){ event.preventDefault(); window.AppInventor.setWebViewString('BUKA_GALERI|||set-bg-image|||null'); }" class="bg-slate-100 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 rounded-xl px-4 flex items-center justify-center cursor-pointer hover:border-indigo-500 hover:text-indigo-600 transition-all shrink-0 font-bold text-xs gap-1.5 shadow-sm">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Upload
+                <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'set-bg-image')" />
+              </label>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-1.5">Jika diisi, gambar akan otomatis terpasang tajam dan jernih sebagai wallpaper latar belakang toko dan CMS.</p>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -1533,8 +1548,12 @@ window.saveAdminSettings = async () => {
     appData.store.lng = getV('set-lng');
     
     appData.store.themeColor = getV('set-theme-color');
-    appData.store.bgStyle = getV('set-bg-style') || appData.store.bgStyle || 'mesh-aurora';
-    try { localStorage.setItem('freshmart_bg_style', appData.store.bgStyle); } catch(e) {}
+    appData.store.bgStyle = getV('set-bg-style') || appData.store.bgStyle || 'hero-arch';
+    appData.store.bgImage = fixD(getV('set-bg-image'));
+    try { 
+      localStorage.setItem('freshmart_bg_style', appData.store.bgStyle); 
+      localStorage.setItem('freshmart_bg_image', appData.store.bgImage || '');
+    } catch(e) {}
 
     if(!appData.store.social) appData.store.social = {};
     appData.store.social.fb = getV('set-soc-fb');

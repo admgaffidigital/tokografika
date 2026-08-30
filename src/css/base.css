@@ -200,7 +200,7 @@ code, kbd, samp, pre, .font-mono {
 }
 
 /* --------------------------------------------------------------------------
-   4. Background Shapes & Dynamic Ambient Lighting (Smooth - Transparent Views)
+   4. Background Shapes & Wallpapers (CRISP, CLEAR & MODERN - NO BLUR)
    -------------------------------------------------------------------------- */
 body {
     background-color: #f1f5f9;
@@ -232,142 +232,137 @@ html.dark body {
     transition: all 0.4s ease;
 }
 
-.shape-grid-pattern {
-    display: none !important;
-}
-
-.shape-blob-1,
-.shape-blob-2,
-.shape-blob-3 {
+.app-bg-custom-image {
     position: absolute;
-    border-radius: 50%;
-    filter: blur(75px);
-    pointer-events: none;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* 1. MESH AURORA (Default Modern Dynamic App - Floating Ambient Glow) */
-.bg-style-mesh-aurora .shape-blob-1 {
-    top: -80px;
-    right: -80px;
-    width: 480px;
-    height: 480px;
-    background-color: var(--clr-p-25);
-    animation: floatBlob1 18s ease-in-out infinite alternate;
-}
-
-.bg-style-mesh-aurora .shape-blob-2 {
-    top: 35%;
-    left: -100px;
-    width: 420px;
-    height: 420px;
-    background-color: var(--clr-p-25);
-    animation: floatBlob2 14s ease-in-out infinite alternate;
-}
-
-.bg-style-mesh-aurora .shape-blob-3 {
-    bottom: -60px;
-    right: 15%;
-    width: 460px;
-    height: 460px;
-    background-color: var(--clr-p-25);
-    animation: floatBlob1 20s ease-in-out infinite alternate-reverse;
-}
-
-/* 2. GLOWING SPOTLIGHT (Center Focus) */
-.bg-style-dot-grid .shape-blob-1 {
-    top: -120px;
-    left: 25%;
-    width: 550px;
-    height: 420px;
-    background-color: var(--clr-p-35);
-    filter: blur(85px);
-    animation: floatBlob1 16s ease-in-out infinite alternate;
-}
-.bg-style-dot-grid .shape-blob-2 {
-    bottom: 5%;
-    right: -60px;
-    width: 440px;
-    height: 440px;
-    background-color: var(--clr-p-25);
-}
-.bg-style-dot-grid .shape-blob-3 {
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.18;
+    transition: opacity 0.3s ease;
     display: none;
 }
 
-/* 3. DUAL AURORA (Top-Bottom Split) */
-.bg-style-diag-grid .shape-blob-1 {
-    top: 5%;
-    right: -60px;
-    width: 480px;
-    height: 480px;
-    background-color: var(--clr-p-35);
-    animation: floatBlob1 15s ease-in-out infinite alternate;
+html.dark .app-bg-custom-image {
+    opacity: 0.12;
 }
-.bg-style-diag-grid .shape-blob-2 {
-    bottom: 10%;
-    left: -60px;
-    width: 450px;
-    height: 450px;
-    background-color: var(--clr-p-25);
-    animation: floatBlob2 15s ease-in-out infinite alternate;
+
+/* 1. HERO ARCH (Crisp Curved Top Header Banner - Clean App Look) */
+.bg-style-hero-arch .crisp-hero-arch,
+.bg-style-mesh-aurora .crisp-hero-arch {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 240px;
+    background: linear-gradient(135deg, var(--clr-p) 0%, var(--clr-p-dark) 100%);
+    border-radius: 0 0 36px 36px;
+    opacity: 0.95;
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.15);
 }
-.bg-style-diag-grid .shape-blob-3 {
+
+.bg-style-hero-arch .crisp-geo-1,
+.bg-style-mesh-aurora .crisp-geo-1 {
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 220px;
+    height: 220px;
+    border-radius: 44px;
+    border: 3px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(25deg);
+}
+
+.bg-style-hero-arch .crisp-geo-2,
+.bg-style-mesh-aurora .crisp-geo-2 {
+    position: absolute;
+    top: 70px;
+    left: -30px;
+    width: 150px;
+    height: 150px;
+    border-radius: 32px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    transform: rotate(-15deg);
+}
+
+/* 2. GEOMETRIC POLYGON (Crisp Clean Sharp 3D Vectors) */
+.bg-style-geometric-poly .crisp-hero-arch,
+.bg-style-dot-grid .crisp-hero-arch {
+    display: none;
+}
+.bg-style-geometric-poly .crisp-geo-1,
+.bg-style-dot-grid .crisp-geo-1 {
+    position: absolute;
+    top: 60px;
+    right: -40px;
+    width: 280px;
+    height: 280px;
+    border-radius: 48px;
+    border: 3px solid var(--clr-p-35);
+    background: var(--clr-p-10);
+    transform: rotate(35deg);
+}
+.bg-style-geometric-poly .crisp-geo-2,
+.bg-style-dot-grid .crisp-geo-2 {
+    position: absolute;
+    bottom: 80px;
+    left: -50px;
+    width: 240px;
+    height: 240px;
+    border-radius: 40px;
+    border: 3px solid var(--clr-p-35);
+    background: var(--clr-p-10);
+    transform: rotate(-25deg);
+}
+
+/* 3. DIAGONAL ACCENT (Crisp Angled Top Stripes) */
+.bg-style-diagonal-accent .crisp-hero-arch,
+.bg-style-diag-grid .crisp-hero-arch {
+    position: absolute;
+    top: -50px;
+    left: -10%;
+    right: -10%;
+    height: 220px;
+    background: linear-gradient(135deg, var(--clr-p) 0%, var(--clr-p-dark) 100%);
+    transform: skewY(-3.5deg);
+    border-bottom: 4px solid var(--clr-p-dark);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+}
+.bg-style-diagonal-accent .crisp-geo-1,
+.bg-style-diag-grid .crisp-geo-1,
+.bg-style-diagonal-accent .crisp-geo-2,
+.bg-style-diag-grid .crisp-geo-2 {
     display: none;
 }
 
-/* 4. ORGANIC GLASS BLOBS (Fluid Liquid Waves) */
-.bg-style-glass-blobs .shape-blob-1 {
-    top: 5%;
-    right: -60px;
-    width: 500px;
-    height: 500px;
-    background-color: var(--clr-p-35);
-    border-radius: 60% 40% 70% 30% / 40% 50% 60% 50%;
-    animation: floatBlob1 12s ease-in-out infinite alternate;
+/* 4. SOLID DUAL TONE */
+.bg-style-dual-tone .crisp-hero-arch,
+.bg-style-glass-blobs .crisp-hero-arch {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 180px;
+    background-color: var(--clr-p);
+    border-bottom: 3px solid var(--clr-p-dark);
 }
-.bg-style-glass-blobs .shape-blob-2 {
-    top: 45%;
-    left: -80px;
-    width: 440px;
-    height: 440px;
-    background-color: var(--clr-p-25);
-    border-radius: 40% 60% 50% 50% / 60% 30% 70% 40%;
-    animation: floatBlob2 15s ease-in-out infinite alternate;
-}
-.bg-style-glass-blobs .shape-blob-3 {
-    bottom: 2%;
-    right: 15%;
-    width: 450px;
-    height: 450px;
-    background-color: var(--clr-p-25);
-    border-radius: 50% 50% 40% 60% / 40% 60% 50% 50%;
-    animation: floatBlob1 16s ease-in-out infinite alternate;
-}
-
-/* 5. CLEAN MINIMAL (Soft Studio Lighting) */
-.bg-style-clean-minimal .shape-blob-1,
-.bg-style-clean-minimal .shape-blob-2,
-.bg-style-clean-minimal .shape-blob-3 {
+.bg-style-dual-tone .crisp-geo-1,
+.bg-style-glass-blobs .crisp-geo-1,
+.bg-style-dual-tone .crisp-geo-2,
+.bg-style-glass-blobs .crisp-geo-2 {
     display: none;
 }
 
-@keyframes floatBlob1 {
-    0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-    50% { transform: translate(-35px, 40px) scale(1.10) rotate(14deg); }
-    100% { transform: translate(30px, -25px) scale(0.95) rotate(-10deg); }
-}
-
-@keyframes floatBlob2 {
-    0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-    50% { transform: translate(40px, -30px) scale(1.08) rotate(-12deg); }
-    100% { transform: translate(-25px, 35px) scale(0.90) rotate(16deg); }
-}
-
-html.dark .shape-blob-1,
-html.dark .shape-blob-2,
-html.dark .shape-blob-3 {
-    opacity: 0.22 !important;
+/* 5. SOLID CLEAN */
+.bg-style-solid-clean .crisp-hero-arch,
+.bg-style-clean-minimal .crisp-hero-arch,
+.bg-style-solid-clean .crisp-geo-1,
+.bg-style-clean-minimal .crisp-geo-1,
+.bg-style-solid-clean .crisp-geo-2,
+.bg-style-clean-minimal .crisp-geo-2 {
+    display: none;
 }
 
 /* --------------------------------------------------------------------------
