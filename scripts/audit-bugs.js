@@ -9,6 +9,11 @@ const xmlContent = fs.readFileSync(path.join(srcDir, 'template.xml'), 'utf8');
 console.log('=== 1. AUDIT: EVENT HANDLERS IN HTML VS JS FUNCTIONS ===');
 const inlineEventRegex = /on(?:click|change|submit|input|keydown|keyup|keypress|load|error)=['"]([^'"]+)['"]/gi;
 const calledFunctions = new Set();
+const builtInNames = new Set([
+  'if', 'for', 'while', 'switch', 'alert', 'confirm', 'prompt', 
+  'parseInt', 'parseFloat', 'Number', 'String', 'Boolean', 'console',
+  'back', 'forward', 'go', 'stopPropagation', 'preventDefault', 'reload', 'focus', 'blur', 'select', 'submit', 'reset'
+]);
 let match;
 
 while ((match = inlineEventRegex.exec(htmlContent)) !== null) {
@@ -18,7 +23,7 @@ while ((match = inlineEventRegex.exec(htmlContent)) !== null) {
   if (fnMatches) {
     fnMatches.forEach(f => {
       const name = f.replace('(', '').trim();
-      if (!['if', 'for', 'while', 'switch', 'alert', 'confirm', 'prompt', 'parseInt', 'parseFloat', 'Number', 'String', 'Boolean', 'console'].includes(name)) {
+      if (!builtInNames.has(name)) {
         calledFunctions.add(name);
       }
     });
@@ -53,29 +58,22 @@ while ((match = getElementRegex.exec(jsContent)) !== null) {
   }
 }
 
-// Extract all actual IDs in HTML & XML
-const actualIds = new Set();
-const idAttrRegex = /\bid=['"]([^'"]+)['"]/g;
-while ((match = idAttrRegex.exec(htmlContent)) !== null) {
-  actualIds.add(match[1]);
-}
-while ((match = idAttrRegex.exec(xmlContent)) !== null) {
-  actualIds.add(match[1]);
-}
-
 const missingIds = [];
 referencedIds.forEach(id => {
-  // Also check if dynamically created in JS
-  const createdInJs = jsContent.includes(`id='${id}'`) || jsContent.includes(`id="${id}"`) || jsContent.includes(`id=\\'${id}\\'`);
-  if (!actualIds.has(id) && !createdInJs) {
+  // Search for id="..." in HTML and template.xml
+  const idPattern = new RegExp(`id=['"]${id}['"]`, 'i');
+  if (!idPattern.test(htmlContent) && !idPattern.test(xmlContent)) {
+    // Check if dynamically created or known
     missingIds.push(id);
   }
 });
 
 console.log(`Total DOM IDs referenced in JS: ${referencedIds.size}`);
-console.log(`Total DOM IDs found in HTML: ${actualIds.size}`);
+const totalHtmlIds = (htmlContent.match(/id=['"][^'"]+['"]/gi) || []).length;
+console.log(`Total DOM IDs found in HTML: ${totalHtmlIds}`);
+
 if (missingIds.length > 0) {
-  console.log('⚠️ DOM IDs referenced in JS but NOT found in HTML/templates:', missingIds);
+  console.log('⚠️ DOM IDs in JS not found as static HTML elements (may be rendered dynamically):', missingIds);
 } else {
   console.log('✅ All JS DOM ID references exist in HTML!');
 }
@@ -83,12 +81,13 @@ if (missingIds.length > 0) {
 console.log('\n=== 3. AUDIT: FIREBASE INITIALIZATION & CREDENTIALS ===');
 console.log('Is firebase.initializeApp present in app.js?', jsContent.includes('firebase.initializeApp'));
 console.log('Is firebaseConfig present in app.js?', jsContent.includes('firebaseConfig'));
-console.log('Is db / firestore initialized in app.js?', jsContent.includes('firebase.firestore()') || jsContent.includes('const db') || jsContent.includes('let db') || jsContent.includes('var db'));
+console.log('Is db / firestore initialized in app.js?', jsContent.includes('db = firebase.firestore()') || jsContent.includes('firebase.firestore()'));
 
 console.log('\n=== 4. AUDIT: LOCALSTORAGE & RUNTIME SAFETY ===');
-const lsRegex = /localStorage\.(?:getItem|setItem|removeItem)\s*\(\s*['"]([^'"]+)['"]/g;
-const lsKeys = new Set();
+const storageKeys = new Set();
+const lsRegex = /localStorage\.(?:getItem|setItem|removeItem)\s*\(\s*['"`]([^'"`]+)['"`]/g;
 while ((match = lsRegex.exec(jsContent)) !== null) {
-  lsKeys.add(match[1]);
+  storageKeys.add(match[1]);
 }
-console.log('LocalStorage keys used:', Array.from(lsKeys));
+console.log('LocalStorage keys used:', Array.from(storageKeys));
+console.log('\n✨ Audit completed successfully!');
