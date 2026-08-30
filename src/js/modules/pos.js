@@ -1,5 +1,5 @@
 // =============================================================================
-// POS KASIR (POINT OF SALE) ENGINE - ADVANCED & COMPLETE
+// POS KASIR (POINT OF SALE) ENGINE - UNIVERSAL FLOATING CART SYSTEM
 // =============================================================================
 
 let posCart = [];
@@ -199,22 +199,22 @@ const renderPosProducts = () => {
   }
 
   if (posViewMode === 'grid') {
-    container.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5 sm:gap-3.5';
+    container.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2.5 sm:gap-4';
     container.innerHTML = filtered.map(p => {
       const isActive = p.isActive !== 'false' && p.isActive !== false;
       const hasVariants = p.variants && p.variants.length > 0;
       return `
-        <div class="card-modern bg-white dark:bg-slate-900 rounded-2xl p-2 sm:p-2.5 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all cursor-pointer shadow-sm group flex flex-col justify-between active:scale-95 select-none" onclick="handlePosProductClick(${p.id})">
-          <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 mb-1.5 border border-slate-200/50 dark:border-slate-700/50">
+        <div class="card-modern bg-white dark:bg-slate-900 rounded-2xl p-2 sm:p-3 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all cursor-pointer shadow-sm group flex flex-col justify-between active:scale-95 select-none" onclick="handlePosProductClick(${p.id})">
+          <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 mb-2 border border-slate-200/50 dark:border-slate-700/50">
             <img src="${esc(p.img || '')}" onerror="window.imgErrRetry(this,'No Image',200)" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 ${!isActive ? 'grayscale opacity-40' : ''}"/>
             ${!isActive ? '<div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center"><span class="badge badge-solid-rose text-[8px] font-bold">KOSONG</span></div>' : ''}
-            ${hasVariants ? '<span class="absolute top-1 right-1 bg-indigo-600 text-white text-[7px] sm:text-[8px] font-bold px-1.5 py-0.5 rounded shadow"><i class="fa-solid fa-layer-group"></i> Varian</span>' : ''}
-            ${p.wholesale?.length ? '<span class="absolute top-1 left-1 bg-amber-500 text-white text-[7px] sm:text-[8px] font-extrabold px-1.5 py-0.5 rounded shadow"><i class="fa-solid fa-tags"></i> Grosir</span>' : ''}
+            ${hasVariants ? '<span class="absolute top-1.5 right-1.5 bg-indigo-600 text-white text-[7px] sm:text-[8px] font-bold px-1.5 py-0.5 rounded shadow"><i class="fa-solid fa-layer-group"></i> Varian</span>' : ''}
+            ${p.wholesale?.length ? '<span class="absolute top-1.5 left-1.5 bg-amber-500 text-white text-[7px] sm:text-[8px] font-extrabold px-1.5 py-0.5 rounded shadow"><i class="fa-solid fa-tags"></i> Grosir</span>' : ''}
           </div>
           <div class="flex-1 flex flex-col justify-between min-w-0 px-0.5">
-            <h4 class="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
+            <h4 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
             <div class="flex items-baseline justify-between gap-1 mt-auto pt-1">
-              <span class="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400 leading-none">${fCur(p.price)}</span>
+              <span class="text-xs sm:text-base font-black text-emerald-600 dark:text-emerald-400 leading-none">${fCur(p.price)}</span>
               ${p.unit ? `<span class="text-[8px] sm:text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase">/${esc(p.unit)}</span>` : ''}
             </div>
           </div>
@@ -223,33 +223,33 @@ const renderPosProducts = () => {
     }).join('');
   } else {
     // List View
-    container.className = 'flex flex-col gap-2';
+    container.className = 'flex flex-col gap-2 max-w-4xl mx-auto';
     container.innerHTML = filtered.map(p => {
       const isActive = p.isActive !== 'false' && p.isActive !== false;
       const hasVariants = p.variants && p.variants.length > 0;
       return `
-        <div class="card-modern bg-white dark:bg-slate-900 rounded-xl p-2 sm:p-2.5 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all cursor-pointer shadow-sm flex items-center justify-between gap-3 active:scale-98 select-none" onclick="handlePosProductClick(${p.id})">
+        <div class="card-modern bg-white dark:bg-slate-900 rounded-xl p-2.5 sm:p-3 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all cursor-pointer shadow-sm flex items-center justify-between gap-3 active:scale-98 select-none" onclick="handlePosProductClick(${p.id})">
           <div class="flex items-center gap-3 min-w-0">
-            <div class="relative w-12 h-12 rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-200/50 dark:border-slate-700/50">
+            <div class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 shrink-0 border border-slate-200/50 dark:border-slate-700/50">
               <img src="${esc(p.img || '')}" onerror="window.imgErrRetry(this,'No Image',100)" class="w-full h-full object-cover"/>
               ${!isActive ? '<div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center text-[7px] text-white font-bold">KOSONG</div>' : ''}
             </div>
             <div class="min-w-0">
               <div class="flex items-center gap-1.5">
-                <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">${esc(p.name)}</h4>
+                <h4 class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 truncate">${esc(p.name)}</h4>
                 ${hasVariants ? '<span class="badge badge-xs badge-indigo">Varian</span>' : ''}
                 ${p.wholesale?.length ? '<span class="badge badge-xs badge-amber">Grosir</span>' : ''}
               </div>
-              <p class="text-[10px] text-slate-400 font-semibold mt-0.5 truncate">${esc(p.sku || '-')}</p>
+              <p class="text-[10px] sm:text-xs text-slate-400 font-semibold mt-0.5 truncate">${esc(p.sku || '-')}</p>
             </div>
           </div>
 
           <div class="flex items-center gap-3 shrink-0">
             <div class="text-right">
-              <p class="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400">${fCur(p.price)}</p>
-              ${p.unit ? `<p class="text-[8px] font-bold text-slate-400 uppercase">/${esc(p.unit)}</p>` : ''}
+              <p class="text-xs sm:text-base font-black text-emerald-600 dark:text-emerald-400">${fCur(p.price)}</p>
+              ${p.unit ? `<p class="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase">/${esc(p.unit)}</p>` : ''}
             </div>
-            <button type="button" class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-bold hover:bg-emerald-500 hover:text-white transition-all shadow-sm">
+            <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-bold hover:bg-emerald-500 hover:text-white transition-all shadow-sm">
               <i class="fa-solid fa-plus"></i>
             </button>
           </div>
@@ -361,8 +361,32 @@ const addPosItemDirect = (product, variantName = null, price = 0, variantImg = n
 };
 
 // -----------------------------------------------------------------------------
-// 5. POS CART MANAGEMENT & DECIMAL QUANTITIES
+// 5. UNIVERSAL FLOATING CART MANAGEMENT & DRAWER
 // -----------------------------------------------------------------------------
+window.openPosCartDrawer = () => {
+  const modal = el('pos-cart-drawer-modal');
+  const box = el('pos-cart-drawer-box');
+  if (modal && box) {
+    show('pos-cart-drawer-modal');
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      box.classList.remove('translate-y-full');
+      box.classList.remove('sm:translate-x-full');
+    }, 10);
+  }
+};
+
+window.closePosCartDrawer = () => {
+  const modal = el('pos-cart-drawer-modal');
+  const box = el('pos-cart-drawer-box');
+  if (modal && box) {
+    modal.classList.add('opacity-0');
+    box.classList.add('translate-y-full');
+    box.classList.add('sm:translate-x-full');
+    setTimeout(() => hide('pos-cart-drawer-modal'), 300);
+  }
+};
+
 window.updatePosQty = (index, delta) => {
   if (!posCart[index]) return;
   const newQty = Math.round((posCart[index].qty + delta) * 100) / 100;
@@ -385,7 +409,7 @@ window.clearPosCart = () => {
   showConfirm("Kosongkan Keranjang", "Batalkan seluruh item di transaksi kasir saat ini?", () => {
     posCart = [];
     renderPosCart();
-    closePosCartBottomSheet();
+    closePosCartDrawer();
     showToast("Keranjang transaksi dikosongkan");
   });
 };
@@ -444,43 +468,51 @@ window.savePosQtyModal = () => {
 };
 
 const renderPosCart = () => {
-  const desktopContainer = el('pos-cart-items-container');
-  const mobileContainer = el('pos-mob-cart-items-container');
-  const emptyState = el('pos-cart-empty');
-  const countEl = el('pos-cart-count');
-  const mobCountEl = el('pos-mob-cart-count');
-  const btnPay = el('btn-pos-pay');
-  const mobFloatingBar = el('pos-mobile-floating-bar');
-  const mobBarCount = el('pos-mob-bar-count');
-  const mobBarTotal = el('pos-mob-bar-total');
+  const drawerContainer = el('pos-drawer-cart-items-container');
+  const topBadge = el('pos-top-cart-badge');
+  const floatDock = el('pos-floating-cart-dock');
+  const floatDockCount = el('pos-float-dock-count');
+  const floatDockTotal = el('pos-float-dock-total');
+  const drawerCount = el('pos-drawer-cart-count');
 
   const totalItems = posCart.length;
   const totalQty = posCart.reduce((acc, item) => acc + item.qty, 0);
   const formattedQty = Math.round(totalQty * 100) / 100;
 
-  if (countEl) countEl.innerText = `${totalItems} Produk (${formattedQty})`;
-  if (mobCountEl) mobCountEl.innerText = `${totalItems} Produk (${formattedQty})`;
-  if (mobBarCount) mobBarCount.innerText = `${totalItems} Item (${formattedQty})`;
+  if (topBadge) {
+    topBadge.innerText = formattedQty;
+    topBadge.classList.toggle('hidden', totalItems === 0);
+  }
+  if (floatDockCount) floatDockCount.innerText = `${totalItems} Item (${formattedQty})`;
+  if (drawerCount) drawerCount.innerText = `${totalItems} Produk (${formattedQty} Unit)`;
 
   if (!posCart.length) {
-    if (desktopContainer) desktopContainer.innerHTML = '';
-    if (mobileContainer) mobileContainer.innerHTML = '<div class="py-12 text-center text-slate-400 text-xs font-bold"><i class="fa-solid fa-basket-shopping text-2xl mb-2 block opacity-40"></i>Keranjang Masih Kosong</div>';
-    if (emptyState && desktopContainer) desktopContainer.appendChild(emptyState);
-    if (btnPay) btnPay.disabled = true;
-    if (mobFloatingBar) mobFloatingBar.classList.add('translate-y-24');
+    if (drawerContainer) {
+      drawerContainer.innerHTML = `
+        <div class="h-full flex flex-col items-center justify-center text-center p-8 text-slate-400 dark:text-slate-500">
+          <div class="w-16 h-16 rounded-full bg-slate-200/60 dark:bg-slate-800/60 flex items-center justify-center mb-3 text-slate-400">
+            <i class="fa-solid fa-basket-shopping text-2xl"></i>
+          </div>
+          <p class="text-xs font-black text-slate-700 dark:text-slate-300">Keranjang Masih Kosong</p>
+          <p class="text-[10px] text-slate-400 mt-1 max-w-[200px]">Pilih produk dari katalog atau scan barcode untuk menambah belanjaan</p>
+        </div>
+      `;
+    }
+    if (floatDock) {
+      floatDock.classList.add('translate-y-28', 'opacity-0', 'pointer-events-none');
+    }
 
-    setIn('pos-summary-subtotal', 'Rp 0');
-    setIn('pos-summary-discount', 'Rp 0');
-    setIn('pos-summary-total', 'Rp 0');
-    setIn('pos-mob-summary-subtotal', 'Rp 0');
-    setIn('pos-mob-summary-discount', 'Rp 0');
-    setIn('pos-mob-summary-total', 'Rp 0');
+    setIn('pos-drawer-summary-subtotal', 'Rp 0');
+    setIn('pos-drawer-summary-discount', 'Rp 0');
+    setIn('pos-drawer-summary-total', 'Rp 0');
+    if (floatDockTotal) floatDockTotal.innerText = 'Rp 0';
     return;
   }
 
-  if (emptyState) emptyState.classList.add('hidden');
-  if (btnPay) btnPay.disabled = false;
-  if (mobFloatingBar) mobFloatingBar.classList.remove('translate-y-24');
+  // Show Floating Cart Dock
+  if (floatDock) {
+    floatDock.classList.remove('translate-y-28', 'opacity-0', 'pointer-events-none');
+  }
 
   let subtotal = 0;
   let totalDiscount = 0;
@@ -495,34 +527,34 @@ const renderPosCart = () => {
     totalDiscount += (origPrice - effPrice) * item.qty;
 
     return `
-      <div class="bg-white dark:bg-[#0b1329] p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 shadow-sm">
+      <div class="bg-white dark:bg-[#0b1329] p-3 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2.5 shadow-sm">
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-1.5">
             <h5 class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">${esc(item.name)}</h5>
-            ${item.variantName ? `<span class="badge badge-xs badge-slate">${esc(item.variantName)}</span>` : ''}
+            ${item.variantName ? `<span class="badge badge-xs badge-slate font-bold">${esc(item.variantName)}</span>` : ''}
             ${isWholesale ? '<span class="badge badge-xs badge-amber font-bold">GROSIR</span>' : ''}
           </div>
-          <div class="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+          <div class="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 mt-1">
             <span>${fCur(effPrice)}</span>
             ${item.unit ? `<span>/ ${esc(item.unit)}</span>` : ''}
             <span>•</span>
-            <span class="font-extrabold text-slate-800 dark:text-slate-200">${fCur(itemSubtotal)}</span>
+            <span class="font-black text-slate-800 dark:text-slate-200">${fCur(itemSubtotal)}</span>
           </div>
         </div>
 
-        <div class="flex items-center gap-1 shrink-0">
-          <div class="flex bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg h-7 overflow-hidden">
-            <button type="button" class="w-6 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, -1)">
+        <div class="flex items-center gap-1.5 shrink-0">
+          <div class="flex bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl h-8 overflow-hidden">
+            <button type="button" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold transition-colors" onclick="updatePosQty(${idx}, -1)">
               <i class="fa-solid fa-minus text-[8px]"></i>
             </button>
-            <button type="button" class="min-w-[28px] px-1 flex items-center justify-center text-xs font-extrabold text-slate-800 dark:text-white bg-white dark:bg-slate-900 hover:bg-emerald-50 dark:hover:bg-emerald-950/40" onclick="openPosQtyModal(${idx})" title="Klik untuk ubah desimal">
+            <button type="button" class="min-w-[32px] px-1.5 flex items-center justify-center text-xs font-black text-slate-800 dark:text-white bg-white dark:bg-slate-900 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors" onclick="openPosQtyModal(${idx})" title="Klik untuk ubah desimal">
               ${item.qty}
             </button>
-            <button type="button" class="w-6 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold" onclick="updatePosQty(${idx}, 1)">
+            <button type="button" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold transition-colors" onclick="updatePosQty(${idx}, 1)">
               <i class="fa-solid fa-plus text-[8px]"></i>
             </button>
           </div>
-          <button type="button" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors" onclick="removePosItem(${idx})" title="Hapus Item">
+          <button type="button" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-xl transition-colors" onclick="removePosItem(${idx})" title="Hapus Item">
             <i class="fa-solid fa-trash-can text-xs"></i>
           </button>
         </div>
@@ -530,45 +562,17 @@ const renderPosCart = () => {
     `;
   }).join('');
 
-  if (desktopContainer) desktopContainer.innerHTML = itemsHtml;
-  if (mobileContainer) mobileContainer.innerHTML = itemsHtml;
+  if (drawerContainer) drawerContainer.innerHTML = itemsHtml;
 
   const grandTotal = subtotal - totalDiscount;
   const fSubtotal = fCur(subtotal);
   const fDiscount = totalDiscount > 0 ? `- ${fCur(totalDiscount)}` : 'Rp 0';
   const fGrand = fCur(grandTotal);
 
-  setIn('pos-summary-subtotal', fSubtotal);
-  setIn('pos-summary-discount', fDiscount);
-  setIn('pos-summary-total', fGrand);
-
-  setIn('pos-mob-summary-subtotal', fSubtotal);
-  setIn('pos-mob-summary-discount', fDiscount);
-  setIn('pos-mob-summary-total', fGrand);
-  if (mobBarTotal) mobBarTotal.innerText = fGrand;
-};
-
-// Mobile Bottom Sheet Controls
-window.openPosCartBottomSheet = () => {
-  const modal = el('pos-mobile-cart-modal');
-  const box = el('pos-mobile-cart-box');
-  if (modal && box) {
-    show('pos-mobile-cart-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-full');
-    }, 10);
-  }
-};
-
-window.closePosCartBottomSheet = () => {
-  const modal = el('pos-mobile-cart-modal');
-  const box = el('pos-mobile-cart-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-full');
-    setTimeout(() => hide('pos-mobile-cart-modal'), 300);
-  }
+  setIn('pos-drawer-summary-subtotal', fSubtotal);
+  setIn('pos-drawer-summary-discount', fDiscount);
+  setIn('pos-drawer-summary-total', fGrand);
+  if (floatDockTotal) floatDockTotal.innerText = fGrand;
 };
 
 // -----------------------------------------------------------------------------
@@ -714,7 +718,7 @@ window.submitPosTransaction = async () => {
     
     hLoad();
     closePosPaymentModal();
-    closePosCartBottomSheet();
+    closePosCartDrawer();
     showToast("Transaksi Berhasil Disimpan! 🎉");
 
     if (typeof openReceiptPreview === 'function') {

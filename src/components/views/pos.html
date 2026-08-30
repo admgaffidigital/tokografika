@@ -1,18 +1,18 @@
 <!-- ========================================================================= -->
-<!-- VIEW: POS KASIR (POINT OF SALE) - ADVANCED & COMPLETE SYSTEM             -->
+<!-- VIEW: POS KASIR (POINT OF SALE) - UNIVERSAL FLOATING CART SYSTEM          -->
 <!-- ========================================================================= -->
 <div class='view-section flex flex-col fade-in bg-slate-100 dark:bg-[#070c18] z-50 hidden h-full max-h-screen overflow-hidden' id='view-pos'>
   
   <!-- POS Top Navigation Bar -->
-  <div class='glass-header shrink-0 px-3 sm:px-5 py-2 sm:py-2.5 flex items-center justify-between sticky top-0 z-30 shadow-sm'>
+  <div class='glass-header shrink-0 px-3 sm:px-6 py-2.5 flex items-center justify-between sticky top-0 z-30 shadow-sm'>
     <div class='flex items-center gap-2.5 min-w-0'>
       <div class='w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/20 text-white flex items-center justify-center shadow-sm border border-white/30 shrink-0'>
-        <i class='fa-solid fa-cash-register text-sm'></i>
+        <i class='fa-solid fa-cash-register text-sm sm:text-base'></i>
       </div>
       <div class='min-w-0'>
         <div class='flex items-center gap-1.5'>
           <h1 class='text-xs sm:text-sm font-black tracking-tight text-white truncate' id='pos-store-name'>POS Kasir</h1>
-          <span class='bg-white/20 text-white border border-white/30 text-[8px] font-black px-1.5 py-0.2 rounded-full shrink-0' id='pos-role-badge'>KASIR</span>
+          <span class='bg-white/20 text-white border border-white/30 text-[8px] sm:text-[9px] font-black px-2 py-0.2 rounded-full shrink-0' id='pos-role-badge'>KASIR</span>
         </div>
         <p class='text-[9px] sm:text-[10px] font-medium text-white/90 flex items-center gap-1 truncate'>
           <i class='fa-solid fa-user-circle text-[10px]'></i>
@@ -25,10 +25,18 @@
 
     <!-- POS Top Actions -->
     <div class='flex items-center gap-1.5 sm:gap-2 shrink-0'>
+      <!-- Open Floating Cart Top Shortcut -->
+      <button type='button' class='relative px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 active:scale-95' onclick='openPosCartDrawer()' title='Buka Keranjang Transaksi'>
+        <i class='fa-solid fa-cart-shopping text-xs'></i>
+        <span class='hidden sm:inline'>Keranjang</span>
+        <span class='badge-counter -top-1 -right-1 !h-4 !min-w-[16px] text-[8px]' id='pos-top-cart-badge'>0</span>
+      </button>
+
       <button class='hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-[11px] font-bold transition-all shadow-sm active:scale-95' id='btn-pos-to-admin' onclick='changeView(&quot;view-admin&quot;); openAdminMenu();' title='Buka CMS Pengaturan'>
         <i class='fa-solid fa-gear text-xs'></i>
         <span>CMS Toko</span>
       </button>
+      
       <button class='px-2.5 sm:px-3 py-1.5 rounded-xl bg-rose-500/90 hover:bg-rose-600 border border-rose-400/40 text-white text-[10px] sm:text-[11px] font-bold transition-all shadow-sm flex items-center gap-1 active:scale-95' onclick='logoutAdmin()' title='Keluar / Ganti Kasir'>
         <i class='fa-solid fa-power-off text-xs'></i>
         <span class='hidden sm:inline'>Tutup Kasir</span>
@@ -36,120 +44,122 @@
     </div>
   </div>
 
-  <!-- POS Main Body (Catalog Left, Cart Right) -->
-  <div class='flex-1 flex min-h-0 overflow-hidden relative'>
+  <!-- POS Main Body: Full Canvas Catalog -->
+  <div class='flex-1 flex flex-col min-w-0 min-h-0 bg-slate-50 dark:bg-[#0b1329] overflow-hidden relative'>
     
-    <!-- CATALOG PANE (Full Width on Mobile, Left on Desktop) -->
-    <div class='flex-1 flex flex-col min-w-0 min-h-0 bg-slate-50 dark:bg-[#0b1329] overflow-hidden' id='pos-catalog-pane'>
-      
-      <!-- Search, Scanner & View Toggle Header -->
-      <div class='p-2.5 sm:p-3.5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm shrink-0 flex flex-col gap-2.5'>
-        <div class='flex items-center gap-2'>
-          <!-- Unified Search & Scan Input -->
-          <div class='relative flex-1'>
-            <i class='fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs'></i>
-            <input class='w-full pl-9 pr-16 py-2 sm:py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:border-theme-primary text-slate-800 dark:text-white placeholder:text-slate-400 transition-all' id='pos-search-input' placeholder='Cari nama atau ketik/scan barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)'/>
-            
-            <button class='absolute right-9 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 hidden w-6 h-6 flex items-center justify-center' id='pos-btn-clear-search' onclick='clearPosSearch()' title='Hapus Pencarian'>
-              <i class='fa-solid fa-xmark text-xs'></i>
-            </button>
-            
-            <button class='absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all' onclick='openCameraScanner()' title='Scan Barcode Kamera'>
-              <i class='fa-solid fa-qrcode text-xs'></i>
-            </button>
-          </div>
-
-          <!-- Grid vs List View Toggle -->
-          <div class='flex bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-0.5 shrink-0'>
-            <button type='button' class='w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-900 shadow-sm' id='btn-pos-view-grid' onclick='setPosViewMode(&quot;grid&quot;)' title='Tampilan Grid'>
-              <i class='fa-solid fa-border-all'></i>
-            </button>
-            <button type='button' class='w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' id='btn-pos-view-list' onclick='setPosViewMode(&quot;list&quot;)' title='Tampilan List'>
-              <i class='fa-solid fa-list-ul'></i>
-            </button>
-          </div>
+    <!-- Search, Scanner, View Toggle & Category Header -->
+    <div class='p-2.5 sm:p-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm shrink-0 flex flex-col gap-2.5'>
+      <div class='flex items-center gap-2'>
+        <!-- Unified Search & Scan Input -->
+        <div class='relative flex-1'>
+          <i class='fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs'></i>
+          <input class='w-full pl-9 pr-16 py-2 sm:py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-semibold focus:outline-none focus:border-theme-primary text-slate-800 dark:text-white placeholder:text-slate-400 transition-all' id='pos-search-input' placeholder='Cari nama atau ketik/scan barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)'/>
+          
+          <button class='absolute right-9 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 hidden w-6 h-6 flex items-center justify-center' id='pos-btn-clear-search' onclick='clearPosSearch()' title='Hapus Pencarian'>
+            <i class='fa-solid fa-xmark text-xs'></i>
+          </button>
+          
+          <button class='absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-all' onclick='openCameraScanner()' title='Scan Barcode Kamera'>
+            <i class='fa-solid fa-qrcode text-xs'></i>
+          </button>
         </div>
 
-        <!-- Category Horizontal Pills Bar -->
-        <div class='flex items-center gap-2 overflow-x-auto hide-scrollbar py-0.5' id='pos-categories-container'></div>
-      </div>
-
-      <!-- Product List / Grid Container -->
-      <div class='flex-1 min-h-0 overflow-y-auto p-2.5 sm:p-3.5 pb-24 lg:pb-4 custom-scrollbar' id='pos-products-scroll'>
-        <div id='pos-product-container'></div>
-      </div>
-
-      <!-- MOBILE FLOATING CART BAR -->
-      <div class='lg:hidden fixed bottom-3 left-3 right-3 z-40 bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md text-white p-3 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center justify-between gap-3 transform translate-y-24 transition-transform duration-300' id='pos-mobile-floating-bar'>
-        <div class='flex items-center gap-2.5 min-w-0 cursor-pointer' onclick='openPosCartBottomSheet()'>
-          <div class='w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shrink-0 shadow' style='background-color: var(--clr-p);'>
-            <i class='fa-solid fa-cart-shopping text-sm'></i>
-          </div>
-          <div class='min-w-0'>
-            <p class='text-[10px] text-slate-300 font-bold uppercase tracking-wider' id='pos-mob-bar-count'>0 Item</p>
-            <p class='text-sm sm:text-base font-black text-white truncate' id='pos-mob-bar-total'>Rp 0</p>
-          </div>
+        <!-- Grid vs List View Toggle -->
+        <div class='flex bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-0.5 shrink-0'>
+          <button type='button' class='w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-900 shadow-sm' id='btn-pos-view-grid' onclick='setPosViewMode(&quot;grid&quot;)' title='Tampilan Grid'>
+            <i class='fa-solid fa-border-all'></i>
+          </button>
+          <button type='button' class='w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all text-slate-400 hover:text-slate-700 dark:hover:text-slate-200' id='btn-pos-view-list' onclick='setPosViewMode(&quot;list&quot;)' title='Tampilan List'>
+            <i class='fa-solid fa-list-ul'></i>
+          </button>
         </div>
-        <button type='button' class='btn-primary !py-2.5 !px-4 !text-xs !font-black !rounded-xl shadow-lg shrink-0' onclick='openPosCartBottomSheet()'>
-          Lihat Struk <i class='fa-solid fa-arrow-up ml-1 text-[10px]'></i>
-        </button>
       </div>
 
+      <!-- Category Horizontal Pills Bar -->
+      <div class='flex items-center gap-2 overflow-x-auto hide-scrollbar py-0.5' id='pos-categories-container'></div>
     </div>
 
-    <!-- DESKTOP SIDEBAR CART (>= 1024px) -->
-    <div class='hidden lg:flex w-[370px] xl:w-[410px] shrink-0 bg-white dark:bg-slate-900 flex-col min-h-0 shadow-xl z-20 border-l border-slate-200 dark:border-slate-800' id='pos-cart-pane'>
-      
-      <!-- Cart Header -->
-      <div class='px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50 dark:bg-[#0b1329]'>
-        <div class='flex items-center gap-2'>
-          <div class='w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-bold'>
-            <i class='fa-solid fa-receipt'></i>
-          </div>
-          <div>
-            <h2 class='font-black text-xs sm:text-sm text-slate-900 dark:text-white leading-tight'>Struk Transaksi</h2>
-            <p class='text-[10px] text-slate-500 dark:text-slate-400 font-semibold' id='pos-cart-count'>0 Item</p>
-          </div>
+    <!-- Product List / Grid Canvas (Full Width Responsive) -->
+    <div class='flex-1 min-h-0 overflow-y-auto p-2.5 sm:p-4 pb-28 custom-scrollbar' id='pos-products-scroll'>
+      <div id='pos-product-container'></div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- UNIVERSAL FLOATING CART DOCK (Visible on HP, Tablet & PC when items > 0)  -->
+    <!-- ========================================================================= -->
+    <div class='fixed bottom-4 left-3 right-3 sm:left-auto sm:right-6 sm:w-[400px] z-40 bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md text-white p-3 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center justify-between gap-3 transform translate-y-28 opacity-0 pointer-events-none transition-all duration-300' id='pos-floating-cart-dock'>
+      <div class='flex items-center gap-2.5 min-w-0 cursor-pointer' onclick='openPosCartDrawer()'>
+        <div class='w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shrink-0 shadow-md' style='background-color: var(--clr-p);'>
+          <i class='fa-solid fa-cart-shopping text-sm'></i>
         </div>
-        <button type='button' class='text-[11px] font-bold text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 px-2 py-1 rounded-lg transition-all flex items-center gap-1' onclick='clearPosCart()'>
+        <div class='min-w-0'>
+          <p class='text-[10px] text-slate-300 font-bold uppercase tracking-wider' id='pos-float-dock-count'>0 Item</p>
+          <p class='text-sm sm:text-base font-black text-white truncate' id='pos-float-dock-total'>Rp 0</p>
+        </div>
+      </div>
+      <div class='flex items-center gap-2 shrink-0'>
+        <button type='button' class='btn-primary !py-2.5 !px-4 !text-xs !font-black !rounded-xl shadow-lg flex items-center gap-1.5' onclick='openPosCartDrawer()'>
+          <span>Lihat Keranjang</span>
+          <i class='fa-solid fa-arrow-right text-[10px]'></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- UNIVERSAL FLOATING CART DRAWER (HP: Bottom Sheet / Tablet & PC: Right Side)-->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[75] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-stretch sm:justify-end' id='pos-cart-drawer-modal' onclick='if(event.target===this) closePosCartDrawer()'>
+  <div class='w-full sm:w-[430px] sm:max-w-full max-h-[90dvh] sm:max-h-full h-auto sm:h-full bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-none shadow-2xl flex flex-col transform translate-y-full sm:translate-y-0 sm:translate-x-full transition-transform duration-300 overflow-hidden border-l border-slate-200 dark:border-slate-800' id='pos-cart-drawer-box'>
+    
+    <!-- Drawer Header -->
+    <div class='px-5 py-3.5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50 dark:bg-[#0b1329]'>
+      <div class='flex items-center gap-2.5'>
+        <div class='w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-bold'>
+          <i class='fa-solid fa-receipt text-sm'></i>
+        </div>
+        <div>
+          <h3 class='font-black text-sm text-slate-900 dark:text-white leading-tight'>Keranjang Transaksi</h3>
+          <p class='text-[10px] text-slate-500 dark:text-slate-400 font-semibold' id='pos-drawer-cart-count'>0 Item</p>
+        </div>
+      </div>
+      <div class='flex items-center gap-2'>
+        <button type='button' class='text-xs font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1' onclick='clearPosCart()' title='Reset Transaksi'>
           <i class='fa-solid fa-trash-can text-[10px]'></i> Reset
         </button>
-      </div>
-
-      <!-- Cart Item List -->
-      <div class='flex-1 min-h-0 overflow-y-auto p-3 space-y-2 custom-scrollbar bg-slate-50/50 dark:bg-[#070c18]' id='pos-cart-items-container'>
-        <div class='h-full flex flex-col items-center justify-center text-center p-6 text-slate-400 dark:text-slate-500' id='pos-cart-empty'>
-          <div class='w-14 h-14 rounded-full bg-slate-200/60 dark:bg-slate-800/60 flex items-center justify-center mb-2 text-slate-400 dark:text-slate-500'>
-            <i class='fa-solid fa-basket-shopping text-xl'></i>
-          </div>
-          <p class='text-xs font-extrabold text-slate-700 dark:text-slate-300'>Keranjang Kosong</p>
-          <p class='text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 max-w-[180px]'>Pilih produk di katalog atau scan barcode</p>
-        </div>
-      </div>
-
-      <!-- Cart Summary & Payment Action -->
-      <div class='p-3.5 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2.5 shrink-0 shadow-lg'>
-        <div class='space-y-1 text-xs font-semibold bg-slate-50 dark:bg-[#0b1329] p-2.5 rounded-xl border border-slate-200 dark:border-slate-800'>
-          <div class='flex justify-between text-slate-600 dark:text-slate-400'>
-            <span>Subtotal</span>
-            <span class='font-bold text-slate-900 dark:text-white' id='pos-summary-subtotal'>Rp 0</span>
-          </div>
-          <div class='flex justify-between text-slate-600 dark:text-slate-400'>
-            <span>Diskon Grosir</span>
-            <span class='font-bold text-emerald-600 dark:text-emerald-400' id='pos-summary-discount'>Rp 0</span>
-          </div>
-          <div class='pt-1.5 border-t border-slate-200 dark:border-slate-800 flex justify-between items-baseline'>
-            <span class='text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wide'>Total Bayar</span>
-            <span class='text-xl font-black text-emerald-600 dark:text-emerald-400' id='pos-summary-total'>Rp 0</span>
-          </div>
-        </div>
-
-        <button class='btn-primary w-full !py-3 !text-sm !font-black shadow-xl hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:pointer-events-none' id='btn-pos-pay' onclick='openPosPaymentModal()' disabled>
-          <i class='fa-solid fa-money-bill-wave mr-1'></i> Bayar Sekarang
+        <button type='button' class='w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center text-xs transition-colors' onclick='closePosCartDrawer()' title='Tutup'>
+          <i class='fa-solid fa-xmark text-sm'></i>
         </button>
       </div>
-
     </div>
+
+    <!-- Drawer Item List -->
+    <div class='flex-1 min-h-[180px] overflow-y-auto p-3.5 space-y-2.5 custom-scrollbar bg-slate-50/50 dark:bg-[#070c18]' id='pos-drawer-cart-items-container'></div>
+
+    <!-- Drawer Summary & Payment Action Footer -->
+    <div class='p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-3 shrink-0 shadow-lg'>
+      <div class='space-y-1.5 text-xs font-semibold bg-slate-50 dark:bg-[#0b1329] p-3 rounded-xl border border-slate-200 dark:border-slate-800'>
+        <div class='flex justify-between text-slate-600 dark:text-slate-400'>
+          <span>Subtotal</span>
+          <span class='font-bold text-slate-900 dark:text-white' id='pos-drawer-summary-subtotal'>Rp 0</span>
+        </div>
+        <div class='flex justify-between text-slate-600 dark:text-slate-400'>
+          <span>Diskon Grosir</span>
+          <span class='font-bold text-emerald-600 dark:text-emerald-400' id='pos-drawer-summary-discount'>Rp 0</span>
+        </div>
+        <div class='pt-2 border-t border-slate-200 dark:border-slate-800 flex justify-between items-baseline'>
+          <span class='text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wide'>Total Bayar</span>
+          <span class='text-xl sm:text-2xl font-black text-emerald-600 dark:text-emerald-400' id='pos-drawer-summary-total'>Rp 0</span>
+        </div>
+      </div>
+
+      <button class='btn-primary w-full !py-3.5 !text-sm !font-black shadow-xl hover:-translate-y-0.5 active:scale-95' onclick='closePosCartDrawer(); openPosPaymentModal();'>
+        <i class='fa-solid fa-money-bill-wave mr-1.5'></i> Bayar Sekarang
+      </button>
+    </div>
+
   </div>
 </div>
 
@@ -168,7 +178,7 @@
       </button>
     </div>
     <div class='p-4 space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar'>
-      <div class='flex items-center gap-3 p-2 bg-slate-50 dark:bg-[#0b1329] rounded-xl border border-slate-200/80 dark:border-slate-800'>
+      <div class='flex items-center gap-3 p-2.5 bg-slate-50 dark:bg-[#0b1329] rounded-xl border border-slate-200/80 dark:border-slate-800'>
         <img src='' id='pos-variant-prod-img' class='w-12 h-12 object-cover rounded-lg shrink-0 border border-slate-200 dark:border-slate-700'/>
         <div class='min-w-0'>
           <h4 class='text-xs font-bold text-slate-900 dark:text-white truncate' id='pos-variant-prod-name'>Nama Produk</h4>
@@ -209,61 +219,6 @@
         Simpan Jumlah
       </button>
     </div>
-  </div>
-</div>
-
-<!-- ========================================================================= -->
-<!-- MODAL / BOTTOM SHEET: POS CART DETAILS FOR MOBILE                         -->
-<!-- ========================================================================= -->
-<div class='fixed inset-0 z-[75] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-end justify-center lg:hidden' id='pos-mobile-cart-modal' onclick='if(event.target===this) closePosCartBottomSheet()'>
-  <div class='w-full max-h-[88dvh] bg-white dark:bg-slate-900 rounded-t-[2rem] shadow-2xl flex flex-col transform translate-y-full transition-transform duration-300 overflow-hidden' id='pos-mobile-cart-box'>
-    
-    <!-- Bottom Sheet Header -->
-    <div class='px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50 dark:bg-[#0b1329]'>
-      <div class='flex items-center gap-2'>
-        <div class='w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs font-bold'>
-          <i class='fa-solid fa-receipt'></i>
-        </div>
-        <div>
-          <h3 class='font-black text-xs sm:text-sm text-slate-900 dark:text-white leading-tight'>Struk Transaksi Kasir</h3>
-          <p class='text-[10px] text-slate-500 dark:text-slate-400 font-semibold' id='pos-mob-cart-count'>0 Item</p>
-        </div>
-      </div>
-      <div class='flex items-center gap-1.5'>
-        <button type='button' class='text-[11px] font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 px-2 py-1 rounded-lg' onclick='clearPosCart()'>
-          <i class='fa-solid fa-trash-can text-[10px]'></i> Reset
-        </button>
-        <button type='button' class='w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center text-xs' onclick='closePosCartBottomSheet()'>
-          <i class='fa-solid fa-xmark'></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- Bottom Sheet Cart Items -->
-    <div class='flex-1 min-h-[160px] overflow-y-auto p-3 space-y-2 custom-scrollbar bg-slate-50/50 dark:bg-[#070c18]' id='pos-mob-cart-items-container'></div>
-
-    <!-- Bottom Sheet Summary & Pay Button -->
-    <div class='p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-3 shrink-0'>
-      <div class='space-y-1 text-xs font-semibold bg-slate-50 dark:bg-[#0b1329] p-3 rounded-xl border border-slate-200 dark:border-slate-800'>
-        <div class='flex justify-between text-slate-600 dark:text-slate-400'>
-          <span>Subtotal</span>
-          <span class='font-bold text-slate-900 dark:text-white' id='pos-mob-summary-subtotal'>Rp 0</span>
-        </div>
-        <div class='flex justify-between text-slate-600 dark:text-slate-400'>
-          <span>Diskon Grosir</span>
-          <span class='font-bold text-emerald-600 dark:text-emerald-400' id='pos-mob-summary-discount'>Rp 0</span>
-        </div>
-        <div class='pt-1.5 border-t border-slate-200 dark:border-slate-800 flex justify-between items-baseline'>
-          <span class='text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-wide'>Total Bayar</span>
-          <span class='text-xl font-black text-emerald-600 dark:text-emerald-400' id='pos-mob-summary-total'>Rp 0</span>
-        </div>
-      </div>
-
-      <button class='btn-primary w-full !py-3.5 !text-sm !font-black shadow-xl' onclick='closePosCartBottomSheet(); openPosPaymentModal();'>
-        <i class='fa-solid fa-money-bill-wave mr-1'></i> Bayar Sekarang
-      </button>
-    </div>
-
   </div>
 </div>
 
