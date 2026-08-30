@@ -670,6 +670,49 @@ const buyerGuideTopicsData = {
       </div>
     `
   },
+  stock_info: {
+    title: 'Informasi Stok & Ketersediaan Produk',
+    icon: 'fa-box-open',
+    content: `
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06)">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2" style="color:var(--clr-p)">
+            <i class="fa-solid fa-boxes-stacked"></i> Status Ketersediaan Stok Realtime
+          </h4>
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Katalog toko kami selalu menyinkronkan data ketersediaan barang secara realtime agar Anda selalu mendapatkan informasi stok yang akurat.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-black bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 uppercase">Ready Stock</span>
+              <h5 class="font-bold text-slate-900 dark:text-white text-xs">Produk Tersedia</h5>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Produk dengan stok siap kirim dapat langsung Anda masukkan ke keranjang belanja dan diproses checkout secara instan.
+            </p>
+          </div>
+
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-black bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 uppercase">Stok Habis</span>
+              <h5 class="font-bold text-slate-900 dark:text-white text-xs">Stok Sedang Kosong</h5>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Produk yang stoknya habis <b>tetap dapat Anda lihat spesifikasi dan harganya</b> di katalog. Anda dapat menghubungi CS kami via WhatsApp untuk menanyakan jadwal restock atau pre-order.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-2xl border flex items-center gap-2.5 text-xs font-semibold" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06);color:var(--clr-p)">
+          <i class="fa-solid fa-bell text-amber-500 text-sm"></i>
+          <span>Jika suatu produk memiliki varian, Anda dapat memilih varian lain yang masih memiliki sisa stok tersedia.</span>
+        </div>
+      </div>
+    `
+  },
   variants: {
     title: 'Panduan Memilih Multi-Varian Produk',
     icon: 'fa-layer-group',

@@ -1326,6 +1326,9 @@ html.dark .badge-counter {
       <button type='button' onclick='showBuyerGuideTopic("order_flow")' id='bguide-btn-order_flow' class='bguide-topic-btn px-3.5 py-2 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 border border-slate-200/80 dark:border-slate-700 shadow-xs'>
         <i class='fa-solid fa-cart-shopping text-[11px]'></i> <span>Cara Pesan</span>
       </button>
+      <button type='button' onclick='showBuyerGuideTopic("stock_info")' id='bguide-btn-stock_info' class='bguide-topic-btn px-3.5 py-2 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 border border-slate-200/80 dark:border-slate-700 shadow-xs'>
+        <i class='fa-solid fa-box-open text-[11px]'></i> <span>Stok & Ketersediaan</span>
+      </button>
       <button type='button' onclick='showBuyerGuideTopic("variants")' id='bguide-btn-variants' class='bguide-topic-btn px-3.5 py-2 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 border border-slate-200/80 dark:border-slate-700 shadow-xs'>
         <i class='fa-solid fa-layer-group text-[11px]'></i> <span>Multi-Varian</span>
       </button>
@@ -4551,6 +4554,49 @@ const buyerGuideTopicsData = {
               <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">Pilih bayar via QRIS, Transfer Bank, atau COD. Pesanan langsung masuk ke sistem & WhatsApp toko!</p>
             </div>
           </div>
+        </div>
+      </div>
+    `
+  },
+  stock_info: {
+    title: 'Informasi Stok & Ketersediaan Produk',
+    icon: 'fa-box-open',
+    content: `
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06)">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2" style="color:var(--clr-p)">
+            <i class="fa-solid fa-boxes-stacked"></i> Status Ketersediaan Stok Realtime
+          </h4>
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Katalog toko kami selalu menyinkronkan data ketersediaan barang secara realtime agar Anda selalu mendapatkan informasi stok yang akurat.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-black bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 uppercase">Ready Stock</span>
+              <h5 class="font-bold text-slate-900 dark:text-white text-xs">Produk Tersedia</h5>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Produk dengan stok siap kirim dapat langsung Anda masukkan ke keranjang belanja dan diproses checkout secara instan.
+            </p>
+          </div>
+
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded text-[9px] font-black bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 uppercase">Stok Habis</span>
+              <h5 class="font-bold text-slate-900 dark:text-white text-xs">Stok Sedang Kosong</h5>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Produk yang stoknya habis <b>tetap dapat Anda lihat spesifikasi dan harganya</b> di katalog. Anda dapat menghubungi CS kami via WhatsApp untuk menanyakan jadwal restock atau pre-order.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-3.5 rounded-2xl border flex items-center gap-2.5 text-xs font-semibold" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06);color:var(--clr-p)">
+          <i class="fa-solid fa-bell text-amber-500 text-sm"></i>
+          <span>Jika suatu produk memiliki varian, Anda dapat memilih varian lain yang masih memiliki sisa stok tersedia.</span>
         </div>
       </div>
     `
@@ -7821,18 +7867,22 @@ window.getTabHelpBanner = (t) => {
   
   const snippets = {
     products: `
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 pt-1">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 pt-1">
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
-          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-tag text-emerald-500"></i> 1. Harga Jual vs HPP</div>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400">Isi <b>Harga Jual</b> (eceran pembeli) dan <b>Harga Modal / HPP</b> (harga beli Anda). Laba bersih dihitung otomatis.</p>
+          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-bolt text-amber-500"></i> 1. Edit Cepat (⚡)</div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Klik tombol petir kuning untuk update <b>Stok</b>, <b>HPP Modal</b>, dan <b>Harga Jual</b> secara instan.</p>
         </div>
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
-          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-boxes-stacked text-blue-500"></i> 2. Multi-Varian</div>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400">Buat varian warna/ukuran/rasa. Setiap varian bisa memiliki harga jual, modal HPP, dan stok spesifik!</p>
+          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-box-open text-emerald-500"></i> 2. Stok Kosong</div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Produk stok 0 <b>tetap tampil di katalog</b> dengan label <i>Stok Habis</i> agar pelanggan tetap tahu ketersediaannya.</p>
         </div>
-        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60 sm:col-span-2 md:col-span-1">
-          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-layer-group text-amber-500"></i> 3. Harga Grosir Bertingkat</div>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400">Atur min pembelian (cth: beli min 10 pcs harga Rp 15.000). Kasir & online otomatis dapat harga grosir.</p>
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
+          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-eye-slash text-rose-500"></i> 3. Nonaktif (Sembunyi)</div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Klik tombol mata (👁️) jika ingin <b>menyembunyikan total</b> produk dari etalase online pembeli.</p>
+        </div>
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
+          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-layer-group text-indigo-500"></i> 4. Varian & Grosir</div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Dukung banyak varian rasa/ukuran dan harga grosir bertingkat dengan diskon otomatis.</p>
         </div>
       </div>
     `,
@@ -7943,17 +7993,43 @@ window.getTabHelpBanner = (t) => {
 
 const guideTopicsData = {
   products: {
-    title: 'Panduan Upload Produk, HPP & Manajemen Stok',
+    title: 'Panduan Upload Produk, Edit Cepat (⚡) & Manajemen Stok',
     icon: 'fa-box-open',
     content: `
       <div class="space-y-4 text-xs sm:text-sm">
         <div class="p-4 rounded-2xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06)">
           <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2" style="color:var(--clr-p)">
-            <i class="fa-solid fa-circle-check"></i> Dasar Pengisian Produk & HPP
+            <i class="fa-solid fa-circle-check"></i> Dasar Pengisian Produk, Edit Cepat & Status Toko
           </h4>
           <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
-            Setiap produk yang Anda jual di toko online dan POS kasir dapat diatur harga eceran, modal kulakan (HPP), stok realtime, varian, dan harga grosir bertingkat.
+            Kelola katalog produk toko secara mudah dan fleksibel. Anda dapat memperbarui stok, harga modal (HPP), harga jual eceran, multi-varian, hingga mengatur visibilitas tampilan di etalase online.
           </p>
+        </div>
+
+        <!-- Highlight Fitur Baru: Edit Cepat (⚡) & Status Produk -->
+        <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 space-y-3">
+          <div class="flex items-center gap-2 text-amber-700 dark:text-amber-300 font-black text-xs sm:text-sm">
+            <i class="fa-solid fa-bolt text-amber-500 text-base"></i>
+            <span>FITUR BARU: Edit Cepat (⚡) & Pemisahan Status Produk</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-700 dark:text-slate-300">
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
+              <span class="font-bold text-amber-600 dark:text-amber-400 block mb-1">⚡ Tombol Edit Cepat</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">Klik ikon petir kuning di kartu produk untuk mengubah <b>Stok</b>, <b>HPP Modal</b>, dan <b>Harga Jual</b> secara instan tanpa perlu membuka form panjang.</p>
+            </div>
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
+              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">📦 Stok Kosong (Tetap Tampil)</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">Produk yang habis stoknya (stok = 0) <b>tetap tampil di katalog online</b> dengan tanda <i>"STOK HABIS"</i> agar pelanggan tahu toko menyediakan produk tersebut.</p>
+            </div>
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
+              <span class="font-bold text-rose-600 dark:text-rose-400 block mb-1">👁️ Nonaktif (Disembunyikan)</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">Klik ikon mata untuk menonaktifkan produk. Produk nonaktif <b>disembunyikan total</b> dari katalog, kategori, dan pencarian pelanggan online.</p>
+            </div>
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
+              <span class="font-bold text-indigo-600 dark:text-indigo-400 block mb-1">🔍 4 Tab Filter Status</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400">Gunakan tab filter di atas daftar produk untuk menyaring: <b>Semua</b>, <b>Aktif Ready</b>, <b>Stok Kosong</b>, atau <b>Nonaktif</b>.</p>
+            </div>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
