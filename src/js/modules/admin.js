@@ -234,10 +234,10 @@ window.rAdmReports = async () => {
   setH('admin-content', `
     <div class="space-y-4 pb-20">
       <!-- Header App-Style Card Box -->
-      <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm relative overflow-hidden">
+      <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm relative overflow-hidden">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
           <div class="flex items-center gap-3.5">
-            <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl shrink-0 shadow-sm" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
+            <div class="w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 shadow-sm" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
               <i class="fa-solid fa-chart-pie"></i>
             </div>
             <div>
@@ -248,10 +248,10 @@ window.rAdmReports = async () => {
             </div>
           </div>
           <div class="flex items-center gap-2 shrink-0">
-            <button type="button" onclick="printFinancialReport()" class="flex-1 sm:flex-initial px-3.5 py-2.5 bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95">
+            <button type="button" onclick="printFinancialReport()" class="flex-1 sm:flex-initial px-3.5 py-2 bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95">
               <i class="fa-solid fa-print text-sm"></i> <span>Cetak</span>
             </button>
-            <button type="button" onclick="exportFinancialReportCsv()" class="flex-1 sm:flex-initial px-4 py-2.5 text-white rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95" style="background-color:var(--clr-p)">
+            <button type="button" onclick="exportFinancialReportCsv()" class="flex-1 sm:flex-initial px-4 py-2 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95" style="background-color:var(--clr-p)">
               <i class="fa-solid fa-file-excel text-sm"></i> <span>Export CSV</span>
             </button>
           </div>
@@ -259,17 +259,17 @@ window.rAdmReports = async () => {
       </div>
 
       <!-- Filter Periode Segmented App Pills -->
-      <div class="bg-white dark:bg-slate-800 p-3.5 sm:p-4 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3">
+      <div class="bg-white dark:bg-slate-800 p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3">
         <div class="flex items-center justify-between flex-wrap gap-2">
           <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
             <i class="fa-solid fa-calendar-check text-emerald-500"></i> Periode:
           </span>
           <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 max-w-full">
-            <button type="button" onclick="setReportPeriod('today')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 ${reportPeriod === 'today' ? 'text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}" style="${reportPeriod === 'today' ? 'background-color:var(--clr-p);color:#fff' : ''}">Hari Ini</button>
-            <button type="button" onclick="setReportPeriod('7days')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 ${reportPeriod === '7days' ? 'text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}" style="${reportPeriod === '7days' ? 'background-color:var(--clr-p);color:#fff' : ''}">7 Hari</button>
-            <button type="button" onclick="setReportPeriod('month')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 ${reportPeriod === 'month' ? 'text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}" style="${reportPeriod === 'month' ? 'background-color:var(--clr-p);color:#fff' : ''}">Bulan Ini</button>
-            <button type="button" onclick="setReportPeriod('year')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 ${reportPeriod === 'year' ? 'text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}" style="${reportPeriod === 'year' ? 'background-color:var(--clr-p);color:#fff' : ''}">Tahun Ini</button>
-            <button type="button" onclick="setReportPeriod('all')" class="px-3.5 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 ${reportPeriod === 'all' ? 'text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}" style="${reportPeriod === 'all' ? 'background-color:var(--clr-p);color:#fff' : ''}">Semua</button>
+            <button type="button" onclick="setReportPeriod('today')" class="px-3.5 py-1.5 rounded-lg text-xs font-black transition-all shrink-0 ${reportPeriod === 'today' ? 'text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}" style="${reportPeriod === 'today' ? 'background-color:var(--clr-p);color:#fff' : ''}">Hari Ini</button>
+            <button type="button" onclick="setReportPeriod('7days')" class="px-3.5 py-1.5 rounded-lg text-xs font-black transition-all shrink-0 ${reportPeriod === '7days' ? 'text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}" style="${reportPeriod === '7days' ? 'background-color:var(--clr-p);color:#fff' : ''}">7 Hari</button>
+            <button type="button" onclick="setReportPeriod('month')" class="px-3.5 py-1.5 rounded-lg text-xs font-black transition-all shrink-0 ${reportPeriod === 'month' ? 'text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}" style="${reportPeriod === 'month' ? 'background-color:var(--clr-p);color:#fff' : ''}">Bulan Ini</button>
+            <button type="button" onclick="setReportPeriod('year')" class="px-3.5 py-1.5 rounded-lg text-xs font-black transition-all shrink-0 ${reportPeriod === 'year' ? 'text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}" style="${reportPeriod === 'year' ? 'background-color:var(--clr-p);color:#fff' : ''}">Tahun Ini</button>
+            <button type="button" onclick="setReportPeriod('all')" class="px-3.5 py-1.5 rounded-lg text-xs font-black transition-all shrink-0 ${reportPeriod === 'all' ? 'text-white shadow-sm' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}" style="${reportPeriod === 'all' ? 'background-color:var(--clr-p);color:#fff' : ''}">Semua</button>
           </div>
         </div>
 
@@ -277,11 +277,11 @@ window.rAdmReports = async () => {
         <div class="pt-3 border-t border-slate-100 dark:border-slate-700/70 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 shrink-0"><i class="fa-regular fa-calendar-days mr-1"></i> Sesuaikan:</span>
           <div class="flex items-center gap-2 flex-1">
-            <input type="date" id="report-start-date" value="${reportCustomStart}" class="admin-input !py-2 !px-3 !text-xs !rounded-xl bg-slate-50 dark:bg-slate-900 flex-1 font-bold"/>
+            <input type="date" id="report-start-date" value="${reportCustomStart}" class="admin-input !py-1.5 !px-3 !text-xs !rounded-lg bg-slate-50 dark:bg-slate-900 flex-1 font-bold"/>
             <span class="text-xs font-bold text-slate-400">s/d</span>
-            <input type="date" id="report-end-date" value="${reportCustomEnd}" class="admin-input !py-2 !px-3 !text-xs !rounded-xl bg-slate-50 dark:bg-slate-900 flex-1 font-bold"/>
+            <input type="date" id="report-end-date" value="${reportCustomEnd}" class="admin-input !py-1.5 !px-3 !text-xs !rounded-lg bg-slate-50 dark:bg-slate-900 flex-1 font-bold"/>
           </div>
-          <button type="button" onclick="applyCustomReportDate()" class="px-4 py-2 bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white text-xs font-black rounded-xl shrink-0 transition-all shadow-sm active:scale-95">
+          <button type="button" onclick="applyCustomReportDate()" class="px-4 py-1.5 bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white text-xs font-black rounded-lg shrink-0 transition-all shadow-sm active:scale-95">
             Terapkan
           </button>
         </div>
@@ -289,7 +289,7 @@ window.rAdmReports = async () => {
 
       <!-- Report Dynamic Output Container -->
       <div id="report-data-container" class="space-y-4">
-        <div class="text-center py-16 bg-white dark:bg-slate-800 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
+        <div class="text-center py-16 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
           <i class="fa-solid fa-spinner fa-spin text-3xl" style="color:var(--clr-p)"></i>
           <p class="text-xs font-bold text-slate-400 mt-3">Menghitung laporan keuangan...</p>
         </div>
@@ -458,10 +458,10 @@ window.renderReportView = () => {
   else if (reportPeriod === 'all') periodLabel = 'Semua Transaksi';
 
   container.innerHTML = `
-    <!-- 4 App-Style Metric Card Boxes -->
+    <!-- 4 Clean 1px-Border Metric Card Boxes -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       <!-- Card 1: Total Omset -->
-      <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm relative overflow-hidden flex flex-col justify-between">
+      <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm relative overflow-hidden flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between mb-2 sm:mb-3">
             <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-400">Total Omset</span>
@@ -473,7 +473,7 @@ window.renderReportView = () => {
       </div>
 
       <!-- Card 2: Total Modal (HPP) -->
-      <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm relative overflow-hidden flex flex-col justify-between">
+      <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm relative overflow-hidden flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between mb-2 sm:mb-3">
             <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-400">Modal (HPP)</span>
@@ -485,7 +485,7 @@ window.renderReportView = () => {
       </div>
 
       <!-- Card 3: Laba Bersih -->
-      <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-[1.75rem] border-2 ${netProfit >= 0 ? 'border-emerald-300/80 dark:border-emerald-700/80 bg-emerald-50/20' : 'border-rose-300/80 dark:border-rose-700/80 bg-rose-50/20'} shadow-sm relative overflow-hidden flex flex-col justify-between">
+      <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border ${netProfit >= 0 ? 'border-emerald-300 dark:border-emerald-700 bg-emerald-50/20' : 'border-rose-300 dark:border-rose-700 bg-rose-50/20'} shadow-sm relative overflow-hidden flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between mb-2 sm:mb-3">
             <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${netProfit >= 0 ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'}">Laba Bersih</span>
@@ -493,13 +493,13 @@ window.renderReportView = () => {
           </div>
           <div class="text-base sm:text-xl font-black ${netProfit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600'} leading-tight mb-1">${fCur(netProfit)}</div>
         </div>
-        <div class="inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded-full mt-2 w-fit ${netProfit >= 0 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-100 text-rose-800'}">
+        <div class="inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded-md mt-2 w-fit ${netProfit >= 0 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-rose-100 text-rose-800'}">
           Margin: ${marginPct}%
         </div>
       </div>
 
       <!-- Card 4: Transaksi & Volume -->
-      <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm relative overflow-hidden flex flex-col justify-between">
+      <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm relative overflow-hidden flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between mb-2 sm:mb-3">
             <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-400">Total Transaksi</span>
@@ -512,28 +512,28 @@ window.renderReportView = () => {
     </div>
 
     <!-- Rincian Metode Pembayaran Card Box -->
-    <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-2.5">
+    <div class="bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-2.5">
       <h3 class="text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
         <i class="fa-solid fa-money-bill-wave text-emerald-500"></i> Rincian Pembayaran Masuk
       </h3>
       <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
-        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-700/60 text-center">
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60 text-center">
           <span class="text-[9px] font-bold text-slate-400 block mb-0.5">TUNAI</span>
           <span class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">${fCur(paymentBreakdown.cash)}</span>
         </div>
-        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-700/60 text-center">
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60 text-center">
           <span class="text-[9px] font-bold text-slate-400 block mb-0.5">QRIS</span>
           <span class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">${fCur(paymentBreakdown.qris)}</span>
         </div>
-        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-700/60 text-center">
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60 text-center">
           <span class="text-[9px] font-bold text-slate-400 block mb-0.5">TRANSFER</span>
           <span class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">${fCur(paymentBreakdown.transfer)}</span>
         </div>
-        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-700/60 text-center">
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60 text-center">
           <span class="text-[9px] font-bold text-slate-400 block mb-0.5">EDC / DEBIT</span>
           <span class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">${fCur(paymentBreakdown.edc)}</span>
         </div>
-        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-100 dark:border-slate-700/60 text-center col-span-2 sm:col-span-1">
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60 text-center col-span-2 sm:col-span-1">
           <span class="text-[9px] font-bold text-slate-400 block mb-0.5">COD</span>
           <span class="text-xs sm:text-sm font-black text-slate-800 dark:text-white">${fCur(paymentBreakdown.cod)}</span>
         </div>
@@ -541,14 +541,14 @@ window.renderReportView = () => {
     </div>
 
     <!-- Segmented Navigation Tab & Search Bar (Mobile App Style) -->
-    <div class="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3">
+    <div class="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm space-y-3">
       <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <!-- Segmented Tab Switch -->
-        <div class="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
-          <button type="button" onclick="setReportSubTab('products')" class="py-2 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${reportSubTab === 'products' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}">
+        <div class="grid grid-cols-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200/60 dark:border-slate-700/60">
+          <button type="button" onclick="setReportSubTab('products')" class="py-2 px-3 rounded-lg text-xs font-black transition-all flex items-center justify-center gap-1.5 ${reportSubTab === 'products' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}">
             <i class="fa-solid fa-trophy text-amber-500"></i> <span>Produk (${productList.length})</span>
           </button>
-          <button type="button" onclick="setReportSubTab('transactions')" class="py-2 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${reportSubTab === 'transactions' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}">
+          <button type="button" onclick="setReportSubTab('transactions')" class="py-2 px-3 rounded-lg text-xs font-black transition-all flex items-center justify-center gap-1.5 ${reportSubTab === 'transactions' ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}">
             <i class="fa-solid fa-receipt text-purple-500"></i> <span>Transaksi (${filteredOrders.length})</span>
           </button>
         </div>
@@ -556,7 +556,7 @@ window.renderReportView = () => {
         <!-- Quick Search Bar -->
         <div class="relative flex-1 max-w-sm">
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-          <input type="text" placeholder="Cari nama produk / ID transaksi..." value="${reportSearchQuery}" oninput="onReportSearch(this.value)" class="admin-input !py-2 !pl-9 !pr-3 !text-xs !rounded-2xl bg-slate-50 dark:bg-slate-900 w-full font-bold"/>
+          <input type="text" placeholder="Cari nama produk / ID transaksi..." value="${reportSearchQuery}" oninput="onReportSearch(this.value)" class="admin-input !py-2 !pl-9 !pr-3 !text-xs !rounded-xl bg-slate-50 dark:bg-slate-900 w-full font-bold"/>
         </div>
       </div>
     </div>
@@ -566,8 +566,8 @@ window.renderReportView = () => {
       <!-- LIST VIEW: KONTRIBUSI PRODUK -->
       <div class="space-y-2.5">
         ${productList.length === 0 ? `
-          <div class="text-center py-14 bg-white dark:bg-slate-800 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
-            <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-700/50 text-slate-400 flex items-center justify-center mx-auto mb-3 text-2xl">
+          <div class="text-center py-14 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
+            <div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-700/50 text-slate-400 flex items-center justify-center mx-auto mb-3 text-xl">
               <i class="fa-solid fa-box-open"></i>
             </div>
             <h4 class="text-xs font-bold text-slate-600 dark:text-slate-300">Belum ada produk terjual</h4>
@@ -576,9 +576,9 @@ window.renderReportView = () => {
         ` : productList.map((p, idx) => {
           const pMargin = p.sales > 0 && p.profit > 0 ? Math.round((p.profit / p.sales) * 100) : 0;
           return `
-            <div class="bg-white dark:bg-slate-800 p-4 rounded-[1.5rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div class="flex items-center gap-3 min-w-0">
-                <div class="w-10 h-10 rounded-2xl flex items-center justify-center font-black text-xs shrink-0 ${idx === 0 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border border-amber-200' : idx === 1 ? 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300' : idx === 2 ? 'bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-500'}">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs shrink-0 ${idx === 0 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border border-amber-200' : idx === 1 ? 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300' : idx === 2 ? 'bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-700/60 text-slate-500'}">
                   #${idx + 1}
                 </div>
                 <div class="min-w-0">
@@ -598,7 +598,7 @@ window.renderReportView = () => {
                   <span class="text-[9px] uppercase font-black text-slate-400 block">Laba Bersih</span>
                   <span class="text-xs sm:text-sm font-black ${p.profit >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600'}">${fCur(p.profit)}</span>
                 </div>
-                <span class="px-2.5 py-1 rounded-xl text-[10px] font-black shrink-0 ${p.profit >= 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50' : 'bg-rose-50 text-rose-700 border border-rose-200'}">
+                <span class="px-2.5 py-1 rounded-lg text-[10px] font-black shrink-0 ${p.profit >= 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50' : 'bg-rose-50 text-rose-700 border border-rose-200'}">
                   ${pMargin}% Margin
                 </span>
               </div>
@@ -610,8 +610,8 @@ window.renderReportView = () => {
       <!-- LIST VIEW: RIWAYAT TRANSAKSI -->
       <div class="space-y-2.5">
         ${filteredOrders.length === 0 ? `
-          <div class="text-center py-14 bg-white dark:bg-slate-800 rounded-[1.75rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
-            <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-700/50 text-slate-400 flex items-center justify-center mx-auto mb-3 text-2xl">
+          <div class="text-center py-14 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm">
+            <div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-700/50 text-slate-400 flex items-center justify-center mx-auto mb-3 text-xl">
               <i class="fa-solid fa-receipt"></i>
             </div>
             <h4 class="text-xs font-bold text-slate-600 dark:text-slate-300">Belum ada transaksi</h4>
@@ -642,10 +642,10 @@ window.renderReportView = () => {
           let dtStr = o.dateString ? new Date(o.dateString).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '-';
 
           return `
-            <div class="bg-white dark:bg-slate-800 p-4 rounded-[1.5rem] border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all space-y-3">
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all space-y-3">
               <div class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2.5 min-w-0">
-                  <div class="w-9 h-9 rounded-2xl flex items-center justify-center text-xs shrink-0" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
+                  <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs shrink-0" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
                     <i class="fa-solid fa-receipt"></i>
                   </div>
                   <div class="min-w-0">
@@ -654,16 +654,16 @@ window.renderReportView = () => {
                   </div>
                 </div>
                 <div class="flex items-center gap-1.5 shrink-0">
-                  <span class="px-2.5 py-1 rounded-xl text-[10px] font-black bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 uppercase">
+                  <span class="px-2.5 py-1 rounded-lg text-[10px] font-black bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 uppercase">
                     ${esc(o.payment?.method || 'Tunai')}
                   </span>
-                  <span class="px-2.5 py-1 rounded-xl text-[10px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                  <span class="px-2.5 py-1 rounded-lg text-[10px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
                     ${esc(o.status || 'Selesai')}
                   </span>
                 </div>
               </div>
               
-              <div class="grid grid-cols-3 gap-2 bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-2xl border border-slate-100 dark:border-slate-700/60 text-center">
+              <div class="grid grid-cols-3 gap-2 bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700/60 text-center">
                 <div>
                   <span class="text-[9px] uppercase font-black text-slate-400 block mb-0.5">Omset</span>
                   <span class="text-xs font-black text-slate-900 dark:text-white">${fCur(grand)}</span>
