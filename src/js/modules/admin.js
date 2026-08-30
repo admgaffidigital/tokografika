@@ -1865,10 +1865,7 @@ window.rAdmItms = t => {
           <i class="fa-solid fa-copy text-sm"></i>
         </button>
 
-        <!-- Tombol Cetak Pricetag / Barcode Produk Ini -->
-        <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200/80 dark:border-slate-700/80 hover:bg-slate-800 hover:text-white dark:hover:bg-white dark:hover:text-slate-800 transition-all flex items-center justify-center shadow-sm" style="background-color:var(--clr-p-bg);color:var(--clr-p)" onclick="event.stopPropagation(); openPricetagBarcodeModal(${x.id})" title="Cetak Pricetag / Barcode Produk Ini">
-          <i class="fa-solid fa-tags text-sm"></i>
-        </button>
+
         ` : ''}
 
         <!-- Tombol Edit Detail Lengkap -->

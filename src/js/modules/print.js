@@ -1328,9 +1328,9 @@ window.renderPricetagProductList = () => {
       : '';
 
     return `
-      <div class="p-3.5 sm:p-4 flex items-center justify-between gap-3 sm:gap-4 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-all ${isSelected ? 'border-l-4' : ''}" style="${isSelected ? 'background-color:var(--clr-p-10); border-left-color:var(--clr-p);' : ''}">
-        <div class="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1 cursor-pointer select-none" onclick="toggleSelectPrintProduct('${esc(p.uid)}')">
-          <input type="checkbox" ${isSelected ? 'checked' : ''} class="w-4 h-4 sm:w-5 sm:h-5 rounded-md cursor-pointer shrink-0" style="accent-color:var(--clr-p)" onclick="event.stopPropagation(); toggleSelectPrintProduct('${esc(p.uid)}')" />
+      <div class="p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-all ${isSelected ? 'border-l-4' : ''}" style="${isSelected ? 'background-color:var(--clr-p-10); border-left-color:var(--clr-p);' : ''}">
+        <div class="flex items-start sm:items-center gap-3 sm:gap-3.5 min-w-0 flex-1 cursor-pointer select-none" onclick="toggleSelectPrintProduct('${esc(p.uid)}')">
+          <input type="checkbox" ${isSelected ? 'checked' : ''} class="w-4 h-4 sm:w-5 sm:h-5 mt-1 sm:mt-0 rounded-md cursor-pointer shrink-0" style="accent-color:var(--clr-p)" onclick="event.stopPropagation(); toggleSelectPrintProduct('${esc(p.uid)}')" />
           ${img}
           <div class="min-w-0 flex-1 pr-1">
             <h4 class="font-black text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-2 leading-snug">${esc(p.name)}</h4>
@@ -1345,7 +1345,7 @@ window.renderPricetagProductList = () => {
         </div>
 
         <!-- Qty Cetak Stepper -->
-        <div class="flex items-center gap-1 shrink-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-1 shadow-xs">
+        <div class="flex items-center self-end sm:self-auto gap-1 shrink-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-1 shadow-xs mt-2 sm:mt-0">
           <button type="button" onclick="changePrintProductQty('${esc(p.uid)}', -1)" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 flex items-center justify-center text-xs font-bold active:scale-95 transition-all" title="Kurangi">
             <i class="fa-solid fa-minus"></i>
           </button>
