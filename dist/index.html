@@ -1783,16 +1783,16 @@ html.dark .badge-counter {
 <input accept='.json' class='hidden' id='restore-file' onchange='restoreData(event)' type='file'/>
 
   <!-- ========================================================================= -->
-<!-- VIEW: POS KASIR (POINT OF SALE) - CLEAN, SPACIOUS & UNIFIED HEADER        -->
+<!-- VIEW: POS KASIR (POINT OF SALE) - CRISP, SPACIOUS & RESPONSIVE LAYOUT     -->
 <!-- ========================================================================= -->
 <div class='view-section flex flex-col fade-in bg-slate-100 dark:bg-[#070c18] z-50 hidden h-full max-h-screen overflow-hidden' id='view-pos'>
   
-  <!-- UNIFIED MASTER POS HEADER -->
-  <header class='glass-header shrink-0 shadow-md sticky top-0 z-30 flex flex-col border-b border-white/20'>
+  <!-- POS MASTER HEADER (CRISP SOLID THEME) -->
+  <header class='shrink-0 shadow-md sticky top-0 z-30 flex flex-col border-b border-white/20 text-white' style='background-color: var(--clr-p);' id='pos-master-header'>
     <!-- Top Row: Identity & Primary Actions -->
     <div class='px-3.5 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-3'>
       <!-- Left: Store Brand & Active Cashier -->
-      <div class='flex items-center gap-3 min-w-0'>
+      <div class='flex items-center gap-2.5 sm:gap-3 min-w-0'>
         <div class='w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/20 text-white flex items-center justify-center shadow-sm border border-white/30 shrink-0 text-base'>
           <i class='fa-solid fa-cash-register'></i>
         </div>
@@ -1828,39 +1828,39 @@ html.dark .badge-counter {
     </div>
 
     <!-- Second Row: Integrated Search, Scanner, Category Dropdown & Segmented Grid/List Switcher -->
-    <div class='px-3.5 sm:px-6 py-2.5 bg-white/10 dark:bg-black/30 backdrop-blur-md border-t border-white/10 flex items-center justify-between gap-2.5 sm:gap-4'>
-      <!-- Search & Scan Group (Spacious & Clean) -->
-      <div class='relative flex-1 max-w-2xl'>
+    <div class='px-3.5 sm:px-6 py-2 sm:py-2.5 bg-black/15 border-t border-white/15 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-4'>
+      <!-- Search & Scan Group (Takes Full Width on Mobile, Flexible on Desktop) -->
+      <div class='relative flex-1'>
         <i class='fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-white/70 text-xs sm:text-sm'></i>
-        <input class='w-full pl-9 sm:pl-10 pr-16 py-2 sm:py-2.5 bg-white/20 dark:bg-white/10 border border-white/30 focus:border-white focus:bg-white/25 rounded-2xl text-xs sm:text-sm font-bold text-white placeholder:text-white/60 focus:outline-none transition-all shadow-inner' id='pos-search-input' placeholder='Cari nama produk atau ketik / scan barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)'/>
+        <input class='w-full pl-9 sm:pl-10 pr-16 py-2 sm:py-2.5 bg-white/20 focus:bg-white/25 border border-white/30 focus:border-white rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold text-white placeholder:text-white/60 focus:outline-none transition-all' id='pos-search-input' placeholder='Cari nama produk atau ketik / scan barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)'/>
         
         <button type='button' class='absolute right-9 top-1/2 -translate-y-1/2 text-white/70 hover:text-white hidden w-6 h-6 flex items-center justify-center' id='pos-btn-clear-search' onclick='clearPosSearch()' title='Hapus Pencarian'>
           <i class='fa-solid fa-xmark text-xs'></i>
         </button>
         
-        <button type='button' class='absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-xl bg-white/30 hover:bg-white/40 text-white transition-all shadow-sm active:scale-95' onclick='openCameraScanner()' title='Scan Barcode Kamera'>
+        <button type='button' class='absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg sm:rounded-xl bg-white/30 hover:bg-white/40 text-white transition-all shadow-sm active:scale-95' onclick='openCameraScanner()' title='Scan Barcode Kamera'>
           <i class='fa-solid fa-qrcode text-xs sm:text-sm'></i>
         </button>
       </div>
 
       <!-- Controls Group: Category Button & Segmented View Switcher -->
-      <div class='flex items-center gap-2 shrink-0'>
+      <div class='flex items-center justify-between sm:justify-end gap-2 shrink-0'>
         <!-- Category Drawer/Menu Button -->
-        <button type='button' onclick='openPosCategoryModal()' class='flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs sm:text-sm font-extrabold transition-all shadow-sm active:scale-95 group' title='Pilih Kategori Produk'>
-          <div class='w-5 h-5 rounded-lg bg-white/20 flex items-center justify-center text-[11px]'>
+        <button type='button' onclick='openPosCategoryModal()' class='flex-1 sm:flex-initial flex items-center justify-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs sm:text-sm font-extrabold transition-all shadow-sm active:scale-95 group' title='Pilih Kategori Produk'>
+          <div class='w-5 h-5 rounded-lg bg-white/20 flex items-center justify-center text-[11px] shrink-0'>
             <i class='fa-solid fa-layer-group'></i>
           </div>
-          <span class='max-w-[100px] sm:max-w-[160px] truncate' id='pos-active-cat-label'>Semua Produk</span>
-          <i class='fa-solid fa-chevron-down text-[10px] opacity-70 group-hover:translate-y-0.5 transition-transform'></i>
+          <span class='max-w-[120px] sm:max-w-[160px] truncate' id='pos-active-cat-label'>Semua Produk</span>
+          <i class='fa-solid fa-chevron-down text-[10px] opacity-70 group-hover:translate-y-0.5 transition-transform shrink-0'></i>
         </button>
 
         <!-- Segmented Grid/List Switcher -->
-        <div class='flex bg-black/25 dark:bg-black/40 border border-white/25 rounded-2xl p-1 shrink-0 shadow-inner' id='pos-view-mode-toggle'>
-          <button type='button' class='px-2.5 sm:px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-xs font-black transition-all text-white bg-white/30 shadow-sm' id='btn-pos-view-grid' onclick='setPosViewMode(&quot;grid&quot;)' title='Tampilan Grid (Kotak)'>
+        <div class='flex bg-black/25 border border-white/25 rounded-xl sm:rounded-2xl p-1 shrink-0' id='pos-view-mode-toggle'>
+          <button type='button' class='px-2.5 sm:px-3 py-1.5 rounded-lg sm:rounded-xl flex items-center gap-1.5 text-xs font-black transition-all text-emerald-800 bg-white shadow-sm' id='btn-pos-view-grid' onclick='setPosViewMode(&quot;grid&quot;)' title='Tampilan Grid (Kotak)'>
             <i class='fa-solid fa-border-all text-xs'></i>
             <span class='hidden md:inline text-[11px]'>Grid</span>
           </button>
-          <button type='button' class='px-2.5 sm:px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-xs font-black transition-all text-white/60 hover:text-white' id='btn-pos-view-list' onclick='setPosViewMode(&quot;list&quot;)' title='Tampilan List (Daftar)'>
+          <button type='button' class='px-2.5 sm:px-3 py-1.5 rounded-lg sm:rounded-xl flex items-center gap-1.5 text-xs font-black transition-all text-white/70 hover:text-white' id='btn-pos-view-list' onclick='setPosViewMode(&quot;list&quot;)' title='Tampilan List (Daftar)'>
             <i class='fa-solid fa-list-ul text-xs'></i>
             <span class='hidden md:inline text-[11px]'>List</span>
           </button>
@@ -1870,17 +1870,17 @@ html.dark .badge-counter {
   </header>
 
   <!-- POS Main Body: Full Canvas Catalog -->
-  <main class='flex-1 flex flex-col min-w-0 min-h-0 bg-slate-50 dark:bg-[#0b1329] overflow-hidden relative'>
+  <main class='flex-1 flex flex-col min-w-0 min-h-0 bg-slate-100 dark:bg-[#070c18] overflow-hidden relative'>
     
     <!-- Product List / Grid Canvas (Full Width Responsive) -->
-    <div class='flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 pb-28 custom-scrollbar' id='pos-products-scroll'>
+    <div class='flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 pb-32 custom-scrollbar' id='pos-products-scroll'>
       <div id='pos-product-container'></div>
     </div>
 
     <!-- ========================================================================= -->
     <!-- UNIVERSAL FLOATING CART DOCK (Visible on HP, Tablet & PC when items > 0)  -->
     <!-- ========================================================================= -->
-    <div class='fixed bottom-4 left-3 right-3 sm:left-auto sm:right-6 sm:w-[400px] z-40 bg-slate-900/95 dark:bg-slate-800/95 backdrop-blur-md text-white p-3 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center justify-between gap-3 transform translate-y-28 opacity-0 pointer-events-none transition-all duration-300' id='pos-floating-cart-dock'>
+    <div class='fixed bottom-4 left-3 right-3 sm:left-auto sm:right-6 sm:w-[420px] z-50 bg-slate-900 text-white p-3 sm:p-3.5 rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-700/80 flex items-center justify-between gap-3 transform translate-y-28 opacity-0 pointer-events-none transition-all duration-300' id='pos-floating-cart-dock'>
       <div class='flex items-center gap-2.5 min-w-0 cursor-pointer' onclick='openPosCartDrawer()'>
         <div class='w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shrink-0 shadow-md' style='background-color: var(--clr-p);'>
           <i class='fa-solid fa-cart-shopping text-sm'></i>
