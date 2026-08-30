@@ -1626,24 +1626,52 @@ window.rAdmItms = t => {
   window.aPrtSort = window.aPrtSort || 'all';
   
   if (t === 'products') {
-    let a = 0, i = 0;
+    let totalAll = (appData.products || []).length;
+    let countActive = 0, countEmpty = 0, countInactive = 0;
     (appData.products || []).forEach(p => {
-      if (p.isActive === 'false' || p.isActive === false) i++;
-      else a++;
+      let isOff = (p.isActive === 'false' || p.isActive === false);
+      if (isOff) {
+        countInactive++;
+      } else {
+        let hasVars = p.variants && p.variants.length > 0;
+        let isOutOfStock = hasVars 
+          ? p.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0)
+          : (p.stock !== undefined && p.stock !== null && p.stock !== '' && Number(p.stock) <= 0);
+        if (isOutOfStock) countEmpty++;
+        else countActive++;
+      }
     });
+
     let s = el('admin-product-stats');
     if (s) {
-      let acSt = window.aPrtSort === 'active' ? 'ring-2 ring-emerald-500 scale-[1.02] shadow-md' : 'opacity-70 hover:opacity-100';
-      let inSt = window.aPrtSort === 'inactive' ? 'ring-2 ring-rose-500 scale-[1.02] shadow-md' : 'opacity-70 hover:opacity-100';
+      const getPillCls = (key) => window.aPrtSort === key 
+        ? 'ring-2 ring-emerald-500 scale-[1.02] shadow-md border-emerald-500 bg-white dark:bg-slate-800' 
+        : 'border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 hover:border-slate-300 dark:hover:border-slate-600 opacity-80 hover:opacity-100 shadow-xs';
+
       s.innerHTML = `
-      <div class="grid grid-cols-2 gap-3">
-        <div onclick="window.aPrtSort=window.aPrtSort==='active'?'all':'active';rAdmItms('products')" class="cursor-pointer bg-emerald-50 dark:bg-emerald-900/20 border-2 border-emerald-200 dark:border-emerald-800 rounded-[1.25rem] p-3 sm:p-4 flex items-center gap-3 transition-all ${acSt}">
-          <div class="w-10 h-10 rounded-xl bg-emerald-200/50 dark:bg-emerald-800/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0"><i class="fa-solid fa-box-open text-lg"></i></div>
-          <div><p class="text-[9px] sm:text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-0.5">Produk Aktif</p><h4 class="text-lg sm:text-xl font-bold text-emerald-700 dark:text-emerald-300 leading-none">${a}</h4></div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
+        <!-- Tab 1: Semua -->
+        <div onclick="window.aPrtSort='all';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('all')}">
+          <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-boxes-stacked"></i></div>
+          <div class="min-w-0"><p class="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">Semua</p><h4 class="text-base sm:text-lg font-black text-slate-800 dark:text-white leading-none">${totalAll}</h4></div>
         </div>
-        <div onclick="window.aPrtSort=window.aPrtSort==='inactive'?'all':'inactive';rAdmItms('products')" class="cursor-pointer bg-rose-50 dark:bg-rose-900/20 border-2 border-rose-200 dark:border-rose-800 rounded-[1.25rem] p-3 sm:p-4 flex items-center gap-3 transition-all ${inSt}">
-          <div class="w-10 h-10 rounded-xl bg-rose-200/50 dark:bg-rose-800/50 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0"><i class="fa-solid fa-ban text-lg"></i></div>
-          <div><p class="text-[9px] sm:text-[10px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-widest mb-0.5">Kosong / Nonaktif</p><h4 class="text-lg sm:text-xl font-bold text-rose-700 dark:text-rose-300 leading-none">${i}</h4></div>
+
+        <!-- Tab 2: Aktif & Ready -->
+        <div onclick="window.aPrtSort='active';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('active')}">
+          <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-check"></i></div>
+          <div class="min-w-0"><p class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider truncate">Aktif Ready</p><h4 class="text-base sm:text-lg font-black text-emerald-700 dark:text-emerald-300 leading-none">${countActive}</h4></div>
+        </div>
+
+        <!-- Tab 3: Stok Kosong (Tampil) -->
+        <div onclick="window.aPrtSort='empty';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('empty')}">
+          <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-box-open"></i></div>
+          <div class="min-w-0"><p class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider truncate">Stok Kosong</p><h4 class="text-base sm:text-lg font-black text-amber-700 dark:text-amber-300 leading-none">${countEmpty}</h4></div>
+        </div>
+
+        <!-- Tab 4: Nonaktif (Disembunyikan) -->
+        <div onclick="window.aPrtSort='inactive';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('inactive')}">
+          <div class="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-eye-slash"></i></div>
+          <div class="min-w-0"><p class="text-[9px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider truncate">Nonaktif</p><h4 class="text-base sm:text-lg font-black text-rose-700 dark:text-rose-300 leading-none">${countInactive}</h4></div>
         </div>
       </div>`;
     }
@@ -1651,19 +1679,26 @@ window.rAdmItms = t => {
   
   let rawList = [...(appData[t] || [])];
   rawList.sort((a, b) => {
-    if (t === 'products' && window.aPrtSort !== 'all') {
-      let aOff = (a.isActive === 'false' || a.isActive === false) ? 1 : 0;
-      let bOff = (b.isActive === 'false' || b.isActive === false) ? 1 : 0;
-      if (window.aPrtSort === 'inactive' && aOff !== bOff) return bOff - aOff;
-      if (window.aPrtSort === 'active' && aOff !== bOff) return aOff - bOff;
-    }
     return (b.id || 0) - (a.id || 0);
   });
   
   let i = rawList.filter(x => {
     let m = (x.name || x.title || x.code || x.bankName || x.sku || '').toLowerCase().includes(aSq);
     if (t === 'products' && !m && x.variants) m = x.variants.some(v => v.sku && v.sku.toLowerCase().includes(aSq));
-    return m;
+    if (!m) return false;
+
+    if (t === 'products' && window.aPrtSort && window.aPrtSort !== 'all') {
+      let isOff = (x.isActive === 'false' || x.isActive === false);
+      let hasVars = x.variants && x.variants.length > 0;
+      let isOutOfStock = hasVars 
+        ? x.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0)
+        : (x.stock !== undefined && x.stock !== null && x.stock !== '' && Number(x.stock) <= 0);
+
+      if (window.aPrtSort === 'active') return !isOff && !isOutOfStock;
+      if (window.aPrtSort === 'empty') return !isOff && isOutOfStock;
+      if (window.aPrtSort === 'inactive') return isOff;
+    }
+    return true;
   });
   
   if (!i.length) return setH('admin-list-container', `<div class="text-center py-16 text-slate-400 font-bold bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow-sm"><i class="fa-solid fa-folder-open text-4xl mb-3 opacity-40 block"></i>Data tidak ditemukan</div>`);
@@ -1671,34 +1706,51 @@ window.rAdmItms = t => {
   setH('admin-list-container', i.map(x => {
     let isP = t === 'products';
     let isOff = isP && (x.isActive === 'false' || x.isActive === false);
+    let hasVars = isP && x.variants && x.variants.length > 0;
+    let totalStock = isP ? (hasVars ? x.variants.reduce((sum, v) => sum + Number(v.stock || 0), 0) : Number(x.stock ?? 100)) : 0;
+    let isOutOfStock = isP && !isOff && (hasVars ? x.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0) : (x.stock !== undefined && x.stock !== null && x.stock !== '' && Number(x.stock) <= 0));
+
+    let bC = isOff 
+      ? 'border-rose-200 dark:border-rose-900/50 bg-rose-50/20' 
+      : (isOutOfStock 
+        ? 'border-amber-200 dark:border-amber-900/50 bg-amber-50/20' 
+        : 'border-slate-200/80 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500 bg-white dark:bg-slate-800');
     
-    let bC = isOff ? 'border-rose-200 dark:border-rose-900/50 bg-rose-50/20' : 'border-slate-100 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500 bg-white dark:bg-slate-800';
-    let tC = isOff ? 'text-slate-400 dark:text-slate-500 line-through' : 'text-slate-800 dark:text-slate-200';
-    let badg = isOff ? `<span class="badge badge-ribbon-inset badge-solid-rose">KOSONG</span>` : '';
+    let tC = isOff ? 'text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200';
     
+    let statusBadge = '';
+    if (isP) {
+      if (isOff) {
+        statusBadge = `<span class="badge badge-xs bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 font-bold"><i class="fa-solid fa-eye-slash text-[8px]"></i> Nonaktif (Sembunyi)</span>`;
+      } else if (isOutOfStock) {
+        statusBadge = `<span class="badge badge-xs bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800 font-bold"><i class="fa-solid fa-box-open text-[8px]"></i> Stok Kosong (Tampil)</span>`;
+      } else {
+        statusBadge = `<span class="badge badge-xs bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 font-bold"><i class="fa-solid fa-check text-[8px]"></i> Aktif (${totalStock} ${esc(x.unit||'Pcs')})</span>`;
+      }
+    }
+
     let img = x.img 
-      ? `<div class="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0"><img loading="lazy" src="${esc(x.img)}" onerror="this.onerror=null;this.src='https://placehold.co/100?text=Img'" class="w-full h-full rounded-xl object-cover border-2 border-slate-100 dark:border-slate-700 ${isOff?'grayscale opacity-60':''} shadow-sm"/>${badg}</div>` 
-      : `<div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-slate-50 dark:bg-slate-700 border-2 border-slate-100 dark:border-slate-600 flex items-center justify-center text-slate-300 dark:text-slate-400 shrink-0 shadow-sm"><i class="fa-solid fa-image text-xl"></i>${badg}</div>`;
-    
-    let tglBtn = isP 
-      ? (isOff 
-        ? `<button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); toggleProductStatus(${x.id}, true)" title="Aktifkan Stok"><i class="fa-solid fa-check text-sm"></i></button>` 
-        : `<button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-50 dark:bg-amber-900/30 border border-amber-100 dark:border-amber-800 text-amber-600 hover:bg-amber-500 hover:text-white transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); toggleProductStatus(${x.id}, false)" title="Kosongkan Stok"><i class="fa-solid fa-ban text-sm"></i></button>`) 
-      : '';
+      ? `<div class="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0"><img loading="lazy" src="${esc(x.img)}" onerror="this.onerror=null;this.src='https://placehold.co/100?text=Img'" class="w-full h-full rounded-xl object-cover border-2 border-slate-100 dark:border-slate-700 ${isOff?'grayscale opacity-50':(isOutOfStock?'grayscale opacity-75':'')} shadow-sm"/></div>` 
+      : `<div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-slate-50 dark:bg-slate-700 border-2 border-slate-100 dark:border-slate-600 flex items-center justify-center text-slate-300 dark:text-slate-400 shrink-0 shadow-sm"><i class="fa-solid fa-image text-xl"></i></div>`;
     
     let skuBadge = isP && x.sku ? `<span class="badge badge-xs badge-slate badge-normal-case"><i class="fa-solid fa-barcode"></i> ${esc(x.sku)}</span>` : '';
-    let varsBadge = isP && x.variants && x.variants.length ? `<span class="badge badge-xs badge-indigo">${x.variants.length} Varian</span>` : '';
+    let varsBadge = isP && hasVars ? `<span class="badge badge-xs badge-indigo">${x.variants.length} Varian</span>` : '';
     let wholBadge = isP && x.wholesale && x.wholesale.length ? `<span class="badge badge-xs badge-purple"><i class="fa-solid fa-tags"></i> Grosir</span>` : '';
+    let costBadge = (isP && x.costPrice) ? `<span class="text-[10px] text-slate-400 font-medium bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">HPP: <b class="text-slate-700 dark:text-slate-300">${fCur(x.costPrice)}</b></span>` : '';
     
     return `
-    <div class="p-4 sm:p-5 rounded-[1.5rem] flex flex-col sm:flex-row sm:items-center justify-between cursor-pointer border-2 ${bC} shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 gap-4 group" onclick="oAEd('${t}',${x.id})">
+    <div class="p-4 sm:p-5 rounded-[1.5rem] flex flex-col sm:flex-row sm:items-center justify-between cursor-pointer border-2 ${bC} shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 gap-4 group" onclick="oAEd('${t}',${x.id})">
       <div class="flex items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto min-w-0 flex-1">
         ${img}
         <div class="min-w-0 flex flex-col justify-center">
-          <p class="text-sm sm:text-base font-bold ${tC} truncate mb-1">${esc(x.name||x.title||x.bankName||x.code||'Item')}</p>
+          <div class="flex items-center gap-2 mb-1 flex-wrap">
+            <p class="text-sm sm:text-base font-bold ${tC} truncate">${esc(x.name||x.title||x.bankName||x.code||'Item')}</p>
+            ${statusBadge}
+          </div>
           ${isP ? `
-          <div class="flex flex-wrap items-center gap-1.5 mb-1.5">
+          <div class="flex flex-wrap items-center gap-2 mb-1.5">
             <span class="font-bold text-emerald-600 dark:text-emerald-400 text-sm drop-shadow-sm">${fCur(x.price)}</span>
+            ${costBadge}
             ${skuBadge}
           </div>
           <div class="flex flex-wrap gap-1.5">
@@ -1708,11 +1760,33 @@ window.rAdmItms = t => {
           ` : ''}
         </div>
       </div>
-      <div class="flex items-center gap-2 w-full sm:w-auto pt-3 sm:pt-0 border-t border-slate-100 dark:border-slate-700 sm:border-t-0 shrink-0 justify-end">
-        ${tglBtn}
-        ${isP ? `<button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); duplicateProduct(${x.id})" title="Duplikat Produk"><i class="fa-solid fa-copy text-sm"></i></button>` : ''}
-        <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-800 hover:text-white dark:hover:bg-white dark:hover:text-slate-800 transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); oAEd('${t}',${x.id})" title="Edit Detail"><i class="fa-solid fa-pen text-sm"></i></button>
-        <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-rose-50 dark:bg-rose-900/30 border border-rose-100 dark:border-rose-800 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); oADel('${t}',${x.id})" title="Hapus Permanen"><i class="fa-solid fa-trash text-sm"></i></button>
+      <div class="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto pt-3 sm:pt-0 border-t border-slate-100 dark:border-slate-700 sm:border-t-0 shrink-0 justify-end flex-wrap">
+        ${isP ? `
+        <!-- Tombol Edit Cepat (⚡) -->
+        <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-500 hover:bg-amber-600 text-white transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); openQuickEditProduct(${x.id})" title="Edit Cepat (Stok, HPP, Harga)">
+          <i class="fa-solid fa-bolt text-sm"></i>
+        </button>
+
+        <!-- Tombol Toggle Visibilitas Toko (👁️) -->
+        <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl ${isOff ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-emerald-600' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 hover:bg-emerald-600 hover:text-white'} border border-slate-200 dark:border-slate-600 transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); toggleProductStatus(${x.id}, ${isOff})" title="${isOff ? 'Tampilkan di Toko' : 'Sembunyikan dari Toko'}">
+          <i class="fa-solid ${isOff ? 'fa-eye-slash' : 'fa-eye'} text-sm"></i>
+        </button>
+
+        <!-- Tombol Duplikat -->
+        <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); duplicateProduct(${x.id})" title="Duplikat Produk">
+          <i class="fa-solid fa-copy text-sm"></i>
+        </button>
+        ` : ''}
+
+        <!-- Tombol Edit Detail Lengkap -->
+        <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-800 hover:text-white dark:hover:bg-white dark:hover:text-slate-800 transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); oAEd('${t}',${x.id})" title="Edit Detail Lengkap">
+          <i class="fa-solid fa-pen text-sm"></i>
+        </button>
+
+        <!-- Tombol Hapus -->
+        <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-rose-50 dark:bg-rose-900/30 border border-rose-100 dark:border-rose-800 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); oADel('${t}',${x.id})" title="Hapus Permanen">
+          <i class="fa-solid fa-trash text-sm"></i>
+        </button>
       </div>
     </div>`;
   }).join(''));
@@ -2129,19 +2203,170 @@ window.closeAdminModal = () => {
   eId = null;
 };
 
+window.openQuickEditProduct = (id) => {
+  const p = (appData.products || []).find(x => x.id === id);
+  if (!p) return;
+  window._currentQuickEditProdId = id;
+  
+  const m = el('quick-edit-modal');
+  const box = el('quick-edit-modal-box');
+  const cont = el('quick-edit-modal-content');
+  const sub = el('qe-product-subtitle');
+  if (!m || !box || !cont) return;
+
+  if (sub) sub.innerText = p.name || 'Edit Cepat';
+
+  const hasVars = p.variants && p.variants.length > 0;
+  const isOff = p.isActive === 'false' || p.isActive === false;
+
+  let html = `
+    <!-- Product Header Info Card -->
+    <div class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700">
+      <img src="${esc(p.img || 'https://placehold.co/100?text=Img')}" onerror="this.src='https://placehold.co/100?text=Img'" class="w-12 h-12 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0"/>
+      <div class="min-w-0 flex-1">
+        <h4 class="font-bold text-slate-800 dark:text-white text-xs sm:text-sm truncate">${esc(p.name)}</h4>
+        <p class="text-[10px] text-slate-400 font-semibold">${esc(p.category || 'Umum')} • SKU: ${esc(p.sku || '-')}</p>
+      </div>
+    </div>
+
+    <!-- Visibility Toggle -->
+    <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
+      <div>
+        <label class="block text-xs font-bold text-slate-800 dark:text-white">Status Visibilitas Toko Online</label>
+        <p class="text-[10px] text-slate-400">Jika nonaktif, produk disembunyikan total dari katalog & pencarian pembeli</p>
+      </div>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" id="qe-is-active" class="sr-only peer" ${!isOff ? 'checked' : ''} />
+        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-600"></div>
+      </label>
+    </div>
+  `;
+
+  if (!hasVars) {
+    html += `
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider"><i class="fa-solid fa-tag text-emerald-600 mr-1"></i> Harga Jual (Rp)</label>
+        <input type="number" id="qe-price" value="${p.price || 0}" class="admin-input !py-2.5 !text-sm font-bold w-full" placeholder="0" min="0" />
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider"><i class="fa-solid fa-coins text-amber-500 mr-1"></i> HPP / Modal (Rp)</label>
+        <input type="number" id="qe-cost-price" value="${p.costPrice || 0}" class="admin-input !py-2.5 !text-sm font-bold w-full" placeholder="0" min="0" />
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider"><i class="fa-solid fa-boxes-stacked text-indigo-500 mr-1"></i> Stok (${esc(p.unit || 'Pcs')})</label>
+        <input type="number" id="qe-stock" value="${p.stock ?? 100}" class="admin-input !py-2.5 !text-sm font-bold w-full" placeholder="0" min="0" />
+      </div>
+    </div>
+    `;
+  } else {
+    html += `
+    <div class="space-y-3">
+      <div class="flex items-center justify-between">
+        <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest"><i class="fa-solid fa-layer-group text-indigo-500 mr-1"></i> Edit Cepat Varian Produk (${p.variants.length} Varian)</label>
+      </div>
+      <div class="space-y-2.5 max-h-64 overflow-y-auto pr-1 hide-scrollbar">
+      ${p.variants.map((v, idx) => `
+        <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-xs text-slate-800 dark:text-white truncate">${esc(v.name)}</span>
+            <span class="text-[9px] font-mono font-bold text-slate-400 bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded">SKU: ${esc(v.sku || '-')}</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <span class="block text-[9px] font-semibold text-slate-400 mb-0.5">Harga (Rp)</span>
+              <input type="number" id="qe-var-price-${idx}" value="${v.price || 0}" class="admin-input !py-1.5 !px-2 !text-xs font-bold w-full" min="0" />
+            </div>
+            <div>
+              <span class="block text-[9px] font-semibold text-slate-400 mb-0.5">HPP (Rp)</span>
+              <input type="number" id="qe-var-cost-${idx}" value="${v.costPrice || 0}" class="admin-input !py-1.5 !px-2 !text-xs font-bold w-full" min="0" />
+            </div>
+            <div>
+              <span class="block text-[9px] font-semibold text-slate-400 mb-0.5">Stok</span>
+              <input type="number" id="qe-var-stock-${idx}" value="${v.stock ?? 100}" class="admin-input !py-1.5 !px-2 !text-xs font-bold w-full" min="0" />
+            </div>
+          </div>
+        </div>
+      `).join('')}
+      </div>
+    </div>
+    `;
+  }
+
+  cont.innerHTML = html;
+
+  show('quick-edit-modal');
+  setTimeout(() => {
+    m.classList.remove('opacity-0');
+    box.classList.remove('translate-y-full', 'sm:scale-95');
+  }, 10);
+};
+
+window.closeQuickEditModal = () => {
+  const m = el('quick-edit-modal');
+  const box = el('quick-edit-modal-box');
+  if (!m || !box) return;
+  m.classList.add('opacity-0');
+  box.classList.add('translate-y-full', 'sm:scale-95');
+  setTimeout(() => hide('quick-edit-modal'), 300);
+  window._currentQuickEditProdId = null;
+};
+
+window.saveQuickEditProduct = async () => {
+  const id = window._currentQuickEditProdId;
+  if (!id) return;
+  const p = (appData.products || []).find(x => x.id === id);
+  if (!p) return;
+
+  const isActive = el('qe-is-active') ? el('qe-is-active').checked : true;
+  p.isActive = isActive ? 'true' : 'false';
+
+  const hasVars = p.variants && p.variants.length > 0;
+  if (!hasVars) {
+    p.price = Math.max(0, Number(getV('qe-price') || 0));
+    p.costPrice = Math.max(0, Number(getV('qe-cost-price') || 0));
+    p.stock = Math.max(0, Number(getV('qe-stock') || 0));
+  } else {
+    p.variants.forEach((v, idx) => {
+      const vP = el(`qe-var-price-${idx}`);
+      const vC = el(`qe-var-cost-${idx}`);
+      const vS = el(`qe-var-stock-${idx}`);
+      if (vP) v.price = Math.max(0, Number(vP.value || 0));
+      if (vC) v.costPrice = Math.max(0, Number(vC.value || 0));
+      if (vS) v.stock = Math.max(0, Number(vS.value || 0));
+    });
+    // Set base price & cost to lowest variant
+    p.price = Math.min(...p.variants.map(v => v.price));
+    p.costPrice = Math.min(...p.variants.map(v => v.costPrice || 0));
+  }
+
+  sLoad('Menyimpan perubahan...');
+  try {
+    await db.collection("freshmart").doc("cms_data").collection("products").doc(id.toString()).set(p);
+    appData.lastUpdate = Date.now();
+    await saveApp();
+    rAdmItms('products');
+    closeQuickEditModal();
+    showToast("Produk berhasil diperbarui!");
+  } catch(e) {
+    showToast("Gagal menyimpan perubahan!");
+  }
+  hLoad();
+};
+
 window.toggleProductStatus = async (id, toActive) => {
   if (isSaving) return;
   isSaving = true;
   const i = appData.products.findIndex(x => x.id === id);
   if (i > -1) {
     appData.products[i].isActive = toActive ? 'true' : 'false';
-    sLoad(toActive ? 'Mengaktifkan...' : 'Menonaktifkan...');
+    sLoad(toActive ? 'Menampilkan di toko...' : 'Menyembunyikan dari toko...');
     try {
       await db.collection("freshmart").doc("cms_data").collection("products").doc(id.toString()).update({ isActive: toActive ? 'true' : 'false' });
       appData.lastUpdate = Date.now();
       await saveApp();
       rAdmItms('products');
-      showToast(toActive ? "Produk Aktif!" : "Stok Dikosongkan!");
+      showToast(toActive ? "Produk Ditampilkan di Toko!" : "Produk Disembunyikan dari Toko!");
     } catch (e) {
       showToast("Gagal update status!");
     }

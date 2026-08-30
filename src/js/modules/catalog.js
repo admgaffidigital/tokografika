@@ -326,8 +326,14 @@ window.toggleView = v => {
 };
 
 const rCat = () => {
-  let f = appData.products.filter(p => {
+  let f = (appData.products || []).filter(p => {
+    // 1. Produk Nonaktif (Disembunyikan) tidak ditampilkan sama sekali di katalog
+    if (p.isActive === 'false' || p.isActive === false) return false;
+    
+    // 2. Filter Kategori
     if (aCat !== 'Semua Produk' && p.category !== aCat) return false;
+    
+    // 3. Filter Pencarian
     if (!sQ) return true;
     let q = sQ.toLowerCase();
     return (p.name || '').toLowerCase().includes(q) || 
@@ -360,8 +366,13 @@ const rCat = () => {
   const v = f.slice(0, cPage * iPP);
 
   c.innerHTML = v.map(p => {
-    let a = p.isActive !== 'false' && p.isActive !== false;
-    let nH = !a ? `<div class="absolute top-1.5 right-1.5 z-20"><span class="bg-rose-600/90 backdrop-blur-sm text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow">HABIS</span></div>` : '';
+    // Cek apakah produk kehabisan stok
+    const hasVars = p.variants && p.variants.length > 0;
+    const isOutOfStock = hasVars 
+      ? p.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0)
+      : (p.stock !== undefined && p.stock !== null && p.stock !== '' && Number(p.stock) <= 0);
+
+    let nH = isOutOfStock ? `<div class="absolute top-1.5 right-1.5 z-20"><span class="bg-amber-500/95 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wider">STOK HABIS</span></div>` : '';
     let bH = `
     <div class="mb-1 flex flex-wrap gap-1 items-center overflow-hidden shrink-0">
       ${p.tag ? `<span class="bg-rose-50 dark:bg-rose-950/60 border border-rose-200/80 dark:border-rose-800/60 text-rose-600 dark:text-rose-400 px-1.5 py-0.5 rounded text-[8px] font-bold truncate max-w-full"><i class="fa-solid fa-fire text-[7px]"></i> ${esc(p.tag)}</span>` : ''}
@@ -376,7 +387,7 @@ const rCat = () => {
       return `
       <div class="card-modern overflow-hidden flex flex-col cursor-pointer group p-2.5 sm:p-3 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-200" onclick="openProductModal(${p.id})">
         <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 mb-2.5">
-          <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${!a ? 'grayscale' : ''}"/>
+          <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${isOutOfStock ? 'grayscale opacity-75' : ''}"/>
           ${nH}
         </div>
         <div class="flex-1 flex flex-col justify-between min-w-0 px-0.5 pb-0.5">
@@ -395,7 +406,7 @@ const rCat = () => {
       return `
       <div class="card-modern flex items-center p-3 gap-3.5 cursor-pointer group border border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-200" onclick="openProductModal(${p.id})">
         <div class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60">
-          <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${!a ? 'grayscale' : ''}"/>
+          <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${isOutOfStock ? 'grayscale opacity-75' : ''}"/>
           ${nH}
         </div>
         <div class="flex-1 min-w-0 pr-1 flex flex-col justify-between py-0.5 h-full">
@@ -531,22 +542,38 @@ const rProdMod = () => {
     </div>
   ` : '');
   
-  if (a) {
-    show('modal-active-controls');
-    hide('modal-inactive-controls');
-    if (hV) {
-      show('product-modal-options-container');
-      setH('product-modal-options', p.variants.map((r, x) => `
-        <button class="px-4 py-2 rounded-lg text-xs font-bold border-2 transition-all ${x === cVar ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-500 text-emerald-700 dark:text-emerald-400' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-emerald-300 dark:hover:border-emerald-600'}" onclick="selectVariant(${x})">
-          ${esc(r.name)}
-        </button>
-      `).join(''));
-    } else {
-      hide('product-modal-options-container');
-    }
-  } else {
+  const curStock = hV ? (v?.stock) : p.stock;
+  const isOutOfStock = curStock !== undefined && curStock !== null && curStock !== '' && Number(curStock) <= 0;
+
+  if (isOutOfStock) {
     hide('modal-active-controls');
     show('modal-inactive-controls');
+    const inActTxt = el('modal-inactive-controls');
+    if (inActTxt) {
+      inActTxt.innerHTML = `
+        <div class="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-xl p-3.5 text-center text-amber-700 dark:text-amber-300 font-bold text-xs flex items-center justify-center gap-2 shadow-xs">
+          <i class="fa-solid fa-box-open text-base"></i>
+          <span>Stok item ini sedang kosong. Silakan hubungi admin toko.</span>
+        </div>
+      `;
+    }
+  } else {
+    show('modal-active-controls');
+    hide('modal-inactive-controls');
+  }
+
+  if (hV) {
+    show('product-modal-options-container');
+    setH('product-modal-options', p.variants.map((r, x) => {
+      const vStock = r.stock !== undefined && r.stock !== null && r.stock !== '' && Number(r.stock) <= 0;
+      return `
+      <button class="px-3.5 py-2 rounded-xl text-xs font-bold border-2 transition-all flex items-center gap-1.5 ${x === cVar ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-500 text-emerald-700 dark:text-emerald-400 shadow-sm' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-emerald-300 dark:hover:border-emerald-600'}" onclick="selectVariant(${x})">
+        <span>${esc(r.name)}</span>
+        ${vStock ? `<span class="text-[8px] font-bold px-1 py-0.2 rounded bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300">Habis</span>` : ''}
+      </button>
+      `;
+    }).join(''));
+  } else {
     hide('product-modal-options-container');
   }
   uMPP();
