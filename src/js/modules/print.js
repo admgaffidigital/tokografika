@@ -1262,31 +1262,31 @@ window.renderPricetagProductList = () => {
     const qty = selectedPrintProducts[p.id] || 0;
     const cleanImg = p.img ? fixD(p.img) : '';
     const img = cleanImg 
-      ? `<img src="${esc(cleanImg)}" onerror="this.onerror=null;this.outerHTML='<div class=\\'w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-400 flex items-center justify-center shrink-0 text-sm border border-slate-200 dark:border-slate-700\\'><i class=\\'fa-solid fa-image\\'></i></div>';" class="w-10 h-10 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0" loading="lazy" alt="" />`
-      : `<div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-400 flex items-center justify-center shrink-0 text-sm border border-slate-200 dark:border-slate-700"><i class="fa-solid fa-image"></i></div>`;
+      ? `<img src="${esc(cleanImg)}" onerror="this.onerror=null;this.outerHTML='<div class=\\'w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 flex items-center justify-center shrink-0 text-sm border border-slate-200 dark:border-slate-700 shadow-xs\\'><i class=\\'fa-solid fa-box\\'></i></div>';" class="w-12 h-12 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0 shadow-xs" loading="lazy" alt="" />`
+      : `<div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-400 flex items-center justify-center shrink-0 text-sm border border-slate-200 dark:border-slate-700 shadow-xs"><i class="fa-solid fa-box"></i></div>`;
 
     return `
-      <div class="p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors ${isSelected ? 'border-l-4' : ''}" style="${isSelected ? 'background-color:var(--clr-p-10); border-left-color:var(--clr-p);' : ''}">
-        <div class="flex items-center gap-3 min-w-0 flex-1 cursor-pointer" onclick="toggleSelectPrintProduct(${p.id})">
-          <input type="checkbox" ${isSelected ? 'checked' : ''} class="w-4 h-4 rounded cursor-pointer" style="accent-color:var(--clr-p)" onclick="event.stopPropagation(); toggleSelectPrintProduct(${p.id})" />
+      <div class="p-3.5 sm:p-4 flex items-center justify-between gap-3 sm:gap-4 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-all ${isSelected ? 'border-l-4' : ''}" style="${isSelected ? 'background-color:var(--clr-p-10); border-left-color:var(--clr-p);' : ''}">
+        <div class="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1 cursor-pointer select-none" onclick="toggleSelectPrintProduct(${p.id})">
+          <input type="checkbox" ${isSelected ? 'checked' : ''} class="w-4 h-4 sm:w-5 sm:h-5 rounded-md cursor-pointer shrink-0" style="accent-color:var(--clr-p)" onclick="event.stopPropagation(); toggleSelectPrintProduct(${p.id})" />
           ${img}
-          <div class="min-w-0 flex-1">
-            <h4 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-white truncate">${esc(p.name)}</h4>
-            <div class="flex flex-wrap items-center gap-2 mt-0.5 text-[10px] text-slate-400 font-medium">
-              <span class="font-black" style="color:var(--clr-p)">${fCur(p.price)}</span>
-              ${p.sku ? `<span class="badge badge-xs badge-slate">${esc(p.sku)}</span>` : ''}
-              <span>${esc(p.category || '')}</span>
+          <div class="min-w-0 flex-1 pr-1">
+            <h4 class="font-black text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-2 leading-snug">${esc(p.name)}</h4>
+            <div class="flex flex-wrap items-center gap-2 mt-1 text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              <span class="font-black text-sm" style="color:var(--clr-p)">${fCur(p.price)}</span>
+              ${p.sku ? `<span class="font-mono text-[10px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded-md border border-slate-200 dark:border-slate-600">SKU: ${esc(p.sku)}</span>` : ''}
+              ${p.category ? `<span class="text-[10px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded-md border border-slate-200 dark:border-slate-600">${esc(p.category)}</span>` : ''}
             </div>
           </div>
         </div>
 
         <!-- Qty Cetak Stepper -->
-        <div class="flex items-center gap-1.5 shrink-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-1 shadow-xs">
-          <button type="button" onclick="changePrintProductQty(${p.id}, -1)" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 flex items-center justify-center text-xs font-bold active:scale-95 transition-all">
+        <div class="flex items-center gap-1 shrink-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-1 shadow-xs">
+          <button type="button" onclick="changePrintProductQty(${p.id}, -1)" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 flex items-center justify-center text-xs font-bold active:scale-95 transition-all" title="Kurangi">
             <i class="fa-solid fa-minus"></i>
           </button>
-          <input type="number" min="0" max="999" value="${qty}" onchange="setPrintProductQty(${p.id}, this.value)" class="w-10 text-center text-xs font-black bg-transparent border-0 focus:ring-0 text-slate-800 dark:text-white p-0" />
-          <button type="button" onclick="changePrintProductQty(${p.id}, 1)" class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold active:scale-95 transition-all" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
+          <input type="number" min="0" max="999" value="${qty}" onchange="setPrintProductQty(${p.id}, this.value)" class="w-10 sm:w-12 text-center text-xs sm:text-sm font-black bg-transparent border-0 focus:ring-0 text-slate-800 dark:text-white p-0" />
+          <button type="button" onclick="changePrintProductQty(${p.id}, 1)" class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold active:scale-95 transition-all shadow-xs" style="background-color:var(--clr-p-bg);color:var(--clr-p)" title="Tambah">
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -1307,8 +1307,8 @@ window.setPricetagZoom = (scale) => {
     if (b) {
       const match = (s === '50' && Math.abs(scale - 0.5) < 0.05) || (s === '75' && Math.abs(scale - 0.75) < 0.05) || (s === '100' && Math.abs(scale - 1) < 0.05);
       b.className = match
-        ? 'px-2 py-0.5 rounded-lg bg-white dark:bg-slate-600 shadow-xs text-slate-900 dark:text-white font-black'
-        : 'px-2 py-0.5 rounded-lg hover:bg-white dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 transition-all';
+        ? 'px-2.5 py-1 rounded-lg bg-white dark:bg-slate-600 shadow-xs text-slate-900 dark:text-white font-black'
+        : 'px-2.5 py-1 rounded-lg hover:bg-white dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 transition-all';
     }
   });
 };
@@ -1406,7 +1406,7 @@ window.proceedToPricetagPreview = () => {
               <div class="my-1">
                 <h3 class="font-black text-slate-900 text-xs sm:text-[13px] leading-tight line-clamp-2 uppercase">${esc(p.name)}</h3>
                 <div class="flex items-center gap-1.5 text-[9.5px] text-slate-500 font-bold mt-0.5">
-                  ${p.category ? `<span class="bg-slate-100 px-1 py-0.2 rounded">${esc(p.category)}</span>` : ''}
+                  ${p.category ? `<span class="bg-slate-100 px-1.5 py-0.5 rounded">${esc(p.category)}</span>` : ''}
                   ${p.sku ? `<span class="font-mono text-slate-400">SKU: ${esc(p.sku)}</span>` : ''}
                 </div>
               </div>
@@ -1477,6 +1477,22 @@ window.proceedToPricetagPreview = () => {
     const pageInfoEl = el('pricetag-preview-page-info');
     if (pageInfoEl) {
       pageInfoEl.textContent = `Total ${pages.length} Halaman A4 (${printQueue.length} Label)`;
+    }
+
+    const navContainer = el('pricetag-page-nav-btns');
+    if (navContainer) {
+      if (pages.length > 1) {
+        navContainer.innerHTML = `
+          <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-700/80 px-2.5 py-1 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-600 shadow-xs">
+            <span class="text-[10px] text-slate-400 uppercase font-bold">Ke Hal:</span>
+            <select onchange="const pages = document.querySelectorAll('.a4-pricetag-page'); if(pages[this.value]) pages[this.value].scrollIntoView({behavior:'smooth', block:'start'});" class="bg-transparent border-0 font-black cursor-pointer text-slate-800 dark:text-white focus:ring-0 p-0 text-xs">
+              ${pages.map((_, idx) => `<option value="${idx}">Hal ${idx + 1} / ${pages.length}</option>`).join('')}
+            </select>
+          </div>
+        `;
+      } else {
+        navContainer.innerHTML = '';
+      }
     }
 
     // Auto-fit on mobile screens
