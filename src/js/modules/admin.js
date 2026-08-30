@@ -1417,8 +1417,9 @@ const rAdmSet = () => {
             <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-list-ul text-emerald-600 mr-1"></i> Desain Menu Kategori</label>
             <div class="relative">
               <select id="set-category-style" class="admin-input cursor-pointer !py-3 appearance-none w-full font-bold">
-                <option value="image" ${appData.store.categoryStyle !== 'text' ? 'selected' : ''}>Kartu Gambar (Visual)</option>
-                <option value="text" ${appData.store.categoryStyle === 'text' ? 'selected' : ''}>Teks Pill (Minimalis)</option>
+                <option value="image" ${appData.store.categoryStyle === 'image' || !appData.store.categoryStyle ? 'selected' : ''}>Kartu Ikon Squircle Visual (E-Commerce)</option>
+                <option value="text" ${appData.store.categoryStyle === 'text' || appData.store.categoryStyle === 'chips' ? 'selected' : ''}>Pill Chips Modern (+ Jumlah Produk)</option>
+                <option value="grid" ${appData.store.categoryStyle === 'grid' ? 'selected' : ''}>Grid Menu 2 Baris (Ala App Mobile)</option>
               </select>
               <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[10px]"></i>
             </div>

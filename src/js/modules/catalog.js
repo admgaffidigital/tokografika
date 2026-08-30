@@ -197,29 +197,85 @@ const rDyn = () => {
     }
   }
 
-  // Render Menu Kategori
-  const cL = [{ name: 'Semua Produk', img: appData.store.allProductsIcon || 'https://placehold.co/150/10b981/ffffff?text=All' }, ...(appData.categories || [])];
+  // Render Menu Kategori dengan Product Counter Otomatis
+  const cL = [
+    { name: 'Semua Produk', img: appData.store.allProductsIcon || '' }, 
+    ...(appData.categories || [])
+  ];
+
+  const catStyle = appData.store.categoryStyle || 'image';
+  const catCont = el('dynamic-categories-container');
+  if (catCont) {
+    if (catStyle === 'grid') {
+      catCont.className = 'grid grid-rows-2 grid-flow-col auto-cols-[74px] sm:auto-cols-[88px] gap-2.5 sm:gap-3.5 overflow-x-auto hide-scrollbar no-scrollbar snap-x pb-2';
+    } else {
+      catCont.className = 'flex gap-2.5 sm:gap-3.5 overflow-x-auto hide-scrollbar no-scrollbar snap-x pb-1.5 items-center';
+    }
+  }
+
+  const catBadge = el('dyn-cat-count-badge');
+  if (catBadge) {
+    catBadge.innerText = `${(appData.categories || []).length} Kategori`;
+  }
   
-  setH('dynamic-categories-container', cL.map(c => 
-    appData.store.categoryStyle === 'text' 
-    ? `
-    <div onclick="filterCategory(decodeURIComponent('${encodeURIComponent(c.name).replace(/'/g, "%27")}'))" class="cursor-pointer shrink-0 snap-start">
-      <div class="px-4 py-2 rounded-full border-2 border-slate-200 dark:border-slate-700 ${aCat === c.name ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm'} transition-all font-bold text-[10px] sm:text-xs text-center uppercase tracking-wider">
-        ${esc(c.name)}
+  setH('dynamic-categories-container', cL.map(c => {
+    const isAll = c.name === 'Semua Produk';
+    const count = isAll 
+      ? (appData.products || []).length 
+      : (appData.products || []).filter(p => p.category === c.name).length;
+    const isActive = aCat === c.name;
+    const encodedName = encodeURIComponent(c.name).replace(/'/g, "%27");
+
+    // Mode 1: Chips / Text (Pill Chips Modern + Counter Badge)
+    if (catStyle === 'text' || catStyle === 'chips') {
+      return `
+      <div onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="cursor-pointer shrink-0 snap-start">
+        <div class="px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-full border-2 transition-all duration-200 flex items-center gap-2 font-bold text-xs text-center tracking-wide ${isActive ? 'text-white border-transparent shadow-md scale-[1.03]' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200/90 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm'}" style="${isActive ? 'background-color:var(--clr-p);' : ''}">
+          <i class="fa-solid ${isAll ? 'fa-boxes-stacked' : 'fa-tag'} text-[11px] ${isActive ? 'text-white' : 'text-slate-400 dark:text-slate-500'}"></i>
+          <span>${esc(c.name)}</span>
+          <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full ${isActive ? 'bg-white/25 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'}">${count}</span>
+        </div>
+      </div>
+      `;
+    }
+
+    // Mode 3: Grid (2-Row Interactive App Grid)
+    if (catStyle === 'grid') {
+      const hasImg = c.img && (c.img.includes('http') || c.img.includes('data:'));
+      return `
+      <div onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 w-[74px] sm:w-[88px] group snap-start">
+        <div class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl transition-all duration-300 group-hover:scale-105 flex items-center justify-center overflow-hidden ${isActive ? 'border-2 shadow-md ring-2 ring-offset-2 ring-emerald-500' : 'border-2 border-slate-200/90 dark:border-slate-700 bg-slate-50 dark:bg-slate-750 shadow-sm hover:border-slate-300'}" style="${isActive ? 'border-color:var(--clr-p);background-color:var(--clr-p-bg);' : ''}">
+          ${hasImg 
+            ? `<img data-src="${esc(fixD(c.img))}" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==" onerror="this.onerror=null;this.src='https://placehold.co/150/10b981/ffffff?text=Cat'" class="lazy-load opacity-0 transition-all duration-500 absolute inset-0 w-full h-full object-cover rounded-2xl"/>` 
+            : `<i class="fa-solid ${isAll ? 'fa-store' : 'fa-layer-group'} text-lg ${isActive ? '' : 'text-slate-500 dark:text-slate-400'}" style="${isActive ? 'color:var(--clr-p);' : ''}"></i>`}
+        </div>
+        <div class="text-center w-full px-0.5">
+          <span class="text-[10px] sm:text-[11px] block line-clamp-1 leading-tight ${isActive ? 'font-black' : 'font-bold text-slate-600 dark:text-slate-300'}" style="${isActive ? 'color:var(--clr-p);' : ''}">
+            ${esc(c.name)}
+          </span>
+        </div>
+      </div>
+      `;
+    }
+
+    // Mode 2 (Default): Image Cards (Visual Squircle E-Commerce Icon Cards)
+    const hasImg = c.img && (c.img.includes('http') || c.img.includes('data:'));
+    return `
+    <div onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="flex flex-col items-center gap-2 cursor-pointer shrink-0 w-[74px] sm:w-[86px] group snap-start">
+      <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl transition-all duration-300 group-hover:scale-105 flex items-center justify-center overflow-hidden ${isActive ? 'border-2 shadow-md ring-2 ring-offset-2 ring-emerald-500' : 'border-2 border-slate-200/90 dark:border-slate-700 bg-slate-50 dark:bg-slate-750 shadow-sm hover:border-slate-300'}" style="${isActive ? 'border-color:var(--clr-p);background-color:var(--clr-p-bg);' : ''}">
+        ${hasImg 
+          ? `<img data-src="${esc(fixD(c.img))}" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==" onerror="this.onerror=null;this.src='https://placehold.co/150/10b981/ffffff?text=Cat'" class="lazy-load opacity-0 transition-all duration-500 absolute inset-0 w-full h-full object-cover rounded-2xl"/>` 
+          : `<i class="fa-solid ${isAll ? 'fa-store' : 'fa-layer-group'} text-xl ${isActive ? '' : 'text-slate-500 dark:text-slate-400'}" style="${isActive ? 'color:var(--clr-p);' : ''}"></i>`}
+        <span class="absolute bottom-1 right-1 text-[8px] font-black px-1 py-0.2 rounded-md ${isActive ? 'bg-white text-slate-800 shadow-sm' : 'bg-slate-900/60 text-white backdrop-blur-xs'}">${count}</span>
+      </div>
+      <div class="text-center w-full px-0.5">
+        <span class="text-[10px] sm:text-[11px] block line-clamp-2 leading-tight ${isActive ? 'font-black' : 'font-bold text-slate-600 dark:text-slate-300'}" style="${isActive ? 'color:var(--clr-p);' : ''}">
+          ${esc(c.name)}
+        </span>
       </div>
     </div>
-    ` 
-    : `
-    <div onclick="filterCategory(decodeURIComponent('${encodeURIComponent(c.name).replace(/'/g, "%27")}'))" class="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 w-[64px] group snap-start">
-      <div class="relative w-12 h-12 rounded-xl bg-white dark:bg-slate-800 transition-transform group-hover:-translate-y-1 ${aCat === c.name ? 'border-2 border-emerald-500 shadow-md' : 'border-2 border-slate-200 dark:border-slate-700 shadow-sm'}">
-        <img data-src="${esc(c.img)}" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==" onerror="this.onerror=null;this.src='https://placehold.co/150/10b981/ffffff?text=Cat'" class="lazy-load opacity-0 transition-all duration-700 absolute inset-0 w-full h-full object-cover rounded-xl"/>
-      </div>
-      <span class="text-[9px] text-center w-full line-clamp-2 leading-tight px-1 ${aCat === c.name ? 'font-bold text-emerald-700 dark:text-emerald-400' : 'font-bold text-slate-500 dark:text-slate-400'} uppercase">
-        ${esc(c.name)}
-      </span>
-    </div>
-    `
-  ).join(''));
+    `;
+  }).join(''));
   
   if (el('dyn-qris-img') && appData.payment) el('dyn-qris-img').src = appData.payment.qrisUrl;
   
@@ -910,6 +966,9 @@ window.showBuyerGuideTopic = (topic) => {
     activeBtn.classList.add('shadow-sm', 'text-white');
     activeBtn.style.backgroundColor = 'var(--clr-p)';
     activeBtn.style.color = '#ffffff';
+    try {
+      activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    } catch(e) {}
   }
 
   const data = buyerGuideTopicsData[target];

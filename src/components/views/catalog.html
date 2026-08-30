@@ -53,12 +53,17 @@
     
     <!-- Dynamic Categories -->
     <div class='w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5'>
-      <div class='bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 dark:border-slate-700/80'>
-        <div class='flex items-center gap-2 mb-3'>
-          <i class='fa-solid fa-layer-group text-emerald-500 dark:text-emerald-400 text-xs'></i>
-          <h3 class='font-bold text-slate-800 dark:text-white text-xs tracking-widest uppercase'>Kategori</h3>
+      <div class='bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 dark:border-slate-700/80'>
+        <div class='flex items-center justify-between gap-2 mb-3 sm:mb-3.5'>
+          <div class='flex items-center gap-2'>
+            <div class='w-6 h-6 rounded-lg flex items-center justify-center text-xs shadow-xs' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
+              <i class='fa-solid fa-layer-group'></i>
+            </div>
+            <h3 class='font-bold text-slate-800 dark:text-white text-xs sm:text-sm tracking-wider uppercase'>Kategori Produk</h3>
+          </div>
+          <span class='text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400' id='dyn-cat-count-badge'>Pilih Kategori</span>
         </div>
-        <div class='flex gap-3 overflow-x-auto hide-scrollbar snap-x pb-1' id='dynamic-categories-container'></div>
+        <div class='flex gap-2.5 sm:gap-3.5 overflow-x-auto hide-scrollbar no-scrollbar snap-x pb-1' id='dynamic-categories-container'></div>
       </div>
     </div>
     
