@@ -1145,15 +1145,28 @@ window.submitPosTransaction = async () => {
       note: custNote || null,
       method: posDeliveryMethod === 'pickup' ? 'Ambil di Toko' : 'Dikirim'
     },
-    items: posCart.map(item => ({
-      id: item.id,
-      name: item.name,
-      variantName: item.variantName || null,
-      price: item.price,
-      effectivePrice: getEffP(item),
-      qty: item.qty,
-      unit: item.unit || ''
-    })),
+    items: posCart.map(item => {
+      const prod = (appData.products || []).find(p => String(p.id) === String(item.id) || p.name === item.name);
+      let itemCost = 0;
+      if (prod) {
+        if (item.variantName && prod.variants && prod.variants.length > 0) {
+          const vObj = prod.variants.find(v => v.name === item.variantName);
+          itemCost = parseFloat(vObj?.costPrice) || parseFloat(prod.costPrice) || 0;
+        } else {
+          itemCost = parseFloat(prod.costPrice) || 0;
+        }
+      }
+      return {
+        id: item.id,
+        name: item.name,
+        variantName: item.variantName || null,
+        price: item.price,
+        effectivePrice: getEffP(item),
+        costPrice: itemCost,
+        qty: item.qty,
+        unit: item.unit || ''
+      };
+    }),
     payment: {
       subtotal: subtotal,
       shippingCost: posShippingCost,

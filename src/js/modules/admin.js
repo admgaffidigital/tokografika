@@ -404,14 +404,16 @@ window.renderReportView = () => {
       totalItemsSold += qty;
       const price = parseFloat(item.price || item.effectivePrice) || 0;
 
-      const prod = (appData.products || []).find(p => String(p.id) === String(item.id) || p.name === item.name);
-      let costPerUnit = 0;
-      if (prod) {
-        if (item.variantName && prod.variants && prod.variants.length > 0) {
-          const v = prod.variants.find(vr => vr.name === item.variantName);
-          costPerUnit = parseFloat(v?.costPrice) || parseFloat(prod.costPrice) || 0;
-        } else {
-          costPerUnit = parseFloat(prod.costPrice) || 0;
+      let costPerUnit = typeof item.costPrice !== 'undefined' && item.costPrice !== '' ? (parseFloat(item.costPrice) || 0) : 0;
+      if (!costPerUnit) {
+        const prod = (appData.products || []).find(p => String(p.id) === String(item.id) || p.name === item.name);
+        if (prod) {
+          if (item.variantName && prod.variants && prod.variants.length > 0) {
+            const v = prod.variants.find(vr => vr.name === item.variantName);
+            costPerUnit = parseFloat(v?.costPrice) || parseFloat(prod.costPrice) || 0;
+          } else {
+            costPerUnit = parseFloat(prod.costPrice) || 0;
+          }
         }
       }
       const itemCost = costPerUnit * qty;
@@ -622,14 +624,16 @@ window.renderReportView = () => {
           (o.items || []).forEach(it => {
             const q = parseInt(it.qty) || 1;
             itemCount += q;
-            const pr = (appData.products || []).find(p => String(p.id) === String(it.id) || p.name === it.name);
-            let cpu = 0;
-            if (pr) {
-              if (it.variantName && pr.variants && pr.variants.length > 0) {
-                const vr = pr.variants.find(v => v.name === it.variantName);
-                cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
-              } else {
-                cpu = parseFloat(pr.costPrice) || 0;
+            let cpu = typeof it.costPrice !== 'undefined' && it.costPrice !== '' ? (parseFloat(it.costPrice) || 0) : 0;
+            if (!cpu) {
+              const pr = (appData.products || []).find(p => String(p.id) === String(it.id) || p.name === it.name);
+              if (pr) {
+                if (it.variantName && pr.variants && pr.variants.length > 0) {
+                  const vr = pr.variants.find(v => v.name === it.variantName);
+                  cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
+                } else {
+                  cpu = parseFloat(pr.costPrice) || 0;
+                }
               }
             }
             ordCost += (cpu * q);
@@ -703,14 +707,16 @@ window.exportFinancialReportCsv = () => {
     let ordCost = 0;
     (o.items || []).forEach(it => {
       const q = parseInt(it.qty) || 1;
-      const pr = (appData.products || []).find(p => String(p.id) === String(it.id) || p.name === it.name);
-      let cpu = 0;
-      if (pr) {
-        if (it.variantName && pr.variants && pr.variants.length > 0) {
-          const vr = pr.variants.find(v => v.name === it.variantName);
-          cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
-        } else {
-          cpu = parseFloat(pr.costPrice) || 0;
+      let cpu = typeof it.costPrice !== 'undefined' && it.costPrice !== '' ? (parseFloat(it.costPrice) || 0) : 0;
+      if (!cpu) {
+        const pr = (appData.products || []).find(p => String(p.id) === String(it.id) || p.name === it.name);
+        if (pr) {
+          if (it.variantName && pr.variants && pr.variants.length > 0) {
+            const vr = pr.variants.find(v => v.name === it.variantName);
+            cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
+          } else {
+            cpu = parseFloat(pr.costPrice) || 0;
+          }
         }
       }
       ordCost += (cpu * q);
