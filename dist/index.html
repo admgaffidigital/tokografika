@@ -4460,31 +4460,6 @@ window.openAdminTab = (t, fH = !1) => {
 
   if (!fH) history.pushState({ view: 'view-admin', tab: t }, '', '');
   
-  const lockedTabs = ['settings', 'vouchers', 'banks', 'banners', 'accounts'];
-  if (!isPro && lockedTabs.includes(t)) {
-    hide('admin-dashboard-view'); 
-    show('admin-content-view'); 
-    show('btn-admin-back'); 
-    hide('admin-logo-box'); 
-    setIn('admin-header-title', 'Akses Terkunci');
-    setH('admin-content', `
-    <div class="text-center py-10 bg-white dark:bg-slate-800 rounded-2xl border border-amber-200 dark:border-amber-900/30 shadow-sm px-6 max-w-lg mx-auto mt-4">
-      <div class="w-16 h-16 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i class="fa-solid fa-lock text-3xl"></i>
-      </div>
-      <h2 class="text-base font-bold text-slate-900 dark:text-white mb-2">Fitur Terkunci (Versi PRO)</h2>
-      <p class="text-xs text-slate-500 dark:text-slate-400 font-bold mb-6">Menu <b>${t.toUpperCase()}</b> hanya untuk pengguna PRO. Masukkan kode lisensi Anda.</p>
-      <div class="max-w-xs mx-auto flex flex-col gap-3">
-        <input id="pro-license-input" type="text" placeholder="KODE LISENSI..." class="admin-input !py-3 text-center uppercase tracking-widest font-semibold text-xs"/>
-        <button onclick="activatePro()" class="w-full bg-amber-400 hover:bg-amber-500 text-amber-950 font-bold py-3 rounded-xl shadow-sm transition-all text-xs border border-amber-500">
-          <i class="fa-solid fa-key mr-1.5"></i> Aktivasi Sekarang
-        </button>
-      </div>
-    </div>
-    `);
-    return;
-  }
-  
   hide('admin-dashboard-view'); 
   show('admin-content-view'); 
   show('btn-admin-back'); 
