@@ -327,7 +327,10 @@ const rCat = () => {
             ${bH}
             <h4 class="text-xs font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
           </div>
-          <p class="text-emerald-600 dark:text-emerald-400 font-bold text-sm sm:text-base mt-auto pt-1">${fCur(p.price)}${p.unit ? `<span class="text-slate-400 dark:text-slate-500 font-medium text-[10px] ml-1">/ ${esc(p.unit)}</span>` : ''}</p>
+          <div class="mt-auto pt-1.5 flex items-baseline justify-between gap-1 flex-wrap">
+            <span class="text-emerald-600 dark:text-emerald-400 font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
+            ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide shrink-0">/${esc(p.unit)}</span>` : ''}
+          </div>
         </div>
       </div>
       `;
@@ -343,7 +346,10 @@ const rCat = () => {
             ${bH}
             <h4 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
           </div>
-          <p class="text-emerald-600 dark:text-emerald-400 font-bold text-sm sm:text-base">${fCur(p.price)}${p.unit ? `<span class="text-slate-400 dark:text-slate-500 font-medium text-[10px] ml-1">/ ${esc(p.unit)}</span>` : ''}</p>
+          <div class="mt-auto pt-1 flex items-baseline gap-2">
+            <span class="text-emerald-600 dark:text-emerald-400 font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
+            ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide">/${esc(p.unit)}</span>` : ''}
+          </div>
         </div>
       </div>
       `;
@@ -434,7 +440,12 @@ const rProdMod = () => {
   }
   
   setIn('product-modal-title', p.name);
-  setIn('product-modal-price', fCur(v?.price ?? p.price) + (p.unit ? ` / ${p.unit}` : ''));
+  setH('product-modal-price', `
+    <div class="flex items-baseline gap-2 flex-wrap">
+      <span class="text-emerald-600 dark:text-emerald-400 font-black text-2xl sm:text-3xl">${fCur(v?.price ?? p.price)}</span>
+      ${p.unit ? `<span class="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700 uppercase tracking-wider">/ ${esc(p.unit)}</span>` : ''}
+    </div>
+  `);
   setIn('product-modal-desc', p.desc || '-');
   
   setH('product-modal-badges', `
