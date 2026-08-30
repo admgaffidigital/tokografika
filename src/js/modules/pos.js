@@ -145,7 +145,14 @@ window.activateSubscriptionToken = async () => {
 // -----------------------------------------------------------------------------
 // 2. POS VIEW INITIALIZATION & CLOCK
 // -----------------------------------------------------------------------------
-window.initPosView = () => {
+window.initPosView = async () => {
+  if (!isPro) {
+    const cachedToken = (localStorage.getItem('freshmart_cache_PRO') || appData?.licenseKey || '').trim().toUpperCase();
+    if (cachedToken) {
+      isPro = await verifyLicenseInDb(cachedToken, 'PRO');
+    }
+  }
+
   if (!isPro) {
     window.openSubscriptionModal('Fitur POS Kasir & Struk hanya tersedia untuk pengguna Toko Grafika POS Premium (Promo Rp 35.000/bln).');
     return;

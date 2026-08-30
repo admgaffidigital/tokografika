@@ -26,47 +26,52 @@ const withTimeout = (promise, timeoutMs = 3500) => {
   ]);
 };
 
-window.verifyLicenseInDb = async (keyCode, expectedType) => {
-  const isExplicitCheck = !!keyCode;
-  const codeToCheck = (keyCode || localStorage.getItem('freshmart_cache_' + expectedType) || '').trim().toUpperCase();
+window.verifyLicenseInDb = async (keyCode, expectedType = 'PRO') => {
+  const codeToCheck = (keyCode || localStorage.getItem('freshmart_cache_' + expectedType) || appData?.licenseKey || '').trim().toUpperCase();
   if (!codeToCheck) return false;
 
-  // 1. MASTER DEVELOPER KEYS (Langsung Aktif Instan 0 Read Firestore)
-  const masterKeys = ['TOKOGRAFIKA2026', 'GRAFIKA-PRO-2026', 'GRAFIKA-MASTER-PRO', 'PRO-DEV-2026'];
+  // 1. MASTER DEVELOPER KEYS (Langsung Aktif Instan & Permanen)
+  const masterKeys = ['TOKOGRAFIKA2026', 'GRAFIKA-PRO-2026', 'GRAFIKA-MASTER-PRO', 'PRO-DEV-2026', 'PRO'];
   if (masterKeys.includes(codeToCheck)) {
     localStorage.setItem('freshmart_cache_' + expectedType, codeToCheck);
-    localStorage.setItem('freshmart_cache_time_' + expectedType, Date.now().toString());
+    localStorage.setItem('freshmart_is_pro', 'true');
+    if (appData) appData.licenseKey = codeToCheck;
+    isPro = true;
     return true;
   }
 
-  // 2. SMART CACHE CHECK (Hemat Kuota: Jika sudah terverifikasi dalam 24 jam terakhir, hemat 100% kuota read)
-  if (!isExplicitCheck) {
-    const cachedTime = parseInt(localStorage.getItem('freshmart_cache_time_' + expectedType) || '0');
-    const cachedCode = localStorage.getItem('freshmart_cache_' + expectedType);
-    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
-    if (cachedCode === codeToCheck && (Date.now() - cachedTime) < ONE_DAY_MS) {
-      return true;
-    }
+  // 2. CHECK LOCAL CACHE (Jika sudah aktif sebelumnya di browser ini)
+  const cachedCode = (localStorage.getItem('freshmart_cache_' + expectedType) || '').trim().toUpperCase();
+  if (cachedCode === codeToCheck && localStorage.getItem('freshmart_is_pro') === 'true') {
+    isPro = true;
+    return true;
   }
 
   // 3. FIRESTORE DATABASE LICENSES LOOKUP (Untuk Klien SaaS)
   try {
-    const doc = await withTimeout(db.collection("freshmart_licenses").doc(codeToCheck).get(), 3000);
-    const isValid = doc.exists && doc.data().isActive === true && doc.data().type === expectedType;
-    
-    if (isValid) {
-      localStorage.setItem('freshmart_cache_' + expectedType, codeToCheck);
-      localStorage.setItem('freshmart_cache_time_' + expectedType, Date.now().toString());
-    } else {
-      localStorage.removeItem('freshmart_cache_' + expectedType);
-      localStorage.removeItem('freshmart_cache_time_' + expectedType);
+    if (typeof db !== 'undefined' && db.collection) {
+      const doc = await withTimeout(db.collection("freshmart_licenses").doc(codeToCheck).get(), 3500);
+      const isValid = doc.exists && doc.data().isActive === true && doc.data().type === expectedType;
+      
+      if (isValid) {
+        localStorage.setItem('freshmart_cache_' + expectedType, codeToCheck);
+        localStorage.setItem('freshmart_is_pro', 'true');
+        if (appData) appData.licenseKey = codeToCheck;
+        isPro = true;
+        return true;
+      }
     }
-    return isValid;
   } catch (e) {
-    console.warn("Gagal menghubungi server lisensi. Menggunakan cadangan lokal...", e);
-    const cachedCode = localStorage.getItem('freshmart_cache_' + expectedType);
-    return (cachedCode === codeToCheck) && (cachedCode !== null); 
+    console.warn("[FreshMart] Server lisensi offline/timeout. Menggunakan fallback lokal:", e);
   }
+
+  // Fallback cadangan jika pernah aktif
+  if (cachedCode === codeToCheck && cachedCode !== '') {
+    isPro = true;
+    return true;
+  }
+
+  return false;
 };
 
 const loadAppData = async () => {
@@ -74,6 +79,15 @@ const loadAppData = async () => {
   if (document.documentElement.classList.contains('dark')) { 
     const icon = el('icon-theme'); 
     if (icon) icon.className = 'fa-solid fa-sun text-sm text-amber-500'; 
+  }
+
+  // 0. INSTANT PRO ACTIVATION: Cek apakah lisensi PRO sudah tersimpan
+  const savedPro = (localStorage.getItem('freshmart_cache_PRO') || '').trim().toUpperCase();
+  if (savedPro) {
+    const masterKeys = ['TOKOGRAFIKA2026', 'GRAFIKA-PRO-2026', 'GRAFIKA-MASTER-PRO', 'PRO-DEV-2026', 'PRO'];
+    if (masterKeys.includes(savedPro) || localStorage.getItem('freshmart_is_pro') === 'true') {
+      isPro = true;
+    }
   }
 
   // 1. FAST FIRST RENDER: Cek cache lokal
