@@ -83,9 +83,9 @@ function build() {
   console.log(`✅ [dist/theme.xml] built successfully! (${lines} lines, ${sizeKB} KB)`);
 
   const previewHtml = generatePreviewHtml(finalXml);
-  const previewHtmlPath = path.join(distDir, 'preview.html');
-  fs.writeFileSync(previewHtmlPath, previewHtml, 'utf8');
-  console.log(`✅ [dist/preview.html] generated for local testing!`);
+  const indexPath = path.join(distDir, 'index.html');
+  fs.writeFileSync(indexPath, previewHtml, 'utf8');
+  console.log(`✅ [dist/index.html] generated for web preview!`);
 
   const elapsed = Date.now() - startTime;
   console.log(`✨ Build finished in ${elapsed}ms\n`);

@@ -50,16 +50,6 @@ function bloggerPlugin() {
         console.error('Error generating preview HTML:', err);
         return html;
       }
-    },
-
-    // Ensure dist/index.html matches dist/preview.html on production build
-    closeBundle() {
-      const distDir = path.resolve(__dirname, 'dist');
-      const previewPath = path.join(distDir, 'preview.html');
-      const indexPath = path.join(distDir, 'index.html');
-      if (fs.existsSync(previewPath)) {
-        fs.copyFileSync(previewPath, indexPath);
-      }
     }
   };
 }
