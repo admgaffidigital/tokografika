@@ -38,11 +38,21 @@
     <link rel='preconnect' href='https://cdnjs.cloudflare.com'/>
     <link rel='preconnect' href='https://www.gstatic.com'/>
     <link rel='dns-prefetch' href='https://cdn.jsdelivr.net'/>
+    <link rel='dns-prefetch' href='https://wsrv.nl'/>
     <link rel='dns-prefetch' href='https://lh3.googleusercontent.com'/>
     
     <b:skin><![CDATA[ @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap'); ]]></b:skin>
     
     <!-- External CDN Scripts & Libraries -->
+    <script>//<![CDATA[
+      (function(){
+        const origWarn = console.warn;
+        console.warn = function(...args) {
+          if (args[0] && typeof args[0] === 'string' && args[0].includes('cdn.tailwindcss.com should not be used in production')) return;
+          origWarn.apply(console, args);
+        };
+      })();
+    //]]></script>
     <script src='https://cdn.tailwindcss.com'></script>
     <script>//<![CDATA[
       tailwind.config = { darkMode: 'class' }

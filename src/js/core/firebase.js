@@ -6,7 +6,8 @@ firebase.initializeApp(fbC);
 const db = firebase.firestore(); 
 const auth = firebase.auth(); 
 
-db.settings({ ignoreUndefinedProperties: true });
+// Gunakan merge: true agar tidak memicu peringatan override host di Firestore 10.8.1
+db.settings({ ignoreUndefinedProperties: true, merge: true });
 
 // Helper timeout untuk Firestore agar tidak hang jika offline / koneksi lambat
 const withTimeout = (promise, timeoutMs = 3500) => {

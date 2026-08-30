@@ -25,12 +25,58 @@ const _drawTextFallback = (ctx, size, storeName) => {
   ctx.fillText(initials, size / 2, size / 2);
 };
 
+// Robust image loader dengan auto-proxy CORS untuk Google Drive & external CDN
 const _loadImgOnce = (url) => new Promise((resolve, reject) => {
+  if (!url || typeof url !== 'string') return reject(new Error('Invalid image URL'));
+  
+  let cleanUrl = fixD(url.trim());
+  
+  // Data URL tidak memerlukan proxy
+  if (cleanUrl.startsWith('data:image/')) {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Failed to load data URL image'));
+    img.src = cleanUrl;
+    return;
+  }
+  
+  // Gunakan wsrv.nl proxy untuk URL eksternal agar aman dari CORS block browser
+  let targetUrl = cleanUrl;
+  if (!cleanUrl.includes('wsrv.nl') && /^https?:\/\//i.test(cleanUrl)) {
+    targetUrl = `https://wsrv.nl/?url=${encodeURIComponent(cleanUrl)}&w=512&output=png`;
+  }
+  
+  let done = false;
   const img = new Image();
   img.crossOrigin = 'anonymous';
-  img.onload = () => resolve(img);
-  img.onerror = () => reject(new Error('Failed to load image'));
-  img.src = url;
+  
+  img.onload = () => {
+    if (done) return;
+    done = true;
+    resolve(img);
+  };
+  
+  img.onerror = () => {
+    if (targetUrl !== cleanUrl) {
+      // Coba fallback langsung jika proxy gagal
+      const fallbackImg = new Image();
+      fallbackImg.crossOrigin = 'anonymous';
+      fallbackImg.onload = () => { if (!done) { done = true; resolve(fallbackImg); } };
+      fallbackImg.onerror = () => { if (!done) { done = true; reject(new Error('Image failed to load via CORS')); } };
+      fallbackImg.src = cleanUrl;
+    } else {
+      if (!done) { done = true; reject(new Error('Image failed to load')); }
+    }
+  };
+  
+  setTimeout(() => {
+    if (!done) {
+      done = true;
+      reject(new Error('Image load timeout'));
+    }
+  }, 3500);
+  
+  img.src = targetUrl;
 });
 
 const renderLogoToCanvas = async (logo, themeHex, storeName, size) => {
