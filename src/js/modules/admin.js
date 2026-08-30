@@ -1327,6 +1327,30 @@ const rAdmSet = () => {
             </div>
           </div>
         </div>
+
+        <!-- Pengaturan Ukuran Printer Struk Kasir (58mm / 80mm) -->
+        <div class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 mt-4">
+          <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">
+            <i class="fa-solid fa-print text-emerald-500 mr-1"></i> Ukuran Kertas Printer Struk Thermal Kasir
+          </label>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mb-3">Pilih ukuran lebar kertas printer thermal default yang digunakan toko untuk mencetak struk kasir & pesanan.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label class="flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all bg-white dark:bg-slate-800 ${appData.store.printerPaper !== '80' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700'}">
+              <input type="radio" name="store-printer-paper" value="58" ${appData.store.printerPaper !== '80' ? 'checked' : ''} onchange="appData.store.printerPaper='58'; try{localStorage.setItem('freshmart_printer_paper','58');}catch(e){}" class="text-emerald-600 focus:ring-emerald-500" />
+              <div>
+                <div class="text-xs font-bold text-slate-800 dark:text-white">Printer 58mm (Kecil / Portabel)</div>
+                <div class="text-[10px] text-slate-400">Standar 32 Kolom (Bluetooth mini kasir)</div>
+              </div>
+            </label>
+            <label class="flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all bg-white dark:bg-slate-800 ${appData.store.printerPaper === '80' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700'}">
+              <input type="radio" name="store-printer-paper" value="80" ${appData.store.printerPaper === '80' ? 'checked' : ''} onchange="appData.store.printerPaper='80'; try{localStorage.setItem('freshmart_printer_paper','80');}catch(e){}" class="text-emerald-600 focus:ring-emerald-500" />
+              <div>
+                <div class="text-xs font-bold text-slate-800 dark:text-white">Printer 80mm (Besar / Standar POS)</div>
+                <div class="text-[10px] text-slate-400">Standar 48 Kolom (Desktop POS / Kasir Resto & Minimarket)</div>
+              </div>
+            </label>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1551,9 +1575,12 @@ window.saveAdminSettings = async () => {
     appData.store.themeColor = getV('set-theme-color');
     appData.store.bgStyle = getV('set-bg-style') || appData.store.bgStyle || 'hero-arch';
     appData.store.bgImage = fixD(getV('set-bg-image'));
+    const selPaper = document.querySelector('input[name="store-printer-paper"]:checked')?.value || '58';
+    appData.store.printerPaper = selPaper;
     try { 
       localStorage.setItem('freshmart_bg_style', appData.store.bgStyle); 
       localStorage.setItem('freshmart_bg_image', appData.store.bgImage || '');
+      localStorage.setItem('freshmart_printer_paper', selPaper);
     } catch(e) {}
 
     if(!appData.store.social) appData.store.social = {};
