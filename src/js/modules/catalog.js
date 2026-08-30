@@ -535,50 +535,49 @@ window.selectVariant = i => { cVar = i; rProdMod(); };
 
 const buyerGuideTopicsData = {
   order_flow: {
-    title: 'Panduan Cara Membuat Pesanan Online Lengkap',
+    title: 'Panduan Cara Membuat Pesanan Online',
     icon: 'fa-cart-shopping',
-    color: 'text-emerald-500',
     content: `
       <div class="space-y-4 text-xs sm:text-sm">
-        <div class="p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-2xl border border-emerald-200 dark:border-emerald-800/50">
-          <h4 class="font-bold text-emerald-800 dark:text-emerald-300 text-sm mb-1.5 flex items-center gap-2">
-            <i class="fa-solid fa-circle-check"></i> Belanja Mudah & Cepat di Toko Grafika
+        <div class="p-4 rounded-2xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06)">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2" style="color:var(--clr-p)">
+            <i class="fa-solid fa-circle-check"></i> Alur Belanja Cepat & Praktis
           </h4>
-          <p class="text-xs text-emerald-700 dark:text-emerald-400 leading-relaxed">
-            Anda dapat memesan barang langsung dari katalog website kami dengan proses mudah dalam hitungan detik. Pesanan otomatis terhubung ke WhatsApp CS dan tercatat rapi di sistem.
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Pesan produk langsung dari katalog toko kami dalam beberapa langkah mudah. Pesanan otomatis tersimpan di sistem dan Anda langsung terhubung ke WhatsApp CS toko.
           </p>
         </div>
 
-        <div class="space-y-3">
-          <div class="flex gap-3 items-start">
-            <div class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 font-bold flex items-center justify-center shrink-0 text-xs">1</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 flex gap-3 items-start">
+            <div class="w-8 h-8 rounded-xl text-white font-bold flex items-center justify-center shrink-0 text-xs shadow-sm" style="background-color:var(--clr-p)">1</div>
             <div>
-              <h5 class="font-bold text-slate-900 dark:text-white">Pilih Produk & Varian</h5>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Jelajahi kategori atau gunakan kolom pencarian / scan barcode. Klik produk yang diinginkan, pilih varian warna/ukuran/rasa jika tersedia, dan tentukan jumlah yang ingin dibeli.</p>
+              <h5 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm">Pilih Produk & Varian</h5>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">Cari barang favorit Anda, pilih varian jika ada (ukuran, warna, rasa), lalu tentukan jumlah pesanan.</p>
             </div>
           </div>
 
-          <div class="flex gap-3 items-start">
-            <div class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 font-bold flex items-center justify-center shrink-0 text-xs">2</div>
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 flex gap-3 items-start">
+            <div class="w-8 h-8 rounded-xl text-white font-bold flex items-center justify-center shrink-0 text-xs shadow-sm" style="background-color:var(--clr-p)">2</div>
             <div>
-              <h5 class="font-bold text-slate-900 dark:text-white">Masukkan ke Keranjang</h5>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tekan tombol <b>"Masuk Keranjang"</b>. Anda bisa melanjutkan belanja memilih barang lainnya, atau langsung klik ikon Keranjang di bawah untuk checkout.</p>
+              <h5 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm">Masuk Keranjang & Voucher</h5>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">Tekan "Masuk Keranjang". Di keranjang, Anda bisa memasukkan kode kupon diskon promo jika ada.</p>
             </div>
           </div>
 
-          <div class="flex gap-3 items-start">
-            <div class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 font-bold flex items-center justify-center shrink-0 text-xs">3</div>
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 flex gap-3 items-start">
+            <div class="w-8 h-8 rounded-xl text-white font-bold flex items-center justify-center shrink-0 text-xs shadow-sm" style="background-color:var(--clr-p)">3</div>
             <div>
-              <h5 class="font-bold text-slate-900 dark:text-white">Pilih Pengiriman (Kurir Toko / Ambil Sendiri)</h5>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pilih <b>"Diantar Kurir"</b> (tekan tombol <i>Deteksi Lokasi GPS</i> agar kurir sampai tepat ke alamat Anda), atau pilih <b>"Ambil di Toko"</b> untuk ambil pesanan langsung di toko bebas biaya ongkir.</p>
+              <h5 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm">Pengiriman & Titik GPS</h5>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">Pilih diantar kurir (klik tombol Deteksi GPS agar ongkir akurat) atau ambil sendiri di toko (Bebas Ongkir).</p>
             </div>
           </div>
 
-          <div class="flex gap-3 items-start">
-            <div class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 font-bold flex items-center justify-center shrink-0 text-xs">4</div>
+          <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 flex gap-3 items-start">
+            <div class="w-8 h-8 rounded-xl text-white font-bold flex items-center justify-center shrink-0 text-xs shadow-sm" style="background-color:var(--clr-p)">4</div>
             <div>
-              <h5 class="font-bold text-slate-900 dark:text-white">Pilih Pembayaran & Konfirmasi</h5>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Pilih pembayaran via <b>QRIS</b> (scan semua e-wallet & m-banking), <b>Transfer Bank</b>, atau <b>COD (Bayar Tunai di Tempat)</b>. Tekan konfirmasi dan Anda akan terhubung otomatis ke WhatsApp Toko membawa nota pesanan resmi!</p>
+              <h5 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm">Pembayaran & Invoice WhatsApp</h5>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">Pilih bayar via QRIS, Transfer Bank, atau COD. Pesanan langsung masuk ke sistem & WhatsApp toko!</p>
             </div>
           </div>
         </div>
@@ -588,47 +587,34 @@ const buyerGuideTopicsData = {
   variants: {
     title: 'Panduan Memilih Multi-Varian Produk',
     icon: 'fa-layer-group',
-    color: 'text-blue-500',
     content: `
       <div class="space-y-4 text-xs sm:text-sm">
-        <div class="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-2xl border border-blue-200 dark:border-blue-800/50">
-          <h4 class="font-bold text-blue-800 dark:text-blue-300 text-sm mb-1.5 flex items-center gap-2">
-            <i class="fa-solid fa-tags"></i> Ragam Ukuran, Warna, Rasa & Kemasan
+        <div class="p-4 rounded-2xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06)">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2" style="color:var(--clr-p)">
+            <i class="fa-solid fa-tags"></i> Ragam Pilihan Warna, Ukuran & Rasa
           </h4>
-          <p class="text-xs text-blue-700 dark:text-blue-400 leading-relaxed">
-            Produk dengan multi-varian memudahkan Anda memilih jenis barang yang spesifik sesuai kebutuhan tanpa perlu membuat pesanan terpisah.
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Satu produk bisa memiliki beberapa pilihan varian. Setiap varian memiliki harga, foto, dan stok masing-masing.
           </p>
         </div>
 
-        <div class="space-y-3">
-          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
-            <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <span class="w-6 h-6 rounded-md bg-blue-500 text-white flex items-center justify-center text-xs">1</span>
-              Cara Memilih Varian:
-            </h5>
-            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              Saat mengklik produk, perhatikan bagian <b>"Pilih Varian"</b>. Cukup ketuk salah satu tombol pilihan varian yang tertera (contoh: <i>Size L</i>, <i>Warna Hitam</i>, atau <i>Kemasan 500g</i>).
-            </p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <div class="w-7 h-7 rounded-lg text-white font-bold flex items-center justify-center text-xs shadow-sm" style="background-color:var(--clr-p)">1</div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Pilih Varian</h5>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Ketuk tombol varian yang Anda inginkan pada pop-up produk (contoh: Size L, Warna Hitam, 500g).</p>
           </div>
 
-          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
-            <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <span class="w-6 h-6 rounded-md bg-blue-500 text-white flex items-center justify-center text-xs">2</span>
-              Harga & Stok Otomatis Beradaptasi:
-            </h5>
-            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              Tiap varian memiliki harga dan stoknya masing-masing. Begitu Anda memilih varian, nominal harga pada layar akan langsung berubah sesuai harga varian tersebut.
-            </p>
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <div class="w-7 h-7 rounded-lg text-white font-bold flex items-center justify-center text-xs shadow-sm" style="background-color:var(--clr-p)">2</div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Harga Otomatis Update</h5>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Nominal harga dan subtotal akan langsung berganti otomatis mengikuti varian yang aktif.</p>
           </div>
 
-          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
-            <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <span class="w-6 h-6 rounded-md bg-blue-500 text-white flex items-center justify-center text-xs">3</span>
-              Beli Lebih dari 1 Jenis Varian:
-            </h5>
-            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              Anda bisa memilih Varian A lalu klik "Masuk Keranjang". Setelah itu buka kembali produk yang sama, pilih Varian B lalu klik "Masuk Keranjang". Kedua varian akan tercatat rapi di keranjang belanja Anda.
-            </p>
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <div class="w-7 h-7 rounded-lg text-white font-bold flex items-center justify-center text-xs shadow-sm" style="background-color:var(--clr-p)">3</div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Beli Varian Berbeda</h5>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Anda bisa memasukkan beberapa varian berbeda dari produk yang sama ke keranjang belanja Anda.</p>
           </div>
         </div>
       </div>
@@ -637,40 +623,39 @@ const buyerGuideTopicsData = {
   wholesale: {
     title: 'Panduan Cara Mendapatkan Harga Grosir Bertingkat',
     icon: 'fa-tags',
-    color: 'text-amber-500',
     content: `
       <div class="space-y-4 text-xs sm:text-sm">
-        <div class="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-200 dark:border-amber-800/50">
-          <h4 class="font-bold text-amber-800 dark:text-amber-300 text-sm mb-1.5 flex items-center gap-2">
-            <i class="fa-solid fa-arrow-down-wide-short"></i> Beli Banyak Makin Murah & Hemat!
+        <div class="p-4 rounded-2xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06)">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2" style="color:var(--clr-p)">
+            <i class="fa-solid fa-arrow-down-wide-short"></i> Beli Banyak Makin Hemat & Murah
           </h4>
-          <p class="text-xs text-amber-700 dark:text-amber-400 leading-relaxed">
-            Sistem toko secara otomatis memberikan potongan harga grosir jika jumlah pesanan Anda mencapai batas minimal kuota tier grosir.
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Sistem otomatis menerapkan harga grosir jika jumlah pesanan Anda memenuhi batas minimal kuota pembelian.
           </p>
         </div>
 
         <div class="space-y-3">
-          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80">
-            <h5 class="font-bold text-slate-900 dark:text-white text-xs mb-2">📌 Contoh Simulasi Tier Grosir:</h5>
-            <div class="space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
-              <div class="flex justify-between p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                <span>Beli 1 s/d 4 pcs (Eceran)</span>
-                <span class="font-bold text-slate-800 dark:text-white">Rp 50.000 / pcs</span>
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs mb-2.5">Simulasi Harga Bertingkat:</h5>
+            <div class="space-y-2 text-xs">
+              <div class="flex justify-between items-center p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
+                <span class="text-slate-600 dark:text-slate-300 font-medium">Beli 1 - 4 pcs (Eceran Normal)</span>
+                <span class="font-bold text-slate-900 dark:text-white">Rp 50.000 / pcs</span>
               </div>
-              <div class="flex justify-between p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800">
-                <span class="font-bold text-emerald-800 dark:text-emerald-300">Beli Min 5 pcs (Tier 1)</span>
-                <span class="font-extrabold text-emerald-600 dark:text-emerald-400">Rp 45.000 / pcs</span>
+              <div class="flex justify-between items-center p-2.5 rounded-xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.08)">
+                <span class="font-bold" style="color:var(--clr-p)">Beli Min 5 pcs (Grosir Tier 1)</span>
+                <span class="font-black text-sm" style="color:var(--clr-p)">Rp 45.000 / pcs</span>
               </div>
-              <div class="flex justify-between p-2 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700">
-                <span class="font-bold text-emerald-900 dark:text-emerald-200">Beli Min 20 pcs (Tier 2)</span>
-                <span class="font-extrabold text-emerald-600 dark:text-emerald-400">Rp 40.000 / pcs</span>
+              <div class="flex justify-between items-center p-2.5 rounded-xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.08)">
+                <span class="font-bold" style="color:var(--clr-p)">Beli Min 20 pcs (Grosir Tier 2)</span>
+                <span class="font-black text-sm" style="color:var(--clr-p)">Rp 40.000 / pcs</span>
               </div>
             </div>
           </div>
 
-          <div class="p-3 bg-amber-50 dark:bg-amber-950/30 rounded-xl border border-amber-200 dark:border-amber-800/50 text-xs text-amber-800 dark:text-amber-300 font-semibold flex items-center gap-2">
-            <i class="fa-solid fa-sparkles text-amber-500"></i>
-            <span>Diskon grosir aktif otomatis tanpa perlu memasukkan kode promo. Badge "GROSIR" akan menyala di keranjang Anda!</span>
+          <div class="p-3.5 rounded-2xl border flex items-center gap-2.5 text-xs font-semibold" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06);color:var(--clr-p)">
+            <i class="fa-solid fa-sparkles text-amber-500 text-sm"></i>
+            <span>Badge "GROSIR" otomatis muncul di keranjang belanja saat jumlah item mencapai batas grosir!</span>
           </div>
         </div>
       </div>
@@ -679,43 +664,44 @@ const buyerGuideTopicsData = {
   decimal: {
     title: 'Panduan Pembelian Jumlah Koma / Desimal (Kg, Meter, Liter)',
     icon: 'fa-scale-balanced',
-    color: 'text-indigo-500',
     content: `
       <div class="space-y-4 text-xs sm:text-sm">
-        <div class="p-4 bg-indigo-50 dark:bg-indigo-950/30 rounded-2xl border border-indigo-200 dark:border-indigo-800/50">
-          <h4 class="font-bold text-indigo-800 dark:text-indigo-300 text-sm mb-1.5 flex items-center gap-2">
-            <i class="fa-solid fa-scale-balanced"></i> Dukungan Satuan Timbangan & Potongan Bebas
+        <div class="p-4 rounded-2xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06)">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2" style="color:var(--clr-p)">
+            <i class="fa-solid fa-scale-balanced"></i> Satuan Timbangan & Ukuran Koma Bebas
           </h4>
-          <p class="text-xs text-indigo-700 dark:text-indigo-400 leading-relaxed">
-            Untuk barang yang dijual kiloan (kg), ons, gram, meteran, atau literan, Anda tidak harus membeli dalam jumlah bulat (1, 2, 3). Anda bebas membeli pecahan seperti 0.5 kg (setengah kilo).
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Untuk produk dengan satuan kiloan (kg), ons, gram, meteran, atau literan, Anda bebas membeli pecahan seperti 0.5 kg (setengah kilo).
           </p>
         </div>
 
-        <div class="space-y-2.5">
-          <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+        <div class="space-y-3">
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
             <h5 class="font-bold text-slate-900 dark:text-white text-xs">Cara Mengisi Jumlah Desimal:</h5>
-            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              Cukup klik pada kotak angka jumlah barang di pop-up produk, lalu ketik angka pecahan dengan titik (.) atau koma (,):
-            </p>
-            <div class="grid grid-cols-2 gap-2 pt-1 text-xs">
-              <div class="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                <span class="font-bold text-indigo-600">0.5</span> = Setengah kg / meter
+            <p class="text-xs text-slate-500 dark:text-slate-400">Ketik angka desimal langsung pada kotak jumlah barang di pop-up produk:</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs">
+              <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-center">
+                <span class="font-bold block text-sm" style="color:var(--clr-p)">0.5</span>
+                <span class="text-[10px] text-slate-400">1/2 kg atau 1/2 m</span>
               </div>
-              <div class="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                <span class="font-bold text-indigo-600">1.5</span> = Satu setengah kg
+              <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-center">
+                <span class="font-bold block text-sm" style="color:var(--clr-p)">1.5</span>
+                <span class="text-[10px] text-slate-400">1.5 kg / meter</span>
               </div>
-              <div class="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                <span class="font-bold text-indigo-600">0.25</span> = 250 gram / 1/4 kg
+              <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-center">
+                <span class="font-bold block text-sm" style="color:var(--clr-p)">0.25</span>
+                <span class="text-[10px] text-slate-400">250 gram / 1/4 kg</span>
               </div>
-              <div class="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                <span class="font-bold text-indigo-600">2.75</span> = 2.75 meter / kg
+              <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-center">
+                <span class="font-bold block text-sm" style="color:var(--clr-p)">2.75</span>
+                <span class="text-[10px] text-slate-400">2.75 kg / meter</span>
               </div>
             </div>
           </div>
 
-          <div class="p-3 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl border border-emerald-200 dark:border-emerald-800/50 text-xs text-emerald-800 dark:text-emerald-300 font-semibold flex items-center gap-2">
-            <i class="fa-solid fa-calculator text-emerald-500"></i>
-            <span>Harga subtotal otomatis dikalikan secara presisi dan akurat tanpa pembulatan yang merugikan Anda!</span>
+          <div class="p-3.5 rounded-2xl border flex items-center gap-2.5 text-xs font-semibold" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06);color:var(--clr-p)">
+            <i class="fa-solid fa-calculator text-amber-500 text-sm"></i>
+            <span>Subtotal dikalikan otomatis secara presisi matematis tanpa pembulatan yang merugikan.</span>
           </div>
         </div>
       </div>
@@ -724,41 +710,34 @@ const buyerGuideTopicsData = {
   voucher: {
     title: 'Panduan Klaim & Menggunakan Kupon Diskon Promo',
     icon: 'fa-ticket',
-    color: 'text-purple-500',
     content: `
       <div class="space-y-4 text-xs sm:text-sm">
-        <div class="p-4 bg-purple-50 dark:bg-purple-950/30 rounded-2xl border border-purple-200 dark:border-purple-800/50">
-          <h4 class="font-bold text-purple-800 dark:text-purple-300 text-sm mb-1.5 flex items-center gap-2">
-            <i class="fa-solid fa-percent"></i> Hemat Lebih Banyak dengan Voucher Diskon
+        <div class="p-4 rounded-2xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06)">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2" style="color:var(--clr-p)">
+            <i class="fa-solid fa-percent"></i> Belanja Lebih Hemat dengan Kupon
           </h4>
-          <p class="text-xs text-purple-700 dark:text-purple-400 leading-relaxed">
-            Dapatkan potongan harga produk atau potongan biaya ongkos kirim dengan memanfaatkan kode kupon promosi yang tersedia.
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Gunakan kode kupon promo untuk mendapatkan potongan persentase (%) produk atau gratis/potongan ongkir (Rp).
           </p>
         </div>
 
-        <div class="space-y-3">
-          <div class="flex gap-3 items-start">
-            <div class="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-900/40 text-purple-600 font-bold flex items-center justify-center shrink-0 text-xs">1</div>
-            <div>
-              <h5 class="font-bold text-slate-900 dark:text-white">Lihat Voucher di Beranda</h5>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Cek baris <b>Voucher Spesial</b> di halaman utama. Klik tombol "Salin Kode" pada voucher yang ingin Anda gunakan.</p>
-            </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <div class="w-7 h-7 rounded-lg text-white font-bold flex items-center justify-center text-xs shadow-sm" style="background-color:var(--clr-p)">1</div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Cek Voucher di Beranda</h5>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Lihat daftar kupon di halaman depan, lalu klik "Salin Kode" pada voucher yang tersedia.</p>
           </div>
 
-          <div class="flex gap-3 items-start">
-            <div class="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-900/40 text-purple-600 font-bold flex items-center justify-center shrink-0 text-xs">2</div>
-            <div>
-              <h5 class="font-bold text-slate-900 dark:text-white">Gunakan saat Checkout</h5>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tempel atau ketikkan kode voucher di kolom input voucher pada halaman keranjang atau halaman pengiriman, lalu klik Terapkan.</p>
-            </div>
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <div class="w-7 h-7 rounded-lg text-white font-bold flex items-center justify-center text-xs shadow-sm" style="background-color:var(--clr-p)">2</div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Tempel di Keranjang</h5>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Masukkan kode kupon pada kolom voucher keranjang belanja atau halaman checkout.</p>
           </div>
 
-          <div class="flex gap-3 items-start">
-            <div class="w-7 h-7 rounded-lg bg-purple-100 dark:bg-purple-900/40 text-purple-600 font-bold flex items-center justify-center shrink-0 text-xs">3</div>
-            <div>
-              <h5 class="font-bold text-slate-900 dark:text-white">Potongan Langsung Aktif</h5>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Total nominal yang harus Anda bayar akan otomatis berkurang sesuai nilai diskon kupon!</p>
-            </div>
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <div class="w-7 h-7 rounded-lg text-white font-bold flex items-center justify-center text-xs shadow-sm" style="background-color:var(--clr-p)">3</div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Diskon Terpotong</h5>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Total tagihan belanja Anda akan langsung berkurang seketika!</p>
           </div>
         </div>
       </div>
@@ -767,34 +746,33 @@ const buyerGuideTopicsData = {
   shipping: {
     title: 'Panduan Pengiriman & Deteksi Titik GPS',
     icon: 'fa-motorcycle',
-    color: 'text-cyan-500',
     content: `
       <div class="space-y-4 text-xs sm:text-sm">
-        <div class="p-4 bg-cyan-50 dark:bg-cyan-950/30 rounded-2xl border border-cyan-200 dark:border-cyan-800/50">
-          <h4 class="font-bold text-cyan-800 dark:text-cyan-300 text-sm mb-1.5 flex items-center gap-2">
+        <div class="p-4 rounded-2xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06)">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2" style="color:var(--clr-p)">
             <i class="fa-solid fa-location-dot"></i> Pilihan Pengantaran Cepat & Tepat
           </h4>
-          <p class="text-xs text-cyan-700 dark:text-cyan-400 leading-relaxed">
-            Pilih metode pengantaran kurir toko dengan ongkir transparan per kilometer, atau ambil sendiri langsung di gerai kami.
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Pilih metode pengantaran kurir toko dengan perhitungan ongkir per kilometer akurat, atau ambil sendiri langsung di toko.
           </p>
         </div>
 
-        <div class="space-y-3">
-          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
-            <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <i class="fa-solid fa-motorcycle text-cyan-500"></i> Opsi Diantar Kurir:
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm flex items-center gap-2">
+              <i class="fa-solid fa-motorcycle" style="color:var(--clr-p)"></i> Opsi Diantar Kurir:
             </h5>
-            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              Pesanan akan diantar oleh kurir toko ke alamat Anda. Klik tombol <b>"Deteksi Lokasi GPS"</b> pada form pengiriman agar browser membaca titik lokasi rumah Anda. Biaya ongkir akan dihitung otomatis sesuai jarak tempuh per KM.
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Pesanan diantar langsung oleh kurir toko ke alamat Anda. Klik tombol <b>"Deteksi Lokasi GPS"</b> agar sistem membaca titik rumah Anda dan menghitung ongkir per KM secara transparan.
             </p>
           </div>
 
-          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
-            <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <i class="fa-solid fa-store text-emerald-500"></i> Opsi Ambil di Toko (Self-Pickup):
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm flex items-center gap-2">
+              <i class="fa-solid fa-store" style="color:var(--clr-p)"></i> Opsi Ambil di Toko:
             </h5>
-            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-              Anda bisa mengambil barang pesanan langsung di toko kami. <b>Bebas Biaya Ongkir (100% Gratis)</b>. Setelah pesanan selesai dikemas, Anda tinggal datang ke toko dan menunjukkan nomor invoice Anda.
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Anda bisa mengambil barang pesanan langsung di gerai toko kami. <b>100% Bebas Ongkir (Gratis)</b>. Anda tinggal datang dan menunjukkan nomor invoice pesanan.
             </p>
           </div>
         </div>
@@ -804,86 +782,81 @@ const buyerGuideTopicsData = {
   payment: {
     title: 'Panduan Pembayaran (QRIS, Transfer Bank & COD)',
     icon: 'fa-wallet',
-    color: 'text-emerald-500',
     content: `
       <div class="space-y-4 text-xs sm:text-sm">
-        <div class="p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-2xl border border-emerald-200 dark:border-emerald-800/50">
-          <h4 class="font-bold text-emerald-800 dark:text-emerald-300 text-sm mb-1.5 flex items-center gap-2">
-            <i class="fa-solid fa-shield-halved"></i> Transaksi Aman, Cepat & Terpercaya
+        <div class="p-4 rounded-2xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06)">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2" style="color:var(--clr-p)">
+            <i class="fa-solid fa-shield-halved"></i> Transaksi Praktis, Aman & Terpercaya
           </h4>
-          <p class="text-xs text-emerald-700 dark:text-emerald-400 leading-relaxed">
-            Kami mendukung berbagai metode pembayaran yang fleksibel untuk kenyamanan transaksi Anda.
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Tersedia metode pembayaran digital instan maupun bayar tunai di tempat saat barang sampai.
           </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
-          <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80">
-            <h5 class="font-bold text-slate-900 dark:text-white text-xs mb-1 flex items-center gap-1.5">
-              <i class="fa-solid fa-qrcode text-indigo-500"></i> QRIS
-            </h5>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-              Scan barcode QRIS langsung menggunakan aplikasi GoPay, OVO, Dana, ShopeePay, LinkAja, atau Mobile Banking BCA/Mandiri/BRI/BNI.
-            </p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm shadow-sm" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
+              <i class="fa-solid fa-qrcode"></i>
+            </div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">QRIS Digital</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Scan QRIS dari aplikasi GoPay, OVO, Dana, ShopeePay, LinkAja, atau Mobile Banking BCA/Mandiri/BRI/BNI.</p>
           </div>
 
-          <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80">
-            <h5 class="font-bold text-slate-900 dark:text-white text-xs mb-1 flex items-center gap-1.5">
-              <i class="fa-solid fa-building-columns text-blue-500"></i> Transfer Bank
-            </h5>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-              Transfer ke nomor rekening resmi toko, lalu unggah foto bukti transfer saat checkout pesanan.
-            </p>
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm shadow-sm" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
+              <i class="fa-solid fa-building-columns"></i>
+            </div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Transfer Bank</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Transfer ke rekening bank toko, lalu unggah foto bukti transfer saat checkout pesanan.</p>
           </div>
 
-          <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80">
-            <h5 class="font-bold text-slate-900 dark:text-white text-xs mb-1 flex items-center gap-1.5">
-              <i class="fa-solid fa-hand-holding-dollar text-emerald-500"></i> COD (Bayar di Tempat)
-            </h5>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-              Bayar tunai kepada kurir toko saat barang telah sampai dan Anda terima di lokasi Anda.
-            </p>
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm shadow-sm" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
+              <i class="fa-solid fa-hand-holding-dollar"></i>
+            </div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">COD (Bayar di Tempat)</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Bayar tunai langsung kepada kurir toko saat barang telah Anda terima di lokasi tujuan.</p>
           </div>
         </div>
       </div>
     `
   },
   tracking: {
-    title: 'Panduan Lacak Status Pesanan & Hubungi Admin CS',
-    icon: 'fa-truck-ramp-box',
-    color: 'text-rose-500',
+    title: 'Panduan Lacak Status Pesanan & Hubungi CS Toko',
+    icon: 'fa-headset',
     content: `
       <div class="space-y-4 text-xs sm:text-sm">
-        <div class="p-4 bg-rose-50 dark:bg-rose-950/30 rounded-2xl border border-rose-200 dark:border-rose-800/50">
-          <h4 class="font-bold text-rose-800 dark:text-rose-300 text-sm mb-1.5 flex items-center gap-2">
-            <i class="fa-solid fa-headset"></i> Layanan Pelanggan Selalu Siap Membantu
+        <div class="p-4 rounded-2xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06)">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2" style="color:var(--clr-p)">
+            <i class="fa-solid fa-headset"></i> Layanan Bantuan & Tracking Pesanan
           </h4>
-          <p class="text-xs text-rose-700 dark:text-rose-400 leading-relaxed">
-            Pantau status pesanan Anda secara realtime dan hubungi tim CS kami jika membutuhkan bantuan.
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Pantau proses pesanan Anda secara realtime dan hubungi tim CS kami jika memerlukan bantuan.
           </p>
         </div>
 
         <div class="space-y-3">
-          <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
-            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Arti Status Pesanan Anda:</h5>
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Tahapan Status Pesanan Anda:</h5>
             <div class="space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
               <div class="flex items-center gap-2">
                 <span class="badge badge-ribbon-inset badge-solid-rose shrink-0">BARU</span>
-                <span>Pesanan masuk ke sistem dan sedang menunggu konfirmasi admin toko.</span>
+                <span>Pesanan masuk ke sistem dan menunggu konfirmasi toko.</span>
               </div>
               <div class="flex items-center gap-2">
                 <span class="badge badge-ribbon-inset badge-solid-amber shrink-0">DIPROSES</span>
-                <span>Barang sedang disiapkan dan dikemas oleh tim toko.</span>
+                <span>Barang sedang disiapkan dan dikemas rapi oleh tim toko.</span>
               </div>
               <div class="flex items-center gap-2">
                 <span class="badge badge-ribbon-inset badge-solid-emerald shrink-0">SELESAI</span>
-                <span>Pesanan sudah dikirim oleh kurir atau telah selesai diambil di toko.</span>
+                <span>Pesanan telah dikirim kurir atau telah Anda ambil di toko.</span>
               </div>
             </div>
           </div>
 
-          <div class="p-3 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl border border-emerald-200 dark:border-emerald-800/50 text-xs text-emerald-800 dark:text-emerald-300 font-semibold flex items-center gap-2">
-            <i class="fa-brands fa-whatsapp text-lg text-emerald-600"></i>
-            <span>Ada kendala atau pertanyaan? Klik tombol WhatsApp di website untuk langsung terhubung dengan Customer Service kami!</span>
+          <div class="p-3.5 rounded-2xl border flex items-center gap-2.5 text-xs font-semibold" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06);color:var(--clr-p)">
+            <i class="fa-brands fa-whatsapp text-lg"></i>
+            <span>Ada pertanyaan khusus? Klik tombol WhatsApp di website untuk langsung chat dengan admin toko!</span>
           </div>
         </div>
       </div>
@@ -898,7 +871,8 @@ window.openBuyerGuide = (topic = 'order_flow') => {
   m.classList.remove('hidden');
   setTimeout(() => {
     m.classList.remove('opacity-0');
-    box.classList.remove('scale-95');
+    box.classList.remove('translate-y-full');
+    box.classList.remove('sm:scale-95');
   }, 10);
   window.showBuyerGuideTopic(topic);
 };
@@ -908,7 +882,8 @@ window.closeBuyerGuide = () => {
   const box = el('buyer-guide-modal-box');
   if (!m || !box) return;
   m.classList.add('opacity-0');
-  box.classList.add('scale-95');
+  box.classList.add('translate-y-full');
+  box.classList.add('sm:scale-95');
   setTimeout(() => m.classList.add('hidden'), 300);
 };
 
@@ -918,16 +893,20 @@ window.showBuyerGuideTopic = (topic) => {
     target = 'order_flow';
   }
 
-  // Update active pill buttons
+  // Update active pill buttons with dynamic theme styling
   document.querySelectorAll('.bguide-topic-btn').forEach(btn => {
-    btn.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white', 'shadow-sm', 'border', 'border-slate-200/80', 'dark:border-slate-700');
-    btn.classList.add('text-slate-500', 'hover:text-slate-800', 'dark:hover:text-slate-200');
+    btn.style.backgroundColor = '';
+    btn.style.color = '';
+    btn.classList.remove('shadow-sm', 'text-white');
+    btn.classList.add('text-slate-600', 'dark:text-slate-300', 'hover:bg-slate-200/60', 'dark:hover:bg-slate-800');
   });
 
   const activeBtn = el(`bguide-btn-${target}`);
   if (activeBtn) {
-    activeBtn.classList.remove('text-slate-500', 'hover:text-slate-800', 'dark:hover:text-slate-200');
-    activeBtn.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white', 'shadow-sm', 'border', 'border-slate-200/80', 'dark:border-slate-700');
+    activeBtn.classList.remove('text-slate-600', 'dark:text-slate-300', 'hover:bg-slate-200/60', 'dark:hover:bg-slate-800');
+    activeBtn.classList.add('shadow-sm', 'text-white');
+    activeBtn.style.backgroundColor = 'var(--clr-p)';
+    activeBtn.style.color = '#ffffff';
   }
 
   const data = buyerGuideTopicsData[target];
@@ -935,12 +914,12 @@ window.showBuyerGuideTopic = (topic) => {
   if (container && data) {
     container.innerHTML = `
       <div class="space-y-4 fade-in">
-        <div class="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-700/60">
-          <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center text-lg ${data.color}">
+        <div class="flex items-center gap-3.5 pb-3.5 border-b border-slate-100 dark:border-slate-700/60">
+          <div class="w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 shadow-sm" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
             <i class="fa-solid ${data.icon}"></i>
           </div>
           <div>
-            <h4 class="font-black text-slate-800 dark:text-white text-base">${data.title}</h4>
+            <h4 class="font-bold text-slate-900 dark:text-white text-sm sm:text-base tracking-tight">${data.title}</h4>
             <p class="text-[10px] sm:text-xs text-slate-400 font-medium">Panduan Resmi Pelanggan Toko Grafika</p>
           </div>
         </div>
@@ -949,4 +928,5 @@ window.showBuyerGuideTopic = (topic) => {
     `;
   }
 };
+
 

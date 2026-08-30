@@ -67,22 +67,22 @@
     
     <!-- Quick Buyer Guide Banner -->
     <div class='w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5'>
-      <div class='bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 dark:from-slate-800 dark:via-slate-800/90 dark:to-slate-800 rounded-2xl p-4 sm:p-4.5 border border-emerald-200/80 dark:border-emerald-700/50 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 relative overflow-hidden'>
-        <div class='flex items-center gap-3.5 relative z-10'>
-          <div class='w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-lg shrink-0 shadow-md shadow-emerald-500/20'>
-            <i class='fa-solid fa-book-open'></i>
+      <div class='bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 relative overflow-hidden group hover:border-slate-300 dark:hover:border-slate-600 transition-all'>
+        <div class='flex items-center gap-3.5 relative z-10 min-w-0'>
+          <div class='w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 shadow-sm transition-transform duration-200 group-hover:scale-105' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
+            <i class='fa-solid fa-book-open-reader'></i>
           </div>
-          <div>
-            <h4 class='text-xs sm:text-sm font-black text-slate-900 dark:text-white flex items-center gap-2'>
-              <span>Panduan Belanja & Cara Pesan</span>
-              <span class='bg-emerald-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider'>Mudah & Cepat</span>
-            </h4>
-            <p class='text-[10px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5'>
-              Pelajari cara pilih varian, dapatkan diskon grosir, isi desimal/kiloan, hingga bayar via QRIS/COD.
+          <div class='min-w-0'>
+            <div class='flex items-center gap-2 flex-wrap'>
+              <h4 class='text-xs sm:text-sm font-bold text-slate-900 dark:text-white tracking-tight'>Panduan Belanja & Cara Pesan</h4>
+              <span class='text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>TUTORIAL</span>
+            </div>
+            <p class='text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium leading-relaxed'>
+              Pelajari cara pilih varian, dapatkan diskon grosir, isi desimal/kiloan, hingga bayar via QRIS & COD.
             </p>
           </div>
         </div>
-        <button type='button' onclick='openBuyerGuide()' class='w-full sm:w-auto px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 active:scale-95 shrink-0 relative z-10'>
+        <button type='button' onclick='openBuyerGuide()' class='w-full sm:w-auto px-4 py-2.5 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 active:scale-95 shrink-0 relative z-10' style='background-color:var(--clr-p)'>
           <i class='fa-solid fa-circle-question text-amber-300'></i>
           <span>Buka Panduan</span>
         </button>
