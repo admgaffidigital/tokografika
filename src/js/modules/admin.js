@@ -1700,11 +1700,13 @@ window.restoreData = e => {
 const rAdmL = t => {
   let helpBanner = window.getTabHelpBanner ? window.getTabHelpBanner(t) : '';
   let stats = '';
+  let extraBtns = '';
   if (t === 'products') {
     stats = `<div id="admin-product-stats" class="mb-4"></div>`;
+    extraBtns = `<button onclick="openPricetagBarcodeModal()" class="w-full sm:w-auto bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-bold px-4 py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-sm border-2 border-emerald-500/40 dark:border-emerald-600/40 shadow-sm shrink-0 active:scale-95" title="Cetak Pricetag Rak & Label Barcode"><i class="fa-solid fa-tags text-emerald-500"></i> <span class="hidden sm:inline">Cetak</span> Pricetag Rak</button>`;
   }
 
-  setH('admin-content', helpBanner + stats + `<div class="mb-5 flex flex-col sm:flex-row gap-3 items-center"><div class="relative w-full flex-1"><i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i><input id="admin-search-input" placeholder="Cari nama, SKU..." oninput="clearTimeout(window._admST);window._admST=setTimeout(()=>{aSq=this.value.toLowerCase();rAdmItms('${t}')},250)" class="admin-input !pl-10 !pr-[2.5rem] !py-3 !text-sm !rounded-xl shadow-sm" /><button onclick="openCameraScanner('admin-search-input')" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-500 transition-all"><i class="fa-solid fa-qrcode text-sm"></i></button></div><button onclick="oAAdd()" class="w-full sm:w-auto bg-emerald-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-emerald-700 transition-all flex items-center justify-center gap-2 text-sm shadow-md border border-emerald-700"><i class="fa-solid fa-plus"></i> Tambah Baru</button></div><div id="admin-list-container" class="space-y-3 pb-12"></div>`);
+  setH('admin-content', helpBanner + stats + `<div class="mb-5 flex flex-col sm:flex-row gap-3 items-center"><div class="relative w-full flex-1"><i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i><input id="admin-search-input" placeholder="Cari nama, SKU..." oninput="clearTimeout(window._admST);window._admST=setTimeout(()=>{aSq=this.value.toLowerCase();rAdmItms('${t}')},250)" class="admin-input !pl-10 !pr-[2.5rem] !py-3 !text-sm !rounded-xl shadow-sm" /><button onclick="openCameraScanner('admin-search-input')" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-500 transition-all"><i class="fa-solid fa-qrcode text-sm"></i></button></div>${extraBtns}<button onclick="oAAdd()" class="w-full sm:w-auto bg-emerald-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-emerald-700 transition-all flex items-center justify-center gap-2 text-sm shadow-md border border-emerald-700"><i class="fa-solid fa-plus"></i> Tambah Baru</button></div><div id="admin-list-container" class="space-y-3 pb-12"></div>`);
   rAdmItms(t);
 };
 
@@ -1861,6 +1863,11 @@ window.rAdmItms = t => {
         <!-- Tombol Duplikat -->
         <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); duplicateProduct(${x.id})" title="Duplikat Produk">
           <i class="fa-solid fa-copy text-sm"></i>
+        </button>
+
+        <!-- Tombol Cetak Pricetag / Barcode Produk Ini -->
+        <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); openPricetagBarcodeModal(${x.id})" title="Cetak Pricetag / Barcode Produk Ini">
+          <i class="fa-solid fa-tags text-sm"></i>
         </button>
         ` : ''}
 
@@ -2859,6 +2866,27 @@ const guideTopicsData = {
             <br>&bull; <b>Invoice (Biru)</b>: Membuka pratinjau faktur tagihan A4 PDF.
             <br>&bull; <b>Surat Jalan (Amber)</b>: Membuka pratinjau surat jalan ekspedisi A4 PDF.
           </p>
+        </div>
+
+        <!-- 5. Cetak Pricetag Rak & Label Barcode -->
+        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 space-y-3">
+          <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+            <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs shadow-sm font-bold bg-emerald-600">5</span>
+            Cetak Pricetag Rak (A4 HVS) & Label Stiker Barcode:
+          </h5>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
+              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">🏷️ Pricetag Rak Toko (Kertas HVS A4)</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Cetak label harga rak di kertas HVS biasa dengan printer rumahan/kantor. Dilengkapi <b>garis putus-putus (*cut lines*)</b> agar mudah dipotong rapi dengan gunting/cutter.</p>
+            </div>
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
+              <span class="font-bold text-blue-600 dark:text-blue-400 block mb-1">🖨️ Label Stiker Barcode Produk</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Cetak barcode produk tajam (Code128 SVG) beserta SKU dan harga untuk ditempel di kemasan/barang dagangan.</p>
+            </div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-[11px] text-emerald-800 dark:text-emerald-200 font-medium">
+            💡 <b>Pengaturan Jumlah Cetak (Custom Qty):</b> Anda dapat mengatur jumlah label yang dicetak untuk masing-masing produk (misal: *Produk A cetak 3 label, Produk B cetak 5 label*).
+          </div>
         </div>
       </div>
     `

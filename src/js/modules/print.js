@@ -1053,3 +1053,506 @@ window.generateA4Document = async (type, directOrder = null) => {
 window.generatePosA4Document = (type, orderData) => {
   return window.generateA4Document(type, orderData);
 };
+
+// =============================================================================
+// MODUL CETAK PRICETAG RAK TOKO & LABEL BARCODE PRODUK (A4 HVS & STIKER)
+// =============================================================================
+let currentPricetagMode = 'pricetag'; // 'pricetag' | 'barcode'
+let selectedPrintProducts = {}; // { [productId]: quantity }
+let pricetagSearchQuery = '';
+let pricetagCatFilter = 'all';
+let currentPricetagSheets = []; // Array of HTML strings per A4 page
+
+window.openPricetagBarcodeModal = (preselectedId = null) => {
+  const modal = el('pricetag-barcode-modal');
+  const box = el('pricetag-barcode-modal-box');
+  if (!modal || !box) return;
+
+  // Populate category filter dropdown
+  const catSelect = el('pricetag-cat-filter');
+  if (catSelect) {
+    const cats = appData.categories || [];
+    catSelect.innerHTML = `<option value="all">Semua Kategori</option>` + 
+      cats.map(c => `<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');
+    catSelect.value = 'all';
+  }
+  
+  const searchInput = el('pricetag-search-input');
+  if (searchInput) searchInput.value = '';
+  pricetagSearchQuery = '';
+  pricetagCatFilter = 'all';
+
+  // Initialize selected products
+  selectedPrintProducts = {};
+  const products = appData.products || [];
+  if (preselectedId !== null) {
+    selectedPrintProducts[preselectedId] = 1;
+  } else {
+    // Default: select all active products with 1 qty each
+    products.forEach(p => {
+      const isOff = (p.isActive === 'false' || p.isActive === false);
+      if (!isOff) {
+        selectedPrintProducts[p.id] = 1;
+      }
+    });
+  }
+
+  window.showPricetagStep('selection');
+  window.switchPricetagMode(currentPricetagMode || 'pricetag');
+  window.renderPricetagProductList();
+
+  modal.classList.remove('hidden');
+  setTimeout(() => {
+    modal.classList.remove('opacity-0');
+    box.classList.remove('scale-95');
+  }, 10);
+};
+
+window.closePricetagBarcodeModal = () => {
+  const modal = el('pricetag-barcode-modal');
+  const box = el('pricetag-barcode-modal-box');
+  if (!modal || !box) return;
+  modal.classList.add('opacity-0');
+  box.classList.add('scale-95');
+  setTimeout(() => modal.classList.add('hidden'), 300);
+};
+
+window.switchPricetagMode = (mode) => {
+  currentPricetagMode = mode === 'barcode' ? 'barcode' : 'pricetag';
+  const btnPt = el('btn-tab-pricetag');
+  const btnBc = el('btn-tab-barcode');
+  const sizeWrap = el('tag-size-select-wrap');
+
+  if (btnPt && btnBc) {
+    if (currentPricetagMode === 'pricetag') {
+      btnPt.className = 'px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shadow-sm bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 font-black';
+      btnBc.className = 'px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900';
+      if (sizeWrap) sizeWrap.classList.remove('hidden');
+    } else {
+      btnBc.className = 'px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shadow-sm bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 font-black';
+      btnPt.className = 'px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900';
+      if (sizeWrap) sizeWrap.classList.add('hidden');
+    }
+  }
+
+  // If already in preview step, regenerate preview sheets
+  const stepPreview = el('pricetag-step-preview');
+  if (stepPreview && !stepPreview.classList.contains('hidden')) {
+    window.proceedToPricetagPreview();
+  }
+};
+
+window.showPricetagStep = (step) => {
+  const sSelect = el('pricetag-step-selection');
+  const sPrev = el('pricetag-step-preview');
+  const btnProceed = el('btn-proceed-preview-pricetag');
+  const prevActions = el('pricetag-preview-actions');
+
+  if (step === 'preview') {
+    if (sSelect) sSelect.classList.add('hidden');
+    if (sPrev) sPrev.classList.remove('hidden');
+    if (btnProceed) btnProceed.classList.add('hidden');
+    if (prevActions) prevActions.classList.remove('hidden');
+  } else {
+    if (sSelect) sSelect.classList.remove('hidden');
+    if (sPrev) sPrev.classList.add('hidden');
+    if (btnProceed) btnProceed.classList.remove('hidden');
+    if (prevActions) prevActions.classList.add('hidden');
+  }
+};
+
+window.filterPrintProductsList = () => {
+  pricetagSearchQuery = (el('pricetag-search-input')?.value || '').toLowerCase().trim();
+  pricetagCatFilter = el('pricetag-cat-filter')?.value || 'all';
+  window.renderPricetagProductList();
+};
+
+window.toggleSelectAllPrintProducts = (selectAll) => {
+  const products = appData.products || [];
+  if (selectAll) {
+    products.forEach(p => {
+      if (!selectedPrintProducts[p.id]) {
+        selectedPrintProducts[p.id] = 1;
+      }
+    });
+  } else {
+    selectedPrintProducts = {};
+  }
+  window.renderPricetagProductList();
+};
+
+window.toggleSelectPrintProduct = (id) => {
+  if (selectedPrintProducts[id]) {
+    delete selectedPrintProducts[id];
+  } else {
+    selectedPrintProducts[id] = 1;
+  }
+  window.renderPricetagProductList();
+};
+
+window.changePrintProductQty = (id, delta) => {
+  const current = selectedPrintProducts[id] || 0;
+  const next = Math.max(0, current + delta);
+  if (next <= 0) {
+    delete selectedPrintProducts[id];
+  } else {
+    selectedPrintProducts[id] = next;
+  }
+  window.renderPricetagProductList();
+};
+
+window.setPrintProductQty = (id, val) => {
+  const num = parseInt(val, 10);
+  if (isNaN(num) || num <= 0) {
+    delete selectedPrintProducts[id];
+  } else {
+    selectedPrintProducts[id] = Math.min(999, num);
+  }
+  window.renderPricetagProductList();
+};
+
+window.renderPricetagProductList = () => {
+  const container = el('pricetag-product-list-container');
+  if (!container) return;
+
+  const products = appData.products || [];
+  let filtered = products.filter(p => {
+    if (pricetagCatFilter !== 'all' && p.category !== pricetagCatFilter) return false;
+    if (pricetagSearchQuery) {
+      const matchName = (p.name || '').toLowerCase().includes(pricetagSearchQuery);
+      const matchSku = (p.sku || '').toLowerCase().includes(pricetagSearchQuery);
+      const matchBarcode = (p.barcode || '').toLowerCase().includes(pricetagSearchQuery);
+      if (!matchName && !matchSku && !matchBarcode) return false;
+    }
+    return true;
+  });
+
+  // Calculate totals
+  let selectedCount = 0;
+  let totalLabels = 0;
+  Object.keys(selectedPrintProducts).forEach(id => {
+    const q = selectedPrintProducts[id];
+    if (q > 0) {
+      selectedCount++;
+      totalLabels += q;
+    }
+  });
+
+  const summaryEl = el('pricetag-selected-summary');
+  if (summaryEl) {
+    summaryEl.textContent = `${selectedCount} Produk Dipilih (${totalLabels} Label)`;
+  }
+  const footerBadge = el('pricetag-footer-count-badge');
+  if (footerBadge) {
+    footerBadge.innerHTML = `<span class="badge badge-solid-emerald text-xs px-2.5 py-1 font-bold">${totalLabels} Label Siap Dicetak</span>`;
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="text-center py-12 text-slate-400 font-bold">
+        <i class="fa-solid fa-box-open text-3xl mb-2 opacity-40 block"></i>
+        Produk tidak ditemukan
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(p => {
+    const isSelected = !!selectedPrintProducts[p.id];
+    const qty = selectedPrintProducts[p.id] || 0;
+    const img = p.img 
+      ? `<img src="${esc(p.img)}" onerror="this.onerror=null;this.src='https://placehold.co/80?text=Img'" class="w-10 h-10 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0" />`
+      : `<div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-image"></i></div>`;
+
+    return `
+      <div class="p-3 sm:p-3.5 flex items-center justify-between gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors ${isSelected ? 'bg-emerald-50/40 dark:bg-emerald-950/20' : ''}">
+        <div class="flex items-center gap-3 min-w-0 flex-1 cursor-pointer" onclick="toggleSelectPrintProduct(${p.id})">
+          <input type="checkbox" ${isSelected ? 'checked' : ''} class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer" onclick="event.stopPropagation(); toggleSelectPrintProduct(${p.id})" />
+          ${img}
+          <div class="min-w-0 flex-1">
+            <h4 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-white truncate">${esc(p.name)}</h4>
+            <div class="flex flex-wrap items-center gap-2 mt-0.5 text-[10px] text-slate-400 font-medium">
+              <span class="font-black text-emerald-600 dark:text-emerald-400">${fCur(p.price)}</span>
+              ${p.sku ? `<span class="badge badge-xs badge-slate">${esc(p.sku)}</span>` : ''}
+              <span>${esc(p.category || '')}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Qty Cetak Stepper -->
+        <div class="flex items-center gap-1.5 shrink-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-1 shadow-xs">
+          <button type="button" onclick="changePrintProductQty(${p.id}, -1)" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 text-slate-700 dark:text-slate-200 flex items-center justify-center text-xs font-bold active:scale-95 transition-all">
+            <i class="fa-solid fa-minus"></i>
+          </button>
+          <input type="number" min="0" max="999" value="${qty}" onchange="setPrintProductQty(${p.id}, this.value)" class="w-10 text-center text-xs font-black bg-transparent border-0 focus:ring-0 text-slate-800 dark:text-white p-0" />
+          <button type="button" onclick="changePrintProductQty(${p.id}, 1)" class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 hover:bg-emerald-200 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-xs font-bold active:scale-95 transition-all">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+};
+
+window.refreshPricetagPreviewIfActive = () => {
+  const stepPreview = el('pricetag-step-preview');
+  if (stepPreview && !stepPreview.classList.contains('hidden')) {
+    window.proceedToPricetagPreview();
+  }
+};
+
+window.proceedToPricetagPreview = () => {
+  // Check if any product selected
+  const selectedIds = Object.keys(selectedPrintProducts).filter(id => selectedPrintProducts[id] > 0);
+  if (selectedIds.length === 0) {
+    return showToast("Pilih minimal 1 produk untuk dicetak!");
+  }
+
+  sLoad("Membuat Lembaran A4...");
+  try {
+    const productsMap = {};
+    (appData.products || []).forEach(p => { productsMap[p.id] = p; });
+
+    // Flatten array of items based on Qty
+    const printQueue = [];
+    selectedIds.forEach(id => {
+      const p = productsMap[id];
+      if (p) {
+        const qty = selectedPrintProducts[id];
+        for (let i = 0; i < qty; i++) {
+          printQueue.push(p);
+        }
+      }
+    });
+
+    const storeName = esc(appData.store?.name || 'TOKO GRAFIKA');
+    const layoutSize = el('tag-layout-size')?.value || 'standard';
+    const nowStr = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+
+    let itemsPerPage = 16;
+    let gridColsClass = 'grid-cols-2';
+    let cardHeight = '34mm';
+    let cardMinHeight = '125px';
+
+    if (currentPricetagMode === 'pricetag') {
+      if (layoutSize === 'large') {
+        itemsPerPage = 10;
+        gridColsClass = 'grid-cols-2';
+        cardHeight = '55mm';
+        cardMinHeight = '200px';
+      } else if (layoutSize === 'compact') {
+        itemsPerPage = 24;
+        gridColsClass = 'grid-cols-3';
+        cardHeight = '34mm';
+        cardMinHeight = '125px';
+      } else {
+        // standard
+        itemsPerPage = 16;
+        gridColsClass = 'grid-cols-2';
+        cardHeight = '34mm';
+        cardMinHeight = '125px';
+      }
+    } else {
+      // Barcode stickers sheet (3 cols x 10 rows = 30 per page)
+      itemsPerPage = 30;
+      gridColsClass = 'grid-cols-3';
+      cardHeight = '27mm';
+      cardMinHeight = '100px';
+    }
+
+    // Split printQueue into pages
+    const pages = [];
+    for (let i = 0; i < printQueue.length; i += itemsPerPage) {
+      pages.push(printQueue.slice(i, i + itemsPerPage));
+    }
+
+    currentPricetagSheets = pages.map((pageItems, pageIdx) => {
+      const totalPages = pages.length;
+      
+      const cardsHtml = pageItems.map(p => {
+        const barcodeVal = p.barcode || p.sku || String(p.id);
+        const barcodeSvg = _generateReceiptBarcodeSvg(barcodeVal);
+        const unit = p.unit ? ` / ${esc(p.unit)}` : '';
+
+        if (currentPricetagMode === 'pricetag') {
+          return `
+            <div class="pricetag-card bg-white text-slate-900 border border-dashed border-slate-300 rounded-lg p-2.5 flex flex-col justify-between relative overflow-hidden box-border shadow-xs" style="min-height:${cardMinHeight}; height:${cardHeight};">
+              <!-- Top Header: Store & Date -->
+              <div class="flex items-center justify-between text-[9px] font-extrabold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-1">
+                <span class="truncate max-w-[120px]"><i class="fa-solid fa-store text-emerald-600 mr-0.5"></i> ${storeName}</span>
+                <span class="text-slate-400 font-mono">${nowStr}</span>
+              </div>
+
+              <!-- Middle: Product Name & Category -->
+              <div class="my-1">
+                <h3 class="font-black text-slate-900 text-xs sm:text-[13px] leading-tight line-clamp-2 uppercase">${esc(p.name)}</h3>
+                <div class="flex items-center gap-1.5 text-[9.5px] text-slate-500 font-bold mt-0.5">
+                  ${p.category ? `<span class="bg-slate-100 px-1 py-0.2 rounded">${esc(p.category)}</span>` : ''}
+                  ${p.sku ? `<span class="font-mono text-slate-400">SKU: ${esc(p.sku)}</span>` : ''}
+                </div>
+              </div>
+
+              <!-- Bottom: Barcode + Prominent Price Box -->
+              <div class="flex items-end justify-between gap-2 pt-1 border-t border-slate-100 mt-auto">
+                <div class="shrink-0 max-w-[45%]">
+                  ${barcodeSvg}
+                </div>
+                <div class="text-right">
+                  <div class="text-[9px] font-black uppercase text-slate-400 tracking-wider">Harga Pas</div>
+                  <div class="text-base sm:text-lg font-black text-slate-950 leading-none tracking-tight">
+                    <span class="text-[10px] font-extrabold text-emerald-600 align-top mr-0.5">Rp</span>${fCur(p.price).replace('Rp\u00a0','').replace('Rp ','')}
+                  </div>
+                  <div class="text-[8.5px] font-bold text-slate-400">${unit}</div>
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          // Label Stiker Barcode Mode
+          return `
+            <div class="barcode-sticker-card bg-white text-slate-900 border border-dashed border-slate-300 rounded-md p-1.5 flex flex-col justify-between items-center text-center relative overflow-hidden box-border" style="min-height:${cardMinHeight}; height:${cardHeight};">
+              <div class="text-[8px] font-black uppercase tracking-wider text-slate-400 truncate w-full border-b border-slate-100 pb-0.5">
+                ${storeName}
+              </div>
+              <div class="w-full my-0.5">
+                <div class="text-[10px] font-bold text-slate-800 truncate w-full leading-tight uppercase">${esc(p.name)}</div>
+              </div>
+              <div class="w-full my-0.5 transform scale-90 origin-center">
+                ${barcodeSvg}
+              </div>
+              <div class="text-[11px] font-black text-slate-950 leading-none mt-auto pt-0.5 border-t border-slate-100 w-full flex items-center justify-center gap-0.5">
+                <span class="text-[8px] font-bold text-emerald-600">Rp</span>${fCur(p.price).replace('Rp\u00a0','').replace('Rp ','')}
+              </div>
+            </div>
+          `;
+        }
+      }).join('');
+
+      return `
+        <div class="a4-pricetag-page bg-white text-slate-900 p-5 rounded-2xl shadow-xl border border-slate-300 mx-auto box-border" style="width: 794px; min-width: 794px; max-width: 794px; min-height: 1123px; box-sizing: border-box; position: relative;">
+          <!-- A4 Header Meta -->
+          <div class="flex items-center justify-between text-[10px] font-bold text-slate-400 border-b border-slate-200 pb-2 mb-3">
+            <span class="uppercase tracking-widest"><i class="fa-solid fa-tags text-emerald-500 mr-1"></i> ${currentPricetagMode === 'pricetag' ? 'Lembar Pricetag Rak Toko' : 'Lembar Label Stiker Barcode'}</span>
+            <span>Halaman ${pageIdx + 1} dari ${totalPages} &bull; Kertas A4 (210 x 297 mm)</span>
+          </div>
+
+          <!-- Tags Grid -->
+          <div class="grid ${gridColsClass} gap-2">
+            ${cardsHtml}
+          </div>
+
+          <!-- Bottom Cut Instructions -->
+          <div class="absolute bottom-3 left-6 right-6 flex items-center justify-between text-[8.5px] text-slate-400 border-t border-slate-100 pt-1.5 font-medium">
+            <span>✂️ Potong mengikuti garis putus-putus (*cut lines*) dengan gunting / cutter kertas.</span>
+            <span class="font-bold">${storeName} &bull; Cetak Presisi Toko Grafika</span>
+          </div>
+        </div>
+      `;
+    });
+
+    const previewContainer = el('pricetag-sheets-render-container');
+    if (previewContainer) {
+      previewContainer.innerHTML = currentPricetagSheets.join('');
+    }
+
+    const pageInfoEl = el('pricetag-preview-page-info');
+    if (pageInfoEl) {
+      pageInfoEl.textContent = `Total ${pages.length} Halaman A4 (${printQueue.length} Label)`;
+    }
+
+    window.showPricetagStep('preview');
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal memproses pratinjau!");
+  } finally {
+    hLoad();
+  }
+};
+
+window.executePrintPricetags = () => {
+  if (!currentPricetagSheets || currentPricetagSheets.length === 0) {
+    return showToast("Tidak ada lembar pricetag untuk dicetak!");
+  }
+
+  const printSection = el('pricetag-print-section');
+  if (printSection) {
+    printSection.innerHTML = currentPricetagSheets.join('');
+  }
+
+  document.body.classList.add('print-mode-pricetag');
+  window.print();
+  setTimeout(() => {
+    document.body.classList.remove('print-mode-pricetag');
+  }, 1500);
+};
+
+window.downloadPricetagPdf = async () => {
+  const container = el('pricetag-sheets-render-container');
+  if (!container || !window.jspdf || !window.html2canvas) {
+    return showToast("Library PDF belum siap, gunakan tombol Cetak ke Printer!");
+  }
+
+  const pages = container.querySelectorAll('.a4-pricetag-page');
+  if (pages.length === 0) return showToast("Tidak ada halaman untuk diunduh!");
+
+  sLoad("Mengenerate PDF A4...");
+  try {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    for (let i = 0; i < pages.length; i++) {
+      const pageEl = pages[i];
+      const canvas = await html2canvas(pageEl, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      });
+      const imgData = canvas.toDataURL('image/png');
+      if (i > 0) pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
+    }
+
+    const modeName = currentPricetagMode === 'pricetag' ? 'Pricetag_Rak' : 'Label_Barcode';
+    pdf.save(`${modeName}_A4_${Date.now()}.pdf`);
+    showToast("✅ Berkas PDF A4 berhasil diunduh!");
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal mengunduh PDF!");
+  } finally {
+    hLoad();
+  }
+};
+
+window.downloadPricetagImage = async () => {
+  const container = el('pricetag-sheets-render-container');
+  const firstPage = container?.querySelector('.a4-pricetag-page');
+  if (!firstPage || !window.html2canvas) {
+    return showToast("Gagal mengambil gambar!");
+  }
+
+  sLoad("Menyimpan Gambar PNG...");
+  try {
+    const canvas = await html2canvas(firstPage, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#ffffff'
+    });
+    const link = document.createElement('a');
+    link.download = `Pricetag_A4_${Date.now()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast("✅ Gambar PNG berhasil disimpan!");
+  } catch (err) {
+    console.error(err);
+    showToast("Gagal menyimpan gambar!");
+  } finally {
+    hLoad();
+  }
+};
+

@@ -110,4 +110,40 @@
         line-height: 1.25 !important;
         box-sizing: border-box !important;
     }
+
+    /* 5. MODE: CETAK PRICETAG RAK & BARCODE (A4) */
+    body.print-mode-pricetag {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    body.print-mode-pricetag #pricetag-print-section {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background-color: #ffffff !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    body.print-mode-pricetag #pricetag-print-section .a4-pricetag-page {
+        width: 210mm !important;
+        min-height: 295mm !important;
+        margin: 0 auto !important;
+        padding: 6mm !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        box-sizing: border-box !important;
+        background: #ffffff !important;
+    }
 }
+
+#pricetag-print-section {
+    display: none;
+}
+
