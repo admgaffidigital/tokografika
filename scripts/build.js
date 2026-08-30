@@ -27,7 +27,7 @@ function resolveIncludes(filePath, baseDir = srcDir, visited = new Set()) {
   let content = fs.readFileSync(fullPath, 'utf8');
   const currentDir = path.dirname(fullPath);
 
-  // Regex patterns for various include comment styles
+  // Regex patterns for various include comment styles:
   // 1. <!-- @include path/to/file -->
   // 2. /* @include path/to/file */
   // 3. // @include path/to/file
@@ -40,17 +40,12 @@ function resolveIncludes(filePath, baseDir = srcDir, visited = new Set()) {
   return content;
 }
 
-function build() {
-  console.log('🚀 Starting Blogger Theme Build...');
-  const startTime = Date.now();
-
+function generateThemeXml() {
   const entryTemplate = path.join(srcDir, 'template.xml');
   if (!fs.existsSync(entryTemplate)) {
-    console.error('Error: src/template.xml not found!');
-    process.exit(1);
+    throw new Error('src/template.xml not found!');
   }
 
-  // 1. Build production XML
   let finalXml = resolveIncludes('template.xml', srcDir);
   
   // XML 1.0 Compliance: Double hyphen (--) is strictly forbidden inside comments
@@ -62,31 +57,51 @@ function build() {
     return `<!--${clean}-->`;
   });
 
-  const themeXmlPath = path.join(distDir, 'theme.xml');
-  fs.writeFileSync(themeXmlPath, finalXml, 'utf8');
+  return finalXml;
+}
 
-  // Verify XML size and lines
-  const lines = finalXml.split('\n').length;
-  const sizeKB = (Buffer.byteLength(finalXml, 'utf8') / 1024).toFixed(2);
-  console.log(`✅ [dist/theme.xml] built successfully! (${lines} lines, ${sizeKB} KB)`);
-
-  // 2. Build local preview HTML
-  // Replace blogger tags that might confuse pure browser rendering if necessary
+function generatePreviewHtml(xmlContent) {
+  const finalXml = xmlContent || generateThemeXml();
   let previewHtml = finalXml;
   // Remove Blogger XML declaration & namespace for browser preview compatibility
   previewHtml = previewHtml.replace(/<\?xml[^>]*\?>/i, '');
   // Replace <data:blog.pageTitle/> with sample title
   previewHtml = previewHtml.replace(/<data:blog\.pageTitle\s*\/>/gi, 'Freshmart PWA - Local Preview');
-  
+  return previewHtml;
+}
+
+function build() {
+  console.log('🚀 Starting Blogger Theme Build...');
+  const startTime = Date.now();
+
+  const finalXml = generateThemeXml();
+  const themeXmlPath = path.join(distDir, 'theme.xml');
+  fs.writeFileSync(themeXmlPath, finalXml, 'utf8');
+
+  const lines = finalXml.split('\n').length;
+  const sizeKB = (Buffer.byteLength(finalXml, 'utf8') / 1024).toFixed(2);
+  console.log(`✅ [dist/theme.xml] built successfully! (${lines} lines, ${sizeKB} KB)`);
+
+  const previewHtml = generatePreviewHtml(finalXml);
   const previewHtmlPath = path.join(distDir, 'preview.html');
   fs.writeFileSync(previewHtmlPath, previewHtml, 'utf8');
   console.log(`✅ [dist/preview.html] generated for local testing!`);
 
   const elapsed = Date.now() - startTime;
   console.log(`✨ Build finished in ${elapsed}ms\n`);
+
+  return { finalXml, previewHtml };
 }
 
-module.exports = { build, resolveIncludes };
+module.exports = { 
+  build, 
+  generateThemeXml, 
+  generatePreviewHtml, 
+  resolveIncludes,
+  srcDir,
+  distDir,
+  rootDir
+};
 
 if (require.main === module) {
   build();

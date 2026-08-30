@@ -1,11 +1,12 @@
 {
   "name": "grafika-blogger-pwa-template",
   "version": "1.0.0",
-  "description": "Modular Development & Live Preview Workflow for Blogger PWA Theme",
+  "description": "Modular Development & Live Preview Workflow for Blogger PWA Theme with Vite",
   "scripts": {
-    "dev": "node scripts/dev-server.js",
-    "start": "node scripts/dev-server.js",
-    "build": "node scripts/build.js",
+    "dev": "vite",
+    "build": "vite build",
+    "build:xml": "node scripts/build.js",
+    "preview": "vite preview",
     "test": "node scripts/validate-xml.js && node scripts/audit-bugs.js"
   },
   "keywords": [
@@ -13,8 +14,12 @@
     "blogspot",
     "pwa",
     "theme",
-    "template"
+    "template",
+    "vite"
   ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^8.2.2"
+  }
 }
