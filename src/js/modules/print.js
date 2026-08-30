@@ -446,8 +446,8 @@ const _buildInvoicePages = ({ o, formattedDate, themeClr, base64Logo, storeName,
         <table style="width: 100%; text-align: left; border-collapse: collapse; table-layout: fixed;">
           <thead>
             <tr style="background-color: #f1f5f9; border-bottom: 1.5px solid #cbd5e1; color: #334155;">
-              <th style="padding: 8px 12px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; width: 22%;">Qty &amp; Satuan</th>
-              <th style="padding: 8px 10px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; width: 38%;">Nama Barang &amp; Varian</th>
+              <th style="padding: 8px 10px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; width: 14%;">Qty</th>
+              <th style="padding: 8px 10px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; width: 46%;">Nama Barang &amp; Varian</th>
               <th style="padding: 8px 10px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; text-align: right; width: 20%;">Harga Satuan</th>
               <th style="padding: 8px 12px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; text-align: right; width: 20%;">Total</th>
             </tr>
@@ -458,9 +458,9 @@ const _buildInvoicePages = ({ o, formattedDate, themeClr, base64Logo, storeName,
               const varKeterangan = [item.variantName, (isGrosir ? 'Grosir' : '')].filter(Boolean).join(' · ');
               return `
               <tr style="border-bottom: 1px solid #e2e8f0; font-size: 10.5px; color: #0f172a; background-color: ${iIdx % 2 === 1 ? '#f8fafc' : '#ffffff'};">
-                <td style="padding: 7px 12px; font-weight: 800; vertical-align: middle; white-space: nowrap;">
-                  <span style="display:inline-block; padding: 2px 6px; background:#f1f5f9; border-radius: 5px; border: 1px solid #e2e8f0; font-size: 10px;">
-                    ${item.qty} <span style="color:${themeClr}; font-weight:700;">${esc(item.unit || 'Pcs')}</span>
+                <td style="padding: 7px 10px; font-weight: 800; vertical-align: middle; white-space: nowrap; text-align: center;">
+                  <span style="display:inline-block; padding: 2px 8px; background:#f1f5f9; border-radius: 5px; border: 1px solid #e2e8f0; font-size: 11px; font-weight: 800; color: #0f172a;">
+                    ${item.qty}
                   </span>
                 </td>
                 <td style="padding: 7px 10px; vertical-align: middle; line-height: 1.35; word-break: break-word;">
@@ -639,9 +639,9 @@ const _buildSuratJalanPages = ({ o, formattedDate, themeClr, base64Logo, storeNa
         <table style="width: 100%; text-align: left; border-collapse: collapse; table-layout: fixed;">
           <thead>
             <tr style="background-color: #f1f5f9; border-bottom: 1.5px solid #cbd5e1; color: #334155;">
-              <th style="padding: 8px 12px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; width: 48%; border-right: 1px solid #cbd5e1;">Nama Barang / Deskripsi</th>
-              <th style="padding: 8px 10px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; width: 20%; border-right: 1px solid #cbd5e1;">Qty / Satuan</th>
-              <th style="padding: 8px 10px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; width: 22%; border-right: 1px solid #cbd5e1;">Varian / Spesifikasi</th>
+              <th style="padding: 8px 12px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; width: 52%; border-right: 1px solid #cbd5e1;">Nama Barang / Deskripsi</th>
+              <th style="padding: 8px 10px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; width: 14%; border-right: 1px solid #cbd5e1;">Qty</th>
+              <th style="padding: 8px 10px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; width: 24%; border-right: 1px solid #cbd5e1;">Varian / Spesifikasi</th>
               <th style="padding: 8px 8px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; width: 10%;">Cek</th>
             </tr>
           </thead>
@@ -655,8 +655,8 @@ const _buildSuratJalanPages = ({ o, formattedDate, themeClr, base64Logo, storeNa
                   ${esc(item.name)}
                 </td>
                 <td style="padding: 7px 10px; text-align: center; vertical-align: middle; font-weight: 800; border-right: 1px solid #e2e8f0; white-space: nowrap;">
-                  <span style="display:inline-block; padding: 2px 8px; background:#f0f9ff; border-radius: 5px; border: 1px solid #bae6fd; color:#0369a1; font-size: 10px;">
-                    ${item.qty} ${esc(item.unit || 'Pcs')}
+                  <span style="display:inline-block; padding: 2px 8px; background:#f0f9ff; border-radius: 5px; border: 1px solid #bae6fd; color:#0369a1; font-size: 11px; font-weight: 800;">
+                    ${item.qty}
                   </span>
                 </td>
                 <td style="padding: 7px 10px; color: #475569; vertical-align: middle; border-right: 1px solid #e2e8f0; font-size: 9.5px; font-weight: 600;">
