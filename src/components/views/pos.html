@@ -26,36 +26,36 @@
         </div>
       </div>
 
-      <!-- Right: Action Tabs (Shifted to Top Header on Tablet & PC >=640px, Bottom Bar on Mobile <640px) -->
+      <!-- Right: Action Tabs (Pure CSS Fail-Safe Responsive: .pos-desktop-tab) -->
       <div class='flex items-center gap-1.5 shrink-0'>
         <!-- Katalog Tab -->
-        <button type='button' class='btn-solid no-glass hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='scrollToPosTop()' title='Etalase Produk'>
+        <button type='button' class='btn-solid no-glass pos-desktop-tab items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='scrollToPosTop()' title='Etalase Produk'>
           <i class='fa-solid fa-boxes-stacked text-xs'></i>
           <span>Katalog</span>
         </button>
 
         <!-- Quick Cart Tab -->
-        <button type='button' class='btn-solid no-glass hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
+        <button type='button' class='btn-solid no-glass pos-desktop-tab items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
           <i class='fa-solid fa-cart-shopping text-xs'></i>
           <span>Keranjang</span>
           <span id='pos-cart-header-badge' class='hidden bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
         </button>
 
         <!-- Pending Tab -->
-        <button type='button' class='btn-solid no-glass hidden sm:inline-flex relative items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosPendingModal()' title='Transaksi Ditahan'>
+        <button type='button' class='btn-solid no-glass pos-desktop-tab relative items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosPendingModal()' title='Transaksi Ditahan'>
           <i class='fa-solid fa-pause text-amber-200 text-xs'></i>
           <span>Pending</span>
           <span id='pos-pending-header-badge' class='hidden bg-amber-400 text-slate-900 text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
         </button>
 
         <!-- Guide Tab -->
-        <button type='button' class='btn-solid no-glass hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openCmsGuide("pos")' title='Panduan Kasir'>
+        <button type='button' class='btn-solid no-glass pos-desktop-tab items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openCmsGuide("pos")' title='Panduan Kasir'>
           <i class='fa-solid fa-circle-question text-amber-200 text-xs'></i>
           <span>Panduan</span>
         </button>
 
         <!-- CMS Tab -->
-        <button type='button' class='btn-solid no-glass hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' id='btn-pos-to-admin' onclick='changeView("view-admin"); openAdminMenu();' title='Buka CMS Pengaturan'>
+        <button type='button' class='btn-solid no-glass pos-desktop-tab items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' id='btn-pos-to-admin' onclick='changeView("view-admin"); openAdminMenu();' title='Buka CMS Pengaturan'>
           <i class='fa-solid fa-gear text-xs'></i>
           <span>CMS</span>
         </button>
@@ -115,8 +115,8 @@
       </div>
     </div>
 
-    <!-- Right Column: DESKTOP PERMANENT CASHIER CART REGISTER (Visible on PC / Tablet screen) -->
-    <aside class='hidden md:flex w-[320px] lg:w-[380px] xl:w-[420px] shrink-0 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-col h-full shadow-lg z-20' id='pos-desktop-cart-sidebar'>
+    <!-- Right Column: DESKTOP PERMANENT CASHIER CART REGISTER (Visible on PC / Large screen) -->
+    <aside class='pos-desktop-sidebar w-[320px] lg:w-[380px] xl:w-[420px] shrink-0 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-col h-full shadow-lg z-20' id='pos-desktop-cart-sidebar'>
       <!-- Desktop Cart Header -->
       <div class='px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50 dark:bg-[#0b1329]'>
         <div class='flex items-center gap-2'>
@@ -173,7 +173,7 @@
     <!-- ========================================================================= -->
     <!-- MOBILE POS BOTTOM NAVIGATION BAR (Clean, Harmonic & Thumb-Friendly)       -->
     <!-- ========================================================================= -->
-    <nav class='sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 px-2 py-1.5 flex items-center justify-around text-[10px] font-bold text-slate-500 dark:text-slate-400 pb-[calc(0.4rem+env(safe-area-inset-bottom,0px))] shadow-lg' id='pos-mobile-bottom-nav'>
+    <nav class='pos-mobile-nav fixed bottom-0 left-0 right-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/80 dark:border-slate-800 px-2 py-1.5 items-center justify-around text-[10px] font-bold text-slate-500 dark:text-slate-400 pb-[calc(0.4rem+env(safe-area-inset-bottom,0px))] shadow-lg' id='pos-mobile-bottom-nav'>
       <!-- Tab 1: Catalog Products -->
       <button type='button' class='flex-1 flex flex-col items-center py-1 text-emerald-600 dark:text-emerald-400 transition-colors' onclick='scrollToPosTop()' title='Etalase Produk'>
         <i class='fa-solid fa-boxes-stacked text-base mb-0.5'></i>

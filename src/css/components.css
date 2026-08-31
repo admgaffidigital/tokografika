@@ -306,3 +306,33 @@ html.dark .badge-counter {
 .modal-box {
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* --------------------------------------------------------------------------
+   7. Fail-Safe POS Responsive Navigation & Layout System
+   -------------------------------------------------------------------------- */
+@media (max-width: 639px) {
+    .pos-desktop-tab {
+        display: none !important;
+    }
+    .pos-mobile-nav {
+        display: flex !important;
+    }
+    .pos-desktop-sidebar {
+        display: none !important;
+    }
+}
+
+@media (min-width: 640px) {
+    .pos-desktop-tab {
+        display: inline-flex !important;
+    }
+    .pos-mobile-nav {
+        display: none !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    .pos-desktop-sidebar {
+        display: flex !important;
+    }
+}
