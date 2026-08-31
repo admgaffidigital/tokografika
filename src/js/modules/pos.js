@@ -364,12 +364,18 @@ window.handlePosSearch = (val) => {
   posSearchQuery = (val || '').trim();
   const clearBtn = el('pos-btn-clear-search');
   if (clearBtn) clearBtn.classList.toggle('hidden', !posSearchQuery);
+  const mInput = el('pos-search-input');
+  const dInput = el('pos-search-input-desktop');
+  if (mInput && mInput.value !== val) mInput.value = val;
+  if (dInput && dInput.value !== val) dInput.value = val;
   renderPosProducts();
 };
 
 window.clearPosSearch = () => {
-  const input = el('pos-search-input');
-  if (input) input.value = '';
+  const mInput = el('pos-search-input');
+  const dInput = el('pos-search-input-desktop');
+  if (mInput) mInput.value = '';
+  if (dInput) dInput.value = '';
   posSearchQuery = '';
   const clearBtn = el('pos-btn-clear-search');
   if (clearBtn) clearBtn.classList.add('hidden');
@@ -402,10 +408,10 @@ const renderPosProducts = () => {
   }
 
   if (posViewMode === 'grid') {
-    container.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4';
+    container.className = 'grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5 sm:gap-3.5';
     container.innerHTML = filtered.map(p => renderPosProductCardGrid(p)).join('');
   } else {
-    container.className = 'space-y-2.5 max-w-4xl mx-auto';
+    container.className = 'flex flex-col gap-2';
     container.innerHTML = filtered.map(p => renderPosProductCardList(p)).join('');
   }
 };
@@ -736,7 +742,6 @@ window.savePosQtyModal = () => {
   }
   closePosQtyModal();
   renderPosCart();
-  renderPosProducts();
 };
 
 // -----------------------------------------------------------------------------
@@ -744,10 +749,12 @@ window.savePosQtyModal = () => {
 // -----------------------------------------------------------------------------
 const renderPosCart = () => {
   const drawerContainer = el('pos-drawer-cart-items-container');
+  const desktopContainer = el('pos-desktop-cart-items-container');
   const floatDock = el('pos-floating-cart-dock');
   const floatDockCount = el('pos-float-dock-count');
   const floatDockTotal = el('pos-float-dock-total');
   const drawerCount = el('pos-drawer-cart-count');
+  const desktopCount = el('pos-desktop-cart-count');
   const topBadge = el('pos-cart-header-badge');
 
   const totalItems = posCart.length;
@@ -768,24 +775,31 @@ const renderPosCart = () => {
   }
   if (floatDockCount) floatDockCount.innerText = `${totalItems} Item (${formattedQty})`;
   if (drawerCount) drawerCount.innerText = `${totalItems} Produk (${formattedQty} Unit)`;
+  if (desktopCount) desktopCount.innerText = `${totalItems} Produk (${formattedQty} Unit)`;
 
   setIn('pos-drawer-summary-subtotal', fCur(subtotal));
   setIn('pos-drawer-summary-discount', discount > 0 ? `-${fCur(discount)}` : fCur(0));
   setIn('pos-drawer-summary-total', fCur(subtotal));
+
+  setIn('pos-desktop-summary-subtotal', fCur(subtotal));
+  setIn('pos-desktop-summary-discount', discount > 0 ? `-${fCur(discount)}` : fCur(0));
+  setIn('pos-desktop-summary-total', fCur(subtotal));
+
   if (floatDockTotal) floatDockTotal.innerText = fCur(subtotal);
 
+  const emptyCartHtml = `
+    <div class="h-full min-h-[220px] flex flex-col items-center justify-center text-center p-6 text-slate-400 dark:text-slate-500">
+      <div class="w-14 h-14 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-2.5 text-slate-400">
+        <i class="fa-solid fa-basket-shopping text-2xl"></i>
+      </div>
+      <p class="text-xs font-black text-slate-700 dark:text-slate-300">Keranjang Masih Kosong</p>
+      <p class="text-[10px] text-slate-400 mt-1 max-w-[200px]">Klik produk dari katalog atau scan barcode untuk menambah belanjaan</p>
+    </div>
+  `;
+
   if (!posCart.length) {
-    if (drawerContainer) {
-      drawerContainer.innerHTML = `
-        <div class="h-full flex flex-col items-center justify-center text-center p-8 text-slate-400 dark:text-slate-500">
-          <div class="w-16 h-16 rounded-full bg-slate-200/60 dark:bg-slate-800/60 flex items-center justify-center mb-3 text-slate-400">
-            <i class="fa-solid fa-basket-shopping text-2xl"></i>
-          </div>
-          <p class="text-xs font-black text-slate-700 dark:text-slate-300">Keranjang Masih Kosong</p>
-          <p class="text-[10px] text-slate-400 mt-1 max-w-[200px]">Pilih produk dari katalog atau scan barcode untuk menambah belanjaan</p>
-        </div>
-      `;
-    }
+    if (drawerContainer) drawerContainer.innerHTML = emptyCartHtml;
+    if (desktopContainer) desktopContainer.innerHTML = emptyCartHtml;
     if (floatDock) {
       floatDock.classList.add('translate-y-28', 'opacity-0', 'pointer-events-none');
     }
@@ -796,49 +810,49 @@ const renderPosCart = () => {
     floatDock.classList.remove('translate-y-28', 'opacity-0', 'pointer-events-none');
   }
 
-  if (drawerContainer) {
-    drawerContainer.innerHTML = posCart.map((item, idx) => {
-      const effPrice = getEffP(item);
-      const isGrosir = item.wholesaleMinQty > 0 && item.qty >= item.wholesaleMinQty;
-      const lineTotal = effPrice * item.qty;
-      const isDecimal = item.unit && ['kg', 'gram', 'liter', 'ml', 'ons', 'm', 'cm'].some(u => item.unit.toLowerCase().includes(u));
+  const cartHtml = posCart.map((item, idx) => {
+    const effPrice = getEffP(item);
+    const isGrosir = item.wholesaleMinQty > 0 && item.qty >= item.wholesaleMinQty;
+    const lineTotal = effPrice * item.qty;
+    const isDecimal = item.unit && ['kg', 'gram', 'liter', 'ml', 'ons', 'm', 'cm'].some(u => item.unit.toLowerCase().includes(u));
 
-      return `
-        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3 flex items-start gap-3 shadow-sm">
-          ${item.image ? `<img src="${esc(item.image)}" class="w-12 h-12 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-slate-700" onerror="if(window.imgErrRetry) window.imgErrRetry(this, 'No Image', 400); else this.style.display='none';"/>` : `<div class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 shrink-0 flex items-center justify-center"><i class="fa-solid fa-image text-slate-300 dark:text-slate-600"></i></div>`}
-          <div class="flex-1 min-w-0">
-            <p class="text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight truncate">${esc(item.name)}${item.variantName ? ` <span class="text-slate-500">(${esc(item.variantName)})</span>` : ''}</p>
-            <div class="flex items-center gap-1.5 mt-0.5">
-              ${isGrosir ? `<span class="text-[8px] font-black bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 px-1.5 py-0.5 rounded-full">GROSIR</span>` : ''}
-              <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400">${fCur(effPrice)} × ${item.qty}${item.unit ? ' ' + item.unit : ''}</span>
-            </div>
-            <div class="flex items-center justify-between mt-2">
-              <span class="text-sm font-black text-emerald-600 dark:text-emerald-400">${fCur(lineTotal)}</span>
-              <div class="flex items-center gap-1.5">
-                <button type="button" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-all active:scale-95" onclick="changePosQty(${idx}, -${isDecimal ? 0.5 : 1})">
-                  <i class="fa-solid fa-minus text-[10px] text-slate-600 dark:text-slate-400"></i>
-                </button>
-                <button type="button" class="min-w-[32px] text-center text-xs font-black text-slate-900 dark:text-white px-2 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg cursor-pointer hover:border-emerald-500 transition-colors" onclick="openPosQtyModal(${idx})">
-                  ${item.qty}
-                </button>
-                <button type="button" class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-all active:scale-95" onclick="changePosQty(${idx}, ${isDecimal ? 0.5 : 1})">
-                  <i class="fa-solid fa-plus text-[10px] text-slate-600 dark:text-slate-400"></i>
-                </button>
-                <button type="button" class="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 flex items-center justify-center transition-all active:scale-95" onclick="removeFromPosCart(${idx})">
-                  <i class="fa-solid fa-trash-can text-[10px] text-rose-500"></i>
-                </button>
-              </div>
+    return `
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-2.5 flex items-start gap-2.5 shadow-xs hover:border-emerald-500/50 transition-colors">
+        ${item.image ? `<img src="${esc(item.image)}" class="w-11 h-11 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-slate-700" onerror="if(window.imgErrRetry) window.imgErrRetry(this, 'No Image', 400); else this.style.display='none';"/>` : `<div class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-800 shrink-0 flex items-center justify-center"><i class="fa-solid fa-image text-slate-300 dark:text-slate-600"></i></div>`}
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight truncate">${esc(item.name)}${item.variantName ? ` <span class="text-slate-500">(${esc(item.variantName)})</span>` : ''}</p>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            ${isGrosir ? `<span class="text-[8px] font-black bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 px-1.5 py-0.2 rounded-full">GROSIR</span>` : ''}
+            <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400">${fCur(effPrice)} × ${item.qty}${item.unit ? ' ' + item.unit : ''}</span>
+          </div>
+          <div class="flex items-center justify-between mt-1.5">
+            <span class="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400">${fCur(lineTotal)}</span>
+            <div class="flex items-center gap-1">
+              <button type="button" class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-all active:scale-95" onclick="changePosQty(${idx}, -${isDecimal ? 0.5 : 1})">
+                <i class="fa-solid fa-minus text-[9px] text-slate-600 dark:text-slate-400"></i>
+              </button>
+              <button type="button" class="min-w-[28px] text-center text-xs font-black text-slate-900 dark:text-white px-1.5 py-0.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md cursor-pointer hover:border-emerald-500 transition-colors" onclick="openPosQtyModal(${idx})">
+                ${item.qty}
+              </button>
+              <button type="button" class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center transition-all active:scale-95" onclick="changePosQty(${idx}, ${isDecimal ? 0.5 : 1})">
+                <i class="fa-solid fa-plus text-[9px] text-slate-600 dark:text-slate-400"></i>
+              </button>
+              <button type="button" class="w-6 h-6 rounded-lg bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 flex items-center justify-center transition-all active:scale-95" onclick="removeFromPosCart(${idx})">
+                <i class="fa-solid fa-trash-can text-[9px] text-rose-500"></i>
+              </button>
             </div>
           </div>
         </div>
-      `;
-    }).join('');
-  }
+      </div>
+    `;
+  }).join('');
+
+  if (drawerContainer) drawerContainer.innerHTML = cartHtml;
+  if (desktopContainer) desktopContainer.innerHTML = cartHtml;
 };
 
 // -----------------------------------------------------------------------------
 // 8. CART DRAWER
-// -----------------------------------------------------------------------------
 window.openPosCartDrawer = () => {
   const modal = el('pos-cart-drawer-modal');
   const box = el('pos-cart-drawer-box');
