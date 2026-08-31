@@ -32,13 +32,26 @@ const rDyn = () => {
   if (waEl) waEl.href = `https://wa.me/${waNum}?text=Halo%20Admin%20Toko,%20saya%20ingin%20bertanya.`;
   
   let mapEl = el('footer-address-link');
-  if (mapEl) {
-    if (appData.store.lat && appData.store.lng) {
-      mapEl.href = `https://www.google.com/maps?q=${appData.store.lat},${appData.store.lng}`;
-    } else {
-      mapEl.href = `https://www.google.com/maps?q=${encodeURIComponent(appData.store.address || 'Toko')}`;
-    }
+  const mapFrame = el('footer-map-frame');
+  const mapOverlayBtn = el('footer-map-overlay-btn');
+  let mapQuery = '';
+  if (appData.store.lat && appData.store.lng) {
+    mapQuery = `${appData.store.lat},${appData.store.lng}`;
+  } else if (appData.store.address) {
+    mapQuery = appData.store.address;
+  } else {
+    mapQuery = appData.store.name || 'TOKO GRAFIKA';
   }
+
+  const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+  const directMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
+
+  if (mapFrame && mapFrame.getAttribute('data-loaded-query') !== mapQuery) {
+    mapFrame.src = embedUrl;
+    mapFrame.setAttribute('data-loaded-query', mapQuery);
+  }
+  if (mapOverlayBtn) mapOverlayBtn.href = directMapsUrl;
+  if (mapEl) mapEl.href = directMapsUrl;
   
   // Render Media Sosial
   let socHtml = '';

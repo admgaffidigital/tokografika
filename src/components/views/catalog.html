@@ -277,33 +277,42 @@
             </div>
           </div>
 
-          <!-- Col 3: Kontak & Lokasi Toko (4 Cols) -->
+          <!-- Col 3: Kontak & Peta Lokasi Toko (4 Cols) -->
           <div class='md:col-span-4 flex flex-col gap-3 w-full'>
-            <h4 class='text-xs sm:text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider mb-0.5 flex items-center gap-2'>
-              <i class='fa-solid fa-headset text-emerald-500'></i> Hubungi Toko
+            <h4 class='text-xs sm:text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider mb-0.5 flex items-center justify-between'>
+              <span class='flex items-center gap-2'><i class='fa-solid fa-map-location-dot text-emerald-500'></i> Peta &amp; Kontak Gerai</span>
+              <span class='text-[9px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/40'>Live GPS</span>
             </h4>
 
-            <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 p-3.5 rounded-2xl flex items-center gap-3.5 hover:border-emerald-500 hover:shadow-md transition-all cursor-pointer group shadow-2xs' id='footer-address-link' target='_blank'>
-              <div class='w-11 h-11 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 border border-emerald-500/20'>
-                <i class='fa-solid fa-map-location-dot text-base'></i>
+            <!-- Interactive Map Embed Frame -->
+            <div class='w-full h-36 sm:h-40 rounded-2xl overflow-hidden border border-slate-200/90 dark:border-slate-700/80 shadow-2xs relative group bg-slate-100 dark:bg-slate-900'>
+              <iframe id='footer-map-frame' class='w-full h-full border-0' loading='lazy' allowfullscreen referrerpolicy='no-referrer-when-downgrade' src=''></iframe>
+              <a id='footer-map-overlay-btn' href='#' target='_blank' class='absolute bottom-2 right-2 px-2.5 py-1 rounded-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-xs text-[10px] font-black text-emerald-700 dark:text-emerald-400 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-1 hover:scale-105 transition-transform' title='Buka Rute di Google Maps'>
+                <i class='fa-solid fa-diamond-turn-right text-xs'></i> Petunjuk Arah
+              </a>
+            </div>
+
+            <!-- Lokasi Toko Details -->
+            <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 p-3 rounded-xl flex items-center gap-3 hover:border-emerald-500 hover:shadow-sm transition-all cursor-pointer group shadow-2xs' id='footer-address-link' target='_blank'>
+              <div class='w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 border border-emerald-500/20'>
+                <i class='fa-solid fa-location-dot text-sm'></i>
               </div>
               <div class='min-w-0 flex-1'>
-                <div class='flex items-center justify-between gap-1 mb-0.5'>
-                  <p class='text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest group-hover:text-emerald-600 transition-colors'>LOKASI GERAI TOKO</p>
-                  <span class='text-[8px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded-md'>Maps ↗</span>
-                </div>
+                <p class='text-[8px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest group-hover:text-emerald-600 transition-colors'>ALAMAT LENGKAP</p>
                 <p class='text-xs text-slate-800 dark:text-slate-200 font-bold line-clamp-1 truncate' id='footer-address'>Alamat Toko</p>
               </div>
+              <i class='fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:text-emerald-500 transition-colors shrink-0'></i>
             </a>
             
-            <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 p-3.5 rounded-2xl flex items-center gap-3.5 hover:border-emerald-500 hover:shadow-md transition-all cursor-pointer group shadow-2xs' id='footer-wa-link' target='_blank'>
-              <div class='w-11 h-11 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 shadow-sm'>
-                <i class='fa-brands fa-whatsapp text-lg'></i>
+            <!-- WhatsApp CS -->
+            <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 p-3 rounded-xl flex items-center gap-3 hover:border-emerald-500 hover:shadow-sm transition-all cursor-pointer group shadow-2xs' id='footer-wa-link' target='_blank'>
+              <div class='w-9 h-9 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 shadow-xs'>
+                <i class='fa-brands fa-whatsapp text-base'></i>
               </div>
               <div class='min-w-0 flex-1'>
                 <div class='flex items-center justify-between gap-1 mb-0.5'>
-                  <p class='text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest group-hover:text-emerald-600 transition-colors'>LAYANAN WHATSAPP CS</p>
-                  <span class='text-[8px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded-md'>Chat CS 💬</span>
+                  <p class='text-[8px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest group-hover:text-emerald-600 transition-colors'>WHATSAPP CS</p>
+                  <span class='text-[8px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded-md'>Chat Sekarang 💬</span>
                 </div>
                 <p class='text-xs text-slate-800 dark:text-slate-200 font-black tracking-wide' id='footer-wa'>08123456789</p>
               </div>
