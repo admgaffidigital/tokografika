@@ -249,9 +249,6 @@ const renderPosCategories = () => {
   const labelEl = el('pos-active-cat-label');
   if (labelEl) labelEl.innerText = posActiveCategory;
 
-  const listContainer = el('pos-category-modal-list');
-  if (!listContainer) return;
-
   const allProducts = appData.products || [];
   const categories = [
     { name: 'Semua Produk', count: allProducts.length, icon: 'fa-boxes-stacked' },
@@ -261,6 +258,26 @@ const renderPosCategories = () => {
       icon: 'fa-tag'
     }))
   ];
+
+  // 1. Render Top Horizontal Category Pills Bar
+  const pillsBar = el('pos-category-pills-bar');
+  if (pillsBar) {
+    pillsBar.innerHTML = categories.map(cat => {
+      const isSelected = posActiveCategory === cat.name;
+      return `
+        <button type="button" onclick="selectPosCategory('${esc(cat.name)}')" 
+          class="px-3 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 flex items-center gap-1.5 active:scale-95 ${isSelected ? 'bg-white text-slate-900 shadow-sm' : 'bg-white/20 hover:bg-white/30 text-white border border-white/20'}">
+          <i class="fa-solid ${cat.icon} text-[10px]"></i>
+          <span>${esc(cat.name)}</span>
+          <span class="text-[9px] opacity-75 font-semibold">(${cat.count})</span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  // 2. Render Category Modal List
+  const listContainer = el('pos-category-modal-list');
+  if (!listContainer) return;
 
   const filteredCats = categories.filter(c => {
     if (!posCategorySearchQuery) return true;
@@ -302,7 +319,13 @@ window.selectPosCategory = (cat) => {
   const labelEl = el('pos-active-cat-label');
   if (labelEl) labelEl.innerText = cat;
   closePosCategoryModal();
+  renderPosCategories();
   renderPosProducts();
+};
+
+window.scrollToPosTop = () => {
+  const scrollEl = el('pos-products-scroll');
+  if (scrollEl) scrollEl.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 window.filterPosCategory = (cat) => {
@@ -734,6 +757,11 @@ const renderPosCart = () => {
     topBadge.innerText = formattedQty;
     topBadge.classList.toggle('hidden', totalItems === 0);
   }
+  const navCartBadge = el('pos-nav-cart-badge');
+  if (navCartBadge) {
+    navCartBadge.innerText = formattedQty;
+    navCartBadge.classList.toggle('hidden', totalItems === 0);
+  }
   if (floatDockCount) floatDockCount.innerText = `${totalItems} Item (${formattedQty})`;
   if (drawerCount) drawerCount.innerText = `${totalItems} Produk (${formattedQty} Unit)`;
 
@@ -848,6 +876,11 @@ window.updatePosPendingBadge = () => {
     badge.innerText = count;
     badge.classList.toggle('hidden', count === 0);
   }
+  const navBadge = el('pos-nav-pending-badge');
+  if (navBadge) {
+    navBadge.innerText = count;
+    navBadge.classList.toggle('hidden', count === 0);
+  }
 };
 
 window.holdPosTransaction = (customNote = null) => {
@@ -884,7 +917,7 @@ window.holdPosTransaction = (customNote = null) => {
   if (inputEl) inputEl.value = '';
   
   if (typeof playPosBeep === 'function') playPosBeep('hold');
-  showToast(`Transaksi ditahan sebagai "${esc(note)}"! ⏸️`);
+  showToast(`Transaksi ditahan sebagai "${esc(note)}"!`);
   if (el('pos-pending-modal') && !el('pos-pending-modal').classList.contains('hidden')) {
     renderPosPendingList();
   }
