@@ -184,7 +184,7 @@ window.initPosView = async () => {
   const navCms = el('pos-nav-cms-tab');
   const hasAdminPerm = cRole === 'admin' || (cPerms && cPerms.length > 0);
   if (btnCms) {
-    btnCms.style.display = (hasAdminPerm && window.innerWidth >= 768) ? 'inline-flex' : 'none';
+    btnCms.style.display = (hasAdminPerm && window.innerWidth >= 640) ? 'inline-flex' : 'none';
   }
   if (navCms) {
     navCms.classList.toggle('hidden', !hasAdminPerm);
@@ -365,17 +365,13 @@ window.handlePosSearch = (val) => {
   const clearBtn = el('pos-btn-clear-search');
   if (clearBtn) clearBtn.classList.toggle('hidden', !posSearchQuery);
   const mInput = el('pos-search-input');
-  const dInput = el('pos-search-input-desktop');
   if (mInput && mInput.value !== val) mInput.value = val;
-  if (dInput && dInput.value !== val) dInput.value = val;
   renderPosProducts();
 };
 
 window.clearPosSearch = () => {
   const mInput = el('pos-search-input');
-  const dInput = el('pos-search-input-desktop');
   if (mInput) mInput.value = '';
-  if (dInput) dInput.value = '';
   posSearchQuery = '';
   const clearBtn = el('pos-btn-clear-search');
   if (clearBtn) clearBtn.classList.add('hidden');
