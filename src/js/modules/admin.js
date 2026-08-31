@@ -3770,6 +3770,120 @@ const guideTopicsData = {
       </div>
     `
   },
+  unlimited_stock: {
+    title: 'Panduan Transaksi Bebas / Tanpa Stok (Unlimited Stock)',
+    icon: 'fa-infinity',
+    content: `
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl border bg-cyan-50/60 dark:bg-cyan-950/30 border-cyan-200 dark:border-cyan-800/60">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2 text-cyan-700 dark:text-cyan-400">
+            <i class="fa-solid fa-infinity"></i> Bebas Transaksi Tanpa Terhalang Kuota Stok
+          </h4>
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Fitur <b>Mode Stok Unlimited</b> memungkinkan toko melayani penjualan produk jasa (seperti <i>Jasa Desain, Digital Print, Sablon, Pre-Order, Sewa, atau Kursus</i>) maupun barang retail tanpa batasan kuota stok. Transaksi di kasir POS dan toko online tidak akan pernah terblokir oleh validasi stok kosong.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-2">
+            <span class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs">
+              <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-cyan-600">1</span>
+              Tingkat Toko (Global Setting):
+            </span>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Buka menu <b>Pengaturan Toko</b>, lalu pada bagian <i>Mode Manajemen Stok Toko</i> pilih <b>Mode Bebas Stok (Unlimited)</b>. Seluruh produk toko seketika dapat ditransaksikan bebas di kasir & online tanpa pengurangan stok ke angka minus.
+            </p>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-2">
+            <span class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs">
+              <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-indigo-600">2</span>
+              Tingkat Satuan Produk (Per-Item):
+            </span>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Jika toko tetap ingin mencatat stok untuk barang fisik, Anda dapat mengaktifkan toggle <b>Stok Unlimited (Bebas Transaksi)</b> hanya pada item produk tertentu via tombol <b>Edit Cepat ⚡</b> atau form edit produk.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+          <span class="font-bold text-slate-800 dark:text-white text-xs block"><i class="fa-solid fa-circle-info text-cyan-500 mr-1"></i> Tampilan di Kasir & Toko Online:</span>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+            Produk bertipe unlimited akan diberi badge <b><i class="fa-solid fa-infinity text-cyan-500 text-[10px]"></i> Stok Bebas</b> di kasir POS dan tidak akan pernah berstatus <i>"STOK HABIS"</i> di katalog toko online, sehingga pelanggan dapat langsung memesan tanpa hambatan.
+          </p>
+        </div>
+      </div>
+    `
+  },
+  barcode_scanner: {
+    title: 'Panduan Scanner Barcode Kamera, USB Scanner & SKU Auto',
+    icon: 'fa-barcode',
+    content: `
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06)">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2" style="color:var(--clr-p)">
+            <i class="fa-solid fa-barcode"></i> Efisiensi Kasir dengan Barcode Scanner & SKU Cerdas
+          </h4>
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Toko Grafika mendukung pemindaian barcode instan dari kamera smartphone, scanner barcode fisik USB/Bluetooth kasir, hingga pembuatan nomor barcode SKU otomatis dalam 1-klik.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-camera text-emerald-500"></i> Scanner Kamera HP</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Klik ikon QR/Barcode di samping kolom pencarian atau input SKU untuk membuka kamera dan memindai kemasan barang langsung tanpa alat tambahan.</p>
+          </div>
+          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-barcode text-indigo-500"></i> Scanner Fisik USB / BT</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Colokkan barcode scanner USB ke komputer kasir. Setiap kali barcode ditembak, item langsung otomatis masuk ke keranjang kasir POS dengan notifikasi suara!</p>
+          </div>
+          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> Auto SKU Generator</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Jika produk tidak memiliki barcode pabrik, klik tombol <b>Auto SKU</b> saat membuat produk atau varian untuk menghasilkan kode barcode unik otomatis.</p>
+          </div>
+        </div>
+      </div>
+    `
+  },
+  pwa_app: {
+    title: 'Panduan Aplikasi Mobile PWA (Install di Android & iOS)',
+    icon: 'fa-mobile-screen-button',
+    content: `
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl border bg-purple-50/60 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800/60">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2 text-purple-700 dark:text-purple-400">
+            <i class="fa-solid fa-mobile-screen"></i> Pasang Toko Grafika Sebagai Aplikasi di Layar HP
+          </h4>
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Toko Grafika telah mengadopsi teknologi <b>Progressive Web App (PWA)</b> generasi terbaru. Aplikasi dapat di-install langsung ke layar utama smartphone tanpa perlu mengunduh dari Google Play Store atau Apple App Store.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-2">
+            <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs"><i class="fa-brands fa-android text-emerald-500 text-sm"></i> Cara Install di HP Android:</h5>
+            <ol class="list-decimal list-inside text-xs text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
+              <li>Buka website <b>tokogrosir.id</b> di Google Chrome.</li>
+              <li>Klik tombol <b>"Install Aplikasi"</b> yang muncul di layar (atau tekan menu titik 3 di pojok kanan atas Chrome).</li>
+              <li>Pilih <b>"Tambahkan ke Layar Utama" / "Install Aplikasi"</b>.</li>
+              <li>Ikon Toko Grafika akan langsung muncul di homescreen HP Anda dan siap digunakan seperti aplikasi kasir profesional!</li>
+            </ol>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-2">
+            <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs"><i class="fa-brands fa-apple text-slate-800 dark:text-white text-sm"></i> Cara Install di iPhone (iOS):</h5>
+            <ol class="list-decimal list-inside text-xs text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
+              <li>Buka website <b>tokogrosir.id</b> di browser Safari.</li>
+              <li>Tekan tombol <b>Share</b> (ikon kotak dengan panah ke atas di bagian bawah Safari).</li>
+              <li>Gulir ke bawah dan pilih <b>"Add to Home Screen" (Tambah ke Layar Utama)</b>.</li>
+              <li>Tekan <b>Add</b> di pojok kanan atas. Aplikasi siap dibuka dalam mode layar penuh!</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    `
+  },
   settings: {
     title: 'Panduan Pengaturan Toko, Rekening & Akun Kasir',
     icon: 'fa-gear',
