@@ -8,6 +8,17 @@
 }
 
 @media print {
+    @page {
+        margin: 0 !important;
+        size: auto;
+    }
+
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+    }
+
     /* 1. Sembunyikan elemen aplikasi umum */
     #app-container,
     #global-loader,
@@ -23,6 +34,7 @@
     * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+        box-sizing: border-box !important;
     }
 
     /* 2. MODE: CETAK LAPORAN KEUANGAN A4 */
@@ -51,33 +63,35 @@
         display: none !important;
     }
 
-    /* 3. MODE: CETAK STRUK THERMAL 58MM */
+    /* 3. MODE: CETAK STRUK THERMAL 58MM (RAZOR-SHARP & PRECISE PRINTABLE AREA) */
     body:not(.print-mode-report):not(.print-paper-80) {
         background-color: #ffffff !important;
         color: #000000 !important;
-        margin: 0 !important;
+        margin: 0 auto !important;
         padding: 0 !important;
         width: 58mm !important;
+        max-width: 58mm !important;
     }
     
     body:not(.print-mode-report):not(.print-paper-80) #thermal-print-section {
         display: block !important;
         width: 58mm !important;
         max-width: 58mm !important;
-        margin: 0 !important;
-        padding: 2mm !important;
+        margin: 0 auto !important;
+        padding: 1.5mm 2.5mm 6mm 2.5mm !important;
         background-color: #ffffff !important;
         color: #000000 !important;
         opacity: 1 !important;
         visibility: visible !important;
+        box-sizing: border-box !important;
     }
     
     body:not(.print-mode-report):not(.print-paper-80) #thermal-print-section * {
         font-family: 'JetBrains Mono', 'Courier New', Courier, monospace !important;
-        font-size: 11px !important;
-        font-weight: bold !important;
+        font-size: 10.5px !important;
+        font-weight: 700 !important;
         color: #000000 !important;
-        line-height: 1.2 !important;
+        line-height: 1.3 !important;
         box-sizing: border-box !important;
     }
 
@@ -85,29 +99,31 @@
     body.print-paper-80:not(.print-mode-report) {
         background-color: #ffffff !important;
         color: #000000 !important;
-        margin: 0 !important;
+        margin: 0 auto !important;
         padding: 0 !important;
         width: 80mm !important;
+        max-width: 80mm !important;
     }
     
     body.print-paper-80:not(.print-mode-report) #thermal-print-section {
         display: block !important;
         width: 80mm !important;
         max-width: 80mm !important;
-        margin: 0 !important;
-        padding: 3mm !important;
+        margin: 0 auto !important;
+        padding: 2mm 3.5mm 8mm 3.5mm !important;
         background-color: #ffffff !important;
         color: #000000 !important;
         opacity: 1 !important;
         visibility: visible !important;
+        box-sizing: border-box !important;
     }
     
     body.print-paper-80:not(.print-mode-report) #thermal-print-section * {
         font-family: 'JetBrains Mono', 'Courier New', Courier, monospace !important;
         font-size: 12px !important;
-        font-weight: bold !important;
+        font-weight: 700 !important;
         color: #000000 !important;
-        line-height: 1.25 !important;
+        line-height: 1.35 !important;
         box-sizing: border-box !important;
     }
 }

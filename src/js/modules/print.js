@@ -71,7 +71,6 @@ const _generateReceiptBarcodeSvg = (codeStr) => {
 const _renderReceiptHtml = (o, paperSize = '58') => {
   if (!o) return '';
   const is80 = paperSize === '80';
-  const len = is80 ? 48 : 32;
   const d = (o.dateString || o.createdAt) 
     ? new Date(o.dateString || o.createdAt).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }) 
     : new Date().toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -80,14 +79,16 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
   const sAddr = appData.store.address || "";
   const sW = appData.store.wa || "";
   const sFooter = appData.store.footerText || "Terima kasih atas kunjungan Anda";
-  
-  const pL = (l, r, targetLen = len) => {
-    const p = targetLen - l.length - r.length;
-    return l + (p > 0 ? ' '.repeat(p) : ' ') + r;
-  };
 
-  const dLine = '='.repeat(len);
-  const sLine = '-'.repeat(len);
+  const dLine = '<div style="border-top: 2px solid #000; margin: 4px 0;"></div>';
+  const sLine = '<div style="border-top: 1px dashed #000; margin: 4px 0;"></div>';
+
+  const row = (l, r, bold = false, sz = is80 ? '11px' : '10px') => `
+    <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:${sz}; font-weight:${bold ? 'bold' : 'normal'}; line-height:1.35; margin:1.5px 0;">
+      <span style="text-align:left; color:#000;">${l}</span>
+      <span style="text-align:right; font-weight:${bold ? '900' : 'bold'}; color:#000; white-space:nowrap; padding-left:4px;">${r}</span>
+    </div>
+  `;
 
   // Total items and total qty
   let totalQty = 0;
@@ -97,21 +98,21 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
   });
 
   let h = `
-    <div style="text-align:center; font-weight:900; font-size:${is80 ? '16px' : '13px'}; letter-spacing:0.5px; line-height:1.2; margin-bottom:2px;">${esc(sN)}</div>
+    <div style="text-align:center; font-weight:900; font-size:${is80 ? '16px' : '13px'}; letter-spacing:0.5px; line-height:1.2; margin-bottom:2px; color:#000;">${esc(sN)}</div>
     ${sSlogan ? `<div style="text-align:center; font-size:${is80 ? '11px' : '9px'}; font-weight:600; color:#333; margin-bottom:2px;">${esc(sSlogan)}</div>` : ''}
     ${sAddr ? `<div style="text-align:center; font-size:${is80 ? '10px' : '9px'}; color:#444; line-height:1.2; margin-bottom:2px; word-break:break-word;">${esc(sAddr)}</div>` : ''}
-    ${sW ? `<div style="text-align:center; font-size:${is80 ? '11px' : '9px'}; font-weight:bold; margin-bottom:4px;">TELP/WA: ${esc(sW)}</div>` : ''}
+    ${sW ? `<div style="text-align:center; font-size:${is80 ? '11px' : '9px'}; font-weight:bold; margin-bottom:4px; color:#000;">TELP/WA: ${esc(sW)}</div>` : ''}
     
-    <div style="font-family:monospace; font-weight:bold; line-height:1; font-size:${is80 ? '11px' : '10px'}; margin: 4px 0;">${dLine}</div>
+    ${dLine}
     
-    <div style="white-space:pre; font-size:${is80 ? '11px' : '10px'}; line-height:1.35;">${pL('No.Struk: #' + (o.orderId || o.id), '')}</div>
-    <div style="white-space:pre; font-size:${is80 ? '11px' : '10px'}; line-height:1.35;">${pL('Waktu   : ' + d, '')}</div>
-    <div style="white-space:pre; font-size:${is80 ? '11px' : '10px'}; line-height:1.35;">${pL('Kasir   : ' + esc(o.cashier || 'Admin / Kasir-1'), '')}</div>
-    <div style="white-space:pre; font-size:${is80 ? '11px' : '10px'}; line-height:1.35;">${pL('Pelanggan: ' + esc(o.customer?.name || 'Umum / Walk-in').substring(0, is80 ? 30 : 16), '')}</div>
-    <div style="white-space:pre; font-size:${is80 ? '11px' : '10px'}; line-height:1.35;">${pL('Layanan : ' + (o.type === 'pos' ? 'POS KASIR TOKO' : (o.customer?.deliveryMethod === 'delivery' ? 'PENGIRIMAN KURIR' : 'AMBIL DI TOKO')), '')}</div>
-    ${o.customer?.note ? `<div style="white-space:pre-wrap; word-break:break-word; font-size:${is80 ? '11px' : '9.5px'}; line-height:1.3; color:#333; margin-top:2px;">Catatan : ${esc(o.customer.note)}</div>` : ''}
+    ${row('No.Struk', '#' + (o.orderId || o.id))}
+    ${row('Waktu', d)}
+    ${row('Kasir', esc(o.cashier || 'Admin / Kasir-1'))}
+    ${row('Pelanggan', esc(o.customer?.name || 'Umum / Walk-in'))}
+    ${row('Layanan', (o.type === 'pos' ? 'POS KASIR TOKO' : (o.customer?.deliveryMethod === 'delivery' ? 'PENGIRIMAN KURIR' : 'AMBIL DI TOKO')))}
+    ${o.customer?.note ? `<div style="font-size:${is80 ? '11px' : '9.5px'}; line-height:1.3; color:#333; margin-top:2px; word-break:break-word;">Catatan: ${esc(o.customer.note)}</div>` : ''}
 
-    <div style="font-family:monospace; font-weight:bold; line-height:1; font-size:${is80 ? '11px' : '10px'}; margin: 4px 0;">${sLine}</div>
+    ${sLine}
   `;
 
   // Item Listings
@@ -125,19 +126,15 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
     const qtyPriceStr = `${qty}${unit} x ${effP.toLocaleString('id-ID')}`;
     const totalStr = itemTotal.toLocaleString('id-ID');
 
-    if (is80) {
-      const truncatedName = rawName.substring(0, 48);
-      h += `
-        <div style="white-space:pre-wrap; font-weight:bold; font-size:12px; line-height:1.25; margin-top:3px; word-break:break-word;">${truncatedName}</div>
-        <div style="white-space:pre; font-size:11.5px; line-height:1.3; margin-bottom:3px;">${pL('  ' + qtyPriceStr, totalStr, 48)}</div>
-      `;
-    } else {
-      const truncatedName = rawName.substring(0, 32);
-      h += `
-        <div style="white-space:pre-wrap; font-weight:bold; font-size:10.5px; line-height:1.25; margin-top:2.5px; word-break:break-word;">${truncatedName}</div>
-        <div style="white-space:pre; font-size:10px; line-height:1.3; margin-bottom:2.5px;">${pL(qtyPriceStr, totalStr, 32)}</div>
-      `;
-    }
+    h += `
+      <div style="margin: 3px 0 4px 0;">
+        <div style="font-weight:bold; font-size:${is80 ? '12px' : '10.5px'}; line-height:1.25; word-break:break-word; color:#000;">${rawName}</div>
+        <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:${is80 ? '11px' : '9.5px'}; line-height:1.3; margin-top:1px;">
+          <span style="color:#222;">${qtyPriceStr}</span>
+          <span style="font-weight:bold; color:#000; white-space:nowrap; padding-left:4px;">${totalStr}</span>
+        </div>
+      </div>
+    `;
   });
 
   const sub = o.payment?.subtotal || o.subtotal || 0;
@@ -147,39 +144,42 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
   const totalSavings = prodDisc + shipDisc;
 
   h += `
-    <div style="font-family:monospace; font-weight:bold; line-height:1; font-size:${is80 ? '11px' : '10px'}; margin: 4px 0;">${sLine}</div>
-    <div style="white-space:pre; font-size:${is80 ? '11px' : '10px'}; line-height:1.35;">${pL('Total Item / Qty', `${totalItemsCount} Brg / ${totalQty} Pcs`)}</div>
-    <div style="white-space:pre; font-size:${is80 ? '11px' : '10px'}; line-height:1.35;">${pL('Subtotal', sub.toLocaleString('id-ID'))}</div>
+    ${sLine}
+    ${row('Total Item / Qty', `${totalItemsCount} Brg / ${totalQty} Pcs`)}
+    ${row('Subtotal', sub.toLocaleString('id-ID'))}
   `;
 
   if (prodDisc > 0) {
-    h += `<div style="white-space:pre; font-size:${is80 ? '11px' : '10px'}; line-height:1.35;">${pL('Diskon Promo', '-' + prodDisc.toLocaleString('id-ID'))}</div>`;
+    h += row('Diskon Promo', '-' + prodDisc.toLocaleString('id-ID'));
   }
   if (o.customer?.deliveryMethod !== 'pickup' && o.type !== 'pos') {
-    h += `<div style="white-space:pre; font-size:${is80 ? '11px' : '10px'}; line-height:1.35;">${pL('Ongkos Kirim', (o.payment?.shippingCost || 0).toLocaleString('id-ID'))}</div>`;
+    h += row('Ongkos Kirim', (o.payment?.shippingCost || 0).toLocaleString('id-ID'));
   }
   if (shipDisc > 0) {
-    h += `<div style="white-space:pre; font-size:${is80 ? '11px' : '10px'}; line-height:1.35;">${pL('Potongan Ongkir', '-' + shipDisc.toLocaleString('id-ID'))}</div>`;
+    h += row('Potongan Ongkir', '-' + shipDisc.toLocaleString('id-ID'));
   }
 
   h += `
-    <div style="font-family:monospace; font-weight:bold; line-height:1; font-size:${is80 ? '11px' : '10px'}; margin: 4px 0;">${dLine}</div>
-    <div style="white-space:pre; font-weight:900; font-size:${is80 ? '14px' : '12px'}; line-height:1.4;">${pL('TOTAL AKHIR', 'Rp ' + grand.toLocaleString('id-ID'))}</div>
-    <div style="font-family:monospace; font-weight:bold; line-height:1; font-size:${is80 ? '11px' : '10px'}; margin: 4px 0;">${dLine}</div>
+    ${dLine}
+    <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:${is80 ? '14px' : '12px'}; font-weight:900; line-height:1.4; margin: 3px 0; color:#000;">
+      <span>TOTAL AKHIR</span>
+      <span style="white-space:nowrap; padding-left:4px;">Rp ${grand.toLocaleString('id-ID')}</span>
+    </div>
+    ${dLine}
   `;
 
   const payMethod = String(o.payment?.method || 'TUNAI').toUpperCase();
-  h += `<div style="white-space:pre; font-size:${is80 ? '11px' : '10px'}; line-height:1.35;">${pL('Metode Bayar', payMethod)}</div>`;
+  h += row('Metode Bayar', payMethod);
 
   if (o.payment?.cashReceived) {
-    h += `<div style="white-space:pre; font-size:${is80 ? '11px' : '10px'}; line-height:1.35;">${pL('Bayar Tunai', o.payment.cashReceived.toLocaleString('id-ID'))}</div>`;
-    h += `<div style="white-space:pre; font-size:${is80 ? '11px' : '10px'}; line-height:1.35;">${pL('Kembalian', (o.payment.change || 0).toLocaleString('id-ID'))}</div>`;
+    h += row('Bayar Tunai', o.payment.cashReceived.toLocaleString('id-ID'));
+    h += row('Kembalian', (o.payment.change || 0).toLocaleString('id-ID'));
   }
 
   // Supermarket Savings Banner
   if (totalSavings > 0) {
     h += `
-      <div style="margin: 6px 0; padding: 3px 0; border-top: 1px dashed #000; border-bottom: 1px dashed #000; text-align:center; font-weight:900; font-size:${is80 ? '11px' : '9.5px'};">
+      <div style="margin: 6px 0; padding: 3px 0; border-top: 1px dashed #000; border-bottom: 1px dashed #000; text-align:center; font-weight:900; font-size:${is80 ? '11px' : '9.5px'}; color:#000;">
         *** ANDA HEMAT: Rp ${totalSavings.toLocaleString('id-ID')} ***
       </div>
     `;
@@ -188,18 +188,18 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
   // Barcode and Authentic Supermarket Footer
   h += `
     ${_generateReceiptBarcodeSvg(o.orderId || o.id)}
-    <div style="font-family:monospace; font-weight:bold; line-height:1; font-size:${is80 ? '11px' : '10px'}; margin: 4px 0;">${sLine}</div>
-    <div style="text-align:center; font-weight:bold; font-size:${is80 ? '11px' : '9.5px'}; line-height:1.3; margin-top:2px;">
+    ${sLine}
+    <div style="text-align:center; font-weight:bold; font-size:${is80 ? '11px' : '9.5px'}; line-height:1.3; margin-top:2px; color:#000;">
       ${esc(sFooter)}
     </div>
-    <div style="text-align:center; font-size:${is80 ? '10px' : '8.5px'}; color:#555; line-height:1.3; margin-top:2px;">
+    <div style="text-align:center; font-size:${is80 ? '10px' : '8.5px'}; color:#444; line-height:1.3; margin-top:2px;">
       Barang yang sudah dibeli tidak dapat ditukar/dikembalikan
     </div>
-    <div style="font-family:monospace; font-weight:bold; line-height:1; font-size:${is80 ? '11px' : '10px'}; margin: 4px 0;">${dLine}</div>
-    <div style="text-align:center; font-size:${is80 ? '9.5px' : '8px'}; color:#777; margin-top:2px;">
+    ${dLine}
+    <div style="text-align:center; font-size:${is80 ? '9.5px' : '8px'}; color:#666; margin-top:2px;">
       Powered by Toko Grafika POS &bull; www.tokografika.com
     </div>
-    <div style="height:12px;"></div>
+    <div style="height:14px;"></div>
   `;
 
   return h;
