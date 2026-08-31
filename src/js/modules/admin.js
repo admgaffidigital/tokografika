@@ -2103,9 +2103,74 @@ const rAdmSet = () => {
               <input type="radio" name="store-printer-paper" value="80" ${appData.store.printerPaper === '80' ? 'checked' : ''} onchange="appData.store.printerPaper='80'; try{localStorage.setItem('freshmart_printer_paper','80');}catch(e){}" class="text-emerald-600 focus:ring-emerald-500" />
               <div>
                 <div class="text-xs font-bold text-slate-800 dark:text-white">Printer 80mm (Besar / Standar POS)</div>
-                <div class="text-[10px] text-slate-400">Standar 48 Kolom (Desktop POS / Kasir Resto & Minimarket)</div>
+                <div class="text-[10px] text-slate-400">Standar 42/48 Kolom (Desktop POS / Kasir Resto & Minimarket)</div>
               </div>
             </label>
+          </div>
+        </div>
+
+        <!-- Pengaturan Format & Panjang Struk Kasir (Header & Footer) -->
+        <div class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 mt-4 space-y-4">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-widest">
+              <i class="fa-solid fa-receipt text-emerald-500 mr-1"></i> Format Panjang Struk Kasir (Header & Footer)
+            </label>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mb-3">Pilih format panjang struk agar hemat kertas thermal dan tidak terlalu panjang saat dicetak.</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <label class="flex items-center gap-2.5 p-3 rounded-xl border-2 cursor-pointer transition-all bg-white dark:bg-slate-800 ${appData.store.receiptLayoutMode === 'full' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700'}">
+                <input type="radio" name="store-receipt-mode" value="full" ${appData.store.receiptLayoutMode === 'full' ? 'checked' : ''} class="text-emerald-600 focus:ring-emerald-500" />
+                <div>
+                  <div class="text-xs font-bold text-slate-800 dark:text-white">Format Lengkap</div>
+                  <div class="text-[10px] text-slate-400">Header komplit, barcode & catatan</div>
+                </div>
+              </label>
+              <label class="flex items-center gap-2.5 p-3 rounded-xl border-2 cursor-pointer transition-all bg-white dark:bg-slate-800 ${(appData.store.receiptLayoutMode === 'compact' || !appData.store.receiptLayoutMode) ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700'}">
+                <input type="radio" name="store-receipt-mode" value="compact" ${(appData.store.receiptLayoutMode === 'compact' || !appData.store.receiptLayoutMode) ? 'checked' : ''} class="text-emerald-600 focus:ring-emerald-500" />
+                <div>
+                  <div class="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1"><span class="text-amber-500">⚡</span> Ringkas (Rekomendasi)</div>
+                  <div class="text-[10px] text-slate-400">Header padat, hemat kertas ~40%</div>
+                </div>
+              </label>
+              <label class="flex items-center gap-2.5 p-3 rounded-xl border-2 cursor-pointer transition-all bg-white dark:bg-slate-800 ${appData.store.receiptLayoutMode === 'minimal' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700'}">
+                <input type="radio" name="store-receipt-mode" value="minimal" ${appData.store.receiptLayoutMode === 'minimal' ? 'checked' : ''} class="text-emerald-600 focus:ring-emerald-500" />
+                <div>
+                  <div class="text-xs font-bold text-slate-800 dark:text-white">Super Pendek (Eco)</div>
+                  <div class="text-[10px] text-slate-400">Hanya nama toko, item & total</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Opsi Toggle Rinci Elemen Struk -->
+          <div class="pt-3 border-t border-slate-200/80 dark:border-slate-700">
+            <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2.5">Kustomisasi Elemen Header & Footer Struk:</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+              <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer">
+                <input type="checkbox" id="set-receipt-show-slogan" ${appData.store.receiptShowSlogan === true ? 'checked' : ''} class="rounded text-emerald-600 focus:ring-emerald-500" />
+                <span class="font-medium text-slate-700 dark:text-slate-300">Tampilkan Slogan Toko</span>
+              </label>
+              <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer">
+                <input type="checkbox" id="set-receipt-show-address" ${appData.store.receiptShowAddress !== false ? 'checked' : ''} class="rounded text-emerald-600 focus:ring-emerald-500" />
+                <span class="font-medium text-slate-700 dark:text-slate-300">Tampilkan Alamat Toko</span>
+              </label>
+              <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer">
+                <input type="checkbox" id="set-receipt-show-wa" ${appData.store.receiptShowWa !== false ? 'checked' : ''} class="rounded text-emerald-600 focus:ring-emerald-500" />
+                <span class="font-medium text-slate-700 dark:text-slate-300">Tampilkan No. Telp/WA</span>
+              </label>
+              <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer">
+                <input type="checkbox" id="set-receipt-show-barcode" ${appData.store.receiptShowBarcode === true ? 'checked' : ''} class="rounded text-emerald-600 focus:ring-emerald-500" />
+                <span class="font-medium text-slate-700 dark:text-slate-300">Tampilkan Garis Barcode Visual</span>
+              </label>
+              <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer">
+                <input type="checkbox" id="set-receipt-show-notes" ${appData.store.receiptShowNotes === true ? 'checked' : ''} class="rounded text-emerald-600 focus:ring-emerald-500" />
+                <span class="font-medium text-slate-700 dark:text-slate-300">Tampilkan Catatan Pengembalian</span>
+              </label>
+              <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer">
+                <input type="checkbox" id="set-receipt-show-powered" ${appData.store.receiptShowPowered !== false ? 'checked' : ''} class="rounded text-emerald-600 focus:ring-emerald-500" />
+                <span class="font-medium text-slate-700 dark:text-slate-300">Tampilkan "Powered by"</span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -2336,6 +2401,14 @@ window.saveAdminSettings = async () => {
     appData.store.printerPaper = selPaper;
     const selStockMode = document.querySelector('input[name="store-stock-mode"]:checked')?.value || 'tracked';
     appData.store.stockMode = selStockMode;
+    const selReceiptMode = document.querySelector('input[name="store-receipt-mode"]:checked')?.value || 'compact';
+    appData.store.receiptLayoutMode = selReceiptMode;
+    appData.store.receiptShowSlogan = el('set-receipt-show-slogan')?.checked ?? false;
+    appData.store.receiptShowAddress = el('set-receipt-show-address')?.checked ?? true;
+    appData.store.receiptShowWa = el('set-receipt-show-wa')?.checked ?? true;
+    appData.store.receiptShowBarcode = el('set-receipt-show-barcode')?.checked ?? false;
+    appData.store.receiptShowNotes = el('set-receipt-show-notes')?.checked ?? false;
+    appData.store.receiptShowPowered = el('set-receipt-show-powered')?.checked ?? true;
     try { 
       localStorage.setItem('freshmart_bg_style', appData.store.bgStyle); 
       localStorage.setItem('freshmart_bg_image', appData.store.bgImage || '');

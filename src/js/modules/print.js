@@ -82,8 +82,16 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
   const sW = appData.store.wa || "";
   const sFooter = appData.store.footerText || "Terima kasih atas kunjungan Anda";
 
-  const dLine = '<div style="border-top: 2px solid #000; margin: 4px 0;"></div>';
-  const sLine = '<div style="border-top: 1px dashed #000; margin: 4px 0;"></div>';
+  const rMode = appData.store.receiptLayoutMode || 'compact'; // 'full' | 'compact' | 'minimal'
+  const showSlogan = (appData.store.receiptShowSlogan === true) || (rMode === 'full' && appData.store.receiptShowSlogan !== false);
+  const showAddress = (appData.store.receiptShowAddress !== false) && (rMode !== 'minimal') && (rMode !== 'compact' || appData.store.receiptShowAddress === true);
+  const showWa = (appData.store.receiptShowWa !== false) && (rMode !== 'minimal');
+  const showBarcode = (appData.store.receiptShowBarcode === true) || (rMode === 'full' && appData.store.receiptShowBarcode !== false);
+  const showNotes = (appData.store.receiptShowNotes === true) || (rMode === 'full' && appData.store.receiptShowNotes !== false);
+  const showPowered = (appData.store.receiptShowPowered !== false) && (rMode !== 'minimal');
+
+  const dLine = '<div style="border-top: 1.5px solid #000; margin: 3px 0;"></div>';
+  const sLine = '<div style="border-top: 1px dashed #000; margin: 3px 0;"></div>';
 
   const row = (l, r, bold = false, sz = is80 ? '11px' : '10px') => `
     <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:${sz}; font-weight:${bold ? 'bold' : 'normal'}; line-height:1.35; margin:1.5px 0; width:100%; box-sizing:border-box;">
@@ -101,17 +109,17 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
 
   let h = `
     <div style="text-align:center; font-weight:900; font-size:${is80 ? '15px' : '13px'}; letter-spacing:0.5px; line-height:1.2; margin-bottom:2px; color:#000;">${esc(sN)}</div>
-    ${sSlogan ? `<div style="text-align:center; font-size:${is80 ? '11px' : '9px'}; font-weight:600; color:#333; margin-bottom:2px;">${esc(sSlogan)}</div>` : ''}
-    ${sAddr ? `<div style="text-align:center; font-size:${is80 ? '10.5px' : '9px'}; color:#444; line-height:1.2; margin-bottom:2px; word-break:break-word;">${esc(sAddr)}</div>` : ''}
-    ${sW ? `<div style="text-align:center; font-size:${is80 ? '11px' : '9px'}; font-weight:bold; margin-bottom:4px; color:#000;">TELP/WA: ${esc(sW)}</div>` : ''}
+    ${(showSlogan && sSlogan) ? `<div style="text-align:center; font-size:${is80 ? '11px' : '9px'}; font-weight:600; color:#333; margin-bottom:2px;">${esc(sSlogan)}</div>` : ''}
+    ${(showAddress && sAddr) ? `<div style="text-align:center; font-size:${is80 ? '10.5px' : '8.5px'}; color:#444; line-height:1.2; margin-bottom:2px; word-break:break-word;">${esc(sAddr)}</div>` : ''}
+    ${(showWa && sW) ? `<div style="text-align:center; font-size:${is80 ? '11px' : '9px'}; font-weight:bold; margin-bottom:3px; color:#000;">TELP/WA: ${esc(sW)}</div>` : ''}
     
     ${dLine}
     
     ${row('No.Struk', '#' + (o.orderId || o.id))}
     ${row('Waktu', d)}
     ${row('Kasir', esc(o.cashier || 'Admin / Kasir-1'))}
-    ${row('Pelanggan', esc(o.customer?.name || 'Umum / Walk-in'))}
-    ${row('Layanan', (o.type === 'pos' ? 'POS KASIR TOKO' : (o.customer?.deliveryMethod === 'delivery' ? 'PENGIRIMAN KURIR' : 'AMBIL DI TOKO')))}
+    ${(o.customer?.name && o.customer.name !== 'Umum / Walk-in') ? row('Pelanggan', esc(o.customer.name)) : ''}
+    ${(rMode === 'full' && o.type !== 'pos') ? row('Layanan', (o.customer?.deliveryMethod === 'delivery' ? 'PENGIRIMAN KURIR' : 'AMBIL DI TOKO')) : ''}
     ${o.customer?.note ? `<div style="font-size:${is80 ? '11px' : '9.5px'}; line-height:1.3; color:#333; margin-top:2px; word-break:break-word;">Catatan: ${esc(o.customer.note)}</div>` : ''}
 
     ${sLine}
@@ -181,28 +189,48 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
   // Supermarket Savings Banner
   if (totalSavings > 0) {
     h += `
-      <div style="margin: 6px 0; padding: 3px 0; border-top: 1px dashed #000; border-bottom: 1px dashed #000; text-align:center; font-weight:900; font-size:${is80 ? '11.5px' : '9.5px'}; color:#000; width:100%; box-sizing:border-box;">
+      <div style="margin: 4px 0; padding: 2px 0; border-top: 1px dashed #000; border-bottom: 1px dashed #000; text-align:center; font-weight:900; font-size:${is80 ? '11px' : '9.5px'}; color:#000; width:100%; box-sizing:border-box;">
         *** ANDA HEMAT: Rp ${totalSavings.toLocaleString('id-ID')} ***
       </div>
     `;
   }
 
-  // Barcode and Authentic Supermarket Footer
-  h += `
-    ${_generateReceiptBarcodeSvg(o.orderId || o.id, is80)}
-    ${sLine}
-    <div style="text-align:center; font-weight:bold; font-size:${is80 ? '11px' : '9.5px'}; line-height:1.3; margin-top:2px; color:#000;">
-      ${esc(sFooter)}
-    </div>
-    <div style="text-align:center; font-size:${is80 ? '10px' : '8.5px'}; color:#444; line-height:1.3; margin-top:2px;">
-      Barang yang sudah dibeli tidak dapat ditukar/dikembalikan
-    </div>
-    ${dLine}
-    <div style="text-align:center; font-size:${is80 ? '9.5px' : '8px'}; color:#666; margin-top:2px;">
-      Powered by www.tokogrosir.id
-    </div>
-    <div style="height:14px;"></div>
-  `;
+  // Barcode (if enabled)
+  if (showBarcode) {
+    h += _generateReceiptBarcodeSvg(o.orderId || o.id, is80);
+    h += sLine;
+  } else {
+    h += dLine;
+  }
+
+  // Footer Message
+  if (sFooter) {
+    h += `
+      <div style="text-align:center; font-weight:bold; font-size:${is80 ? '11px' : '9.5px'}; line-height:1.3; margin-top:2px; color:#000;">
+        ${esc(sFooter)}
+      </div>
+    `;
+  }
+
+  // Return policy note (if enabled)
+  if (showNotes) {
+    h += `
+      <div style="text-align:center; font-size:${is80 ? '10px' : '8.5px'}; color:#444; line-height:1.3; margin-top:1px;">
+        Barang yang sudah dibeli tidak dapat ditukar/dikembalikan
+      </div>
+    `;
+  }
+
+  // Powered by (if enabled)
+  if (showPowered) {
+    h += `
+      <div style="text-align:center; font-size:${is80 ? '9.5px' : '8px'}; color:#666; margin-top:1.5px;">
+        Powered by www.tokogrosir.id
+      </div>
+    `;
+  }
+
+  h += `<div style="height:6px;"></div>`;
 
   return h;
 };
@@ -245,6 +273,13 @@ window.executePrintReceipt = () => {
   const is80 = currentPaperSize === '80';
   const len = is80 ? 42 : 32;
 
+  const rMode = appData.store?.receiptLayoutMode || 'compact';
+  const showSlogan = (appData.store?.receiptShowSlogan === true) || (rMode === 'full' && appData.store?.receiptShowSlogan !== false);
+  const showAddress = (appData.store?.receiptShowAddress !== false) && (rMode !== 'minimal') && (rMode !== 'compact' || appData.store?.receiptShowAddress === true);
+  const showWa = (appData.store?.receiptShowWa !== false) && (rMode !== 'minimal');
+  const showNotes = (appData.store?.receiptShowNotes === true) || (rMode === 'full' && appData.store?.receiptShowNotes !== false);
+  const showPowered = (appData.store?.receiptShowPowered !== false) && (rMode !== 'minimal');
+
   if (window.AppInventor) {
     try {
       const pC = t => {
@@ -259,16 +294,17 @@ window.executePrintReceipt = () => {
         return ll + " ".repeat(Math.max(0, len - ll.length - rs.length)) + rs;
       };
       let sT = pC(appData.store.name || "TOKO GRAFIKA") + "\n";
-      if (appData.store.slogan) sT += pC(appData.store.slogan) + "\n";
-      if (appData.store.address) sT += pC(appData.store.address) + "\n";
-      if (appData.store.wa) sT += pC("WA: " + appData.store.wa) + "\n";
+      if (showSlogan && appData.store.slogan) sT += pC(appData.store.slogan) + "\n";
+      if (showAddress && appData.store.address) sT += pC(appData.store.address) + "\n";
+      if (showWa && appData.store.wa) sT += pC("WA: " + appData.store.wa) + "\n";
       sT += "=".repeat(len) + "\n";
       sT += pLR("No.Struk: #" + (o.orderId || o.id), "") + "\n";
       let ds = (o.dateString || o.createdAt) ? new Date(o.dateString || o.createdAt).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : new Date().toLocaleString('id-ID');
       sT += pLR("Waktu   : " + ds, "") + "\n";
       sT += pLR("Kasir   : " + (o.cashier || "Admin / Kasir-1"), "") + "\n";
-      sT += pLR("Plg     : " + (o.customer?.name || "Umum").substring(0, is80 ? 28 : 18), "") + "\n";
-      sT += pLR("Layanan : " + (o.type === 'pos' ? 'POS KASIR' : (o.customer?.deliveryMethod === 'delivery' ? 'KURIR' : 'AMBIL DI TOKO')), "") + "\n";
+      if (o.customer?.name && o.customer.name !== 'Umum / Walk-in') {
+        sT += pLR("Plg     : " + (o.customer.name).substring(0, is80 ? 28 : 18), "") + "\n";
+      }
       sT += "-".repeat(len) + "\n";
       
       let totQ = 0;
@@ -304,10 +340,15 @@ window.executePrintReceipt = () => {
         sT += pC(`*** ANDA HEMAT: Rp ${savings.toLocaleString('id-ID')} ***`) + "\n";
       }
       sT += "-".repeat(len) + "\n";
-      sT += pC(appData.store.footerText || "Terima Kasih Atas Kunjungan Anda") + "\n";
-      sT += pC("Barang yang sudah dibeli") + "\n";
-      sT += pC("tidak dapat ditukar/dikembalikan") + "\n";
-      sT += pC("Powered by www.tokogrosir.id") + "\n\n\n\n";
+      if (appData.store.footerText) sT += pC(appData.store.footerText) + "\n";
+      if (showNotes) {
+        sT += pC("Barang yang sudah dibeli") + "\n";
+        sT += pC("tidak dapat ditukar/dikembalikan") + "\n";
+      }
+      if (showPowered) {
+        sT += pC("Powered by www.tokogrosir.id") + "\n";
+      }
+      sT += "\n\n";
       let b64 = btoa(unescape(encodeURIComponent(sT)));
       window.AppInventor.setWebViewString("PRINT_THERMAL|||base64," + b64);
       showToast(`Mengirim ke printer (${currentPaperSize}mm)...`);
