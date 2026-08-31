@@ -292,6 +292,12 @@ window.filterCategory = c => {
   if (window.updateStoreSeo) updateStoreSeo(c === 'Semua Produk' ? '' : `Kategori ${c}`);
 };
 
+window.scrollCatalogToTop = () => {
+  const s = el('catalog-scroll');
+  if (s) s.scrollTo({ top: 0, behavior: 'smooth' });
+  else window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
 window.handleSearch = v => {
   clearTimeout(window._catST);
   const val = (v || '').trim();

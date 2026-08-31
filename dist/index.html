@@ -1927,52 +1927,187 @@ html.dark .badge-counter {
       </div>
     </div>
 
-    <!-- Store Footer -->
-    <div class='mt-12 px-4 sm:px-6 lg:px-8 w-full max-w-7xl mx-auto'>
-      <footer class='bg-white dark:bg-slate-800/90 rounded-3xl p-6 sm:p-8 text-slate-800 dark:text-white relative overflow-hidden shadow-sm border-2 border-slate-200 dark:border-slate-700/80 mb-6'>
-        <div class='relative z-10 flex flex-col md:flex-row items-center md:items-start justify-between gap-8'>
-          <div class='flex flex-col items-center md:items-start text-center md:text-left'>
-            <div class='w-16 h-16 bg-slate-50 dark:bg-slate-700 rounded-full flex items-center justify-center mb-4 overflow-hidden border-2 border-slate-200 dark:border-slate-600 shadow-sm shrink-0'>
-              <img class='w-full h-full object-contain hidden' id='footer-logo-img' src='' alt='Footer Logo'/>
-              <i class='fa-solid fa-store text-2xl text-theme-primary hidden' id='footer-logo-icon'></i>
-            </div>
-            <h3 class='text-xl sm:text-2xl font-black mb-1 tracking-tight text-slate-900 dark:text-white' id='footer-name'>TokoKu</h3>
-            <div class='inline-block bg-theme-bg border border-theme-primary px-3 py-0.5 rounded-full mb-3'>
-              <p class='text-theme-primary text-[9px] font-bold uppercase tracking-widest' id='footer-slogan'>RITEL &amp; GROSIR</p>
-            </div>
-            <p class='text-xs text-slate-500 dark:text-slate-400 font-medium max-w-xs' id='footer-desc'>Terima kasih telah berbelanja di toko kami.</p>
-            <div class='flex justify-center md:justify-start gap-2.5 mt-5' id='footer-social-links'></div>
+    <!-- Store Footer & Value Propositions -->
+    <div class='mt-14 px-4 sm:px-6 lg:px-8 w-full max-w-7xl mx-auto'>
+      
+      <!-- 1. Value Propositions / Trust Badges -->
+      <div class='grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6'>
+        <div class='bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-5 border border-slate-200/90 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-start gap-3.5 group'>
+          <div class='w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 group-hover:scale-105 transition-transform duration-200' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
+            <i class='fa-solid fa-truck-fast'></i>
           </div>
+          <div class='min-w-0'>
+            <h4 class='text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-tight mb-1'>Pengiriman Cepat</h4>
+            <p class='text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed'>Kurir toko siap kirim dengan ongkir transparan per KM.</p>
+          </div>
+        </div>
+
+        <div class='bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-5 border border-slate-200/90 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-start gap-3.5 group'>
+          <div class='w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 group-hover:scale-105 transition-transform duration-200 bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400'>
+            <i class='fa-solid fa-tags'></i>
+          </div>
+          <div class='min-w-0'>
+            <h4 class='text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-tight mb-1'>Harga Grosir Otomatis</h4>
+            <p class='text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed'>Belanja kuota banyak, harga otomatis makin murah.</p>
+          </div>
+        </div>
+
+        <div class='bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-5 border border-slate-200/90 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-start gap-3.5 group'>
+          <div class='w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 group-hover:scale-105 transition-transform duration-200 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400'>
+            <i class='fa-solid fa-circle-check'></i>
+          </div>
+          <div class='min-w-0'>
+            <h4 class='text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-tight mb-1'>100% Produk Berkualitas</h4>
+            <p class='text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed'>Jaminan stok barang baru, higienis & terawat rapi.</p>
+          </div>
+        </div>
+
+        <div class='bg-white dark:bg-slate-800/90 rounded-2xl p-4 sm:p-5 border border-slate-200/90 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-start gap-3.5 group'>
+          <div class='w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 group-hover:scale-105 transition-transform duration-200 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400'>
+            <i class='fa-solid fa-shield-halved'></i>
+          </div>
+          <div class='min-w-0'>
+            <h4 class='text-xs sm:text-sm font-black text-slate-900 dark:text-white leading-tight mb-1'>Bayar Mudah & Aman</h4>
+            <p class='text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed'>Support QRIS instan, Transfer Bank & COD di tempat.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Main Footer Card -->
+      <footer class='bg-white dark:bg-slate-800/95 rounded-3xl p-6 sm:p-8 text-slate-800 dark:text-white relative overflow-hidden shadow-sm border border-slate-200/90 dark:border-slate-700/80 mb-6'>
+        
+        <!-- Top Section: 3-Column Content -->
+        <div class='relative z-10 grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10 pb-8 border-b border-slate-100 dark:border-slate-700/60'>
           
-          <div class='flex flex-col w-full md:w-auto gap-3'>
-            <a class='w-full md:w-[290px] bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 p-3.5 rounded-2xl flex items-center gap-3.5 hover:border-theme-primary hover:shadow-md transition-all cursor-pointer group' id='footer-address-link' target='_blank'>
+          <!-- Col 1: Store Brand Profile & Live Status (5 Cols) -->
+          <div class='md:col-span-5 flex flex-col items-center md:items-start text-center md:text-left'>
+            <div class='flex items-center gap-3.5 mb-3'>
+              <div class='w-14 h-14 bg-slate-50 dark:bg-slate-700 rounded-2xl flex items-center justify-center overflow-hidden border-2 border-slate-200/80 dark:border-slate-600 shadow-xs shrink-0'>
+                <img class='w-full h-full object-contain hidden' id='footer-logo-img' src='' alt='Footer Logo'/>
+                <i class='fa-solid fa-store text-2xl text-theme-primary hidden' id='footer-logo-icon'></i>
+              </div>
+              <div class='text-left'>
+                <h3 class='text-xl font-black tracking-tight text-slate-900 dark:text-white leading-tight' id='footer-name'>TOKO GRAFIKA</h3>
+                <div class='inline-block bg-theme-bg border border-theme-primary px-2.5 py-0.5 rounded-full mt-1'>
+                  <p class='text-theme-primary text-[8px] sm:text-[9px] font-black uppercase tracking-widest' id='footer-slogan'>RITEL &amp; GROSIR</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Status Toko Buka Indicator -->
+            <div class='inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-[11px] font-bold my-2 shadow-xs'>
+              <span class='w-2 h-2 rounded-full bg-emerald-500 animate-pulse'></span>
+              <span>Buka Setiap Hari &bull; 07.00 - 21.00 WIB</span>
+            </div>
+
+            <p class='text-xs text-slate-500 dark:text-slate-400 font-medium max-w-sm mt-1 leading-relaxed' id='footer-desc'>
+              Penyedia kebutuhan ritel dan grosir terpercaya dengan pelayanan cepat, produk lengkap, dan harga paling kompetitif.
+            </p>
+
+            <!-- Social Media Icons -->
+            <div class='mt-4'>
+              <span class='text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-2'>Media Sosial Kami</span>
+              <div class='flex justify-center md:justify-start gap-2.5' id='footer-social-links'></div>
+            </div>
+          </div>
+
+          <!-- Col 2: Akses Cepat & Panduan Belanja (3 Cols) -->
+          <div class='md:col-span-3 flex flex-col items-center md:items-start text-center md:text-left'>
+            <h4 class='text-xs sm:text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider mb-3.5 flex items-center gap-2'>
+              <i class='fa-solid fa-circle-question text-amber-500'></i> Bantuan & Info
+            </h4>
+            <ul class='space-y-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300'>
+              <li>
+                <button type='button' onclick='openBuyerGuide("order_flow")' class='hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2 group'>
+                  <i class='fa-solid fa-chevron-right text-[9px] text-slate-400 group-hover:translate-x-0.5 transition-transform'></i>
+                  <span>Cara Belanja & Pesan</span>
+                </button>
+              </li>
+              <li>
+                <button type='button' onclick='openBuyerGuide("wholesale")' class='hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2 group'>
+                  <i class='fa-solid fa-chevron-right text-[9px] text-slate-400 group-hover:translate-x-0.5 transition-transform'></i>
+                  <span>Daftar Harga Grosir</span>
+                </button>
+              </li>
+              <li>
+                <button type='button' onclick='openBuyerGuide("shipping")' class='hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2 group'>
+                  <i class='fa-solid fa-chevron-right text-[9px] text-slate-400 group-hover:translate-x-0.5 transition-transform'></i>
+                  <span>Ongkir & Deteksi GPS</span>
+                </button>
+              </li>
+              <li>
+                <button type='button' onclick='openBuyerGuide("payment")' class='hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2 group'>
+                  <i class='fa-solid fa-chevron-right text-[9px] text-slate-400 group-hover:translate-x-0.5 transition-transform'></i>
+                  <span>Cara Bayar QRIS & COD</span>
+                </button>
+              </li>
+              <li>
+                <button type='button' onclick='openBuyerGuide("tracking")' class='hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2 group'>
+                  <i class='fa-solid fa-chevron-right text-[9px] text-slate-400 group-hover:translate-x-0.5 transition-transform'></i>
+                  <span>Lacak Status Pesanan</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Col 3: Kontak & Lokasi Toko (4 Cols) -->
+          <div class='md:col-span-4 flex flex-col gap-3 w-full'>
+            <h4 class='text-xs sm:text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider mb-0.5 flex items-center gap-2'>
+              <i class='fa-solid fa-headset text-emerald-500'></i> Hubungi Toko
+            </h4>
+
+            <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 p-3.5 rounded-2xl flex items-center gap-3.5 hover:border-theme-primary hover:shadow-sm transition-all cursor-pointer group' id='footer-address-link' target='_blank'>
               <div class='w-10 h-10 rounded-xl bg-theme-bg text-theme-primary flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200'>
                 <i class='fa-solid fa-map-location-dot text-sm'></i>
               </div>
               <div class='min-w-0 flex-1'>
-                <p class='text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mb-0.5 group-hover:text-theme-primary transition-colors'>LOKASI TOKO</p>
-                <p class='text-xs text-slate-700 dark:text-slate-200 font-bold line-clamp-1 truncate' id='footer-address'>Alamat Toko</p>
+                <p class='text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mb-0.5 group-hover:text-theme-primary transition-colors'>LOKASI GERAI TOKO</p>
+                <p class='text-xs text-slate-800 dark:text-slate-200 font-bold line-clamp-1 truncate' id='footer-address'>Alamat Toko</p>
               </div>
               <i class='fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:text-theme-primary transition-colors shrink-0'></i>
             </a>
             
-            <a class='w-full md:w-[290px] bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 p-3.5 rounded-2xl flex items-center gap-3.5 hover:border-theme-primary hover:shadow-md transition-all cursor-pointer group' id='footer-wa-link' target='_blank'>
-              <div class='w-10 h-10 rounded-xl bg-theme-bg text-theme-primary flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200'>
+            <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 p-3.5 rounded-2xl flex items-center gap-3.5 hover:border-emerald-500 hover:shadow-sm transition-all cursor-pointer group' id='footer-wa-link' target='_blank'>
+              <div class='w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200'>
                 <i class='fa-brands fa-whatsapp text-lg'></i>
               </div>
               <div class='min-w-0 flex-1'>
-                <p class='text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mb-0.5 group-hover:text-theme-primary transition-colors'>LAYANAN PELANGGAN</p>
-                <p class='text-xs text-slate-700 dark:text-slate-200 font-bold tracking-wide' id='footer-wa'>08123456789</p>
+                <p class='text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mb-0.5 group-hover:text-emerald-500 transition-colors'>LAYANAN WHATSAPP CS</p>
+                <p class='text-xs text-slate-800 dark:text-slate-200 font-bold tracking-wide' id='footer-wa'>08123456789</p>
               </div>
-              <i class='fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:text-theme-primary transition-colors shrink-0'></i>
+              <i class='fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:text-emerald-500 transition-colors shrink-0'></i>
             </a>
+          </div>
+
+        </div>
+
+        <!-- Middle Section: Metode Pembayaran & Pengiriman Yang Didukung -->
+        <div class='relative z-10 py-5 border-b border-slate-100 dark:border-slate-700/60 flex flex-col lg:flex-row items-center justify-between gap-4'>
+          <div class='flex items-center gap-2 shrink-0'>
+            <i class='fa-solid fa-wallet text-slate-400 text-xs'></i>
+            <span class='text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider'>Metode Pembayaran:</span>
+          </div>
+          <div class='flex flex-wrap items-center justify-center gap-1.5 sm:gap-2'>
+            <span class='px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-[10px] font-black text-slate-700 dark:text-slate-300'>QRIS Instan</span>
+            <span class='px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-[10px] font-bold text-slate-700 dark:text-slate-300'>BCA</span>
+            <span class='px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-[10px] font-bold text-slate-700 dark:text-slate-300'>BRI</span>
+            <span class='px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-[10px] font-bold text-slate-700 dark:text-slate-300'>Mandiri</span>
+            <span class='px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-[10px] font-bold text-slate-700 dark:text-slate-300'>BNI</span>
+            <span class='px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-[10px] font-bold text-slate-700 dark:text-slate-300'>GoPay / OVO</span>
+            <span class='px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-[10px] font-bold text-slate-700 dark:text-slate-300'>DANA / ShopeePay</span>
+            <span class='px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 text-[10px] font-black text-emerald-700 dark:text-emerald-300'>COD (Bayar di Tempat)</span>
           </div>
         </div>
         
-        <div class='relative z-10 mt-8 pt-5 border-t border-slate-100 dark:border-slate-700/60 flex flex-col sm:flex-row items-center justify-between gap-4'>
-          <p class='text-[10px] text-slate-400 dark:text-slate-500 font-bold tracking-widest uppercase text-center sm:text-left'>
-            &#169; <span id='footer-year'></span> <span class='text-slate-700 dark:text-slate-300 font-bold' id='footer-copy-name'></span>. ALL RIGHTS RESERVED.
+        <!-- Bottom Bar: Copyright & Back to Top -->
+        <div class='relative z-10 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4'>
+          <p class='text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 font-bold tracking-wider uppercase text-center sm:text-left'>
+            &#169; <span id='footer-year'></span> <span class='text-slate-700 dark:text-slate-300 font-extrabold' id='footer-copy-name'>TOKO GRAFIKA</span>. ALL RIGHTS RESERVED.
           </p>
+
+          <button type='button' onclick='scrollCatalogToTop()' class='px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 shadow-xs shrink-0' title='Kembali ke bagian atas'>
+            <i class='fa-solid fa-arrow-up text-[10px]'></i> <span>Kembali ke Atas</span>
+          </button>
         </div>
       </footer>
     </div>
@@ -4399,6 +4534,12 @@ window.filterCategory = c => {
   const s = el('catalog-scroll'); 
   if (s) s.scrollTo({ top: 0, behavior: 'smooth' }); 
   if (window.updateStoreSeo) updateStoreSeo(c === 'Semua Produk' ? '' : `Kategori ${c}`);
+};
+
+window.scrollCatalogToTop = () => {
+  const s = el('catalog-scroll');
+  if (s) s.scrollTo({ top: 0, behavior: 'smooth' });
+  else window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 window.handleSearch = v => {
