@@ -1,78 +1,109 @@
-# Toko Grafika - Modern PWA Online Store & POS
+# 🛒 Toko Grafika - Modern PWA Online Store & POS Kasir
 
-Aplikasi Web Toko Online & Kasir (Point of Sale) Modern berbasis **Progressive Web App (PWA)** dengan integrasi Firebase Firestore, Tailwind CSS, dan workflow development **Vite**.
+Aplikasi Web Toko Online & POS Kasir Modern berbasis **Progressive Web App (PWA)** dengan integrasi **Firebase Firestore**, **Tailwind CSS**, dan alur pengembangan **Vite**.
 
-## 🚀 Fitur Utama
-- ⚡ **Vite Powered**: Development server super cepat dengan live reload otomatis.
-- 📱 **PWA Ready**: Dukungan Progressive Web App (manifest dinamis, installable di Android/iOS/Desktop).
-- 🔥 **Firebase Firestore**: Sinkronisasi data katalog produk, keranjang, dan pesanan secara realtime.
-- 📑 **Invoice & Surat Jalan**: Generator cetak struk/nota ukuran thermal dan dokumen invoice A4 otomatis.
-- 🎨 **100% Modular Architecture**: Pemisahan komponen CSS, JS, dan HTML yang rapi di dalam direktori `src/`.
+Website Live: **[tokografika.vercel.app](https://tokografika.vercel.app/)**
 
 ---
 
-## 🛠️ Perintah Pengembangan (Scripts)
+## 🌟 Fitur Unggulan
+
+- 🛍️ **Katalog Online Responsif**: Pencarian instan, filter kategori, badge diskon, multi-varian produk, dan harga grosir bertingkat.
+- 🏪 **POS Kasir (Point of Sale)**: Dirancang untuk transaksi cepat, scan barcode (Kamera Browser & Hybrid Kodular Bridge), kalkulasi otomatis diskon & kembalian, serta potong stok langsung.
+- 🖨️ **Engine Cetak Terlengkap**:
+  - **Struk Thermal**: Pilihan format 58mm & 80mm Bluetooth/USB dengan barcode visual authentic.
+  - **Dokumen Bisnis A4**: Generator PDF Faktur Penjualan (Invoice) dan Surat Jalan Pengiriman logistik dengan layout multi-page presisi.
+- 💬 **Checkout WhatsApp Otomatis**: Integrasi langsung format nota pesanan rapi ke WhatsApp toko beserta titik koordinat GPS Google Maps.
+- 🔐 **Panel CMS & Hak Akses Kasir**: Pengelolaan produk, varian, HPP modal, kategori, voucher, banner, rekening bank, dan akun kasir ber-hak akses.
+- 📱 **Progressive Web App (PWA)**: Dapat diinstall di layar utama HP (Android/iOS) dan Laptop/Desktop dengan dukungan cache offline cerdas (Service Worker v5).
+- 🎨 **Kustomisasi Brand Dinamis**: Pilihan 14 tema warna brand dan background style dinamis yang langsung sinkron di seluruh aplikasi.
+
+---
+
+## 🎯 Standar Alur Pengembangan (Satu Jalur Tunggal)
+
+Proyek ini menerapkan prinsip **Satu Pintu Utama (*Single Source of Truth*)**:
+
+```
+[Edit di src/] ──► [npm run build] ──► [git push origin main] ──► [Auto-Deploy di Vercel]
+```
+
+- **Branch Utama**: **`main`** (terhubung langsung ke Vercel).
+- **Semua Perubahan**: Hanya dikerjakan di folder **`src/`**.
+
+---
+
+## 🛠️ Perintah Pengembangan (NPM Scripts)
 
 | Perintah | Deskripsi |
 |---|---|
-| `npm run dev` | Menjalankan Vite dev server di `http://localhost:3000` dengan auto-reload |
-| `npm run build` | Mengompilasi aplikasi web produksi menjadi `dist/index.html` |
+| `npm run dev` | Menjalankan Vite development server di `http://localhost:3000` dengan live-reload |
+| `npm run build` | Mengompilasi source code `src/` menjadi bundle produksi di `dist/` dan `index.html` |
 | `npm run preview` | Menjalankan local preview server untuk hasil build produksi |
-| `npm test` | Menjalankan audit bug konsistensi DOM dan event handler JS |
+| `npm test` | Menjalankan audit otomatis konsistensi DOM, Event Handlers, dan runtime safety |
 
 ---
 
-## 📁 Struktur Direktori Bersih & Modular
+## 📁 Struktur Direktori Proyek
 
 ```
-├── dist/                  # Output build produksi (ringkas & bersih)
-│   └── index.html         # Web app bundle siap pakai untuk hosting (Vercel)
-├── docs/                  # Dokumentasi & konfigurasi eksternal
-│   ├── FIREBASE_CONFIG.md # Kredensial Firebase SDK
+├── dist/                  # Output build produksi siap deploy (Vercel)
+│   ├── index.html         # Bundle HTML utama (HTML + CSS + JS)
+│   └── sw.js              # Service Worker PWA produksi (v5)
+├── docs/                  # Dokumentasi teknis & konfigurasi eksternal
+│   ├── FIREBASE_CONFIG.md # Konfigurasi Firebase SDK
 │   ├── FIRESTORE_RULES.txt# Aturan keamanan Cloud Firestore
-│   └── GOOGLE_APPS_SCRIPT.gs # Skrip uploader Google Drive
-├── scripts/               # Utilitas build & testing
-│   ├── audit-bugs.js      # Audit konsistensi ID DOM dan event handler JS
-│   └── build.js           # Engine compiler modular @include
-├── src/                   # Source code modular
-│   ├── components/        # Komponen HTML
-│   │   ├── modals/        # Modal dialog (admin, order, product, pdf, receipt, scanner, confirm)
-│   │   ├── templates/     # Template cetak dokumen A4 (Invoice & Surat Jalan)
-│   │   ├── views/         # Tampilan halaman (catalog, cart, checkout, payment, wishlist, admin, login)
-│   │   ├── widgets/       # Global toast & loader
-│   │   └── body.html      # Master HTML body entry point
+│   ├── GOOGLE_APPS_SCRIPT.gs # Skrip upload foto Google Drive
+│   └── PANDUAN_SAAS_DEVELOPER.md # Panduan developer & arsitektur
+├── public/                # Aset statis & Service Worker master
+│   └── sw.js              # Master Service Worker (PWA Cache v5)
+├── scripts/               # Utilitas build & automated testing
+│   ├── audit-bugs.js      # Audit konsistensi ID DOM & event handlers
+│   └── build.js           # Compiler modular @include
+├── src/                   # Source code utama aplikasi (Satu Pintu)
+│   ├── components/        # Komponen HTML modular
+│   │   ├── modals/        # Modal dialog (admin, detail order, panduan, quick edit, dll)
+│   │   ├── templates/     # Template dokumen bisnis A4 (Invoice & Surat Jalan)
+│   │   ├── views/         # Tampilan view (katalog, keranjang, checkout, payment, pos, admin)
+│   │   ├── widgets/       # Global toast notification & loading spinner
+│   │   └── body.html      # Master HTML body layout
 │   ├── css/               # Styling CSS
-│   │   ├── base.css       # Layout dasar, variabel tema & animasi
-│   │   ├── components.css # Komponen UI (buttons, cards, badges, inputs, radios)
-│   │   ├── print.css      # Styling khusus cetak thermal 58mm
+│   │   ├── base.css       # Layout dasar, variabel warna tema & animasi
+│   │   ├── components.css # Komponen UI (buttons, cards, badges, inputs)
+│   │   ├── print.css      # Styling khusus media print thermal & A4
 │   │   └── main.css       # Master CSS entry point
-│   ├── js/                # Logika JavaScript
-│   │   ├── core/          # Core config, Firebase sync, & utilities
-│   │   │   ├── config.js  # Global state & konfigurasi
-│   │   │   ├── firebase.js# Firebase Firestore initialization & sync
-│   │   │   └── utils.js   # Helper format rupiah, toast, konfirmasi, tema
-│   │   ├── modules/       # Fitur modular aplikasi
-│   │   │   ├── admin.js   # CMS admin, CRUD produk/voucher/banner/akun
-│   │   │   ├── cart.js    # Keranjang belanja & wishlist
-│   │   │   ├── catalog.js # Render produk, filter kategori & pencarian
-│   │   │   ├── checkout.js# Kalkulasi ongkir, diskon voucher & WhatsApp order
-│   │   │   ├── print.js   # Engine cetak thermal 58mm & generator A4
-│   │   │   ├── pwa.js     # Engine PWA & manifest generator
-│   │   │   ├── scanner.js # Kamera scanner barcode/QR & hybrid bridge
-│   │   │   └── sync.js    # Sinkronisasi harga & stok realtime
-│   │   ├── bootstrap.js   # Routing & event listeners awal
-│   │   └── app.js         # Master JS orchestrator entry point
-│   └── index.html         # Master HTML template
+│   ├── js/                # Logika JavaScript modular
+│   │   ├── core/          # Konfigurasi, Firebase, dan utilitas dasar
+│   │   │   ├── config.js  # Global state & konfigurasi default
+│   │   │   ├── firebase.js# Inisialisasi Firebase Firestore & Auth
+│   │   │   └── utils.js   # Helper format rupiah, toast, konfirmasi, warna tema
+│   │   ├── modules/       # Fitur-fitur modular aplikasi
+│   │   │   ├── admin.js   # Panel CMS, CRUD produk, varian, laporan laba & akun
+│   │   │   ├── cart.js    # Pengelola keranjang belanja & wishlist
+│   │   │   ├── catalog.js # Render produk, filter kategori & pencarian katalog
+│   │   │   ├── checkout.js# Kalkulasi ongkir KM, diskon voucher & WhatsApp order
+│   │   │   ├── pos.js     # Engine POS Kasir, kalkulasi grosir & transaksi
+│   │   │   ├── print.js   # Engine cetak thermal 58mm/80mm & PDF A4
+│   │   │   ├── pwa.js     # Engine PWA, manifest generator & install prompt
+│   │   │   ├── scanner.js # Kamera scanner barcode/QR & bridge Android hybrid
+│   │   │   ├── seo.js     # Engine SEO meta tag & Schema.org JSON-LD Google
+│   │   │   └── sync.js    # Realtime sync harga & stok produk
+│   │   ├── bootstrap.js   # Inisialisasi routing & event listener awal
+│   │   └── app.js         # Master JavaScript entry point
+│   └── index.html         # Master template HTML
 ├── index.html             # Entry point Vite dev server
-├── vercel.json            # Konfigurasi deployment Vercel
-└── vite.config.mjs        # Konfigurasi & custom plugin Vite
+├── package.json           # Dependensi & script proyek
+├── vercel.json            # Konfigurasi hosting & header zero-cache Vercel
+└── vite.config.mjs        # Konfigurasi build plugin Vite
 ```
 
 ---
 
-## 🌐 Cara Deploy ke Vercel
+## 🔒 Konfigurasi Hosting (Vercel)
 
-1. Buka [Vercel Dashboard](https://vercel.com).
-2. Pilih **Import Git Repository** (`admgaffidigital/tokografika`).
-3. Vercel akan otomatis mengenali konfigurasi `vite` dan output `dist/index.html`.
-4. Klik **Deploy**.
+Proyek ini telah dikonfigurasi dengan header *zero-cache* pada file `vercel.json` untuk memastikan setiap kali Anda melakukan push ke branch **`main`**, Vercel akan langsung mengompilasi dan menampilkan versi teranyar dalam hitungan detik.
+
+---
+
+## 📄 Lisensi
+Hak Cipta © 2026 **Toko Grafika**. Seluruh hak cipta dilindungi undang-undang.
