@@ -21,9 +21,7 @@
 
 .glass-header h1,
 .glass-header h2,
-.glass-header h3,
-.glass-header span,
-.glass-header p {
+.glass-header h3 {
     color: #ffffff !important;
 }
 

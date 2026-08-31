@@ -270,10 +270,10 @@ const renderPosCategories = () => {
       const isSelected = posActiveCategory === cat.name;
       return `
         <button type="button" onclick="selectPosCategory('${esc(cat.name)}')" 
-          class="btn-solid no-glass px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 active:scale-95 ${isSelected ? '!bg-white !text-slate-900 font-extrabold shadow-sm ring-1 ring-black/10' : '!bg-white/20 hover:!bg-white/30 !text-white border border-white/20'}">
-          <i class="fa-solid ${cat.icon} text-[10px] ${isSelected ? '!text-emerald-600' : '!text-white/80'}"></i>
-          <span class="${isSelected ? '!text-slate-900' : '!text-white'}">${esc(cat.name)}</span>
-          <span class="text-[9px] px-1.5 py-0.2 rounded-full ${isSelected ? '!bg-slate-100 !text-slate-800' : '!bg-black/25 !text-white'} font-black ml-0.5">${cat.count}</span>
+          class="btn-solid no-glass px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 active:scale-95 ${isSelected ? '!bg-white !text-slate-900 font-extrabold shadow-sm ring-2 ring-white/50' : '!bg-white/20 hover:!bg-white/30 !text-white border border-white/20'}" style="${isSelected ? 'background-color: #ffffff !important; color: #0f172a !important;' : 'background-color: rgba(255,255,255,0.2) !important; color: #ffffff !important;'}">
+          <i class="fa-solid ${cat.icon} text-[10px]" style="color: ${isSelected ? 'var(--clr-p)' : '#ffffff'} !important;"></i>
+          <span style="color: ${isSelected ? '#0f172a' : '#ffffff'} !important; font-weight: ${isSelected ? '800' : '600'};">${esc(cat.name)}</span>
+          <span class="text-[9px] px-1.5 py-0.2 rounded-full font-black ml-0.5" style="background-color: ${isSelected ? '#f1f5f9' : 'rgba(0,0,0,0.25)'} !important; color: ${isSelected ? '#0f172a' : '#ffffff'} !important;">${cat.count}</span>
         </button>
       `;
     }).join('');
