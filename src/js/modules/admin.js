@@ -2083,29 +2083,52 @@ const rAdmSet = () => {
               </div>
             </label>
           </div>
-        </div>
-
         <!-- Pengaturan Ukuran Printer Struk Kasir (58mm / 80mm) -->
-        <div class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 mt-4">
-          <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">
-            <i class="fa-solid fa-print text-emerald-500 mr-1"></i> Ukuran Kertas Printer Struk Thermal Kasir
-          </label>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mb-3">Pilih ukuran lebar kertas printer thermal default yang digunakan toko untuk mencetak struk kasir & pesanan.</p>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <label class="flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all bg-white dark:bg-slate-800 ${appData.store.printerPaper !== '80' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700'}">
-              <input type="radio" name="store-printer-paper" value="58" ${appData.store.printerPaper !== '80' ? 'checked' : ''} onchange="appData.store.printerPaper='58'; try{localStorage.setItem('freshmart_printer_paper','58');}catch(e){}" class="text-emerald-600 focus:ring-emerald-500" />
-              <div>
-                <div class="text-xs font-bold text-slate-800 dark:text-white">Printer 58mm (Kecil / Portabel)</div>
-                <div class="text-[10px] text-slate-400">Standar 32 Kolom (Bluetooth mini kasir)</div>
-              </div>
+        <div class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 mt-4 space-y-4">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">
+              <i class="fa-solid fa-print text-emerald-500 mr-1"></i> Ukuran Kertas Printer Struk Thermal Kasir
             </label>
-            <label class="flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all bg-white dark:bg-slate-800 ${appData.store.printerPaper === '80' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700'}">
-              <input type="radio" name="store-printer-paper" value="80" ${appData.store.printerPaper === '80' ? 'checked' : ''} onchange="appData.store.printerPaper='80'; try{localStorage.setItem('freshmart_printer_paper','80');}catch(e){}" class="text-emerald-600 focus:ring-emerald-500" />
-              <div>
-                <div class="text-xs font-bold text-slate-800 dark:text-white">Printer 80mm (Besar / Standar POS)</div>
-                <div class="text-[10px] text-slate-400">Standar 42/48 Kolom (Desktop POS / Kasir Resto & Minimarket)</div>
-              </div>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mb-3">Pilih ukuran lebar kertas printer thermal default yang digunakan toko untuk mencetak struk kasir & pesanan.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label class="flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all bg-white dark:bg-slate-800 ${appData.store.printerPaper !== '80' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700'}">
+                <input type="radio" name="store-printer-paper" value="58" ${appData.store.printerPaper !== '80' ? 'checked' : ''} onchange="appData.store.printerPaper='58'; try{localStorage.setItem('freshmart_printer_paper','58');}catch(e){}" class="text-emerald-600 focus:ring-emerald-500" />
+                <div>
+                  <div class="text-xs font-bold text-slate-800 dark:text-white">Printer 58mm (Kecil / Portabel)</div>
+                  <div class="text-[10px] text-slate-400">Standar 30/32 Kolom (Bluetooth mini kasir)</div>
+                </div>
+              </label>
+              <label class="flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all bg-white dark:bg-slate-800 ${appData.store.printerPaper === '80' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700'}">
+                <input type="radio" name="store-printer-paper" value="80" ${appData.store.printerPaper === '80' ? 'checked' : ''} onchange="appData.store.printerPaper='80'; try{localStorage.setItem('freshmart_printer_paper','80');}catch(e){}" class="text-emerald-600 focus:ring-emerald-500" />
+                <div>
+                  <div class="text-xs font-bold text-slate-800 dark:text-white">Printer 80mm (Besar / Standar POS)</div>
+                  <div class="text-[10px] text-slate-400">Standar 42/48 Kolom (Desktop POS / Kasir Resto & Minimarket)</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Posisi Perataan Struk (Tengah Pas / Rata Kiri) -->
+          <div class="pt-3 border-t border-slate-200/80 dark:border-slate-700">
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-widest">
+              <i class="fa-solid fa-align-center text-emerald-500 mr-1"></i> Posisi Perataan Struk di Kertas Thermal
             </label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label class="flex items-center gap-2.5 p-3 rounded-xl border-2 cursor-pointer transition-all bg-white dark:bg-slate-800 ${(appData.store.receiptAlignment !== 'left') ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700'}">
+                <input type="radio" name="store-receipt-align" value="center" ${(appData.store.receiptAlignment !== 'left') ? 'checked' : ''} class="text-emerald-600 focus:ring-emerald-500" />
+                <div>
+                  <div class="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1"><span class="text-emerald-500">🎯</span> Posisi Tengah Pas (Simetris)</div>
+                  <div class="text-[10px] text-slate-400">Rekomendasi untuk semua printer thermal roll</div>
+                </div>
+              </label>
+              <label class="flex items-center gap-2.5 p-3 rounded-xl border-2 cursor-pointer transition-all bg-white dark:bg-slate-800 ${appData.store.receiptAlignment === 'left' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700'}">
+                <input type="radio" name="store-receipt-align" value="left" ${appData.store.receiptAlignment === 'left' ? 'checked' : ''} class="text-emerald-600 focus:ring-emerald-500" />
+                <div>
+                  <div class="text-xs font-bold text-slate-800 dark:text-white">Rata Kiri Penuh (Flush Left)</div>
+                  <div class="text-[10px] text-slate-400">Untuk printer dengan margin driver lebar</div>
+                </div>
+              </label>
+            </div>
           </div>
         </div>
 
@@ -2401,6 +2424,8 @@ window.saveAdminSettings = async () => {
     appData.store.printerPaper = selPaper;
     const selStockMode = document.querySelector('input[name="store-stock-mode"]:checked')?.value || 'tracked';
     appData.store.stockMode = selStockMode;
+    const selReceiptAlign = document.querySelector('input[name="store-receipt-align"]:checked')?.value || 'center';
+    appData.store.receiptAlignment = selReceiptAlign;
     const selReceiptMode = document.querySelector('input[name="store-receipt-mode"]:checked')?.value || 'compact';
     appData.store.receiptLayoutMode = selReceiptMode;
     appData.store.receiptShowSlogan = el('set-receipt-show-slogan')?.checked ?? false;

@@ -361,6 +361,11 @@ window.executePrintReceipt = () => {
     } else {
       document.body.classList.remove('print-paper-80');
     }
+    if (appData.store?.receiptAlignment === 'left') {
+      document.body.classList.add('print-align-left');
+    } else {
+      document.body.classList.remove('print-align-left');
+    }
     const p = el('receipt-paper-content').innerHTML, t = el('thermal-print-section');
     if (t) {
       t.innerHTML = p;
