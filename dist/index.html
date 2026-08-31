@@ -7745,7 +7745,7 @@ window.rAdmItms = t => {
       <div class="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto pt-3 sm:pt-0 border-t border-slate-100 dark:border-slate-700 sm:border-t-0 shrink-0 justify-end flex-wrap">
         ${isP ? `
         <!-- Tombol Edit Cepat -->
-        <button type="button" onclick="openQuickEditModal('${x.id}')" class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-all border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Edit Cepat (Stok, HPP & Harga)"><i class="fa-solid fa-bolt"></i></button>
+        <button type="button" onclick="openQuickEditProduct(${x.id})" class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-all border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Edit Cepat (Stok, HPP & Harga)"><i class="fa-solid fa-bolt"></i></button>
 
         <!-- Tombol Toggle Visibilitas Toko -->
         <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl ${isOff ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-emerald-600' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 hover:bg-emerald-600 hover:text-white'} border border-slate-200 dark:border-slate-600 transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); toggleProductStatus(${x.id}, ${isOff})" title="${isOff ? 'Tampilkan di Toko' : 'Sembunyikan dari Toko'}">
@@ -8186,9 +8186,9 @@ window.closeAdminModal = () => {
 };
 
 window.openQuickEditProduct = (id) => {
-  const p = (appData.products || []).find(x => x.id === id);
+  const p = (appData.products || []).find(x => x.id === id || String(x.id) === String(id));
   if (!p) return;
-  window._currentQuickEditProdId = id;
+  window._currentQuickEditProdId = p.id;
   
   const m = el('quick-edit-modal');
   const box = el('quick-edit-modal-box');
@@ -8293,6 +8293,8 @@ window.closeQuickEditModal = () => {
   setTimeout(() => hide('quick-edit-modal'), 300);
   window._currentQuickEditProdId = null;
 };
+
+window.openQuickEditModal = window.openQuickEditProduct;
 
 window.saveQuickEditProduct = async () => {
   const id = window._currentQuickEditProdId;
