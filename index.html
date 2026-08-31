@@ -2795,8 +2795,8 @@ html.dark .badge-counter {
 
       <!-- Right: Action Buttons -->
       <div class='flex items-center gap-1.5 shrink-0'>
-        <!-- Desktop Quick Cart Toggle -->
-        <button type='button' class='btn-solid no-glass hidden md:inline-flex lg:hidden items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
+        <!-- Desktop Quick Cart Toggle (Always available on tablets & PC) -->
+        <button type='button' class='btn-solid no-glass hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
           <i class='fa-solid fa-cart-shopping text-xs'></i>
           <span>Keranjang</span>
           <span id='pos-cart-header-badge' class='hidden bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
@@ -2876,8 +2876,8 @@ html.dark .badge-counter {
       </div>
     </div>
 
-    <!-- Right Column: DESKTOP PERMANENT CASHIER CART REGISTER (Visible on PC / Laptop screen) -->
-    <aside class='hidden lg:flex w-[380px] xl:w-[420px] shrink-0 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-col h-full shadow-lg z-20' id='pos-desktop-cart-sidebar'>
+    <!-- Right Column: DESKTOP PERMANENT CASHIER CART REGISTER (Visible on PC / Tablet screen) -->
+    <aside class='hidden md:flex w-[320px] lg:w-[380px] xl:w-[420px] shrink-0 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex-col h-full shadow-lg z-20' id='pos-desktop-cart-sidebar'>
       <!-- Desktop Cart Header -->
       <div class='px-4 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50 dark:bg-[#0b1329]'>
         <div class='flex items-center gap-2'>
