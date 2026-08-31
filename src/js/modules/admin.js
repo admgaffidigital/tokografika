@@ -2864,27 +2864,6 @@ const guideTopicsData = {
             <br>&bull; <b>Surat Jalan (Amber)</b>: Membuka pratinjau surat jalan ekspedisi A4 PDF.
           </p>
         </div>
-
-        <!-- 5. Cetak Pricetag Rak & Label Barcode -->
-        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 space-y-3">
-          <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
-            <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs shadow-sm font-bold bg-emerald-600">5</span>
-            Cetak Pricetag Rak (A4 HVS) & Label Stiker Barcode:
-          </h5>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
-            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
-              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">🏷️ Pricetag Rak Toko (Kertas HVS A4)</span>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Cetak label harga rak di kertas HVS biasa dengan printer rumahan/kantor. Dilengkapi <b>garis putus-putus (*cut lines*)</b> agar mudah dipotong rapi dengan gunting/cutter.</p>
-            </div>
-            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
-              <span class="font-bold text-blue-600 dark:text-blue-400 block mb-1">🖨️ Label Stiker Barcode Produk</span>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Cetak barcode produk tajam (Code128 SVG) beserta SKU dan harga untuk ditempel di kemasan/barang dagangan.</p>
-            </div>
-          </div>
-          <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-[11px] text-emerald-800 dark:text-emerald-200 font-medium">
-            💡 <b>Pengaturan Jumlah Cetak (Custom Qty):</b> Anda dapat mengatur jumlah label yang dicetak untuk masing-masing produk (misal: *Produk A cetak 3 label, Produk B cetak 5 label*).
-          </div>
-        </div>
       </div>
     `
   },

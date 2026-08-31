@@ -1002,42 +1002,8 @@ html.dark .badge-counter {
         line-height: 1.25 !important;
         box-sizing: border-box !important;
     }
-
-    /* 5. MODE: CETAK PRICETAG RAK & BARCODE (A4) */
-    body.print-mode-pricetag {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-    }
-
-    body.print-mode-pricetag #pricetag-print-section {
-        display: block !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        background-color: #ffffff !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-    }
-
-    body.print-mode-pricetag #pricetag-print-section .a4-pricetag-page {
-        width: 210mm !important;
-        min-height: 295mm !important;
-        margin: 0 auto !important;
-        padding: 6mm !important;
-        page-break-after: always !important;
-        break-after: page !important;
-        box-sizing: border-box !important;
-        background: #ffffff !important;
-    }
 }
 
-#pricetag-print-section {
-    display: none;
-}
 
 
     </style>
@@ -1741,9 +1707,6 @@ html.dark .badge-counter {
       <p class='font-semibold'>Halaman 1 dari 1</p>
     </div>
   </div>
-
-  <!-- CONTAINER UNTUK CETAK DIRECT PRICETAG & BARCODE KE PRINTER -->
-  <div id='pricetag-print-section'></div>
 </div>
 
 
@@ -8501,27 +8464,6 @@ const guideTopicsData = {
             <br>&bull; <b>Invoice (Biru)</b>: Membuka pratinjau faktur tagihan A4 PDF.
             <br>&bull; <b>Surat Jalan (Amber)</b>: Membuka pratinjau surat jalan ekspedisi A4 PDF.
           </p>
-        </div>
-
-        <!-- 5. Cetak Pricetag Rak & Label Barcode -->
-        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 space-y-3">
-          <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
-            <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs shadow-sm font-bold bg-emerald-600">5</span>
-            Cetak Pricetag Rak (A4 HVS) & Label Stiker Barcode:
-          </h5>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
-            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
-              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">🏷️ Pricetag Rak Toko (Kertas HVS A4)</span>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Cetak label harga rak di kertas HVS biasa dengan printer rumahan/kantor. Dilengkapi <b>garis putus-putus (*cut lines*)</b> agar mudah dipotong rapi dengan gunting/cutter.</p>
-            </div>
-            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
-              <span class="font-bold text-blue-600 dark:text-blue-400 block mb-1">🖨️ Label Stiker Barcode Produk</span>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Cetak barcode produk tajam (Code128 SVG) beserta SKU dan harga untuk ditempel di kemasan/barang dagangan.</p>
-            </div>
-          </div>
-          <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-[11px] text-emerald-800 dark:text-emerald-200 font-medium">
-            💡 <b>Pengaturan Jumlah Cetak (Custom Qty):</b> Anda dapat mengatur jumlah label yang dicetak untuk masing-masing produk (misal: *Produk A cetak 3 label, Produk B cetak 5 label*).
-          </div>
         </div>
       </div>
     `
