@@ -2755,7 +2755,7 @@ const guideTopicsData = {
           </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
             <div class="w-7 h-7 rounded-lg text-white font-bold flex items-center justify-center text-xs shadow-sm" style="background-color:var(--clr-p)">1</div>
             <h5 class="font-bold text-slate-900 dark:text-white text-xs">Pilih Produk / Scan Barcode</h5>
@@ -2772,6 +2772,12 @@ const guideTopicsData = {
             <div class="w-7 h-7 rounded-lg text-white font-bold flex items-center justify-center text-xs shadow-sm" style="background-color:var(--clr-p)">3</div>
             <h5 class="font-bold text-slate-900 dark:text-white text-xs">Cetak Struk 58/80mm & A4</h5>
             <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Cetak struk kasir Bluetooth/USB 58mm atau 80mm, serta faktur nota A4 resmi untuk pelanggan.</p>
+          </div>
+
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <div class="w-7 h-7 rounded-lg text-white font-bold flex items-center justify-center text-xs shadow-sm bg-amber-500">4</div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Tahan / Pending Transaksi</h5>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Simpan sementara antrian belanja saat pelanggan perlu mengambil barang tambahan, lalu lanjutkan kembali kapan saja.</p>
           </div>
         </div>
       </div>

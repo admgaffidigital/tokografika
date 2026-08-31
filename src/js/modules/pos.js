@@ -3,6 +3,12 @@
 // =============================================================================
 
 let posCart = [];
+let posPendingTransactions = [];
+try {
+  posPendingTransactions = JSON.parse(localStorage.getItem('freshmart_pos_pending') || '[]');
+} catch(e) {
+  posPendingTransactions = [];
+}
 let activeCashier = null;
 let currentLoginTab = 'admin';
 let posActiveCategory = 'Semua Produk';
@@ -187,6 +193,7 @@ window.initPosView = async () => {
   renderPosCategories();
   renderPosProducts();
   renderPosCart();
+  updatePosPendingBadge();
 };
 
 const updatePosClock = () => {
@@ -819,6 +826,199 @@ window.closePosCartDrawer = () => {
     box.classList.add('translate-y-full', 'sm:translate-x-full');
     setTimeout(() => hide('pos-cart-drawer-modal'), 300);
   }
+};
+
+// -----------------------------------------------------------------------------
+// 8B. PENDING / HOLD TRANSAKSI ENGINE (TAHAN & LANJUTKAN TRANSAKSI KASIR)
+// -----------------------------------------------------------------------------
+const _savePendingTransactions = () => {
+  try {
+    localStorage.setItem('freshmart_pos_pending', JSON.stringify(posPendingTransactions));
+  } catch(e) {
+    console.warn('[POS] Failed to save pending transactions:', e);
+  }
+  updatePosPendingBadge();
+};
+
+window.updatePosPendingBadge = () => {
+  const count = Array.isArray(posPendingTransactions) ? posPendingTransactions.length : 0;
+  const badge = el('pos-pending-header-badge');
+  if (badge) {
+    badge.innerText = count;
+    badge.classList.toggle('hidden', count === 0);
+  }
+};
+
+window.holdPosTransaction = (customNote = null) => {
+  if (!posCart || !posCart.length) {
+    showToast('Keranjang kasir masih kosong untuk ditahan!');
+    return;
+  }
+  
+  const defaultName = `Antrian #${posPendingTransactions.length + 1}`;
+  let note = typeof customNote === 'string' && customNote.trim() ? customNote.trim() : defaultName;
+  
+  const pendingObj = {
+    id: 'HLD-' + Date.now().toString().slice(-6),
+    timestamp: Date.now(),
+    timeStr: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    dateStr: new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+    note: note,
+    cashierName: activeCashier?.name || 'Kasir',
+    items: JSON.parse(JSON.stringify(posCart)),
+    totalItems: posCart.length,
+    totalQty: posCart.reduce((acc, item) => acc + item.qty, 0),
+    grandTotal: posCart.reduce((acc, item) => acc + (getEffP(item) * item.qty), 0)
+  };
+  
+  posPendingTransactions.unshift(pendingObj);
+  _savePendingTransactions();
+  
+  posCart = [];
+  renderPosCart();
+  renderPosProducts();
+  closePosCartDrawer();
+  
+  const inputEl = el('pos-pending-note-input');
+  if (inputEl) inputEl.value = '';
+  
+  showToast(`Transaksi ditahan sebagai "${esc(note)}"! ⏸️`);
+  if (el('pos-pending-modal') && !el('pos-pending-modal').classList.contains('hidden')) {
+    renderPosPendingList();
+  }
+};
+
+window.holdCurrentPosCartFromInput = () => {
+  const note = el('pos-pending-note-input')?.value || '';
+  holdPosTransaction(note);
+};
+
+window.openPosPendingModal = () => {
+  renderPosPendingList();
+  const modal = el('pos-pending-modal');
+  const box = el('pos-pending-modal-box');
+  if (modal && box) {
+    show('pos-pending-modal');
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      box.classList.remove('translate-y-full', 'sm:scale-95');
+    }, 10);
+  }
+};
+
+window.closePosPendingModal = () => {
+  const modal = el('pos-pending-modal');
+  const box = el('pos-pending-modal-box');
+  if (modal && box) {
+    modal.classList.add('opacity-0');
+    box.classList.add('translate-y-full', 'sm:scale-95');
+    setTimeout(() => hide('pos-pending-modal'), 300);
+  }
+};
+
+window.renderPosPendingList = () => {
+  const container = el('pos-pending-list-container');
+  const subtitle = el('pos-pending-modal-subtitle');
+  if (!container) return;
+  
+  const count = posPendingTransactions.length;
+  if (subtitle) {
+    subtitle.innerText = count > 0 
+      ? `Terdapat ${count} antrian transaksi belanja yang sedang ditahan` 
+      : 'Belum ada antrian belanja pelanggan yang ditahan';
+  }
+  
+  if (count === 0) {
+    container.innerHTML = `
+      <div class="py-12 flex flex-col items-center justify-center text-center text-slate-400 dark:text-slate-500">
+        <div class="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/30 text-amber-500 flex items-center justify-center text-2xl mb-3 shadow-xs border border-amber-100 dark:border-amber-900/40">
+          <i class="fa-solid fa-clipboard-check"></i>
+        </div>
+        <h4 class="text-xs font-black text-slate-700 dark:text-slate-300">Tidak Ada Transaksi Ditahan</h4>
+        <p class="text-[10px] text-slate-400 mt-1 max-w-[240px] leading-relaxed">Saat antrian padat dan pelanggan perlu mengambil barang tambahan, klik tombol <b>Tahan</b> di kasir untuk menyimpan sementara.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = posPendingTransactions.map((item) => `
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 shadow-xs hover:border-amber-400 dark:hover:border-amber-500 transition-all flex flex-col gap-3">
+      <div class="flex items-start justify-between gap-2">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="px-2 py-0.5 rounded-md bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 text-[10px] font-black tracking-wide">${esc(item.id)}</span>
+            <span class="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
+              <i class="fa-regular fa-clock text-[9px]"></i> ${esc(item.timeStr || '-')}
+            </span>
+          </div>
+          <h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate mt-1">${esc(item.note || 'Antrian Pelanggan')}</h4>
+        </div>
+        <button type="button" onclick="deletePendingTransaction('${esc(item.id)}')" class="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 flex items-center justify-center transition-colors shrink-0" title="Hapus Antrian">
+          <i class="fa-solid fa-trash-can text-xs"></i>
+        </button>
+      </div>
+
+      <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs">
+        <div>
+          <span class="text-[10px] text-slate-500 dark:text-slate-400 block">${item.totalItems || item.items.length} Produk (${item.totalQty || 0} Unit)</span>
+          <span class="text-xs font-black text-slate-900 dark:text-white">${fCur(item.grandTotal || 0)}</span>
+        </div>
+        <button type="button" onclick="resumePendingTransaction('${esc(item.id)}')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black text-xs transition-all flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-play text-[10px]"></i>
+          <span>Lanjutkan</span>
+        </button>
+      </div>
+    </div>
+  `).join('');
+};
+
+window.resumePendingTransaction = (pendingId) => {
+  const foundIdx = posPendingTransactions.findIndex(x => x.id === pendingId);
+  if (foundIdx === -1) {
+    showToast('Data pending tidak ditemukan!');
+    return;
+  }
+  
+  const pendingObj = posPendingTransactions[foundIdx];
+  
+  const proceedRestore = () => {
+    posCart = JSON.parse(JSON.stringify(pendingObj.items));
+    posPendingTransactions.splice(foundIdx, 1);
+    _savePendingTransactions();
+    renderPosCart();
+    renderPosProducts();
+    closePosPendingModal();
+    openPosCartDrawer();
+    showToast(`Transaksi "${esc(pendingObj.note)}" dilanjutkan! ▶️`);
+  };
+  
+  if (posCart.length > 0) {
+    showConfirm(
+      'Keranjang Sedang Berisi Item',
+      'Keranjang kasir saat ini tidak kosong. Apakah Anda ingin menahan transaksi aktif saat ini terlebih dahulu sebelum memuat antrian ini?',
+      () => {
+        holdPosTransaction();
+        setTimeout(proceedRestore, 200);
+      },
+      'Tahan & Lanjutkan',
+      false
+    );
+  } else {
+    proceedRestore();
+  }
+};
+
+window.deletePendingTransaction = (pendingId) => {
+  showConfirm(
+    'Hapus Antrian Ditahan?',
+    'Apakah Anda yakin ingin menghapus antrian belanja ini secara permanen?',
+    () => {
+      posPendingTransactions = posPendingTransactions.filter(x => x.id !== pendingId);
+      _savePendingTransactions();
+      renderPosPendingList();
+      showToast('Antrian berhasil dihapus!');
+    }
+  );
 };
 
 // -----------------------------------------------------------------------------

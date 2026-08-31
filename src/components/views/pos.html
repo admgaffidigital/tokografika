@@ -36,6 +36,13 @@
           <span id='pos-cart-header-badge' class='hidden bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
         </button>
 
+        <!-- Tombol Daftar Transaksi Pending / Ditahan -->
+        <button type='button' class='relative flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-sm active:scale-95' onclick='openPosPendingModal()' title='Daftar Transaksi Ditahan / Pending'>
+          <i class='fa-solid fa-pause text-amber-300 text-xs'></i>
+          <span class='hidden sm:inline'>Pending</span>
+          <span id='pos-pending-header-badge' class='hidden bg-amber-400 text-slate-900 text-[10px] font-black px-1.5 py-0.5 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
+        </button>
+
         <!-- Panduan Kasir Quick Button -->
         <button type='button' class='flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-sm active:scale-95' onclick='openCmsGuide("pos")' title='Panduan Cara Pakai POS Kasir'>
           <i class='fa-solid fa-circle-question text-amber-300'></i>
@@ -147,7 +154,10 @@
           <p class='text-[10px] text-slate-500 dark:text-slate-400 font-semibold' id='pos-drawer-cart-count'>0 Item</p>
         </div>
       </div>
-      <div class='flex items-center gap-2'>
+      <div class='flex items-center gap-1.5'>
+        <button type='button' class='text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/30 px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1' onclick='holdPosTransaction()' title='Tahan Transaksi Saat Ini (Pending)'>
+          <i class='fa-solid fa-pause text-[10px]'></i> Tahan
+        </button>
         <button type='button' class='text-xs font-bold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1' onclick='clearPosCart()' title='Reset Transaksi'>
           <i class='fa-solid fa-trash-can text-[10px]'></i> Reset
         </button>

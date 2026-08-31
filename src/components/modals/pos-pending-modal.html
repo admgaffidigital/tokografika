@@ -1,0 +1,56 @@
+<!-- ========================================================================= -->
+<!-- MODAL: DAFTAR TRANSAKSI PENDING / DITAHAN (POS KASIR)                     -->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[80] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4' id='pos-pending-modal' onclick='if(event.target===this) closePosPendingModal()'>
+  <div class='w-full sm:w-[540px] max-h-[92dvh] sm:max-h-[85dvh] bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 overflow-hidden' id='pos-pending-modal-box'>
+    
+    <!-- Grab Bar for Mobile -->
+    <div class='w-full pt-2.5 pb-1 flex justify-center sm:hidden shrink-0 bg-slate-50 dark:bg-slate-900'>
+      <div class='w-12 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700'></div>
+    </div>
+
+    <!-- Modal Header -->
+    <div class='px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50/80 dark:bg-[#0b1329]'>
+      <div class='flex items-center gap-3'>
+        <div class='w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-base font-black shadow-xs'>
+          <i class='fa-solid fa-pause'></i>
+        </div>
+        <div>
+          <h3 class='font-black text-sm sm:text-base text-slate-900 dark:text-white leading-tight'>Daftar Transaksi Ditahan</h3>
+          <p class='text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-semibold mt-0.5' id='pos-pending-modal-subtitle'>Antrian belanja pelanggan yang dipending</p>
+        </div>
+      </div>
+      <button type='button' class='w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center text-xs transition-colors' onclick='closePosPendingModal()' title='Tutup'>
+        <i class='fa-solid fa-xmark text-sm'></i>
+      </button>
+    </div>
+
+    <!-- Quick Hold Current Cart Bar -->
+    <div class='p-3.5 bg-amber-50/50 dark:bg-amber-950/20 border-b border-amber-100 dark:border-amber-900/30 flex items-center gap-2 shrink-0'>
+      <div class='relative flex-1'>
+        <i class='fa-solid fa-user-tag absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs'></i>
+        <input type='text' id='pos-pending-note-input' placeholder='Catatan / Nama Pelanggan (cth: Antrian Bpk Budi)' class='w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-amber-500 transition-colors' />
+      </div>
+      <button type='button' onclick='holdCurrentPosCartFromInput()' class='px-3.5 py-2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-900 font-black text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-sm shrink-0'>
+        <i class='fa-solid fa-pause'></i>
+        <span>Tahan Keranjang</span>
+      </button>
+    </div>
+
+    <!-- Pending List Container -->
+    <div class='flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar bg-slate-50/30 dark:bg-[#070c18]' id='pos-pending-list-container'>
+      <!-- Populated dynamically by pos.js -->
+    </div>
+
+    <!-- Modal Footer -->
+    <div class='p-3.5 bg-slate-50 dark:bg-[#0b1329] border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2 shrink-0'>
+      <span class='text-[11px] text-slate-400 font-semibold flex items-center gap-1.5 truncate'>
+        <i class='fa-solid fa-info-circle text-slate-400'></i> Transaksi tersimpan aman di kasir lokal.
+      </span>
+      <button type='button' class='px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-all shrink-0' onclick='closePosPendingModal()'>
+        Tutup
+      </button>
+    </div>
+
+  </div>
+</div>
