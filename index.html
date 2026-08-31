@@ -2806,10 +2806,10 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <div class='view-section flex flex-col fade-in bg-transparent z-10 hidden h-full max-h-screen overflow-hidden' id='view-pos'>
   
-  <!-- POS MASTER HEADER (PROPORTIONAL, SPACIOUS & PREMIUM) -->
+  <!-- POS MASTER HEADER (UNIVERSAL 3-ROW LAYOUT: BRAND, SEARCH & CATEGORIES) -->
   <header class='shrink-0 shadow-md sticky top-0 z-30 flex flex-col text-white pt-[calc(0.5rem+env(safe-area-inset-top,0px))] pb-2.5 px-3 sm:px-6 gap-2' style='background-color: var(--clr-p);' id='pos-master-header'>
     
-    <!-- Row 1: Brand, Search (Desktop Inline) & Action Tabs -->
+    <!-- Row 1: Brand & Action Tabs -->
     <div class='flex items-center justify-between gap-3 min-w-0'>
       <!-- Left: Store Brand & Cashier Badge -->
       <div class='flex items-center gap-2.5 shrink-0'>
@@ -2828,16 +2828,6 @@ html.dark .badge-counter {
             <span id='pos-clock' class='font-mono font-bold shrink-0 hidden sm:inline text-[10px]'>00:00:00</span>
           </p>
         </div>
-      </div>
-
-      <!-- Center: Search Bar on Wide Screens (Tablet & PC >= 768px) -->
-      <div class='hidden md:flex flex-1 max-w-xl mx-2 min-w-0 relative'>
-        <i class='fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none'></i>
-        <input class='w-full pl-9 pr-24 py-2 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all' id='pos-search-input-desktop' placeholder='Cari produk / scan barcode (Tekan Enter)...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)' onkeydown='if(event.key==="Enter"){event.preventDefault(); handlePosBarcodeScan(this.value);}'/>
-        <button type='button' class='btn-solid no-glass absolute right-1.5 top-1/2 -translate-y-1/2 px-3 py-1 rounded-lg text-white flex items-center gap-1 text-[10px] font-black shadow-xs active:scale-95 transition-all !bg-emerald-600 hover:!bg-emerald-700 !text-white' onclick='openCameraScanner("pos-search-input-desktop")' title='Scan Barcode'>
-          <i class='fa-solid fa-qrcode text-xs !text-white'></i>
-          <span class='text-[10px] font-black uppercase tracking-wider !text-white'>Scan</span>
-        </button>
       </div>
 
       <!-- Right: Action Tabs (Pure CSS Fail-Safe Responsive: .pos-desktop-tab) -->
@@ -2882,24 +2872,24 @@ html.dark .badge-counter {
       </div>
     </div>
 
-    <!-- Mobile Search Bar (Only visible on screens < 768px) -->
-    <div class='md:hidden py-0.5'>
+    <!-- Row 2: UNIVERSAL SEARCH & SCAN BAR (100% ALWAYS VISIBLE ON ALL DEVICES) -->
+    <div class='py-0.5'>
       <div class='relative w-full'>
         <i class='fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none'></i>
-        <input class='w-full pl-9 pr-24 py-2 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all' id='pos-search-input' placeholder='Cari produk / barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)' onkeydown='if(event.key==="Enter"){event.preventDefault(); handlePosBarcodeScan(this.value);}'/>
+        <input class='w-full pl-9 pr-28 py-2.5 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-2xl text-xs sm:text-sm font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all' id='pos-search-input' placeholder='Cari nama produk / scan barcode SKU (Tekan Enter)...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)' onkeydown='if(event.key==="Enter"){event.preventDefault(); handlePosBarcodeScan(this.value);}'/>
         
-        <button type='button' class='absolute right-16 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hidden w-5 h-5 flex items-center justify-center' id='pos-btn-clear-search' onclick='clearPosSearch()' title='Hapus'>
+        <button type='button' class='absolute right-20 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hidden w-6 h-6 flex items-center justify-center' id='pos-btn-clear-search' onclick='clearPosSearch()' title='Hapus Pencarian'>
           <i class='fa-solid fa-xmark text-xs'></i>
         </button>
         
-        <button type='button' class='btn-solid no-glass absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg text-white flex items-center gap-1 text-[10px] font-black shadow-xs active:scale-95 transition-all !bg-emerald-600 hover:!bg-emerald-700 !text-white' onclick='openCameraScanner("pos-search-input")' title='Scan Barcode Kamera'>
+        <button type='button' class='btn-solid no-glass absolute right-1.5 top-1/2 -translate-y-1/2 px-3.5 py-1.5 rounded-xl text-white flex items-center gap-1.5 text-xs font-black shadow-sm active:scale-95 transition-all !bg-emerald-600 hover:!bg-emerald-700 !text-white' onclick='openCameraScanner("pos-search-input")' title='Buka Scanner Barcode Kamera'>
           <i class='fa-solid fa-qrcode text-xs !text-white'></i>
-          <span class='text-[9px] font-black uppercase tracking-wider !text-white'>Scan</span>
+          <span class='text-[10px] font-black uppercase tracking-wider !text-white'>Scan</span>
         </button>
       </div>
     </div>
 
-    <!-- Row 2 (or Row 3 on Mobile): Category Pills & View Switcher -->
+    <!-- Row 3: Category Pills & Segmented View Switcher -->
     <div class='pt-0.5 pb-0.5 flex items-center justify-between gap-2.5'>
       <!-- Scrollable Category Pills -->
       <div class='overflow-x-auto no-scrollbar flex items-center gap-2 flex-1 min-w-0' id='pos-category-pills-bar'>
