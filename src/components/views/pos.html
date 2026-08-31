@@ -29,6 +29,13 @@
 
       <!-- Right: Action Buttons -->
       <div class='flex items-center gap-2 shrink-0'>
+        <!-- Quick POS Cart Drawer Toggle -->
+        <button type='button' class='relative flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-sm active:scale-95' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
+          <i class='fa-solid fa-cart-shopping text-xs'></i>
+          <span class='hidden sm:inline'>Keranjang</span>
+          <span id='pos-cart-header-badge' class='hidden bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
+        </button>
+
         <!-- Panduan Kasir Quick Button -->
         <button type='button' class='flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-sm active:scale-95' onclick='openCmsGuide("pos")' title='Panduan Cara Pakai POS Kasir'>
           <i class='fa-solid fa-circle-question text-amber-300'></i>

@@ -141,9 +141,9 @@ const injectProductSchema = (p, storeName, currentUrl) => {
     '@context': 'https://schema.org',
     '@type': 'Product',
     '@id': `${currentUrl}#product-${p.id}`,
-    'name': p.title || 'Produk',
+    'name': p.name || p.title || 'Produk',
     'image': p.img ? [p.img] : undefined,
-    'description': p.desc || p.title || 'Produk berkualitas harga terbaik',
+    'description': p.desc || p.name || p.title || 'Produk berkualitas harga terbaik',
     'sku': p.sku || `PROD-${p.id}`,
     'category': p.category || 'General',
     'offers': {
