@@ -3,21 +3,22 @@
 <!-- ========================================================================= -->
 <div class='view-section flex flex-col fade-in bg-transparent z-10 hidden h-full max-h-screen overflow-hidden' id='view-pos'>
   
-  <!-- POS MASTER HEADER (UNIVERSAL, ULTRA-SLEEK & 100% VISIBLE ON ALL SCREENS) -->
-  <header class='shrink-0 shadow-md sticky top-0 z-30 flex flex-col text-white pt-[calc(0.4rem+env(safe-area-inset-top,0px))] pb-2 px-3 sm:px-6' style='background-color: var(--clr-p);' id='pos-master-header'>
-    <!-- Row 1: Store Identity & Action Tabs -->
-    <div class='py-1.5 flex items-center justify-between gap-3'>
+  <!-- POS MASTER HEADER (PROPORTIONAL, SPACIOUS & PREMIUM) -->
+  <header class='shrink-0 shadow-md sticky top-0 z-30 flex flex-col text-white pt-[calc(0.5rem+env(safe-area-inset-top,0px))] pb-2.5 px-3 sm:px-6 gap-2' style='background-color: var(--clr-p);' id='pos-master-header'>
+    
+    <!-- Row 1: Brand, Search (Desktop Inline) & Action Tabs -->
+    <div class='flex items-center justify-between gap-3 min-w-0'>
       <!-- Left: Store Brand & Cashier Badge -->
-      <div class='flex items-center gap-2.5 min-w-0'>
-        <div class='w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/20 text-white flex items-center justify-center shadow-xs border border-white/30 shrink-0 text-sm'>
+      <div class='flex items-center gap-2.5 shrink-0'>
+        <div class='w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-white/20 text-white flex items-center justify-center shadow-xs border border-white/30 shrink-0 text-base'>
           <i class='fa-solid fa-cash-register text-white'></i>
         </div>
         <div class='min-w-0'>
           <div class='flex items-center gap-1.5'>
             <h1 class='text-xs sm:text-base font-black tracking-tight text-white truncate leading-tight' id='pos-store-name'>POS Kasir</h1>
-            <span class='bg-white/25 text-white border border-white/30 text-[8px] sm:text-[9px] font-black px-1.5 py-0.2 rounded-full shrink-0 tracking-wider uppercase' id='pos-role-badge'>KASIR</span>
+            <span class='bg-white/25 text-white border border-white/30 text-[8px] sm:text-[9px] font-black px-2 py-0.5 rounded-full shrink-0 tracking-wider uppercase' id='pos-role-badge'>KASIR</span>
           </div>
-          <p class='text-[9px] sm:text-xs font-semibold text-white/90 flex items-center gap-1 truncate'>
+          <p class='text-[10px] sm:text-xs font-semibold text-white/90 flex items-center gap-1 truncate mt-0.5'>
             <i class='fa-solid fa-user-circle text-[10px] text-white/80'></i>
             <span id='pos-cashier-name' class='truncate font-bold'>Kasir</span>
             <span class='opacity-50 hidden sm:inline'>•</span>
@@ -26,78 +27,88 @@
         </div>
       </div>
 
+      <!-- Center: Search Bar on Wide Screens (Tablet & PC >= 768px) -->
+      <div class='hidden md:flex flex-1 max-w-xl mx-2 min-w-0 relative'>
+        <i class='fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none'></i>
+        <input class='w-full pl-9 pr-24 py-2 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all' id='pos-search-input-desktop' placeholder='Cari produk / scan barcode (Tekan Enter)...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)' onkeydown='if(event.key==="Enter"){event.preventDefault(); handlePosBarcodeScan(this.value);}'/>
+        <button type='button' class='btn-solid no-glass absolute right-1.5 top-1/2 -translate-y-1/2 px-3 py-1 rounded-lg text-white flex items-center gap-1 text-[10px] font-black shadow-xs active:scale-95 transition-all !bg-emerald-600 hover:!bg-emerald-700 !text-white' onclick='openCameraScanner("pos-search-input-desktop")' title='Scan Barcode'>
+          <i class='fa-solid fa-qrcode text-xs !text-white'></i>
+          <span class='text-[10px] font-black uppercase tracking-wider !text-white'>Scan</span>
+        </button>
+      </div>
+
       <!-- Right: Action Tabs (Pure CSS Fail-Safe Responsive: .pos-desktop-tab) -->
       <div class='flex items-center gap-1.5 shrink-0'>
         <!-- Katalog Tab -->
-        <button type='button' class='btn-solid no-glass pos-desktop-tab items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='scrollToPosTop()' title='Etalase Produk'>
+        <button type='button' class='btn-solid no-glass pos-desktop-tab items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='scrollToPosTop()' title='Etalase Produk'>
           <i class='fa-solid fa-boxes-stacked text-xs'></i>
           <span>Katalog</span>
         </button>
 
         <!-- Quick Cart Tab -->
-        <button type='button' class='btn-solid no-glass pos-desktop-tab items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
+        <button type='button' class='btn-solid no-glass pos-desktop-tab items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
           <i class='fa-solid fa-cart-shopping text-xs'></i>
           <span>Keranjang</span>
           <span id='pos-cart-header-badge' class='hidden bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
         </button>
 
         <!-- Pending Tab -->
-        <button type='button' class='btn-solid no-glass pos-desktop-tab relative items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosPendingModal()' title='Transaksi Ditahan'>
+        <button type='button' class='btn-solid no-glass pos-desktop-tab relative items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosPendingModal()' title='Transaksi Ditahan'>
           <i class='fa-solid fa-pause text-amber-200 text-xs'></i>
           <span>Pending</span>
           <span id='pos-pending-header-badge' class='hidden bg-amber-400 text-slate-900 text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
         </button>
 
         <!-- Guide Tab -->
-        <button type='button' class='btn-solid no-glass pos-desktop-tab items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openCmsGuide("pos")' title='Panduan Kasir'>
+        <button type='button' class='btn-solid no-glass pos-desktop-tab items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openCmsGuide("pos")' title='Panduan Kasir'>
           <i class='fa-solid fa-circle-question text-amber-200 text-xs'></i>
           <span>Panduan</span>
         </button>
 
         <!-- CMS Tab -->
-        <button type='button' class='btn-solid no-glass pos-desktop-tab items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' id='btn-pos-to-admin' onclick='changeView("view-admin"); openAdminMenu();' title='Buka CMS Pengaturan'>
+        <button type='button' class='btn-solid no-glass pos-desktop-tab items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' id='btn-pos-to-admin' onclick='changeView("view-admin"); openAdminMenu();' title='Buka CMS Pengaturan'>
           <i class='fa-solid fa-gear text-xs'></i>
           <span>CMS</span>
         </button>
 
         <!-- Logout -->
-        <button type='button' class='btn-solid no-glass inline-flex px-2.5 sm:px-3 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-600 border border-rose-400/50 text-white text-xs font-bold transition-all shadow-xs items-center gap-1.5 active:scale-95' onclick='logoutAdmin()' title='Keluar / Ganti Kasir'>
+        <button type='button' class='btn-solid no-glass inline-flex px-3 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 border border-rose-400/50 text-white text-xs font-bold transition-all shadow-xs items-center gap-1.5 active:scale-95' onclick='logoutAdmin()' title='Keluar / Ganti Kasir'>
           <i class='fa-solid fa-power-off text-xs'></i>
           <span class='hidden sm:inline'>Keluar</span>
         </button>
       </div>
     </div>
 
-    <!-- Row 2: Universal Search Bar (Always 100% Visible & Responsive) -->
-    <div class='py-1'>
+    <!-- Mobile Search Bar (Only visible on screens < 768px) -->
+    <div class='md:hidden py-0.5'>
       <div class='relative w-full'>
         <i class='fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none'></i>
-        <input class='w-full pl-9 pr-24 py-1.5 sm:py-2 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all' id='pos-search-input' placeholder='Cari nama produk / scan barcode SKU (Tekan Enter)...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)' onkeydown='if(event.key==="Enter"){event.preventDefault(); handlePosBarcodeScan(this.value);}'/>
+        <input class='w-full pl-9 pr-24 py-2 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all' id='pos-search-input' placeholder='Cari produk / barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)' onkeydown='if(event.key==="Enter"){event.preventDefault(); handlePosBarcodeScan(this.value);}'/>
         
         <button type='button' class='absolute right-16 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hidden w-5 h-5 flex items-center justify-center' id='pos-btn-clear-search' onclick='clearPosSearch()' title='Hapus'>
           <i class='fa-solid fa-xmark text-xs'></i>
         </button>
         
-        <button type='button' class='btn-solid no-glass absolute right-1 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg text-white flex items-center gap-1 text-[10px] font-black shadow-xs active:scale-95 transition-all !bg-emerald-600 hover:!bg-emerald-700 !text-white' onclick='openCameraScanner("pos-search-input")' title='Scan Barcode Kamera'>
+        <button type='button' class='btn-solid no-glass absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg text-white flex items-center gap-1 text-[10px] font-black shadow-xs active:scale-95 transition-all !bg-emerald-600 hover:!bg-emerald-700 !text-white' onclick='openCameraScanner("pos-search-input")' title='Scan Barcode Kamera'>
           <i class='fa-solid fa-qrcode text-xs !text-white'></i>
           <span class='text-[9px] font-black uppercase tracking-wider !text-white'>Scan</span>
         </button>
       </div>
     </div>
 
-    <!-- Row 3: Horizontal Category Scrolling Pills & Segmented View Switcher -->
-    <div class='py-1 pb-1.5 flex items-center justify-between gap-2.5'>
+    <!-- Row 2 (or Row 3 on Mobile): Category Pills & View Switcher -->
+    <div class='pt-0.5 pb-0.5 flex items-center justify-between gap-2.5'>
       <!-- Scrollable Category Pills -->
-      <div class='overflow-x-auto no-scrollbar flex items-center gap-1.5 flex-1 min-w-0' id='pos-category-pills-bar'>
+      <div class='overflow-x-auto no-scrollbar flex items-center gap-2 flex-1 min-w-0' id='pos-category-pills-bar'>
         <!-- Populated dynamically by JS -->
       </div>
 
       <!-- Segmented Grid/List View Switcher -->
       <div class='flex bg-black/20 border border-white/20 rounded-xl p-0.5 shrink-0' id='pos-view-mode-toggle'>
-        <button type='button' class='btn-solid no-glass w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-slate-900 !bg-white shadow-sm' id='btn-pos-view-grid' onclick='setPosViewMode("grid")' title='Tampilan Grid'>
+        <button type='button' class='btn-solid no-glass w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-slate-900 !bg-white shadow-sm' id='btn-pos-view-grid' onclick='setPosViewMode("grid")' title='Tampilan Grid'>
           <i class='fa-solid fa-border-all text-xs !text-slate-900'></i>
         </button>
-        <button type='button' class='btn-solid no-glass w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-white hover:!bg-white/20' id='btn-pos-view-list' onclick='setPosViewMode("list")' title='Tampilan List'>
+        <button type='button' class='btn-solid no-glass w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-white hover:!bg-white/20' id='btn-pos-view-list' onclick='setPosViewMode("list")' title='Tampilan List'>
           <i class='fa-solid fa-list-ul text-xs !text-white'></i>
         </button>
       </div>
