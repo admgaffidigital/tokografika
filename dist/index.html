@@ -2016,38 +2016,47 @@ html.dark .badge-counter {
             <h4 class='text-xs sm:text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider mb-3.5 flex items-center gap-2'>
               <i class='fa-solid fa-circle-question text-amber-500'></i> Bantuan & Info
             </h4>
-            <ul class='space-y-2.5 text-xs font-semibold text-slate-600 dark:text-slate-300'>
-              <li>
-                <button type='button' onclick='openBuyerGuide("order_flow")' class='hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2 group'>
-                  <i class='fa-solid fa-chevron-right text-[9px] text-slate-400 group-hover:translate-x-0.5 transition-transform'></i>
+            <div class='w-full space-y-2 text-xs font-bold text-slate-700 dark:text-slate-200'>
+              <button type='button' onclick='openBuyerGuide("order_flow")' class='w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-emerald-300 dark:hover:border-emerald-700 text-left transition-all flex items-center justify-between group shadow-2xs'>
+                <span class='flex items-center gap-2'>
+                  <i class='fa-solid fa-cart-shopping text-emerald-600 dark:text-emerald-400'></i>
                   <span>Cara Belanja & Pesan</span>
-                </button>
-              </li>
-              <li>
-                <button type='button' onclick='openBuyerGuide("wholesale")' class='hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2 group'>
-                  <i class='fa-solid fa-chevron-right text-[9px] text-slate-400 group-hover:translate-x-0.5 transition-transform'></i>
+                </span>
+                <i class='fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:translate-x-0.5 transition-transform'></i>
+              </button>
+
+              <button type='button' onclick='openBuyerGuide("wholesale")' class='w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 hover:bg-amber-50 dark:hover:bg-amber-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-amber-300 dark:hover:border-amber-700 text-left transition-all flex items-center justify-between group shadow-2xs'>
+                <span class='flex items-center gap-2'>
+                  <i class='fa-solid fa-tags text-amber-500'></i>
                   <span>Daftar Harga Grosir</span>
-                </button>
-              </li>
-              <li>
-                <button type='button' onclick='openBuyerGuide("shipping")' class='hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2 group'>
-                  <i class='fa-solid fa-chevron-right text-[9px] text-slate-400 group-hover:translate-x-0.5 transition-transform'></i>
+                </span>
+                <i class='fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:translate-x-0.5 transition-transform'></i>
+              </button>
+
+              <button type='button' onclick='openBuyerGuide("shipping")' class='w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-blue-300 dark:hover:border-blue-700 text-left transition-all flex items-center justify-between group shadow-2xs'>
+                <span class='flex items-center gap-2'>
+                  <i class='fa-solid fa-location-crosshairs text-blue-500'></i>
                   <span>Ongkir & Deteksi GPS</span>
-                </button>
-              </li>
-              <li>
-                <button type='button' onclick='openBuyerGuide("payment")' class='hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2 group'>
-                  <i class='fa-solid fa-chevron-right text-[9px] text-slate-400 group-hover:translate-x-0.5 transition-transform'></i>
+                </span>
+                <i class='fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:translate-x-0.5 transition-transform'></i>
+              </button>
+
+              <button type='button' onclick='openBuyerGuide("payment")' class='w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 hover:bg-purple-50 dark:hover:bg-purple-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-purple-300 dark:hover:border-purple-700 text-left transition-all flex items-center justify-between group shadow-2xs'>
+                <span class='flex items-center gap-2'>
+                  <i class='fa-solid fa-wallet text-purple-500'></i>
                   <span>Cara Bayar QRIS & COD</span>
-                </button>
-              </li>
-              <li>
-                <button type='button' onclick='openBuyerGuide("tracking")' class='hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors flex items-center gap-2 group'>
-                  <i class='fa-solid fa-chevron-right text-[9px] text-slate-400 group-hover:translate-x-0.5 transition-transform'></i>
+                </span>
+                <i class='fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:translate-x-0.5 transition-transform'></i>
+              </button>
+
+              <button type='button' onclick='openBuyerGuide("tracking")' class='w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-slate-200/70 dark:border-slate-700/60 hover:border-rose-300 dark:hover:border-rose-700 text-left transition-all flex items-center justify-between group shadow-2xs'>
+                <span class='flex items-center gap-2'>
+                  <i class='fa-solid fa-truck text-rose-500'></i>
                   <span>Lacak Status Pesanan</span>
-                </button>
-              </li>
-            </ul>
+                </span>
+                <i class='fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:translate-x-0.5 transition-transform'></i>
+              </button>
+            </div>
           </div>
 
           <!-- Col 3: Kontak & Lokasi Toko (4 Cols) -->
@@ -2056,46 +2065,70 @@ html.dark .badge-counter {
               <i class='fa-solid fa-headset text-emerald-500'></i> Hubungi Toko
             </h4>
 
-            <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 p-3.5 rounded-2xl flex items-center gap-3.5 hover:border-theme-primary hover:shadow-sm transition-all cursor-pointer group' id='footer-address-link' target='_blank'>
-              <div class='w-10 h-10 rounded-xl bg-theme-bg text-theme-primary flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200'>
-                <i class='fa-solid fa-map-location-dot text-sm'></i>
+            <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 p-3.5 rounded-2xl flex items-center gap-3.5 hover:border-emerald-500 hover:shadow-md transition-all cursor-pointer group shadow-2xs' id='footer-address-link' target='_blank'>
+              <div class='w-11 h-11 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 border border-emerald-500/20'>
+                <i class='fa-solid fa-map-location-dot text-base'></i>
               </div>
               <div class='min-w-0 flex-1'>
-                <p class='text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mb-0.5 group-hover:text-theme-primary transition-colors'>LOKASI GERAI TOKO</p>
+                <div class='flex items-center justify-between gap-1 mb-0.5'>
+                  <p class='text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest group-hover:text-emerald-600 transition-colors'>LOKASI GERAI TOKO</p>
+                  <span class='text-[8px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded-md'>Maps ↗</span>
+                </div>
                 <p class='text-xs text-slate-800 dark:text-slate-200 font-bold line-clamp-1 truncate' id='footer-address'>Alamat Toko</p>
               </div>
-              <i class='fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:text-theme-primary transition-colors shrink-0'></i>
             </a>
             
-            <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 p-3.5 rounded-2xl flex items-center gap-3.5 hover:border-emerald-500 hover:shadow-sm transition-all cursor-pointer group' id='footer-wa-link' target='_blank'>
-              <div class='w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200'>
+            <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 p-3.5 rounded-2xl flex items-center gap-3.5 hover:border-emerald-500 hover:shadow-md transition-all cursor-pointer group shadow-2xs' id='footer-wa-link' target='_blank'>
+              <div class='w-11 h-11 rounded-xl bg-emerald-500 text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 shadow-sm'>
                 <i class='fa-brands fa-whatsapp text-lg'></i>
               </div>
               <div class='min-w-0 flex-1'>
-                <p class='text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mb-0.5 group-hover:text-emerald-500 transition-colors'>LAYANAN WHATSAPP CS</p>
-                <p class='text-xs text-slate-800 dark:text-slate-200 font-bold tracking-wide' id='footer-wa'>08123456789</p>
+                <div class='flex items-center justify-between gap-1 mb-0.5'>
+                  <p class='text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest group-hover:text-emerald-600 transition-colors'>LAYANAN WHATSAPP CS</p>
+                  <span class='text-[8px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded-md'>Chat CS 💬</span>
+                </div>
+                <p class='text-xs text-slate-800 dark:text-slate-200 font-black tracking-wide' id='footer-wa'>08123456789</p>
               </div>
-              <i class='fa-solid fa-chevron-right text-[10px] text-slate-400 group-hover:text-emerald-500 transition-colors shrink-0'></i>
             </a>
           </div>
 
         </div>
 
-        <!-- Middle Section: Metode Pembayaran & Pengiriman Yang Didukung -->
+        <!-- Middle Section: Metode Pembayaran & Pengiriman Yang Didukung (Vibrant Micro-Chips) -->
         <div class='relative z-10 py-5 border-b border-slate-100 dark:border-slate-700/60 flex flex-col lg:flex-row items-center justify-between gap-4'>
           <div class='flex items-center gap-2 shrink-0'>
-            <i class='fa-solid fa-wallet text-slate-400 text-xs'></i>
-            <span class='text-[10px] sm:text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider'>Metode Pembayaran:</span>
+            <i class='fa-solid fa-shield-halved text-emerald-500 text-xs'></i>
+            <span class='text-[10px] sm:text-[11px] font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Metode Pembayaran Resmi:</span>
           </div>
-          <div class='flex flex-wrap items-center justify-center gap-1.5 sm:gap-2'>
-            <span class='px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-[10px] font-black text-slate-700 dark:text-slate-300'>QRIS Instan</span>
-            <span class='px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-[10px] font-bold text-slate-700 dark:text-slate-300'>BCA</span>
-            <span class='px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-[10px] font-bold text-slate-700 dark:text-slate-300'>BRI</span>
-            <span class='px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-[10px] font-bold text-slate-700 dark:text-slate-300'>Mandiri</span>
-            <span class='px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-[10px] font-bold text-slate-700 dark:text-slate-300'>BNI</span>
-            <span class='px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-[10px] font-bold text-slate-700 dark:text-slate-300'>GoPay / OVO</span>
-            <span class='px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 text-[10px] font-bold text-slate-700 dark:text-slate-300'>DANA / ShopeePay</span>
-            <span class='px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 text-[10px] font-black text-emerald-700 dark:text-emerald-300'>COD (Bayar di Tempat)</span>
+          
+          <div class='flex flex-wrap items-center justify-center gap-2'>
+            <span class='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-800/40 text-[10px] sm:text-[11px] font-black text-rose-700 dark:text-rose-300 shadow-2xs'>
+              <i class='fa-solid fa-qrcode text-rose-500'></i> QRIS Instan
+            </span>
+
+            <span class='inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-800/40 text-[10px] sm:text-[11px] font-black text-blue-700 dark:text-blue-300 shadow-2xs'>
+              <i class='fa-solid fa-building-columns text-blue-500'></i> BCA
+            </span>
+
+            <span class='inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200/80 dark:border-sky-800/40 text-[10px] sm:text-[11px] font-black text-sky-700 dark:text-sky-300 shadow-2xs'>
+              <i class='fa-solid fa-building-columns text-sky-500'></i> BRI
+            </span>
+
+            <span class='inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/40 text-[10px] sm:text-[11px] font-black text-amber-800 dark:text-amber-300 shadow-2xs'>
+              <i class='fa-solid fa-building-columns text-amber-600'></i> Mandiri
+            </span>
+
+            <span class='inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200/80 dark:border-teal-800/40 text-[10px] sm:text-[11px] font-black text-teal-700 dark:text-teal-300 shadow-2xs'>
+              <i class='fa-solid fa-building-columns text-teal-500'></i> BNI
+            </span>
+
+            <span class='inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200/80 dark:border-purple-800/40 text-[10px] sm:text-[11px] font-black text-purple-700 dark:text-purple-300 shadow-2xs'>
+              <i class='fa-solid fa-wallet text-purple-500'></i> E-Wallet
+            </span>
+
+            <span class='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300/80 dark:border-emerald-700/60 text-[10px] sm:text-[11px] font-black text-emerald-800 dark:text-emerald-300 shadow-2xs'>
+              <i class='fa-solid fa-hand-holding-dollar text-emerald-600'></i> COD (Bayar di Tempat)
+            </span>
           </div>
         </div>
         
