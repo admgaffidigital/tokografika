@@ -573,6 +573,7 @@ window.addToCartPos = (productId, variantId = null, qty = 1) => {
 
   renderPosCart();
   renderPosProducts();
+  if (typeof playPosBeep === 'function') playPosBeep('success');
   showToast(`${product.name} ditambahkan!`);
 };
 
@@ -882,6 +883,7 @@ window.holdPosTransaction = (customNote = null) => {
   const inputEl = el('pos-pending-note-input');
   if (inputEl) inputEl.value = '';
   
+  if (typeof playPosBeep === 'function') playPosBeep('hold');
   showToast(`Transaksi ditahan sebagai "${esc(note)}"! ⏸️`);
   if (el('pos-pending-modal') && !el('pos-pending-modal').classList.contains('hidden')) {
     renderPosPendingList();
@@ -1020,6 +1022,77 @@ window.deletePendingTransaction = (pendingId) => {
     }
   );
 };
+
+// Web Audio Soft Chime on Barcode / Add to Cart
+window.playPosBeep = (type = 'success') => {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    if (type === 'success') {
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.12);
+    } else if (type === 'hold') {
+      osc.frequency.setValueAtTime(660, ctx.currentTime);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.15);
+    }
+  } catch(e) {}
+};
+
+// Keyboard Shortcuts for POS
+window.addEventListener('keydown', (e) => {
+  const posView = el('view-pos');
+  if (!posView || posView.classList.contains('hidden')) return;
+
+  if (e.key === 'F2') {
+    e.preventDefault();
+    const searchInput = el('pos-search-input');
+    if (searchInput) {
+      searchInput.focus();
+      searchInput.select();
+    }
+  } else if (e.key === 'F4') {
+    e.preventDefault();
+    const drawerModal = el('pos-cart-drawer-modal');
+    if (drawerModal && !drawerModal.classList.contains('hidden') && !drawerModal.classList.contains('opacity-0')) {
+      closePosCartDrawer();
+    } else {
+      openPosCartDrawer();
+    }
+  } else if (e.key === 'F8') {
+    e.preventDefault();
+    holdPosTransaction();
+  } else if (e.key === 'F9') {
+    e.preventDefault();
+    openPosPendingModal();
+  } else if (e.key === 'Escape') {
+    if (el('pos-qty-modal') && !el('pos-qty-modal').classList.contains('hidden')) {
+      closePosQtyModal();
+    } else if (el('pos-variant-modal') && !el('pos-variant-modal').classList.contains('hidden')) {
+      closePosVariantModal();
+    } else if (el('pos-category-modal') && !el('pos-category-modal').classList.contains('hidden')) {
+      closePosCategoryModal();
+    } else if (el('pos-pending-modal') && !el('pos-pending-modal').classList.contains('hidden')) {
+      closePosPendingModal();
+    } else if (el('pos-payment-modal') && !el('pos-payment-modal').classList.contains('hidden')) {
+      closePosPaymentModal();
+    } else if (el('pos-cart-drawer-modal') && !el('pos-cart-drawer-modal').classList.contains('hidden')) {
+      closePosCartDrawer();
+    }
+  }
+});
 
 // -----------------------------------------------------------------------------
 // 9. PAYMENT WIZARD

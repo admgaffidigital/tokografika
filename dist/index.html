@@ -2691,6 +2691,21 @@ html.dark .badge-counter {
       </div>
     </div>
 
+    <!-- Desktop Pro Shortcuts Bar (Visible on PC / Laptop / Tablet) -->
+    <div class='hidden lg:flex items-center justify-between px-6 py-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-t border-slate-200/80 dark:border-slate-800 text-[11px] font-semibold text-slate-500 dark:text-slate-400 shrink-0 select-none z-20' id='pos-shortcuts-bar'>
+      <div class='flex items-center gap-4'>
+        <span class='flex items-center gap-1.5'><kbd class='px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-mono text-[10px] font-bold text-slate-700 dark:text-slate-300'>F2</kbd> Cari / Scan</span>
+        <span class='flex items-center gap-1.5'><kbd class='px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-mono text-[10px] font-bold text-slate-700 dark:text-slate-300'>F4</kbd> Keranjang</span>
+        <span class='flex items-center gap-1.5'><kbd class='px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-mono text-[10px] font-bold text-slate-700 dark:text-slate-300'>F8</kbd> Tahan</span>
+        <span class='flex items-center gap-1.5'><kbd class='px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-mono text-[10px] font-bold text-slate-700 dark:text-slate-300'>F9</kbd> Pending</span>
+        <span class='flex items-center gap-1.5'><kbd class='px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 font-mono text-[10px] font-bold text-slate-700 dark:text-slate-300'>ESC</kbd> Tutup Modal</span>
+      </div>
+      <div class='flex items-center gap-2'>
+        <span class='w-2 h-2 rounded-full bg-emerald-500 animate-pulse'></span>
+        <span class='text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider'>Kasir Siap Melayani</span>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -9312,6 +9327,7 @@ window.addToCartPos = (productId, variantId = null, qty = 1) => {
 
   renderPosCart();
   renderPosProducts();
+  if (typeof playPosBeep === 'function') playPosBeep('success');
   showToast(`${product.name} ditambahkan!`);
 };
 
@@ -9621,6 +9637,7 @@ window.holdPosTransaction = (customNote = null) => {
   const inputEl = el('pos-pending-note-input');
   if (inputEl) inputEl.value = '';
   
+  if (typeof playPosBeep === 'function') playPosBeep('hold');
   showToast(`Transaksi ditahan sebagai "${esc(note)}"! ⏸️`);
   if (el('pos-pending-modal') && !el('pos-pending-modal').classList.contains('hidden')) {
     renderPosPendingList();
@@ -9759,6 +9776,77 @@ window.deletePendingTransaction = (pendingId) => {
     }
   );
 };
+
+// Web Audio Soft Chime on Barcode / Add to Cart
+window.playPosBeep = (type = 'success') => {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    if (type === 'success') {
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.12);
+    } else if (type === 'hold') {
+      osc.frequency.setValueAtTime(660, ctx.currentTime);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.15);
+    }
+  } catch(e) {}
+};
+
+// Keyboard Shortcuts for POS
+window.addEventListener('keydown', (e) => {
+  const posView = el('view-pos');
+  if (!posView || posView.classList.contains('hidden')) return;
+
+  if (e.key === 'F2') {
+    e.preventDefault();
+    const searchInput = el('pos-search-input');
+    if (searchInput) {
+      searchInput.focus();
+      searchInput.select();
+    }
+  } else if (e.key === 'F4') {
+    e.preventDefault();
+    const drawerModal = el('pos-cart-drawer-modal');
+    if (drawerModal && !drawerModal.classList.contains('hidden') && !drawerModal.classList.contains('opacity-0')) {
+      closePosCartDrawer();
+    } else {
+      openPosCartDrawer();
+    }
+  } else if (e.key === 'F8') {
+    e.preventDefault();
+    holdPosTransaction();
+  } else if (e.key === 'F9') {
+    e.preventDefault();
+    openPosPendingModal();
+  } else if (e.key === 'Escape') {
+    if (el('pos-qty-modal') && !el('pos-qty-modal').classList.contains('hidden')) {
+      closePosQtyModal();
+    } else if (el('pos-variant-modal') && !el('pos-variant-modal').classList.contains('hidden')) {
+      closePosVariantModal();
+    } else if (el('pos-category-modal') && !el('pos-category-modal').classList.contains('hidden')) {
+      closePosCategoryModal();
+    } else if (el('pos-pending-modal') && !el('pos-pending-modal').classList.contains('hidden')) {
+      closePosPendingModal();
+    } else if (el('pos-payment-modal') && !el('pos-payment-modal').classList.contains('hidden')) {
+      closePosPaymentModal();
+    } else if (el('pos-cart-drawer-modal') && !el('pos-cart-drawer-modal').classList.contains('hidden')) {
+      closePosCartDrawer();
+    }
+  }
+});
 
 // -----------------------------------------------------------------------------
 // 9. PAYMENT WIZARD
