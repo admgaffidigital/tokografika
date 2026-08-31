@@ -3,27 +3,27 @@
 <!-- ========================================================================= -->
 <div class='view-section flex flex-col fade-in' id='view-catalog'>
   <!-- Glass Header -->
-  <div class='glass-header shrink-0 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-center sticky top-0'>
-    <div class='flex items-center justify-between w-full max-w-7xl'>
-      <div class='flex items-center gap-3'>
-        <div class='w-12 h-12 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.08)] border-2 border-slate-200 dark:border-slate-700 overflow-hidden shrink-0'>
+  <div class='glass-header shrink-0 px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-center sticky top-0'>
+    <div class='flex items-center justify-between w-full max-w-7xl gap-2'>
+      <div class='flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1'>
+        <div class='w-10 h-10 sm:w-12 sm:h-12 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.08)] border-2 border-slate-200 dark:border-slate-700 overflow-hidden shrink-0'>
           <img class='w-full h-full object-contain hidden' id='dyn-store-logo-img' src='' alt='Store Logo'/>
-          <i class='fa-solid fa-store text-xl text-emerald-600 dark:text-emerald-400 hidden' id='dyn-store-logo-icon'></i>
+          <i class='fa-solid fa-store text-lg sm:text-xl text-emerald-600 dark:text-emerald-400 hidden' id='dyn-store-logo-icon'></i>
         </div>
-        <div>
-          <h1 class='text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight leading-none mb-1' id='dyn-store-name'>Memuat...</h1>
-          <p class='text-[9px] sm:text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest' id='dyn-store-slogan'>Slogan</p>
+        <div class='min-w-0 flex-1'>
+          <h1 class='text-sm sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight leading-tight truncate mb-0.5' id='dyn-store-name'>Memuat...</h1>
+          <p class='text-[8px] sm:text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest truncate' id='dyn-store-slogan'>Slogan</p>
         </div>
       </div>
-      <div class='flex gap-2 items-center'>
-        <button class='w-9 h-9 sm:w-10 sm:h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-600 dark:text-slate-300 rounded-full flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all' onclick='checkAdminAccess()' title='Akun / Admin'>
-          <i class='fa-solid fa-user text-sm'></i>
+      <div class='flex gap-1.5 sm:gap-2 items-center shrink-0'>
+        <button class='w-8 h-8 sm:w-10 sm:h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-600 dark:text-slate-300 rounded-full flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all' onclick='checkAdminAccess()' title='Akun / Admin'>
+          <i class='fa-solid fa-user text-xs sm:text-sm'></i>
         </button>
-        <button class='w-9 h-9 sm:w-10 sm:h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-600 dark:text-slate-300 rounded-full flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all' id='btn-theme-toggle' onclick='toggleTheme()' title='Ganti Tema'>
-          <i class='fa-solid fa-moon text-sm' id='icon-theme'></i>
+        <button class='w-8 h-8 sm:w-10 sm:h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-600 dark:text-slate-300 rounded-full flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all' id='btn-theme-toggle' onclick='toggleTheme()' title='Ganti Tema'>
+          <i class='fa-solid fa-moon text-xs sm:text-sm' id='icon-theme'></i>
         </button>
-        <button class='w-9 h-9 sm:w-10 sm:h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-600 dark:text-slate-300 rounded-full flex items-center justify-center hover:bg-rose-50 dark:hover:bg-rose-900/40 hover:text-rose-500 dark:hover:text-rose-400 relative transition-all' onclick='changeView(&apos;view-wishlist&apos;)' title='Favorit'>
-          <i class='fa-solid fa-heart text-sm'></i>
+        <button class='w-8 h-8 sm:w-10 sm:h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-600 dark:text-slate-300 rounded-full flex items-center justify-center hover:bg-rose-50 dark:hover:bg-rose-900/40 hover:text-rose-500 dark:hover:text-rose-400 relative transition-all' onclick='changeView(&apos;view-wishlist&apos;)' title='Favorit'>
+          <i class='fa-solid fa-heart text-xs sm:text-sm'></i>
           <span class='badge-counter -top-1 -right-1 transform scale-0 transition-transform duration-300' id='wishlist-badge'>0</span>
         </button>
       </div>
