@@ -62,34 +62,35 @@
       </div>
     </div>
 
-    <!-- Second Row: Clean Search & Scanner Bar (Crisp White Input matching theme) -->
-    <div class='px-4 sm:px-6 py-1.5 flex items-center gap-2'>
+    <!-- Second Row: Clean Search & Scanner Bar (High Contrast & Sharp Typography) -->
+    <div class='px-3.5 sm:px-6 py-2 flex items-center gap-2'>
       <div class='relative flex-1 min-w-0'>
-        <i class='fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs'></i>
-        <input class='w-full pl-9 pr-16 py-2 bg-white text-slate-800 placeholder:text-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-white/80 transition-all' id='pos-search-input' placeholder='Cari nama produk / scan barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)'/>
+        <i class='fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none'></i>
+        <input class='w-full pl-9 pr-24 py-2.5 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all' id='pos-search-input' placeholder='Cari produk / barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)'/>
         
-        <button type='button' class='absolute right-9 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hidden w-5 h-5 flex items-center justify-center' id='pos-btn-clear-search' onclick='clearPosSearch()' title='Hapus'>
+        <button type='button' class='absolute right-16 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hidden w-5 h-5 flex items-center justify-center' id='pos-btn-clear-search' onclick='clearPosSearch()' title='Hapus'>
           <i class='fa-solid fa-xmark text-xs'></i>
         </button>
         
-        <button type='button' class='absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white transition-all shadow-sm active:scale-95' onclick='openCameraScanner()' title='Scan Barcode Kamera'>
+        <button type='button' class='absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 text-xs font-black shadow-xs active:scale-95 transition-all' onclick='openCameraScanner("pos-search-input")' title='Scan Barcode Kamera'>
           <i class='fa-solid fa-qrcode text-xs'></i>
+          <span class='text-[10px] font-extrabold uppercase tracking-wide'>Scan</span>
         </button>
       </div>
 
       <!-- Segmented Grid/List View Switcher -->
-      <div class='flex bg-black/15 border border-white/20 rounded-xl p-0.5 shrink-0' id='pos-view-mode-toggle'>
-        <button type='button' class='px-2.5 py-1.5 rounded-lg flex items-center justify-center text-xs font-black transition-all text-slate-900 bg-white shadow-xs' id='btn-pos-view-grid' onclick='setPosViewMode("grid")' title='Tampilan Grid'>
+      <div class='flex bg-black/20 border border-white/20 rounded-xl p-1 shrink-0' id='pos-view-mode-toggle'>
+        <button type='button' class='w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all text-slate-900 bg-white shadow-xs' id='btn-pos-view-grid' onclick='setPosViewMode("grid")' title='Tampilan Grid'>
           <i class='fa-solid fa-border-all text-xs'></i>
         </button>
-        <button type='button' class='px-2.5 py-1.5 rounded-lg flex items-center justify-center text-xs font-black transition-all text-white hover:bg-white/20' id='btn-pos-view-list' onclick='setPosViewMode("list")' title='Tampilan List'>
+        <button type='button' class='w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all text-white hover:bg-white/20' id='btn-pos-view-list' onclick='setPosViewMode("list")' title='Tampilan List'>
           <i class='fa-solid fa-list-ul text-xs'></i>
         </button>
       </div>
     </div>
 
-    <!-- Third Row: Horizontal Category Scrolling Pills -->
-    <div class='px-4 sm:px-6 py-1.5 pb-2.5 overflow-x-auto no-scrollbar flex items-center gap-1.5 sm:gap-2' id='pos-category-pills-bar'>
+    <!-- Third Row: Horizontal Category Scrolling Pills (High Contrast & Clear Badges) -->
+    <div class='px-3.5 sm:px-6 py-1.5 pb-3 overflow-x-auto no-scrollbar flex items-center gap-2' id='pos-category-pills-bar'>
       <!-- Populated dynamically by JS -->
     </div>
     <span id='pos-active-cat-label' class='hidden'></span>
