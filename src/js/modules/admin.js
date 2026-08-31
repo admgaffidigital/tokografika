@@ -2406,7 +2406,7 @@ const rAdmL = t => {
     extraBtns = ``;
   }
 
-  setH('admin-content', helpBanner + stats + `<div class="mb-5 flex flex-col sm:flex-row gap-3 items-center"><div class="relative w-full flex-1"><i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i><input id="admin-search-input" placeholder="Cari nama, SKU..." oninput="clearTimeout(window._admST);window._admST=setTimeout(()=>{aSq=this.value.toLowerCase();rAdmItms('${t}')},250)" class="admin-input !pl-10 !pr-[2.5rem] !py-3 !text-sm !rounded-xl shadow-sm" /><button onclick="openCameraScanner('admin-search-input')" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-500 transition-all"><i class="fa-solid fa-qrcode text-sm"></i></button></div>${extraBtns}<button onclick="oAAdd()" class="w-full sm:w-auto text-white font-bold px-6 py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md active:scale-95" style="background-color:var(--clr-p)"><i class="fa-solid fa-plus"></i> Tambah Baru</button></div><div id="admin-list-container" class="space-y-3 pb-12"></div>`);
+  setH('admin-content', helpBanner + stats + `<div class="mb-5 flex flex-col sm:flex-row gap-3 items-center"><div class="relative w-full flex-1"><i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i><input id="admin-search-input" placeholder="Cari nama, SKU..." oninput="clearTimeout(window._admST);const _v=this.value;window._admST=setTimeout(()=>{aSq=_v.toLowerCase();rAdmItms('${t}')},200)" class="admin-input !pl-10 !pr-[2.5rem] !py-3 !text-sm !rounded-xl shadow-sm" /><button onclick="openCameraScanner('admin-search-input')" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-500 transition-all"><i class="fa-solid fa-qrcode text-sm"></i></button></div>${extraBtns}<button onclick="oAAdd()" class="w-full sm:w-auto text-white font-bold px-6 py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md active:scale-95 shrink-0" style="background-color:var(--clr-p)"><i class="fa-solid fa-plus"></i> Tambah Baru</button></div><div id="admin-list-container" class="space-y-3 pb-12"></div>`);
   rAdmItms(t);
 };
 
@@ -2418,14 +2418,15 @@ window.rAdmItms = t => {
     let countActive = 0, countEmpty = 0, countInactive = 0;
     (appData.products || []).forEach(p => {
       let isOff = (p.isActive === 'false' || p.isActive === false);
+      let isUnlimited = (appData.store?.stockMode === 'unlimited') || p.isUnlimited === true || p.isUnlimited === 'true';
       if (isOff) {
         countInactive++;
+      } else if (isUnlimited) {
+        countActive++;
       } else {
         let hasVars = p.variants && p.variants.length > 0;
-        let isOutOfStock = hasVars 
-          ? p.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0)
-          : (p.stock !== undefined && p.stock !== null && p.stock !== '' && Number(p.stock) <= 0);
-        if (isOutOfStock) countEmpty++;
+        let totalStock = hasVars ? p.variants.reduce((sum, v) => sum + Number(v.stock || 0), 0) : Number(p.stock ?? 100);
+        if (totalStock <= 0) countEmpty++;
         else countActive++;
       }
     });
@@ -2479,7 +2480,8 @@ window.rAdmItms = t => {
       const isOff = x.isActive === 'false' || x.isActive === false;
       const isUnlimited = (appData.store?.stockMode === 'unlimited') || x.isUnlimited === true || x.isUnlimited === 'true';
       const hasVars = x.variants && x.variants.length > 0;
-      const isOutOfStock = !isOff && !isUnlimited && (hasVars ? x.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0) : (x.stock !== undefined && x.stock !== null && x.stock !== '' && Number(x.stock) <= 0));
+      const totalStock = hasVars ? x.variants.reduce((sum, v) => sum + Number(v.stock || 0), 0) : Number(x.stock ?? 100);
+      const isOutOfStock = !isOff && !isUnlimited && totalStock <= 0;
       
       if (window.aPrtSort === 'active') return !isOff && !isOutOfStock;
       if (window.aPrtSort === 'empty') return !isOff && isOutOfStock;
@@ -2496,24 +2498,24 @@ window.rAdmItms = t => {
     let isUnlimited = isP && ((appData.store?.stockMode === 'unlimited') || x.isUnlimited === true || x.isUnlimited === 'true');
     let hasVars = isP && x.variants && x.variants.length > 0;
     let totalStock = isP ? (hasVars ? x.variants.reduce((sum, v) => sum + Number(v.stock || 0), 0) : Number(x.stock ?? 100)) : 0;
-    let isOutOfStock = isP && !isOff && !isUnlimited && (hasVars ? x.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0) : (x.stock !== undefined && x.stock !== null && x.stock !== '' && Number(x.stock) <= 0));
+    let isOutOfStock = isP && !isOff && !isUnlimited && totalStock <= 0;
 
     let bC = isOff 
       ? 'border-rose-200 dark:border-rose-900/50 bg-rose-50/20' 
       : (isOutOfStock 
         ? 'border-amber-200 dark:border-amber-900/50 bg-amber-50/20' 
-        : 'border-slate-200/80 dark:border-slate-700 hover:border-emerald-400 dark:hover:border-emerald-500 bg-white dark:bg-slate-800');
+        : 'border-slate-200/80 dark:border-slate-700/80 hover:border-emerald-400 dark:hover:border-emerald-500 bg-white dark:bg-slate-800');
     
-    let tC = isOff ? 'text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200';
+    let tC = isOff ? 'text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-100';
     
     let statusBadge = '';
     if (isP) {
       if (isOff) {
         statusBadge = `<span class="badge badge-xs bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 font-bold"><i class="fa-solid fa-eye-slash text-[8px]"></i> Nonaktif (Sembunyi)</span>`;
       } else if (isUnlimited) {
-        statusBadge = `<span class="badge badge-xs bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 font-bold"><i class="fa-solid fa-infinity text-[8px]"></i> Stok Bebas (Unlimited)</span>`;
+        statusBadge = `<span class="badge badge-xs bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 font-bold"><i class="fa-solid fa-infinity text-[8px]"></i> Stok Bebas</span>`;
       } else if (isOutOfStock) {
-        statusBadge = `<span class="badge badge-xs bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800 font-bold"><i class="fa-solid fa-box-open text-[8px]"></i> Stok Kosong (Tampil)</span>`;
+        statusBadge = `<span class="badge badge-xs bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800 font-bold"><i class="fa-solid fa-box-open text-[8px]"></i> Stok Kosong (0 ${esc(x.unit||'Pcs')})</span>`;
       } else {
         statusBadge = `<span class="badge badge-xs bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 font-bold"><i class="fa-solid fa-check text-[8px]"></i> Aktif (${totalStock} ${esc(x.unit||'Pcs')})</span>`;
       }
@@ -2529,8 +2531,8 @@ window.rAdmItms = t => {
     let costBadge = (isP && x.costPrice) ? `<span class="text-[10px] text-slate-400 font-medium bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">HPP: <b class="text-slate-700 dark:text-slate-300">${fCur(x.costPrice)}</b></span>` : '';
     
     return `
-    <div class="p-4 sm:p-5 rounded-[1.5rem] flex flex-col sm:flex-row sm:items-center justify-between cursor-pointer border-2 ${bC} shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 gap-4 group" onclick="oAEd('${t}',${x.id})">
-      <div class="flex items-start sm:items-center gap-3 sm:gap-4 w-full sm:w-auto min-w-0 flex-1">
+    <div class="p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between cursor-pointer border-2 ${bC} shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 gap-3.5 group" onclick="oAEd('${t}',${x.id})">
+      <div class="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0 flex-1">
         ${img}
         <div class="min-w-0 flex flex-col justify-center">
           <div class="flex items-center gap-2 mb-1 flex-wrap">
@@ -2550,35 +2552,35 @@ window.rAdmItms = t => {
           ` : ''}
         </div>
       </div>
-      <div class="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto pt-3 sm:pt-0 border-t border-slate-100 dark:border-slate-700 sm:border-t-0 shrink-0 justify-end flex-wrap">
+      
+      <!-- Action Toolbar (Clean, Unified Pill Container) -->
+      <div class="flex items-center gap-1.5 sm:gap-2 pt-2.5 sm:pt-0 border-t border-slate-100 dark:border-slate-700/80 sm:border-t-0 shrink-0 justify-end flex-wrap">
         ${isP ? `
         <!-- Tombol Edit Cepat -->
-        <button type="button" onclick="openQuickEditProduct(${x.id})" class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-all border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Edit Cepat (Stok, HPP & Harga)"><i class="fa-solid fa-bolt"></i></button>
+        <button type="button" onclick="openQuickEditProduct(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500 hover:text-white transition-all border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Edit Cepat (Stok, HPP & Harga)"><i class="fa-solid fa-bolt"></i></button>
 
         <!-- Tombol Stok Opname Instan -->
-        <button type="button" onclick="openStockOpnameModal(${x.id})" class="w-8 h-8 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-100 dark:hover:bg-cyan-900/60 transition-all border border-cyan-200 dark:border-cyan-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Stok Opname (Audit Fisik)"><i class="fa-solid fa-clipboard-check"></i></button>
+        <button type="button" onclick="openStockOpnameModal(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 hover:text-white transition-all border border-cyan-200 dark:border-cyan-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Stok Opname (Audit Fisik)"><i class="fa-solid fa-clipboard-check"></i></button>
 
         <!-- Tombol Toggle Visibilitas Toko -->
-        <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl ${isOff ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-emerald-600' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 hover:bg-emerald-600 hover:text-white'} border border-slate-200 dark:border-slate-600 transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); toggleProductStatus(${x.id}, ${isOff})" title="${isOff ? 'Tampilkan di Toko' : 'Sembunyikan dari Toko'}">
-          <i class="fa-solid ${isOff ? 'fa-eye-slash' : 'fa-eye'} text-sm"></i>
+        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl ${isOff ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-emerald-600' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 hover:bg-emerald-600 hover:text-white'} border border-slate-200 dark:border-slate-600 transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); toggleProductStatus(${x.id}, ${isOff})" title="${isOff ? 'Tampilkan di Toko' : 'Sembunyikan dari Toko'}">
+          <i class="fa-solid ${isOff ? 'fa-eye-slash' : 'fa-eye'}"></i>
         </button>
 
         <!-- Tombol Duplikat -->
-        <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); duplicateProduct(${x.id})" title="Duplikat Produk">
-          <i class="fa-solid fa-copy text-sm"></i>
+        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); duplicateProduct(${x.id})" title="Duplikat Produk">
+          <i class="fa-solid fa-copy"></i>
         </button>
-
-
         ` : ''}
 
         <!-- Tombol Edit Detail Lengkap -->
-        <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-800 hover:text-white dark:hover:bg-white dark:hover:text-slate-800 transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); oAEd('${t}',${x.id})" title="Edit Detail Lengkap">
-          <i class="fa-solid fa-pen text-sm"></i>
+        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-800 hover:text-white dark:hover:bg-white dark:hover:text-slate-800 transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); oAEd('${t}',${x.id})" title="Edit Detail Lengkap">
+          <i class="fa-solid fa-pen"></i>
         </button>
 
         <!-- Tombol Hapus -->
-        <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-rose-50 dark:bg-rose-900/30 border border-rose-100 dark:border-rose-800 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); oADel('${t}',${x.id})" title="Hapus Permanen">
-          <i class="fa-solid fa-trash text-sm"></i>
+        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-rose-50 dark:bg-rose-900/30 border border-rose-100 dark:border-rose-800 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); oADel('${t}',${x.id})" title="Hapus Permanen">
+          <i class="fa-solid fa-trash"></i>
         </button>
       </div>
     </div>`;
