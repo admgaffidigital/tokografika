@@ -2,7 +2,7 @@
 
 Aplikasi Web Toko Online & POS Kasir Modern berbasis **Progressive Web App (PWA)** dengan integrasi **Firebase Firestore**, **Tailwind CSS**, dan alur pengembangan **Vite**.
 
-Website Live: **[tokografika.vercel.app](https://tokografika.vercel.app/)**
+Website Live: **[tokogrosir.id](https://tokogrosir.id/)** | **[tokografika.vercel.app](https://tokografika.vercel.app/)**
 
 ---
 
