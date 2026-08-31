@@ -88,7 +88,7 @@ const syncProductPrice = (updatedProduct) => {
   }
 
   if (cartChanged || wishlistChanged) {
-    showToast('💰 Harga produk telah diperbarui!');
+    showToast('Harga produk telah diperbarui!');
   }
 };
 

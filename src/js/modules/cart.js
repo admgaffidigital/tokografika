@@ -28,7 +28,7 @@ window.confirmAddToWishlist = () => {
   ssL('freshmart_wishlist', JSON.stringify(wishlist));
   updWish();
   closeProductModal();
-  showToast("Masuk Favorit ❤️");
+  showToast("Dimasukkan ke Favorit");
 };
 
 const updWish = () => {

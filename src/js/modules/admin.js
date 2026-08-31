@@ -115,7 +115,7 @@ window.processAdminLogin = () => {
       cRole = 'cashier';
       cPerms = kasir.permissions || [];
       activeCashier = kasir;
-      showToast(`Selamat bertugas, ${kasir.name}! 🛒`);
+      showToast(`Selamat bertugas, ${kasir.name}!`);
       if (typeof initPosView === 'function') initPosView();
       else changeView('view-pos');
       return;
@@ -126,7 +126,7 @@ window.processAdminLogin = () => {
       cRole = 'admin';
       cPerms = ['all'];
       activeCashier = { name: 'Admin Master' };
-      showToast("Membuka POS Kasir (Mode Admin) 🛒");
+      showToast("Membuka POS Kasir (Mode Admin)");
       if (typeof initPosView === 'function') initPosView();
       else changeView('view-pos');
       return;
@@ -961,7 +961,7 @@ window.exportFinancialReportCsv = () => {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  showToast('✅ Laporan CSV berhasil diunduh!');
+  showToast('Laporan CSV berhasil diunduh!');
 };
 
 window.activatePro = async () => {
@@ -1353,8 +1353,8 @@ const rAdmSet = () => {
             <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-motorcycle text-emerald-500 mr-1"></i> Layanan Kurir</label>
             <div class="relative">
               <select id="set-delivery-enabled" class="admin-input cursor-pointer !py-3 appearance-none w-full font-bold">
-                <option value="true" ${appData.store.isDeliveryEnabled !== !1 ? 'selected' : ''}>✅ Aktif</option>
-                <option value="false" ${appData.store.isDeliveryEnabled === !1 ? 'selected' : ''}>❌ Nonaktif</option>
+                <option value="true" ${appData.store.isDeliveryEnabled !== !1 ? 'selected' : ''}>Aktif</option>
+                <option value="false" ${appData.store.isDeliveryEnabled === !1 ? 'selected' : ''}>Nonaktif</option>
               </select>
               <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[10px]"></i>
             </div>
@@ -1363,8 +1363,8 @@ const rAdmSet = () => {
             <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-person-walking text-emerald-500 mr-1"></i> Ambil di Toko</label>
             <div class="relative">
               <select id="set-pickup-enabled" class="admin-input cursor-pointer !py-3 appearance-none w-full font-bold">
-                <option value="true" ${appData.store.isPickupEnabled !== !1 ? 'selected' : ''}>✅ Aktif</option>
-                <option value="false" ${appData.store.isPickupEnabled === !1 ? 'selected' : ''}>❌ Nonaktif</option>
+                <option value="true" ${appData.store.isPickupEnabled !== !1 ? 'selected' : ''}>Aktif</option>
+                <option value="false" ${appData.store.isPickupEnabled === !1 ? 'selected' : ''}>Nonaktif</option>
               </select>
               <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[10px]"></i>
             </div>
@@ -1848,12 +1848,10 @@ window.rAdmItms = t => {
       </div>
       <div class="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto pt-3 sm:pt-0 border-t border-slate-100 dark:border-slate-700 sm:border-t-0 shrink-0 justify-end flex-wrap">
         ${isP ? `
-        <!-- Tombol Edit Cepat (⚡) -->
-        <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-500 hover:bg-amber-600 text-white transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); openQuickEditProduct(${x.id})" title="Edit Cepat (Stok, HPP, Harga)">
-          <i class="fa-solid fa-bolt text-sm"></i>
-        </button>
+        <!-- Tombol Edit Cepat -->
+        <button type="button" onclick="openQuickEditModal('${x.id}')" class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/60 transition-all border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Edit Cepat (Stok, HPP & Harga)"><i class="fa-solid fa-bolt"></i></button>
 
-        <!-- Tombol Toggle Visibilitas Toko (👁️) -->
+        <!-- Tombol Toggle Visibilitas Toko -->
         <button class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl ${isOff ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-emerald-600' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 hover:bg-emerald-600 hover:text-white'} border border-slate-200 dark:border-slate-600 transition-all flex items-center justify-center shadow-sm" onclick="event.stopPropagation(); toggleProductStatus(${x.id}, ${isOff})" title="${isOff ? 'Tampilkan di Toko' : 'Sembunyikan dari Toko'}">
           <i class="fa-solid ${isOff ? 'fa-eye-slash' : 'fa-eye'} text-sm"></i>
         </button>
@@ -1953,9 +1951,9 @@ window.oAEd = (t, id) => {
         { id: 'categories', name: 'Kelola Kategori' },
         { id: 'vouchers', name: 'Kelola Voucher' },
         { id: 'banners', name: 'Kelola Banner' },
-        { id: 'view_cost_price', name: '🔓 Boleh Lihat Harga Modal (HPP)' },
-        { id: 'edit_stock', name: '📦 Boleh Ubah Stok Produk' },
-        { id: 'view_reports', name: '📊 Boleh Lihat Laporan Keuntungan' }
+        { id: 'view_cost_price', name: 'Boleh Lihat Harga Modal (HPP)' },
+        { id: 'edit_stock', name: 'Boleh Ubah Stok Produk' },
+        { id: 'view_reports', name: 'Boleh Lihat Laporan Keuntungan' }
       ];
       let vArr = Array.isArray(v) ? v : [];
       h += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">`;
@@ -2498,7 +2496,7 @@ window.getTabHelpBanner = (t) => {
     products: `
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 pt-1">
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
-          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-bolt text-amber-500"></i> 1. Edit Cepat (⚡)</div>
+          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-bolt text-amber-500"></i> 1. Edit Cepat</div>
           <p class="text-[11px] text-slate-500 dark:text-slate-400">Klik tombol petir kuning untuk update <b>Stok</b>, <b>HPP Modal</b>, dan <b>Harga Jual</b> secara instan.</p>
         </div>
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
@@ -2507,7 +2505,7 @@ window.getTabHelpBanner = (t) => {
         </div>
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
           <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-eye-slash text-rose-500"></i> 3. Nonaktif (Sembunyi)</div>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400">Klik tombol mata (👁️) jika ingin <b>menyembunyikan total</b> produk dari etalase online pembeli.</p>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Klik tombol mata jika ingin <b>menyembunyikan total</b> produk dari etalase online pembeli.</p>
         </div>
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
           <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-layer-group text-indigo-500"></i> 4. Varian & Grosir</div>
@@ -2836,7 +2834,7 @@ const guideTopicsData = {
             </div>
           </div>
           <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-[11px] text-emerald-800 dark:text-emerald-200 font-medium">
-            <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> <b>Cara Mengatur Default Printer:</b> Masuk ke menu <b>CMS Toko ➜ Pengaturan Toko</b>, lalu pada bagian <i>Ukuran Kertas Printer</i> pilih 58mm atau 80mm dan klik Simpan. Anda juga bisa beralih instan dengan menekan tombol <b>[58mm]</b> atau <b>[80mm]</b> di jendela preview struk!
+            <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> <b>Cara Mengatur Default Printer:</b> Masuk ke menu <b>CMS Toko &gt; Pengaturan Toko</b>, lalu pada bagian <i>Ukuran Kertas Printer</i> pilih 58mm atau 80mm dan klik Simpan. Anda juga bisa beralih instan dengan menekan tombol <b>[58mm]</b> atau <b>[80mm]</b> di jendela preview struk!
           </div>
         </div>
 

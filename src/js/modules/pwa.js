@@ -353,12 +353,12 @@ window.triggerPwaInstall = async () => {
     _pwaInstallEvent.prompt();
     const { outcome } = await _pwaInstallEvent.userChoice;
     if (outcome === 'accepted') {
-      showToast('Aplikasi berhasil diinstall! 🎉');
+      showToast('Aplikasi berhasil diinstall!');
       dismissPwaBanner();
     }
     _pwaInstallEvent = null;
   } else {
-    showToast('Gunakan menu browser → "Tambah ke Layar Utama"');
+    showToast('Gunakan menu browser: Tambah ke Layar Utama');
   }
 };
 
@@ -375,7 +375,7 @@ window.dismissPwaBanner = () => {
 
 window.showIosInstallGuide = () => {
   showConfirm(
-    '📱 Cara Install di iPhone / iPad',
+    'Cara Install di iPhone / iPad',
     '1. Ketuk ikon Bagikan (kotak + panah atas) di toolbar Safari\n2. Gulir ke bawah, pilih "Add to Home Screen"\n3. Ketuk "Add" di pojok kanan atas\n\nAplikasi akan muncul di layar utama Anda!',
     () => {},
     'Mengerti',

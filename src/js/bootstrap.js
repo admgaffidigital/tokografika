@@ -123,7 +123,7 @@ window.addEventListener('beforeinstallprompt', e => {
 });
 
 window.addEventListener('appinstalled', () => {
-  showToast('Berhasil diinstall di layar utama! 🎉');
+  showToast('Berhasil diinstall di layar utama!');
   dismissPwaBanner();
   _pwaInstallEvent = null;
 });

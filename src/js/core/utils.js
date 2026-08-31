@@ -329,7 +329,7 @@ window.copyVoucher = (code) => {
     textArea.select();
     try {
       document.execCommand('copy');
-      showToast(`Kode ${code} berhasil disalin! 🎉`);
+      showToast(`Kode ${code} berhasil disalin!`);
     } catch (err) {
       showToast("Gagal menyalin kode.");
     }
@@ -338,7 +338,7 @@ window.copyVoucher = (code) => {
 
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(code).then(() => {
-      showToast(`Kode ${code} berhasil disalin! 🎉`);
+      showToast(`Kode ${code} berhasil disalin!`);
     }).catch(() => copyProses());
   } else {
     copyProses();

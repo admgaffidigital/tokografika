@@ -278,19 +278,19 @@ window.processOrder = async () => {
     w = w.replace(/\D/g, '');
     if (w.startsWith('0')) w = '62' + w.substring(1);
     
-    let x = `*Order ${appData.store.name}* 🛒\n`;
-    x += `_ID: ${oI}_\n\n*👤 PEMESAN*\nNama: ${cust.name}\nAlamat: ${cust.address}\n`;
+    let x = `*Order ${appData.store.name}*\n`;
+    x += `_ID: ${oI}_\n\n*DATA PEMESAN*\nNama: ${cust.name}\nAlamat: ${cust.address}\n`;
     if (cust.deliveryMethod === 'delivery' && cust.lat) x += `GPS: https://www.google.com/maps?q=${cust.lat},${cust.lng}\n`;
-    if (cust.note) x += `\n*📝 CATATAN:*\n_${cust.note}_\n`;
+    if (cust.note) x += `\n*CATATAN:*\n_${cust.note}_\n`;
     
-    x += `\n*🛍️ DETAIL*\n`;
-    cart.forEach(i => { x += `▫️ ${i.qty}${i.unit ? ' '+i.unit : ''} ${i.name}${i.variantName ? ` (${i.variantName})` : ''} - ${fCur(getEffP(i) * i.qty)}\n`; });
+    x += `\n*DETAIL PESANAN:*\n`;
+    cart.forEach(i => { x += `- ${i.qty}${i.unit ? ' '+i.unit : ''} ${i.name}${i.variantName ? ` (${i.variantName})` : ''} - ${fCur(getEffP(i) * i.qty)}\n`; });
     x += `\nSubtotal: ${fCur(sub)}\n`;
     if (pD) x += `Diskon Produk: -${fCur(pD)}\n`;
     if (cust.deliveryMethod === 'delivery') x += `Ongkir Toko: ${fCur(sC)}\n`;
     if (sD) x += `Diskon Ongkir: -${fCur(sD)}\n`;
     x += `*TOTAL: ${fCur(tot)}*\nBayar: ${m.toUpperCase()}\n`;
-    if (m === 'cod') x += `_*(Siapkan Uang Pas!)*_\n`;
+    if (m === 'cod') x += `_*(Siapkan Uang Pas)*_\n`;
     
     hLoad();
     try { window.open(`https://wa.me/${w}?text=${encodeURIComponent(x)}`, '_blank'); } catch(waErr) { console.warn('[FreshMart] WA popup diblokir browser:', waErr); }
@@ -308,7 +308,7 @@ window.processOrder = async () => {
       if (el('btn-location')) show('btn-location');
       updCart(); 
       changeView('view-catalog'); 
-      showToast("Pesanan Dibuat! 🎉"); 
+      showToast("Pesanan Berhasil Dibuat!"); 
       isSaving = !1;
     }, 2000);
   } catch (e) {

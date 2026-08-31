@@ -119,7 +119,7 @@ window.orderSubscriptionWa = (planName) => {
   waNumber = waNumber.replace(/\D/g, '');
   if (waNumber.startsWith('0')) waNumber = '62' + waNumber.substring(1);
   const storeName = appData.store?.name || 'Toko Grafika';
-  const text = `Halo Admin Toko Grafika,\nSaya ingin berlangganan *Full Premium POS Kasir* untuk toko saya:\n\n🏪 *Nama Toko:* ${storeName}\n📦 *Paket:* ${planName}\n\nMohon petunjuk aktivasi lisensi. Terima kasih! 🙏`;
+  const text = `Halo Admin Toko Grafika,\nSaya ingin berlangganan *Full Premium POS Kasir* untuk toko saya:\n\n*Nama Toko:* ${storeName}\n*Paket:* ${planName}\n\nMohon petunjuk aktivasi lisensi. Terima kasih.`;
   window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(text)}`, '_blank');
 };
 
@@ -140,7 +140,7 @@ window.activateSubscriptionToken = async () => {
     const badge = el('admin-pro-badge');
     if (badge) badge.innerHTML = '<span class="badge badge-xs badge-solid-amber"><i class="fa-solid fa-crown"></i> PRO</span>';
     await saveApp();
-    showToast('🎉 Langganan Full Premium Aktif!');
+    showToast('Langganan Full Premium Aktif!');
     closeSubscriptionModal();
     initPosView();
   } else {
