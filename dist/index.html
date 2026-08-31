@@ -1084,16 +1084,27 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <div class='fixed inset-0 z-[70] bg-slate-900/70 hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-5' id='product-modal' onclick='if(event.target===this) closeProductModal()'>
   <div class='w-full max-w-md sm:max-w-lg md:max-w-xl bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl max-h-[90dvh] sm:max-h-[88dvh] overflow-y-auto transform translate-y-full sm:translate-y-0 transition-transform duration-300 hide-scrollbar shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col relative' id='product-modal-content'>
-    <div class='sticky top-0 right-0 left-0 z-30 flex justify-end gap-2 p-3 pointer-events-none'>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-emerald-500 hover:text-white transition-all border border-slate-200 dark:border-slate-700 shadow-md pointer-events-auto' onclick='shareProduct()' title='Bagikan'>
-        <i class='fa-solid fa-share-nodes text-sm'></i>
-      </button>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-rose-500 hover:text-white transition-all border border-slate-200 dark:border-slate-700 shadow-md pointer-events-auto' onclick='closeProductModal()' title='Tutup'>
-        <i class='fa-solid fa-xmark text-sm'></i>
-      </button>
+    <!-- Synchronized Glass Theme Header -->
+    <div class='glass-header sticky top-0 right-0 left-0 z-30 px-3.5 sm:px-5 py-2.5 sm:py-3 flex items-center justify-between shadow-md shrink-0 sm:rounded-t-2xl' style='background-color:var(--clr-p)!important;'>
+      <div class='flex items-center gap-2 min-w-0 flex-1 text-white'>
+        <div class='w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white/20 flex items-center justify-center text-white shrink-0 border border-white/30 backdrop-blur-sm'>
+          <i class='fa-solid fa-box-open text-xs sm:text-sm text-white'></i>
+        </div>
+        <span class='text-xs sm:text-sm font-bold text-white tracking-tight truncate'>Detail Produk</span>
+      </div>
+      <div class='flex items-center gap-2 shrink-0'>
+        <button class='w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-all border border-white/30 shadow-sm backdrop-blur-sm active:scale-95' onclick='shareProduct()' title='Bagikan Produk'>
+          <i class='fa-solid fa-share-nodes text-xs sm:text-sm text-white'></i>
+        </button>
+        <button class='w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-600/90 text-white transition-all border border-white/30 shadow-sm backdrop-blur-sm active:scale-95' onclick='closeProductModal()' title='Tutup'>
+          <i class='fa-solid fa-xmark text-xs sm:text-sm text-white'></i>
+        </button>
+      </div>
     </div>
-    <div class='w-full aspect-square bg-slate-100 dark:bg-slate-900 -mt-15 relative overflow-hidden sm:rounded-t-2xl shrink-0 border-b border-slate-200 dark:border-slate-700'>
-      <img class='w-full h-full object-cover transition-opacity duration-300' id='product-modal-img' src=''/>
+
+    <!-- Product Image Container -->
+    <div class='w-full aspect-square bg-slate-100 dark:bg-slate-900 relative overflow-hidden shrink-0 border-b border-slate-200 dark:border-slate-700'>
+      <img class='w-full h-full object-cover transition-opacity duration-300' id='product-modal-img' src='' alt='Foto Produk'/>
     </div>
     <div class='p-5 sm:p-6 bg-white dark:bg-slate-800 flex-1 flex flex-col'>
       <div class='mb-2 flex flex-wrap gap-1.5' id='product-modal-badges'></div>
