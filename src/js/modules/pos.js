@@ -184,7 +184,7 @@ window.initPosView = async () => {
   const navCms = el('pos-nav-cms-tab');
   const hasAdminPerm = cRole === 'admin' || (cPerms && cPerms.length > 0);
   if (btnCms) {
-    btnCms.style.display = (hasAdminPerm && window.innerWidth >= 640) ? 'inline-flex' : 'none';
+    btnCms.style.display = hasAdminPerm ? 'inline-flex' : 'none';
   }
   if (navCms) {
     navCms.classList.toggle('hidden', !hasAdminPerm);

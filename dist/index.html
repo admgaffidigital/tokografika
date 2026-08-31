@@ -2783,42 +2783,42 @@ html.dark .badge-counter {
         </div>
       </div>
 
-      <!-- Right: Action Tabs (Shifted to Header on Tablet & PC screens >=640px) -->
-      <div class='flex items-center gap-1.5 shrink-0'>
-        <!-- Katalog Tab (Tablet / PC) -->
-        <button type='button' class='btn-solid no-glass hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='scrollToPosTop()' title='Etalase Produk'>
+      <!-- Right: Action Tabs (Always 100% Visible with Smart Responsive Labels) -->
+      <div class='flex items-center gap-1 sm:gap-1.5 shrink-0'>
+        <!-- Katalog Tab -->
+        <button type='button' class='btn-solid no-glass inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='scrollToPosTop()' title='Etalase Produk'>
           <i class='fa-solid fa-boxes-stacked text-xs'></i>
-          <span>Katalog</span>
+          <span class='hidden md:inline'>Katalog</span>
         </button>
 
-        <!-- Quick Cart Tab (Tablet / PC) -->
-        <button type='button' class='btn-solid no-glass hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
+        <!-- Quick Cart Tab -->
+        <button type='button' class='btn-solid no-glass inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
           <i class='fa-solid fa-cart-shopping text-xs'></i>
-          <span>Keranjang</span>
+          <span class='hidden md:inline'>Keranjang</span>
           <span id='pos-cart-header-badge' class='hidden bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
         </button>
 
-        <!-- Pending Tab (Tablet / PC) -->
-        <button type='button' class='btn-solid no-glass hidden sm:inline-flex relative items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosPendingModal()' title='Transaksi Ditahan'>
+        <!-- Pending Tab -->
+        <button type='button' class='btn-solid no-glass inline-flex relative items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosPendingModal()' title='Transaksi Ditahan'>
           <i class='fa-solid fa-pause text-amber-200 text-xs'></i>
-          <span>Pending</span>
+          <span class='hidden md:inline'>Pending</span>
           <span id='pos-pending-header-badge' class='hidden bg-amber-400 text-slate-900 text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
         </button>
 
-        <!-- Guide Tab (Tablet / PC) -->
-        <button type='button' class='btn-solid no-glass hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openCmsGuide("pos")' title='Panduan Kasir'>
+        <!-- Guide Tab -->
+        <button type='button' class='btn-solid no-glass inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openCmsGuide("pos")' title='Panduan Kasir'>
           <i class='fa-solid fa-circle-question text-amber-200 text-xs'></i>
-          <span>Panduan</span>
+          <span class='hidden md:inline'>Panduan</span>
         </button>
 
-        <!-- CMS Tab (Tablet / PC) -->
-        <button type='button' class='btn-solid no-glass hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' id='btn-pos-to-admin' onclick='changeView("view-admin"); openAdminMenu();' title='Buka CMS Pengaturan'>
+        <!-- CMS Tab -->
+        <button type='button' class='btn-solid no-glass inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' id='btn-pos-to-admin' onclick='changeView("view-admin"); openAdminMenu();' title='Buka CMS Pengaturan'>
           <i class='fa-solid fa-gear text-xs'></i>
-          <span>CMS</span>
+          <span class='hidden md:inline'>CMS</span>
         </button>
 
-        <!-- Logout (Always Available) -->
-        <button type='button' class='btn-solid no-glass px-2.5 sm:px-3 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-600 border border-rose-400/50 text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 active:scale-95' onclick='logoutAdmin()' title='Keluar / Ganti Kasir'>
+        <!-- Logout -->
+        <button type='button' class='btn-solid no-glass inline-flex px-2.5 sm:px-3 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-600 border border-rose-400/50 text-white text-xs font-bold transition-all shadow-xs items-center gap-1 sm:gap-1.5 active:scale-95' onclick='logoutAdmin()' title='Keluar / Ganti Kasir'>
           <i class='fa-solid fa-power-off text-xs'></i>
           <span class='hidden sm:inline'>Keluar</span>
         </button>
@@ -9234,7 +9234,7 @@ window.initPosView = async () => {
   const navCms = el('pos-nav-cms-tab');
   const hasAdminPerm = cRole === 'admin' || (cPerms && cPerms.length > 0);
   if (btnCms) {
-    btnCms.style.display = (hasAdminPerm && window.innerWidth >= 640) ? 'inline-flex' : 'none';
+    btnCms.style.display = hasAdminPerm ? 'inline-flex' : 'none';
   }
   if (navCms) {
     navCms.classList.toggle('hidden', !hasAdminPerm);
