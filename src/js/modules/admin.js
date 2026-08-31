@@ -2565,27 +2565,27 @@ window.getTabHelpBanner = (t) => {
     `,
     categories: `
       <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60 text-[11px] text-slate-500 dark:text-slate-400">
-        💡 <b>Tips Kategori</b>: Kelompokkan barang dagangan Anda ke dalam kategori yang jelas (contoh: Makanan, Minuman, Elektronik, ATK) agar pelanggan dan kasir mudah memfilter produk.
+        <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> <b>Tips Kategori</b>: Kelompokkan barang dagangan Anda ke dalam kategori yang jelas (contoh: Makanan, Minuman, Elektronik, ATK) agar pelanggan dan kasir mudah memfilter produk.
       </div>
     `,
     vouchers: `
       <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60 text-[11px] text-slate-500 dark:text-slate-400">
-        💡 <b>Tips Voucher</b>: Anda dapat membuat kode promo potongan persentase (%) atau nominal rupiah (Rp) untuk menarik minat pelanggan berbelanja lebih banyak.
+        <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> <b>Tips Voucher</b>: Anda dapat membuat kode promo potongan persentase (%) atau nominal rupiah (Rp) untuk menarik minat pelanggan berbelanja lebih banyak.
       </div>
     `,
     banks: `
       <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60 text-[11px] text-slate-500 dark:text-slate-400">
-        💡 <b>Tips Rekening</b>: Daftarkan nomor rekening BCA, Mandiri, BRI, atau e-wallet (GoPay, OVO, Dana) agar pelanggan online bisa mentransfer pembayaran dengan mudah saat checkout.
+        <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> <b>Tips Rekening</b>: Daftarkan nomor rekening BCA, Mandiri, BRI, atau e-wallet (GoPay, OVO, Dana) agar pelanggan online bisa mentransfer pembayaran dengan mudah saat checkout.
       </div>
     `,
     banners: `
       <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60 text-[11px] text-slate-500 dark:text-slate-400">
-        💡 <b>Tips Banner</b>: Pasang banner promo berukuran rekomendasi <b>1200 x 675 px</b> (16:9) untuk menyapa pelanggan di halaman depan katalog online Anda.
+        <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> <b>Tips Banner</b>: Pasang banner promo berukuran rekomendasi <b>1200 x 675 px</b> (16:9) untuk menyapa pelanggan di halaman depan katalog online Anda.
       </div>
     `,
     accounts: `
       <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60 text-[11px] text-slate-500 dark:text-slate-400">
-        💡 <b>Tips Akun Kasir</b>: Daftarkan akun login untuk petugas kasir Anda. Anda bisa mengatur hak akses kasir agar tidak bisa melihat harga modal (HPP), tidak bisa edit produk, atau hanya bisa transaksi kasir.
+        <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> <b>Tips Akun Kasir</b>: Daftarkan akun login untuk petugas kasir Anda. Anda bisa mengatur hak akses kasir agar tidak bisa melihat harga modal (HPP), tidak bisa edit produk, atau hanya bisa transaksi kasir.
       </div>
     `
   };
@@ -2622,7 +2622,7 @@ window.getTabHelpBanner = (t) => {
 
 const guideTopicsData = {
   products: {
-    title: 'Panduan Upload Produk, Edit Cepat (⚡) & Manajemen Stok',
+    title: 'Panduan Upload Produk, Edit Cepat & Manajemen Stok',
     icon: 'fa-box-open',
     content: `
       <div class="space-y-4 text-xs sm:text-sm">
@@ -2635,27 +2635,27 @@ const guideTopicsData = {
           </p>
         </div>
 
-        <!-- Highlight Fitur Baru: Edit Cepat (⚡) & Status Produk -->
+        <!-- Highlight Fitur Baru: Edit Cepat & Status Produk -->
         <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 space-y-3">
           <div class="flex items-center gap-2 text-amber-700 dark:text-amber-300 font-black text-xs sm:text-sm">
             <i class="fa-solid fa-bolt text-amber-500 text-base"></i>
-            <span>FITUR BARU: Edit Cepat (⚡) & Pemisahan Status Produk</span>
+            <span>FITUR BARU: Edit Cepat & Pemisahan Status Produk</span>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-700 dark:text-slate-300">
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
-              <span class="font-bold text-amber-600 dark:text-amber-400 block mb-1">⚡ Tombol Edit Cepat</span>
+              <span class="font-bold text-amber-600 dark:text-amber-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-bolt"></i> Tombol Edit Cepat</span>
               <p class="text-[11px] text-slate-500 dark:text-slate-400">Klik ikon petir kuning di kartu produk untuk mengubah <b>Stok</b>, <b>HPP Modal</b>, dan <b>Harga Jual</b> secara instan tanpa perlu membuka form panjang.</p>
             </div>
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
-              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">📦 Stok Kosong (Tetap Tampil)</span>
+              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-box"></i> Stok Kosong (Tetap Tampil)</span>
               <p class="text-[11px] text-slate-500 dark:text-slate-400">Produk yang habis stoknya (stok = 0) <b>tetap tampil di katalog online</b> dengan tanda <i>"STOK HABIS"</i> agar pelanggan tahu toko menyediakan produk tersebut.</p>
             </div>
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
-              <span class="font-bold text-rose-600 dark:text-rose-400 block mb-1">👁️ Nonaktif (Disembunyikan)</span>
+              <span class="font-bold text-rose-600 dark:text-rose-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-eye-slash"></i> Nonaktif (Disembunyikan)</span>
               <p class="text-[11px] text-slate-500 dark:text-slate-400">Klik ikon mata untuk menonaktifkan produk. Produk nonaktif <b>disembunyikan total</b> dari katalog, kategori, dan pencarian pelanggan online.</p>
             </div>
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
-              <span class="font-bold text-indigo-600 dark:text-indigo-400 block mb-1">🔍 4 Tab Filter Status</span>
+              <span class="font-bold text-indigo-600 dark:text-indigo-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-filter"></i> 4 Tab Filter Status</span>
               <p class="text-[11px] text-slate-500 dark:text-slate-400">Gunakan tab filter di atas daftar produk untuk menyaring: <b>Semua</b>, <b>Aktif Ready</b>, <b>Stok Kosong</b>, atau <b>Nonaktif</b>.</p>
             </div>
           </div>
@@ -2784,7 +2784,7 @@ const guideTopicsData = {
         <!-- Panduan Khusus Fitur Pending Transaksi -->
         <div class="p-4 rounded-2xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/40 space-y-3">
           <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
-            <span class="w-6 h-6 rounded-lg text-slate-900 flex items-center justify-center text-xs shadow-sm font-black bg-amber-400">⏸️</span>
+            <span class="w-6 h-6 rounded-lg text-slate-900 flex items-center justify-center text-xs shadow-sm font-black bg-amber-400"><i class="fa-solid fa-pause"></i></span>
             Cara Menggunakan Fitur Pending / Tahan Transaksi:
           </h5>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
@@ -2798,7 +2798,7 @@ const guideTopicsData = {
             </div>
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/60 dark:border-amber-800/30">
               <span class="font-bold text-amber-700 dark:text-amber-400 block mb-1">3. Lanjutkan Belanja</span>
-              <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">Klik tombol <b>Pending</b> di header kasir, lalu klik <b>▶️ Lanjutkan</b> pada antrian yang ingin diselesaikan pembayarannya.</p>
+              <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">Klik tombol <b>Pending</b> di header kasir, lalu klik <b><i class="fa-solid fa-play text-[10px] mr-1 text-emerald-600"></i> Lanjutkan</b> pada antrian yang ingin diselesaikan pembayarannya.</p>
             </div>
           </div>
         </div>
@@ -2827,16 +2827,16 @@ const guideTopicsData = {
           </h5>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-emerald-200/70 dark:border-emerald-800/40 shadow-xs">
-              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">🖨️ Printer 58mm (Kecil / Portabel)</span>
+              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-print"></i> Printer 58mm (Kecil / Portabel)</span>
               <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Lebar kertas 58mm dengan format <b>32 Karakter</b> per baris. Sangat cocok untuk printer Bluetooth mini kasir, kasir booth, atau kurir keliling.</p>
             </div>
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-emerald-200/70 dark:border-emerald-800/40 shadow-xs">
-              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1">🖨️ Printer 80mm (Standar Supermarket/POS)</span>
+              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-print"></i> Printer 80mm (Standar Supermarket/POS)</span>
               <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Lebar kertas 80mm dengan format <b>48 Karakter</b> per baris. Kolom lebih lebar dan lega, standar kasir minimarket, resto, dan retail besar.</p>
             </div>
           </div>
           <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-[11px] text-emerald-800 dark:text-emerald-200 font-medium">
-            💡 <b>Cara Mengatur Default Printer:</b> Masuk ke menu <b>CMS Toko ➜ Pengaturan Toko</b>, lalu pada bagian <i>Ukuran Kertas Printer</i> pilih 58mm atau 80mm dan klik Simpan. Anda juga bisa beralih instan dengan menekan tombol <b>[58mm]</b> atau <b>[80mm]</b> di jendela preview struk!
+            <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> <b>Cara Mengatur Default Printer:</b> Masuk ke menu <b>CMS Toko ➜ Pengaturan Toko</b>, lalu pada bagian <i>Ukuran Kertas Printer</i> pilih 58mm atau 80mm dan klik Simpan. Anda juga bisa beralih instan dengan menekan tombol <b>[58mm]</b> atau <b>[80mm]</b> di jendela preview struk!
           </div>
         </div>
 
@@ -2864,16 +2864,16 @@ const guideTopicsData = {
           </h5>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
-              <span class="font-bold text-blue-600 dark:text-blue-400 block mb-1">📄 Faktur / Invoice Tagihan</span>
+              <span class="font-bold text-blue-600 dark:text-blue-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-file-invoice"></i> Faktur / Invoice Tagihan</span>
               <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Dokumen penagihan resmi untuk pelanggan, instansi, atau perusahaan. Memuat kolom Qty angka murni, subtotal, potongan diskon, dan total tagihan.</p>
             </div>
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
-              <span class="font-bold text-rose-600 dark:text-rose-400 block mb-1">🚚 Surat Jalan Pengiriman</span>
+              <span class="font-bold text-rose-600 dark:text-rose-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-truck"></i> Surat Jalan Pengiriman</span>
               <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Dokumen serah terima barang ekspedisi / kurir. Tabel item tanpa nominal harga dan dilengkapi kotak tanda tangan 3-pihak: <i>Penerima, Pengemudi/Kurir, dan Toko</i>.</p>
             </div>
           </div>
           <div class="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-[11px] text-purple-800 dark:text-purple-200 font-medium">
-            📄 <b>Teknologi Multi-Page Diskrit:</b> Berapapun banyaknya barang (hingga 50+ item), sistem otomatis membaginya menjadi Halaman 1, 2, ... N ukuran A4 penuh tanpa ada baris yang terpotong di tengah jalan.
+            <i class="fa-solid fa-file-lines text-purple-600 mr-1"></i> <b>Teknologi Multi-Page Diskrit:</b> Berapapun banyaknya barang (hingga 50+ item), sistem otomatis membaginya menjadi Halaman 1, 2, ... N ukuran A4 penuh tanpa ada baris yang terpotong di tengah jalan.
           </div>
         </div>
 
@@ -2982,15 +2982,15 @@ const guideTopicsData = {
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
-            <h5 class="font-bold text-slate-900 dark:text-white text-xs mb-1">🏪 Profil Toko & Kontak</h5>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs mb-1 flex items-center gap-1.5"><i class="fa-solid fa-store" style="color:var(--clr-p)"></i> Profil Toko & Kontak</h5>
             <p class="text-[11px] text-slate-500 dark:text-slate-400">Isi Nama Toko, Slogan, dan Nomor WhatsApp aktif untuk menerima pesanan pelanggan.</p>
           </div>
           <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
-            <h5 class="font-bold text-slate-900 dark:text-white text-xs mb-1">💳 Rekening & QRIS</h5>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs mb-1 flex items-center gap-1.5"><i class="fa-solid fa-credit-card" style="color:var(--clr-p)"></i> Rekening & QRIS</h5>
             <p class="text-[11px] text-slate-500 dark:text-slate-400">Daftarkan nomor rekening bank / e-wallet dan upload gambar barcode QRIS Anda.</p>
           </div>
           <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
-            <h5 class="font-bold text-slate-900 dark:text-white text-xs mb-1">👥 Kelola Akun Kasir</h5>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs mb-1 flex items-center gap-1.5"><i class="fa-solid fa-users" style="color:var(--clr-p)"></i> Kelola Akun Kasir</h5>
             <p class="text-[11px] text-slate-500 dark:text-slate-400">Buat akun kasir dan batasi izin akses agar kasir tidak dapat melihat modal (HPP).</p>
           </div>
         </div>
