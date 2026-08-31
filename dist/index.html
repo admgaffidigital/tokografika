@@ -2387,8 +2387,8 @@ html.dark .badge-counter {
         
         <!-- Bottom Bar: Copyright & Back to Top -->
         <div class='relative z-10 pt-3.5 sm:pt-5 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4'>
-          <p class='text-[9px] sm:text-xs text-slate-400 dark:text-slate-500 font-bold tracking-wider uppercase text-center sm:text-left'>
-            &#169; <span id='footer-year'></span> <span class='text-slate-700 dark:text-slate-300 font-extrabold' id='footer-copy-name'>TOKO GRAFIKA</span>. ALL RIGHTS RESERVED.
+          <p class='text-[9px] sm:text-xs text-slate-400 dark:text-slate-500 font-bold tracking-wider text-center sm:text-left'>
+            &#169; <span id='footer-year'></span> <span class='text-slate-700 dark:text-slate-300 font-extrabold uppercase' id='footer-copy-name'>TOKO GRAFIKA</span> &bull; Powered by <a href="https://www.tokogrosir.id" target="_blank" class="text-emerald-600 dark:text-emerald-400 hover:underline font-extrabold">www.tokogrosir.id</a>
           </p>
 
           <button type='button' onclick='scrollCatalogToTop()' class='px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-[11px] sm:text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 shadow-2xs shrink-0' title='Kembali ke bagian atas'>
@@ -12207,7 +12207,7 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
     </div>
     ${dLine}
     <div style="text-align:center; font-size:${is80 ? '10px' : '8px'}; color:#666; margin-top:2px;">
-      Powered by Toko Grafika POS &bull; www.tokografika.com
+      Powered by www.tokogrosir.id
     </div>
     <div style="height:14px;"></div>
   `;
@@ -12314,7 +12314,8 @@ window.executePrintReceipt = () => {
       sT += "-".repeat(len) + "\n";
       sT += pC(appData.store.footerText || "Terima Kasih Atas Kunjungan Anda") + "\n";
       sT += pC("Barang yang sudah dibeli") + "\n";
-      sT += pC("tidak dapat ditukar/dikembalikan") + "\n\n\n\n";
+      sT += pC("tidak dapat ditukar/dikembalikan") + "\n";
+      sT += pC("Powered by www.tokogrosir.id") + "\n\n\n\n";
       let b64 = btoa(unescape(encodeURIComponent(sT)));
       window.AppInventor.setWebViewString("PRINT_THERMAL|||base64," + b64);
       showToast(`Mengirim ke printer (${currentPaperSize}mm)...`);

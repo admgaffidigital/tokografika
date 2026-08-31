@@ -199,7 +199,7 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
     </div>
     ${dLine}
     <div style="text-align:center; font-size:${is80 ? '10px' : '8px'}; color:#666; margin-top:2px;">
-      Powered by Toko Grafika POS &bull; www.tokografika.com
+      Powered by www.tokogrosir.id
     </div>
     <div style="height:14px;"></div>
   `;
@@ -306,7 +306,8 @@ window.executePrintReceipt = () => {
       sT += "-".repeat(len) + "\n";
       sT += pC(appData.store.footerText || "Terima Kasih Atas Kunjungan Anda") + "\n";
       sT += pC("Barang yang sudah dibeli") + "\n";
-      sT += pC("tidak dapat ditukar/dikembalikan") + "\n\n\n\n";
+      sT += pC("tidak dapat ditukar/dikembalikan") + "\n";
+      sT += pC("Powered by www.tokogrosir.id") + "\n\n\n\n";
       let b64 = btoa(unescape(encodeURIComponent(sT)));
       window.AppInventor.setWebViewString("PRINT_THERMAL|||base64," + b64);
       showToast(`Mengirim ke printer (${currentPaperSize}mm)...`);
