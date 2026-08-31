@@ -608,6 +608,8 @@ window.addToCartPos = (productId, variantId = null, qty = 1) => {
   renderPosProducts();
   if (typeof playPosBeep === 'function') playPosBeep('success');
   showToast(`${product.name} ditambahkan!`);
+  // Automatically open cart drawer so cashier immediately sees the cart
+  openPosCartDrawer();
 };
 
 window.removeFromPosCart = (index) => {
