@@ -2788,27 +2788,27 @@ html.dark .badge-counter {
       <!-- Right: Action Buttons (Only Logout on Mobile; Full on PC) -->
       <div class='flex items-center gap-1.5 sm:gap-2 shrink-0'>
         <!-- Desktop Only Quick Cart Toggle -->
-        <button type='button' class='hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
+        <button type='button' class='hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
           <i class='fa-solid fa-cart-shopping text-xs'></i>
           <span>Keranjang</span>
           <span id='pos-cart-header-badge' class='hidden bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
         </button>
 
         <!-- Desktop Only Pending Button -->
-        <button type='button' class='hidden md:flex relative items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosPendingModal()' title='Daftar Transaksi Ditahan / Pending'>
+        <button type='button' class='hidden md:inline-flex relative items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosPendingModal()' title='Daftar Transaksi Ditahan / Pending'>
           <i class='fa-solid fa-pause text-amber-200 text-xs'></i>
           <span>Pending</span>
           <span id='pos-pending-header-badge' class='hidden bg-amber-400 text-slate-900 text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
         </button>
 
         <!-- Desktop Only Guide Button -->
-        <button type='button' class='hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openCmsGuide("pos")' title='Panduan Kasir'>
+        <button type='button' class='hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openCmsGuide("pos")' title='Panduan Kasir'>
           <i class='fa-solid fa-circle-question text-amber-200 text-xs'></i>
           <span>Panduan</span>
         </button>
 
         <!-- Desktop Only CMS Button -->
-        <button type='button' class='hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' id='btn-pos-to-admin' onclick='changeView("view-admin"); openAdminMenu();' title='Buka CMS Pengaturan'>
+        <button type='button' class='hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' id='btn-pos-to-admin' onclick='changeView("view-admin"); openAdminMenu();' title='Buka CMS Pengaturan'>
           <i class='fa-solid fa-gear text-xs'></i>
           <span>CMS</span>
         </button>
@@ -2822,23 +2822,23 @@ html.dark .badge-counter {
     </div>
 
     <!-- Second Row: Clean Search & Scanner Bar (Crisp White Input matching theme) -->
-    <div class='px-4 sm:px-6 py-2 border-t border-white/20 flex items-center gap-2'>
+    <div class='px-4 sm:px-6 py-1.5 flex items-center gap-2'>
       <div class='relative flex-1 min-w-0'>
         <i class='fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs'></i>
-        <input class='w-full pl-9 pr-16 py-2 bg-white text-slate-800 placeholder:text-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-white/80 transition-all' id='pos-search-input' placeholder='Cari nama barang atau ketik barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)'/>
+        <input class='w-full pl-9 pr-16 py-2 bg-white text-slate-800 placeholder:text-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-white/80 transition-all' id='pos-search-input' placeholder='Cari nama produk / scan barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)'/>
         
-        <button type='button' class='absolute right-8 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hidden w-5 h-5 flex items-center justify-center' id='pos-btn-clear-search' onclick='clearPosSearch()' title='Hapus'>
+        <button type='button' class='absolute right-9 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hidden w-5 h-5 flex items-center justify-center' id='pos-btn-clear-search' onclick='clearPosSearch()' title='Hapus'>
           <i class='fa-solid fa-xmark text-xs'></i>
         </button>
         
-        <button type='button' class='absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-xs active:scale-95' onclick='openCameraScanner()' title='Scan Barcode Kamera'>
+        <button type='button' class='absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white transition-all shadow-sm active:scale-95' onclick='openCameraScanner()' title='Scan Barcode Kamera'>
           <i class='fa-solid fa-qrcode text-xs'></i>
         </button>
       </div>
 
       <!-- Segmented Grid/List View Switcher -->
-      <div class='flex bg-white/20 border border-white/30 rounded-xl p-0.5 shrink-0' id='pos-view-mode-toggle'>
-        <button type='button' class='px-2.5 py-1.5 rounded-lg flex items-center justify-center text-xs font-black transition-all text-slate-800 bg-white shadow-xs' id='btn-pos-view-grid' onclick='setPosViewMode("grid")' title='Tampilan Grid'>
+      <div class='flex bg-black/15 border border-white/20 rounded-xl p-0.5 shrink-0' id='pos-view-mode-toggle'>
+        <button type='button' class='px-2.5 py-1.5 rounded-lg flex items-center justify-center text-xs font-black transition-all text-slate-900 bg-white shadow-xs' id='btn-pos-view-grid' onclick='setPosViewMode("grid")' title='Tampilan Grid'>
           <i class='fa-solid fa-border-all text-xs'></i>
         </button>
         <button type='button' class='px-2.5 py-1.5 rounded-lg flex items-center justify-center text-xs font-black transition-all text-white hover:bg-white/20' id='btn-pos-view-list' onclick='setPosViewMode("list")' title='Tampilan List'>
@@ -2848,7 +2848,7 @@ html.dark .badge-counter {
     </div>
 
     <!-- Third Row: Horizontal Category Scrolling Pills -->
-    <div class='px-4 sm:px-6 py-2 border-t border-white/15 overflow-x-auto no-scrollbar flex items-center gap-1.5 sm:gap-2' id='pos-category-pills-bar'>
+    <div class='px-4 sm:px-6 py-1.5 pb-2.5 overflow-x-auto no-scrollbar flex items-center gap-1.5 sm:gap-2' id='pos-category-pills-bar'>
       <!-- Populated dynamically by JS -->
     </div>
     <span id='pos-active-cat-label' class='hidden'></span>
@@ -2903,7 +2903,7 @@ html.dark .badge-counter {
       </button>
 
       <!-- Tab 5: CMS Dashboard -->
-      <button type='button' class='flex-1 flex flex-col items-center py-1 hover:text-emerald-600 transition-colors' onclick='changeView("view-admin"); openAdminMenu();' title='CMS Admin'>
+      <button type='button' class='flex-1 flex flex-col items-center py-1 hover:text-emerald-600 transition-colors' id='pos-nav-cms-tab' onclick='changeView("view-admin"); openAdminMenu();' title='CMS Admin'>
         <i class='fa-solid fa-gear text-base mb-0.5'></i>
         <span>CMS</span>
       </button>
@@ -9172,9 +9172,13 @@ window.initPosView = async () => {
   }
 
   const btnCms = el('btn-pos-to-admin');
+  const navCms = el('pos-nav-cms-tab');
+  const hasAdminPerm = cRole === 'admin' || (cPerms && cPerms.length > 0);
   if (btnCms) {
-    const hasAdminPerm = cRole === 'admin' || (cPerms && cPerms.length > 0);
-    btnCms.classList.toggle('hidden', !hasAdminPerm);
+    btnCms.style.display = (hasAdminPerm && window.innerWidth >= 768) ? 'inline-flex' : 'none';
+  }
+  if (navCms) {
+    navCms.classList.toggle('hidden', !hasAdminPerm);
   }
 
   if (posClockInterval) clearInterval(posClockInterval);

@@ -181,9 +181,13 @@ window.initPosView = async () => {
   }
 
   const btnCms = el('btn-pos-to-admin');
+  const navCms = el('pos-nav-cms-tab');
+  const hasAdminPerm = cRole === 'admin' || (cPerms && cPerms.length > 0);
   if (btnCms) {
-    const hasAdminPerm = cRole === 'admin' || (cPerms && cPerms.length > 0);
-    btnCms.classList.toggle('hidden', !hasAdminPerm);
+    btnCms.style.display = (hasAdminPerm && window.innerWidth >= 768) ? 'inline-flex' : 'none';
+  }
+  if (navCms) {
+    navCms.classList.toggle('hidden', !hasAdminPerm);
   }
 
   if (posClockInterval) clearInterval(posClockInterval);
