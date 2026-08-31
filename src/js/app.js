@@ -1,8 +1,7 @@
 // =============================================================================
 // FRESHMART PWA APPLICATION - MAIN ENTRY POINT
 // =============================================================================
-// Modul-modul sistem di bawah di-compile secara otomatis ke dalam Blogger XML
-// dan web preview oleh Vite build compiler.
+// Modul-modul aplikasi di bawah di-bundle secara modular oleh Vite & compiler.
 // =============================================================================
 
 // 1. Core State & Configuration
