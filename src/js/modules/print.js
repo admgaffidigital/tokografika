@@ -51,8 +51,8 @@ const _generateReceiptBarcodeSvg = (codeStr, is80 = false) => {
   const pattern = [2, 1, 1, 2, 1, 3, 1, 1, 2, 2, 1, 1, 3, 1, 2, 1, 1, 2, 2, 1, 3, 1, 1, 2, 1, 2, 2, 1, 1, 3, 1, 2, 1, 1, 2, 2, 1, 3, 1, 1, 2, 1, 2, 2, 1, 1, 3, 1, 2, 1];
   let x = 0;
   let rects = '';
-  const scale = is80 ? 1.75 : 1.35;
-  const barH = is80 ? 32 : 26;
+  const scale = is80 ? 1.75 : 1.15;
+  const barH = is80 ? 32 : 22;
   for (let i = 0; i < pattern.length; i++) {
     const w = pattern[i] * scale;
     if (i % 2 === 0) {
@@ -61,11 +61,11 @@ const _generateReceiptBarcodeSvg = (codeStr, is80 = false) => {
     x += w;
   }
   return `
-    <div style="display:flex; flex-direction:column; align-items:center; margin: 8px 0 4px 0;">
+    <div style="display:flex; flex-direction:column; align-items:center; margin: 6px 0 3px 0;">
       <svg width="${x.toFixed(0)}" height="${barH}" viewBox="0 0 ${x.toFixed(0)} ${barH}" style="max-width:100%; height:${barH}px; display:block;">
         ${rects}
       </svg>
-      <div style="font-size:${is80 ? '10.5px' : '9px'}; letter-spacing:2px; font-weight:bold; margin-top:2px; font-family:monospace;">*${clean}*</div>
+      <div style="font-size:${is80 ? '10.5px' : '8.5px'}; letter-spacing:1.5px; font-weight:bold; margin-top:1px; font-family:monospace;">*${clean}*</div>
     </div>
   `;
 };
@@ -93,7 +93,7 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
   const dLine = '<div style="border-top: 1.5px solid #000; margin: 3px 0;"></div>';
   const sLine = '<div style="border-top: 1px dashed #000; margin: 3px 0;"></div>';
 
-  const row = (l, r, bold = false, sz = is80 ? '11px' : '10px') => `
+  const row = (l, r, bold = false, sz = is80 ? '11px' : '9.5px') => `
     <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:${sz}; font-weight:${bold ? 'bold' : 'normal'}; line-height:1.35; margin:1.5px 0; width:100%; box-sizing:border-box;">
       <span style="text-align:left; color:#000; flex:1; min-width:0; word-break:break-word;">${l}</span>
       <span style="text-align:right; font-weight:${bold ? '900' : 'bold'}; color:#000; white-space:nowrap; padding-left:4px; flex-shrink:0;">${r}</span>
@@ -108,10 +108,10 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
   });
 
   let h = `
-    <div style="text-align:center; font-weight:900; font-size:${is80 ? '15px' : '13px'}; letter-spacing:0.5px; line-height:1.2; margin-bottom:2px; color:#000;">${esc(sN)}</div>
-    ${(showSlogan && sSlogan) ? `<div style="text-align:center; font-size:${is80 ? '11px' : '9px'}; font-weight:600; color:#333; margin-bottom:2px;">${esc(sSlogan)}</div>` : ''}
-    ${(showAddress && sAddr) ? `<div style="text-align:center; font-size:${is80 ? '10.5px' : '8.5px'}; color:#444; line-height:1.2; margin-bottom:2px; word-break:break-word;">${esc(sAddr)}</div>` : ''}
-    ${(showWa && sW) ? `<div style="text-align:center; font-size:${is80 ? '11px' : '9px'}; font-weight:bold; margin-bottom:3px; color:#000;">TELP/WA: ${esc(sW)}</div>` : ''}
+    <div style="text-align:center; font-weight:900; font-size:${is80 ? '15px' : '12px'}; letter-spacing:0.5px; line-height:1.2; margin-bottom:2px; color:#000;">${esc(sN)}</div>
+    ${(showSlogan && sSlogan) ? `<div style="text-align:center; font-size:${is80 ? '11px' : '8.5px'}; font-weight:600; color:#333; margin-bottom:2px;">${esc(sSlogan)}</div>` : ''}
+    ${(showAddress && sAddr) ? `<div style="text-align:center; font-size:${is80 ? '10.5px' : '8px'}; color:#444; line-height:1.2; margin-bottom:2px; word-break:break-word;">${esc(sAddr)}</div>` : ''}
+    ${(showWa && sW) ? `<div style="text-align:center; font-size:${is80 ? '11px' : '8.5px'}; font-weight:bold; margin-bottom:3px; color:#000;">TELP/WA: ${esc(sW)}</div>` : ''}
     
     ${dLine}
     
@@ -120,7 +120,7 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
     ${row('Kasir', esc(o.cashier || 'Admin / Kasir-1'))}
     ${(o.customer?.name && o.customer.name !== 'Umum / Walk-in') ? row('Pelanggan', esc(o.customer.name)) : ''}
     ${(rMode === 'full' && o.type !== 'pos') ? row('Layanan', (o.customer?.deliveryMethod === 'delivery' ? 'PENGIRIMAN KURIR' : 'AMBIL DI TOKO')) : ''}
-    ${o.customer?.note ? `<div style="font-size:${is80 ? '11px' : '9.5px'}; line-height:1.3; color:#333; margin-top:2px; word-break:break-word;">Catatan: ${esc(o.customer.note)}</div>` : ''}
+    ${o.customer?.note ? `<div style="font-size:${is80 ? '11px' : '9px'}; line-height:1.3; color:#333; margin-top:2px; word-break:break-word;">Catatan: ${esc(o.customer.note)}</div>` : ''}
 
     ${sLine}
   `;
@@ -138,8 +138,8 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
 
     h += `
       <div style="margin: 3px 0 4px 0; width:100%; box-sizing:border-box;">
-        <div style="font-weight:bold; font-size:${is80 ? '12px' : '10.5px'}; line-height:1.25; word-break:break-word; color:#000;">${rawName}</div>
-        <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:${is80 ? '11px' : '9.5px'}; line-height:1.3; margin-top:1px; width:100%; box-sizing:border-box;">
+        <div style="font-weight:bold; font-size:${is80 ? '12px' : '9.5px'}; line-height:1.25; word-break:break-word; color:#000;">${rawName}</div>
+        <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:${is80 ? '11px' : '9px'}; line-height:1.3; margin-top:1px; width:100%; box-sizing:border-box;">
           <span style="color:#222; flex:1; min-width:0;">${qtyPriceStr}</span>
           <span style="font-weight:bold; color:#000; white-space:nowrap; padding-left:4px; text-align:right; flex-shrink:0;">${totalStr}</span>
         </div>
@@ -171,7 +171,7 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
 
   h += `
     ${dLine}
-    <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:${is80 ? '14px' : '12px'}; font-weight:900; line-height:1.4; margin: 3px 0; color:#000; width:100%; box-sizing:border-box;">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:${is80 ? '14px' : '11px'}; font-weight:900; line-height:1.4; margin: 3px 0; color:#000; width:100%; box-sizing:border-box;">
       <span style="flex:1;">TOTAL AKHIR</span>
       <span style="white-space:nowrap; padding-left:4px; text-align:right; flex-shrink:0;">Rp ${grand.toLocaleString('id-ID')}</span>
     </div>
@@ -189,7 +189,7 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
   // Supermarket Savings Banner
   if (totalSavings > 0) {
     h += `
-      <div style="margin: 4px 0; padding: 2px 0; border-top: 1px dashed #000; border-bottom: 1px dashed #000; text-align:center; font-weight:900; font-size:${is80 ? '11px' : '9.5px'}; color:#000; width:100%; box-sizing:border-box;">
+      <div style="margin: 4px 0; padding: 2px 0; border-top: 1px dashed #000; border-bottom: 1px dashed #000; text-align:center; font-weight:900; font-size:${is80 ? '11px' : '9px'}; color:#000; width:100%; box-sizing:border-box;">
         *** ANDA HEMAT: Rp ${totalSavings.toLocaleString('id-ID')} ***
       </div>
     `;
@@ -206,7 +206,7 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
   // Footer Message
   if (sFooter) {
     h += `
-      <div style="text-align:center; font-weight:bold; font-size:${is80 ? '11px' : '9.5px'}; line-height:1.3; margin-top:2px; color:#000;">
+      <div style="text-align:center; font-weight:bold; font-size:${is80 ? '11px' : '9px'}; line-height:1.3; margin-top:2px; color:#000;">
         ${esc(sFooter)}
       </div>
     `;
@@ -215,7 +215,7 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
   // Return policy note (if enabled)
   if (showNotes) {
     h += `
-      <div style="text-align:center; font-size:${is80 ? '10px' : '8.5px'}; color:#444; line-height:1.3; margin-top:1px;">
+      <div style="text-align:center; font-size:${is80 ? '10px' : '8px'}; color:#444; line-height:1.3; margin-top:1px;">
         Barang yang sudah dibeli tidak dapat ditukar/dikembalikan
       </div>
     `;
@@ -224,7 +224,7 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
   // Powered by (if enabled)
   if (showPowered) {
     h += `
-      <div style="text-align:center; font-size:${is80 ? '9.5px' : '8px'}; color:#666; margin-top:1.5px;">
+      <div style="text-align:center; font-size:${is80 ? '9.5px' : '7.5px'}; color:#666; margin-top:1.5px;">
         Powered by www.tokogrosir.id
       </div>
     `;
@@ -271,7 +271,7 @@ window.executePrintReceipt = () => {
   if (!o) return;
 
   const is80 = currentPaperSize === '80';
-  const len = is80 ? 42 : 32;
+  const len = is80 ? 42 : 30;
 
   const rMode = appData.store?.receiptLayoutMode || 'compact';
   const showSlogan = (appData.store?.receiptShowSlogan === true) || (rMode === 'full' && appData.store?.receiptShowSlogan !== false);
