@@ -2759,7 +2759,7 @@ const guideTopicsData = {
           <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
             <div class="w-7 h-7 rounded-lg text-white font-bold flex items-center justify-center text-xs shadow-sm" style="background-color:var(--clr-p)">1</div>
             <h5 class="font-bold text-slate-900 dark:text-white text-xs">Pilih Produk / Scan Barcode</h5>
-            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Ketuk produk pada katalog, cari nama/SKU, atau scan kemasan langsung dengan barcode scanner.</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Ketuk produk pada katalog, cari nama/SKU, atau scan barcode kemasan langsung dengan scanner kamera.</p>
           </div>
 
           <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
@@ -2778,6 +2778,28 @@ const guideTopicsData = {
             <div class="w-7 h-7 rounded-lg text-white font-bold flex items-center justify-center text-xs shadow-sm bg-amber-500">4</div>
             <h5 class="font-bold text-slate-900 dark:text-white text-xs">Tahan / Pending Transaksi</h5>
             <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Simpan sementara antrian belanja saat pelanggan perlu mengambil barang tambahan, lalu lanjutkan kembali kapan saja.</p>
+          </div>
+        </div>
+
+        <!-- Panduan Khusus Fitur Pending Transaksi -->
+        <div class="p-4 rounded-2xl bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/40 space-y-3">
+          <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs sm:text-sm">
+            <span class="w-6 h-6 rounded-lg text-slate-900 flex items-center justify-center text-xs shadow-sm font-black bg-amber-400">⏸️</span>
+            Cara Menggunakan Fitur Pending / Tahan Transaksi:
+          </h5>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/60 dark:border-amber-800/30">
+              <span class="font-bold text-amber-700 dark:text-amber-400 block mb-1">1. Tahan Keranjang</span>
+              <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">Buka keranjang kasir lalu klik tombol <b>Tahan</b> (atau klik tombol <b>Pending</b> di header kasir). Beri catatan/nama pelanggan jika perlu.</p>
+            </div>
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/60 dark:border-amber-800/30">
+              <span class="font-bold text-amber-700 dark:text-amber-400 block mb-1">2. Layani Antrian Lain</span>
+              <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">Keranjang kasir seketika bersih kembali. Anda bisa langsung melayani pelanggan di antrian berikutnya tanpa hambatan.</p>
+            </div>
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/60 dark:border-amber-800/30">
+              <span class="font-bold text-amber-700 dark:text-amber-400 block mb-1">3. Lanjutkan Belanja</span>
+              <p class="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed">Klik tombol <b>Pending</b> di header kasir, lalu klik <b>▶️ Lanjutkan</b> pada antrian yang ingin diselesaikan pembayarannya.</p>
+            </div>
           </div>
         </div>
       </div>
