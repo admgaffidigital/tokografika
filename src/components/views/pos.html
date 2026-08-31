@@ -72,19 +72,19 @@
           <i class='fa-solid fa-xmark text-xs'></i>
         </button>
         
-        <button type='button' class='absolute right-1.5 top-1/2 -translate-y-1/2 px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 text-xs font-black shadow-xs active:scale-95 transition-all' onclick='openCameraScanner("pos-search-input")' title='Scan Barcode Kamera'>
-          <i class='fa-solid fa-qrcode text-xs'></i>
-          <span class='text-[10px] font-extrabold uppercase tracking-wide'>Scan</span>
+        <button type='button' class='btn-solid no-glass absolute right-1.5 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg text-white flex items-center gap-1.5 text-xs font-black shadow-sm active:scale-95 transition-all !bg-emerald-600 hover:!bg-emerald-700 !text-white' onclick='openCameraScanner("pos-search-input")' title='Scan Barcode Kamera'>
+          <i class='fa-solid fa-qrcode text-xs !text-white'></i>
+          <span class='text-[10px] font-extrabold uppercase tracking-wide !text-white'>Scan</span>
         </button>
       </div>
 
       <!-- Segmented Grid/List View Switcher -->
       <div class='flex bg-black/20 border border-white/20 rounded-xl p-1 shrink-0' id='pos-view-mode-toggle'>
-        <button type='button' class='w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all text-slate-900 bg-white shadow-xs' id='btn-pos-view-grid' onclick='setPosViewMode("grid")' title='Tampilan Grid'>
-          <i class='fa-solid fa-border-all text-xs'></i>
+        <button type='button' class='btn-solid no-glass w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-slate-900 !bg-white shadow-xs' id='btn-pos-view-grid' onclick='setPosViewMode("grid")' title='Tampilan Grid'>
+          <i class='fa-solid fa-border-all text-xs !text-slate-900'></i>
         </button>
-        <button type='button' class='w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all text-white hover:bg-white/20' id='btn-pos-view-list' onclick='setPosViewMode("list")' title='Tampilan List'>
-          <i class='fa-solid fa-list-ul text-xs'></i>
+        <button type='button' class='btn-solid no-glass w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-white hover:!bg-white/20' id='btn-pos-view-list' onclick='setPosViewMode("list")' title='Tampilan List'>
+          <i class='fa-solid fa-list-ul text-xs !text-white'></i>
         </button>
       </div>
     </div>

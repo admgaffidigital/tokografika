@@ -31,7 +31,7 @@
     color: rgba(255, 255, 255, 0.88) !important;
 }
 
-.glass-header button {
+.glass-header button:not(.btn-solid):not(.no-glass) {
     background-color: rgba(255, 255, 255, 0.18) !important;
     border-color: rgba(255, 255, 255, 0.3) !important;
     color: #ffffff !important;
@@ -41,17 +41,17 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-.glass-header button:hover {
+.glass-header button:not(.btn-solid):not(.no-glass):hover {
     background-color: rgba(255, 255, 255, 0.32) !important;
     transform: scale(1.05);
     color: #ffffff !important;
 }
 
-.glass-header button:active {
+.glass-header button:not(.btn-solid):not(.no-glass):active {
     transform: scale(0.95);
 }
 
-.glass-header button i {
+.glass-header button:not(.btn-solid):not(.no-glass) i {
     color: #ffffff !important;
 }
 
