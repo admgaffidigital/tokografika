@@ -15,7 +15,6 @@ window.confirmAddProductToCart = () => {
   updCart();
   closeProductModal();
   showToast("Masuk Keranjang");
-  if (typeof openCartModal === 'function') openCartModal();
 };
 
 window.confirmAddToWishlist = () => {

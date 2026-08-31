@@ -9,13 +9,29 @@ window.openCameraScanner = (targetId = 'search-input') => {
     show('scanner-modal');
     setTimeout(() => { el('scanner-modal').classList.remove('opacity-0'); }, 10);
     if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+    const config = { fps: 15, qrbox: { width: 250, height: 250 } };
+    let lastScanTime = 0;
     setTimeout(() => {
       if (html5QrCode) {
         html5QrCode.start(
           { facingMode: "environment" },
           config,
           (decodedText) => {
+            const now = Date.now();
+            if (now - lastScanTime < 1500) return;
+            lastScanTime = now;
+
+            if (targetId && targetId.includes('pos-search')) {
+              if (typeof handlePosBarcodeScan === 'function') {
+                const added = handlePosBarcodeScan(decodedText);
+                if (added) {
+                  showToast("Barcode masuk keranjang!");
+                  closeCameraScanner();
+                  return;
+                }
+              }
+            }
+
             let tEl = el(targetId);
             if (tEl) {
               tEl.value = decodedText;
@@ -25,7 +41,7 @@ window.openCameraScanner = (targetId = 'search-input') => {
                 tEl.dispatchEvent(new Event('change', { bubbles: true }));
               }
             }
-            showToast("Barcode discan!");
+            showToast("Barcode discan: " + decodedText);
             closeCameraScanner();
           },
           (err) => {}

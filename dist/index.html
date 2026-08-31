@@ -2786,36 +2786,42 @@ html.dark .badge-counter {
       <!-- Center / Desktop Full Search Bar (On PC inline, on mobile separate row) -->
       <div class='hidden md:flex flex-1 max-w-xl mx-2 min-w-0 relative'>
         <i class='fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none'></i>
-        <input class='w-full pl-9 pr-24 py-1.5 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-xl text-xs font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all' id='pos-search-input-desktop' placeholder='Cari produk / barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)'/>
+        <input class='w-full pl-9 pr-24 py-1.5 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-xl text-xs font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all' id='pos-search-input-desktop' placeholder='Cari produk / scan barcode (Tekan Enter)...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)' onkeydown='if(event.key==="Enter"){event.preventDefault(); handlePosBarcodeScan(this.value);}'/>
         <button type='button' class='btn-solid no-glass absolute right-1 top-1/2 -translate-y-1/2 px-2.5 py-1 rounded-lg text-white flex items-center gap-1 text-[10px] font-black shadow-xs active:scale-95 transition-all !bg-emerald-600 hover:!bg-emerald-700 !text-white' onclick='openCameraScanner("pos-search-input-desktop")' title='Scan Barcode'>
           <i class='fa-solid fa-qrcode text-xs !text-white'></i>
           <span class='text-[9px] font-black uppercase tracking-wider !text-white'>Scan</span>
         </button>
       </div>
 
-      <!-- Right: Action Buttons -->
+      <!-- Right: Action Buttons (All 5 Mobile Tabs Shifted to Header on Wide Screens) -->
       <div class='flex items-center gap-1.5 shrink-0'>
-        <!-- Desktop Quick Cart Toggle (Always available on tablets & PC) -->
+        <!-- Desktop Katalog Tab -->
+        <button type='button' class='btn-solid no-glass hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='scrollToPosTop()' title='Etalase Produk'>
+          <i class='fa-solid fa-boxes-stacked text-xs'></i>
+          <span>Katalog</span>
+        </button>
+
+        <!-- Desktop Quick Cart Tab -->
         <button type='button' class='btn-solid no-glass hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
           <i class='fa-solid fa-cart-shopping text-xs'></i>
           <span>Keranjang</span>
           <span id='pos-cart-header-badge' class='hidden bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
         </button>
 
-        <!-- Desktop Pending Button -->
+        <!-- Desktop Pending Tab -->
         <button type='button' class='btn-solid no-glass hidden md:inline-flex relative items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosPendingModal()' title='Transaksi Ditahan'>
           <i class='fa-solid fa-pause text-amber-200 text-xs'></i>
           <span>Pending</span>
           <span id='pos-pending-header-badge' class='hidden bg-amber-400 text-slate-900 text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
         </button>
 
-        <!-- Guide Button -->
-        <button type='button' class='btn-solid no-glass hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openCmsGuide("pos")' title='Panduan Kasir'>
+        <!-- Desktop Guide Tab -->
+        <button type='button' class='btn-solid no-glass hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openCmsGuide("pos")' title='Panduan Kasir'>
           <i class='fa-solid fa-circle-question text-amber-200 text-xs'></i>
           <span>Panduan</span>
         </button>
 
-        <!-- CMS Button -->
+        <!-- Desktop CMS Tab -->
         <button type='button' class='btn-solid no-glass hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' id='btn-pos-to-admin' onclick='changeView("view-admin"); openAdminMenu();' title='Buka CMS Pengaturan'>
           <i class='fa-solid fa-gear text-xs'></i>
           <span>CMS</span>
@@ -2833,7 +2839,7 @@ html.dark .badge-counter {
     <div class='py-1 md:hidden'>
       <div class='relative w-full'>
         <i class='fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none'></i>
-        <input class='w-full pl-9 pr-24 py-1.5 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-xl text-xs font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all' id='pos-search-input' placeholder='Cari produk / barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)'/>
+        <input class='w-full pl-9 pr-24 py-1.5 bg-white text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-xl text-xs font-bold shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all' id='pos-search-input' placeholder='Cari produk / barcode...' type='text' autocomplete='off' oninput='handlePosSearch(this.value)' onkeydown='if(event.key==="Enter"){event.preventDefault(); handlePosBarcodeScan(this.value);}'/>
         
         <button type='button' class='absolute right-16 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 hidden w-5 h-5 flex items-center justify-center' id='pos-btn-clear-search' onclick='clearPosSearch()' title='Hapus'>
           <i class='fa-solid fa-xmark text-xs'></i>
@@ -5491,7 +5497,6 @@ window.confirmAddProductToCart = () => {
   updCart();
   closeProductModal();
   showToast("Masuk Keranjang");
-  if (typeof openCartModal === 'function') openCartModal();
 };
 
 window.confirmAddToWishlist = () => {
@@ -9663,8 +9668,53 @@ window.addToCartPos = (productId, variantId = null, qty = 1) => {
   renderPosProducts();
   if (typeof playPosBeep === 'function') playPosBeep('success');
   showToast(`${product.name} ditambahkan!`);
-  // Automatically open cart drawer so cashier immediately sees the cart
-  openPosCartDrawer();
+};
+
+window.handlePosBarcodeScan = (scannedCode) => {
+  const code = (scannedCode || '').trim();
+  if (!code) return false;
+
+  const codeLower = code.toLowerCase();
+  const products = appData.products || [];
+
+  // 1. Check exact barcode / SKU match
+  for (const p of products) {
+    if (p.variants && p.variants.length) {
+      for (const v of p.variants) {
+        if ((v.sku && String(v.sku).toLowerCase() === codeLower) || (v.barcode && String(v.barcode).toLowerCase() === codeLower)) {
+          addToCartPos(p.id, v.id || v.name, 1);
+          clearPosSearch();
+          return true;
+        }
+      }
+    }
+    if ((p.sku && String(p.sku).toLowerCase() === codeLower) || (p.barcode && String(p.barcode).toLowerCase() === codeLower)) {
+      if (p.variants && p.variants.length > 0) {
+        openPosVariantModal(p.id);
+        clearPosSearch();
+      } else {
+        addToCartPos(p.id, null, 1);
+        clearPosSearch();
+      }
+      return true;
+    }
+  }
+
+  // 2. Exact Name Match
+  const nameMatch = products.find(p => p.name && p.name.toLowerCase() === codeLower);
+  if (nameMatch) {
+    if (nameMatch.variants && nameMatch.variants.length > 0) {
+      openPosVariantModal(nameMatch.id);
+    } else {
+      addToCartPos(nameMatch.id, null, 1);
+    }
+    clearPosSearch();
+    return true;
+  }
+
+  // 3. Fallback: filter products by search
+  handlePosSearch(code);
+  return false;
 };
 
 window.removeFromPosCart = (index) => {
@@ -10705,13 +10755,29 @@ window.openCameraScanner = (targetId = 'search-input') => {
     show('scanner-modal');
     setTimeout(() => { el('scanner-modal').classList.remove('opacity-0'); }, 10);
     if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
-    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+    const config = { fps: 15, qrbox: { width: 250, height: 250 } };
+    let lastScanTime = 0;
     setTimeout(() => {
       if (html5QrCode) {
         html5QrCode.start(
           { facingMode: "environment" },
           config,
           (decodedText) => {
+            const now = Date.now();
+            if (now - lastScanTime < 1500) return;
+            lastScanTime = now;
+
+            if (targetId && targetId.includes('pos-search')) {
+              if (typeof handlePosBarcodeScan === 'function') {
+                const added = handlePosBarcodeScan(decodedText);
+                if (added) {
+                  showToast("Barcode masuk keranjang!");
+                  closeCameraScanner();
+                  return;
+                }
+              }
+            }
+
             let tEl = el(targetId);
             if (tEl) {
               tEl.value = decodedText;
@@ -10721,7 +10787,7 @@ window.openCameraScanner = (targetId = 'search-input') => {
                 tEl.dispatchEvent(new Event('change', { bubbles: true }));
               }
             }
-            showToast("Barcode discan!");
+            showToast("Barcode discan: " + decodedText);
             closeCameraScanner();
           },
           (err) => {}

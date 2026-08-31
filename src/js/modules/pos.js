@@ -608,8 +608,53 @@ window.addToCartPos = (productId, variantId = null, qty = 1) => {
   renderPosProducts();
   if (typeof playPosBeep === 'function') playPosBeep('success');
   showToast(`${product.name} ditambahkan!`);
-  // Automatically open cart drawer so cashier immediately sees the cart
-  openPosCartDrawer();
+};
+
+window.handlePosBarcodeScan = (scannedCode) => {
+  const code = (scannedCode || '').trim();
+  if (!code) return false;
+
+  const codeLower = code.toLowerCase();
+  const products = appData.products || [];
+
+  // 1. Check exact barcode / SKU match
+  for (const p of products) {
+    if (p.variants && p.variants.length) {
+      for (const v of p.variants) {
+        if ((v.sku && String(v.sku).toLowerCase() === codeLower) || (v.barcode && String(v.barcode).toLowerCase() === codeLower)) {
+          addToCartPos(p.id, v.id || v.name, 1);
+          clearPosSearch();
+          return true;
+        }
+      }
+    }
+    if ((p.sku && String(p.sku).toLowerCase() === codeLower) || (p.barcode && String(p.barcode).toLowerCase() === codeLower)) {
+      if (p.variants && p.variants.length > 0) {
+        openPosVariantModal(p.id);
+        clearPosSearch();
+      } else {
+        addToCartPos(p.id, null, 1);
+        clearPosSearch();
+      }
+      return true;
+    }
+  }
+
+  // 2. Exact Name Match
+  const nameMatch = products.find(p => p.name && p.name.toLowerCase() === codeLower);
+  if (nameMatch) {
+    if (nameMatch.variants && nameMatch.variants.length > 0) {
+      openPosVariantModal(nameMatch.id);
+    } else {
+      addToCartPos(nameMatch.id, null, 1);
+    }
+    clearPosSearch();
+    return true;
+  }
+
+  // 3. Fallback: filter products by search
+  handlePosSearch(code);
+  return false;
 };
 
 window.removeFromPosCart = (index) => {
