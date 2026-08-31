@@ -79,18 +79,20 @@ const _loadImgOnce = (url) => new Promise((resolve, reject) => {
   img.src = targetUrl;
 });
 
-const renderLogoToCanvas = async (logo, themeHex, storeName, size) => {
+const renderLogoToCanvas = async (logo, themeHex, storeName, size, isMaskable = false) => {
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext('2d');
 
+  // Fill background with Theme Color
   ctx.fillStyle = themeHex;
   ctx.fillRect(0, 0, size, size);
 
   const isImageUrl = logo && (logo.startsWith('http') || logo.startsWith('https') || logo.startsWith('data:'));
   const isFaIcon = logo && !isImageUrl && logo.trim().length > 0;
-  const pad = size * 0.12;
+  // Use safe zone padding (18% for maskable Android, 10% for iOS / regular)
+  const pad = isMaskable ? size * 0.18 : size * 0.10;
 
   if (isImageUrl) {
     try {
@@ -99,7 +101,18 @@ const renderLogoToCanvas = async (logo, themeHex, storeName, size) => {
       let dw = draw, dh = draw;
       if (img.width > img.height) dh = draw * (img.height / img.width);
       else if (img.height > img.width) dw = draw * (img.width / img.height);
+      
+      // Render Solid White Circular Badge Base & Perfect Circle Clipping for Round Logo Look
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(size / 2, size / 2, draw / 2, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+      ctx.clip();
+      
       ctx.drawImage(img, (size - dw) / 2, (size - dh) / 2, dw, dh);
+      ctx.restore();
+      
       return canvas.toDataURL('image/png');
     } catch (e) {
       _drawTextFallback(ctx, size, storeName);
@@ -125,11 +138,19 @@ const renderLogoToCanvas = async (logo, themeHex, storeName, size) => {
     };
     const cleanClass = logo.replace(/^fa-(solid|regular|brands|light|thin|duotone)\s+/, '').trim();
     const unicode = faMap[cleanClass] || null;
-    const iconSize = size * 0.52;
+    const iconSize = size * (isMaskable ? 0.44 : 0.52);
     return new Promise(resolve => {
       const tryRender = () => {
+        // Draw white circle background for FA icon
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(size / 2, size / 2, (size - pad * 2) / 2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.18)';
+        ctx.fill();
+        ctx.restore();
+
         ctx.font = '900 ' + iconSize + 'px "Font Awesome 6 Free"';
-        ctx.fillStyle = 'rgba(255,255,255,0.95)';
+        ctx.fillStyle = 'rgba(255,255,255,0.98)';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(unicode || '\uf54e', size / 2, size / 2 + iconSize * 0.04);
@@ -182,7 +203,15 @@ const _injectIosSplashScreen = async (logo, themeHex, storeName) => {
         let dw = logoSize, dh = logoSize;
         if (img.width > img.height) dh = logoSize * (img.height / img.width);
         else if (img.height > img.width) dw = logoSize * (img.width / img.height);
+        
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(w / 2, logoY + logoSize / 2, logoSize / 2, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.clip();
         ctx.drawImage(img, logoX + (logoSize - dw) / 2, logoY + (logoSize - dh) / 2, dw, dh);
+        ctx.restore();
       } catch (e) {
         ctx.save(); ctx.translate(logoX, logoY); _drawTextFallback(ctx, logoSize, storeName); ctx.restore();
       }
@@ -227,16 +256,18 @@ const buildAndInjectManifest = async () => {
   if (metaIosTitle) metaIosTitle.content = storeName;
 
   const cacheKey = logo + '|' + themeHex + '|' + storeName;
-  let icon192, icon512, icon180;
+  let icon192, icon512, icon180, iconMaskable192, iconMaskable512;
   if (_pwaIconCache[cacheKey]) {
-    ({ icon192, icon512, icon180 } = _pwaIconCache[cacheKey]);
+    ({ icon192, icon512, icon180, iconMaskable192, iconMaskable512 } = _pwaIconCache[cacheKey]);
   } else {
-    [icon192, icon512, icon180] = await Promise.all([
-      renderLogoToCanvas(logo, themeHex, storeName, 192),
-      renderLogoToCanvas(logo, themeHex, storeName, 512),
-      renderLogoToCanvas(logo, themeHex, storeName, 180)
+    [icon192, icon512, icon180, iconMaskable192, iconMaskable512] = await Promise.all([
+      renderLogoToCanvas(logo, themeHex, storeName, 192, false),
+      renderLogoToCanvas(logo, themeHex, storeName, 512, false),
+      renderLogoToCanvas(logo, themeHex, storeName, 180, false),
+      renderLogoToCanvas(logo, themeHex, storeName, 192, true),
+      renderLogoToCanvas(logo, themeHex, storeName, 512, true)
     ]);
-    _pwaIconCache[cacheKey] = { icon192, icon512, icon180 };
+    _pwaIconCache[cacheKey] = { icon192, icon512, icon180, iconMaskable192, iconMaskable512 };
   }
 
   ['pwa-favicon', 'pwa-favicon-shortcut'].forEach(id => {
@@ -271,10 +302,13 @@ const buildAndInjectManifest = async () => {
     theme_color: themeHex,
     icons: [
       { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'any' },
-      { src: icon192, sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+      { src: iconMaskable192, sizes: '192x192', type: 'image/png', purpose: 'maskable' },
       { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'any' },
-      { src: icon512, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+      { src: iconMaskable512, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
     ],
+    categories: ['shopping','business'],
+    lang: 'id'
+  };
     categories: ['shopping','business'],
     lang: 'id'
   };
