@@ -6860,8 +6860,6 @@ window.openOrderDetail = i => {
 };
 
 window.closeOrderDetailModal = () => { 
-  const menu = el('print-options-menu'); 
-  if (menu) menu.classList.add('hidden'); 
   const modal = el('admin-order-modal'); 
   const box = el('admin-order-modal-box'); 
   if (!modal || !box) return; 
@@ -10480,10 +10478,6 @@ window.downloadReceiptPDF = async () => {
   hLoad();
 };
 
-window.togglePrintMenu = () => {
-  const menu = document.getElementById('print-options-menu');
-  if (menu) menu.classList.toggle('hidden');
-};
 
 window.closePreviewModal = () => {
   document.getElementById('pdf-preview-modal').classList.add('hidden');
@@ -11005,9 +10999,6 @@ window.generateA4Document = async (type, directOrder = null) => {
   if (!o) return;
   
   isSaving = true;
-  const menu = el('print-options-menu');
-  if (menu) menu.classList.add('hidden'); 
-  
   sLoad('Membuat Dokumen A4...'); 
 
   try {

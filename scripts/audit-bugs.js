@@ -47,7 +47,7 @@ if (missingFunctions.length > 0) {
 }
 
 console.log('\n=== 2. AUDIT: DOM IDs REFERENCED IN JS VS HTML ===');
-const getElementRegex = /(?:document\.getElementById|el)\s*\(\s*['"`]([^'"`]+)['"`]\s*\)/g;
+const getElementRegex = /\b(?:document\.getElementById|el)\s*\(\s*['"`]([^'"`]+)['"`]\s*\)/g;
 const referencedIds = new Set();
 
 while ((match = getElementRegex.exec(jsContent)) !== null) {

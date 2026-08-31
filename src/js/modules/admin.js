@@ -1253,8 +1253,6 @@ window.openOrderDetail = i => {
 };
 
 window.closeOrderDetailModal = () => { 
-  const menu = el('print-options-menu'); 
-  if (menu) menu.classList.add('hidden'); 
   const modal = el('admin-order-modal'); 
   const box = el('admin-order-modal-box'); 
   if (!modal || !box) return; 
