@@ -98,31 +98,42 @@ html.dark .glass-nav {
     opacity: 0.92;
 }
 
+/* --------------------------------------------------------------------------
+   Dynamic Theme Color Utility Harmonization (ALL 14 PALETTES)
+   -------------------------------------------------------------------------- */
 .btn-theme-primary,
 .bg-emerald-500,
 .bg-emerald-600,
-.bg-emerald-700 {
+.bg-emerald-700,
+.bg-emerald-800,
+[class*="bg-emerald-600"],
+[class*="bg-emerald-700"] {
     background-color: var(--clr-p) !important;
 }
 
-.bg-emerald-50 {
+.bg-emerald-50,
+[class*="bg-emerald-50"] {
     background-color: var(--clr-p-bg) !important;
 }
 
-.bg-emerald-100 {
+.bg-emerald-100,
+[class*="bg-emerald-100"] {
     background-color: var(--clr-p-10) !important;
 }
 
 .btn-theme-primary:hover,
 .hover\:bg-emerald-600:hover,
-.hover\:bg-emerald-700:hover {
+.hover\:bg-emerald-700:hover,
+[class*="hover:bg-emerald-700"]:hover {
     background-color: var(--clr-p-dark) !important;
 }
 
 .text-theme-primary,
 .text-emerald-500,
 .text-emerald-600,
-.text-emerald-700 {
+.text-emerald-700,
+[class*="text-emerald-600"],
+[class*="text-emerald-500"] {
     color: var(--clr-p) !important;
 }
 
@@ -134,13 +145,32 @@ html.dark .glass-nav {
 .border-theme-primary,
 .border-emerald-400,
 .border-emerald-500,
-.border-emerald-600 {
+.border-emerald-600,
+[class*="border-emerald-500"] {
     border-color: var(--clr-p) !important;
 }
 
 .border-emerald-200,
-.border-emerald-300 {
+.border-emerald-300,
+[class*="border-emerald-200"] {
     border-color: var(--clr-p-25) !important;
+}
+
+.ring-emerald-500,
+.ring-emerald-600,
+.focus\:ring-emerald-500:focus,
+.focus\:ring-emerald-600:focus {
+    --tw-ring-color: var(--clr-p) !important;
+}
+
+.fill-emerald-500,
+.fill-emerald-600 {
+    fill: var(--clr-p) !important;
+}
+
+.accent-emerald-500,
+.accent-emerald-600 {
+    accent-color: var(--clr-p) !important;
 }
 
 .admin-input {

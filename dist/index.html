@@ -686,31 +686,42 @@ html.dark .glass-nav {
     opacity: 0.92;
 }
 
+/* --------------------------------------------------------------------------
+   Dynamic Theme Color Utility Harmonization (ALL 14 PALETTES)
+   -------------------------------------------------------------------------- */
 .btn-theme-primary,
 .bg-emerald-500,
 .bg-emerald-600,
-.bg-emerald-700 {
+.bg-emerald-700,
+.bg-emerald-800,
+[class*="bg-emerald-600"],
+[class*="bg-emerald-700"] {
     background-color: var(--clr-p) !important;
 }
 
-.bg-emerald-50 {
+.bg-emerald-50,
+[class*="bg-emerald-50"] {
     background-color: var(--clr-p-bg) !important;
 }
 
-.bg-emerald-100 {
+.bg-emerald-100,
+[class*="bg-emerald-100"] {
     background-color: var(--clr-p-10) !important;
 }
 
 .btn-theme-primary:hover,
 .hover\:bg-emerald-600:hover,
-.hover\:bg-emerald-700:hover {
+.hover\:bg-emerald-700:hover,
+[class*="hover:bg-emerald-700"]:hover {
     background-color: var(--clr-p-dark) !important;
 }
 
 .text-theme-primary,
 .text-emerald-500,
 .text-emerald-600,
-.text-emerald-700 {
+.text-emerald-700,
+[class*="text-emerald-600"],
+[class*="text-emerald-500"] {
     color: var(--clr-p) !important;
 }
 
@@ -722,13 +733,32 @@ html.dark .glass-nav {
 .border-theme-primary,
 .border-emerald-400,
 .border-emerald-500,
-.border-emerald-600 {
+.border-emerald-600,
+[class*="border-emerald-500"] {
     border-color: var(--clr-p) !important;
 }
 
 .border-emerald-200,
-.border-emerald-300 {
+.border-emerald-300,
+[class*="border-emerald-200"] {
     border-color: var(--clr-p-25) !important;
+}
+
+.ring-emerald-500,
+.ring-emerald-600,
+.focus\:ring-emerald-500:focus,
+.focus\:ring-emerald-600:focus {
+    --tw-ring-color: var(--clr-p) !important;
+}
+
+.fill-emerald-500,
+.fill-emerald-600 {
+    fill: var(--clr-p) !important;
+}
+
+.accent-emerald-500,
+.accent-emerald-600 {
+    accent-color: var(--clr-p) !important;
 }
 
 .admin-input {
@@ -1850,24 +1880,24 @@ html.dark .badge-counter {
   <div class='glass-header shrink-0 px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-center sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-7xl gap-2'>
       <div class='flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1'>
-        <div class='w-10 h-10 sm:w-12 sm:h-12 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center shadow-[0_2px_10px_rgba(0,0,0,0.08)] border-2 border-slate-200 dark:border-slate-700 overflow-hidden shrink-0'>
+        <div class='w-10 h-10 sm:w-11 sm:h-11 bg-white/20 rounded-2xl flex items-center justify-center shadow-xs border border-white/30 overflow-hidden shrink-0'>
           <img class='w-full h-full object-contain hidden' id='dyn-store-logo-img' src='' alt='Store Logo'/>
-          <i class='fa-solid fa-store text-lg sm:text-xl text-emerald-600 dark:text-emerald-400 hidden' id='dyn-store-logo-icon'></i>
+          <i class='fa-solid fa-store text-lg sm:text-xl text-white hidden' id='dyn-store-logo-icon'></i>
         </div>
         <div class='min-w-0 flex-1'>
-          <h1 class='text-sm sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight leading-tight truncate mb-0.5' id='dyn-store-name'>Memuat...</h1>
-          <p class='text-[8px] sm:text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest truncate' id='dyn-store-slogan'>Slogan</p>
+          <h1 class='text-sm sm:text-lg font-black text-white tracking-tight leading-tight truncate' id='dyn-store-name'>Memuat...</h1>
+          <p class='text-[9px] sm:text-[11px] font-semibold text-white/90 uppercase tracking-wider truncate mt-0.5' id='dyn-store-slogan'>Slogan</p>
         </div>
       </div>
       <div class='flex gap-1.5 sm:gap-2 items-center shrink-0'>
-        <button class='w-8 h-8 sm:w-10 sm:h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-600 dark:text-slate-300 rounded-full flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all' onclick='checkAdminAccess()' title='Akun / Admin'>
-          <i class='fa-solid fa-user text-xs sm:text-sm'></i>
+        <button class='w-9 h-9 sm:w-10 sm:h-10 bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl flex items-center justify-center transition-all shadow-xs active:scale-95' onclick='checkAdminAccess()' title='Akun / Admin'>
+          <i class='fa-solid fa-user text-xs sm:text-sm text-white'></i>
         </button>
-        <button class='w-8 h-8 sm:w-10 sm:h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-600 dark:text-slate-300 rounded-full flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-700 transition-all' id='btn-theme-toggle' onclick='toggleTheme()' title='Ganti Tema'>
-          <i class='fa-solid fa-moon text-xs sm:text-sm' id='icon-theme'></i>
+        <button class='w-9 h-9 sm:w-10 sm:h-10 bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl flex items-center justify-center transition-all shadow-xs active:scale-95' id='btn-theme-toggle' onclick='toggleTheme()' title='Ganti Tema'>
+          <i class='fa-solid fa-moon text-xs sm:text-sm text-white' id='icon-theme'></i>
         </button>
-        <button class='w-8 h-8 sm:w-10 sm:h-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm text-slate-600 dark:text-slate-300 rounded-full flex items-center justify-center hover:bg-rose-50 dark:hover:bg-rose-900/40 hover:text-rose-500 dark:hover:text-rose-400 relative transition-all' onclick='changeView(&apos;view-wishlist&apos;)' title='Favorit'>
-          <i class='fa-solid fa-heart text-xs sm:text-sm'></i>
+        <button class='w-9 h-9 sm:w-10 sm:h-10 bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl flex items-center justify-center relative transition-all shadow-xs active:scale-95' onclick='changeView(&apos;view-wishlist&apos;)' title='Favorit'>
+          <i class='fa-solid fa-heart text-xs sm:text-sm text-white'></i>
           <span class='badge-counter -top-1 -right-1 transform scale-0 transition-transform duration-300' id='wishlist-badge'>0</span>
         </button>
       </div>
@@ -2234,12 +2264,12 @@ html.dark .badge-counter {
 <div class='view-section flex flex-col fade-in bg-transparent z-10 hidden' id='view-cart'>
   <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-catalog&apos;)'>
-        <i class='fa-solid fa-arrow-left text-sm'></i>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm active:scale-95' onclick='changeView(&apos;view-catalog&apos;)' title='Kembali ke Katalog'>
+        <i class='fa-solid fa-arrow-left text-sm text-white'></i>
       </button>
-      <h1 class='text-sm font-semibold text-slate-900 dark:text-white tracking-tight'>Keranjang Belanja</h1>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-500 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-all shadow-sm hidden' id='btn-clear-cart' onclick='clearCart()' title='Kosongkan Keranjang'>
-        <i class='fa-solid fa-trash-can text-xs'></i>
+      <h1 class='text-sm sm:text-base font-bold text-white tracking-tight'>Keranjang Belanja</h1>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-500 hover:bg-rose-600 border border-rose-400 text-white transition-all shadow-sm hidden active:scale-95' id='btn-clear-cart' onclick='clearCart()' title='Kosongkan Keranjang'>
+        <i class='fa-solid fa-trash-can text-xs text-white'></i>
       </button>
       <div class='w-9 hidden' id='spacer-cart'></div>
     </div>
@@ -2292,10 +2322,10 @@ html.dark .badge-counter {
 <div class='view-section flex flex-col fade-in bg-transparent z-10 hidden' id='view-checkout'>
   <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-cart&apos;)'>
-        <i class='fa-solid fa-arrow-left text-sm'></i>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm active:scale-95' onclick='changeView(&apos;view-cart&apos;)' title='Kembali ke Keranjang'>
+        <i class='fa-solid fa-arrow-left text-sm text-white'></i>
       </button>
-      <h1 class='text-sm font-semibold text-slate-900 dark:text-white tracking-tight'>Pengiriman & Lokasi</h1>
+      <h1 class='text-sm sm:text-base font-bold text-white tracking-tight'>Pengiriman & Lokasi</h1>
       <div class='w-9'></div>
     </div>
   </div>
@@ -2408,10 +2438,10 @@ html.dark .badge-counter {
 <div class='view-section flex flex-col fade-in bg-transparent z-10 hidden' id='view-payment'>
   <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-4xl lg:max-w-6xl'>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-checkout&apos;)'>
-        <i class='fa-solid fa-arrow-left text-sm'></i>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm active:scale-95' onclick='changeView(&apos;view-checkout&apos;)' title='Kembali ke Pengiriman'>
+        <i class='fa-solid fa-arrow-left text-sm text-white'></i>
       </button>
-      <h1 class='text-sm font-semibold text-slate-900 dark:text-white tracking-tight'>Pembayaran</h1>
+      <h1 class='text-sm sm:text-base font-bold text-white tracking-tight'>Pembayaran</h1>
       <div class='w-9'></div>
     </div>
   </div>
@@ -2564,12 +2594,12 @@ html.dark .badge-counter {
 <div class='view-section flex flex-col fade-in bg-transparent z-10 hidden' id='view-wishlist'>
   <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-catalog&apos;)'>
-        <i class='fa-solid fa-arrow-left text-sm'></i>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm active:scale-95' onclick='changeView(&apos;view-catalog&apos;)' title='Kembali ke Katalog'>
+        <i class='fa-solid fa-arrow-left text-sm text-white'></i>
       </button>
-      <h1 class='text-sm font-semibold text-slate-900 dark:text-white tracking-tight'>Favorit Saya</h1>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-50 dark:bg-rose-900/30 border-2 border-rose-200 dark:border-rose-800 text-rose-500 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-all shadow-sm hidden' id='btn-clear-wishlist' onclick='clearWishlist()'>
-        <i class='fa-solid fa-trash-can text-xs'></i>
+      <h1 class='text-sm sm:text-base font-bold text-white tracking-tight'>Favorit Saya</h1>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-500 hover:bg-rose-600 border border-rose-400 text-white transition-all shadow-sm hidden active:scale-95' id='btn-clear-wishlist' onclick='clearWishlist()' title='Hapus Semua'>
+        <i class='fa-solid fa-trash-can text-xs text-white'></i>
       </button>
       <div class='w-9 hidden' id='spacer-wishlist'></div>
     </div>
@@ -2673,15 +2703,15 @@ html.dark .badge-counter {
         <button class='hidden w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm shrink-0' id='btn-admin-back' onclick='history.back()'>
           <i class='fa-solid fa-arrow-left text-xs sm:text-sm text-white'></i>
         </button>
-        <div class='w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white/20 text-white flex items-center justify-center shadow-md border border-white/30 transition-all shrink-0' id='admin-logo-box'>
-          <i class='fa-solid fa-layer-group text-xs sm:text-sm'></i>
+        <div class='w-9 h-9 sm:w-11 sm:h-11 rounded-2xl bg-white/20 text-white flex items-center justify-center shadow-xs border border-white/30 transition-all shrink-0' id='admin-logo-box'>
+          <i class='fa-solid fa-layer-group text-sm sm:text-base'></i>
         </div>
         <div class='min-w-0 flex-1'>
           <div class='flex items-center gap-1.5 flex-wrap'>
-            <h1 class='text-xs sm:text-base font-bold tracking-tight text-white truncate' id='admin-header-title'>CMS Toko</h1>
+            <h1 class='text-sm sm:text-lg font-black tracking-tight text-white truncate' id='admin-header-title'>CMS Toko</h1>
             <div id='admin-pro-badge'></div>
           </div>
-          <p class='text-[8px] sm:text-[10px] font-bold text-white/85 uppercase tracking-widest truncate'>Mode Admin</p>
+          <p class='text-[9px] sm:text-[11px] font-semibold text-white/90 uppercase tracking-wider truncate mt-0.5'>Mode Admin</p>
         </div>
       </div>
       <div class='flex items-center gap-1.5 sm:gap-2 shrink-0'>

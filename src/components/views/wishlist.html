@@ -4,12 +4,12 @@
 <div class='view-section flex flex-col fade-in bg-transparent z-10 hidden' id='view-wishlist'>
   <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm' onclick='changeView(&apos;view-catalog&apos;)'>
-        <i class='fa-solid fa-arrow-left text-sm'></i>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm active:scale-95' onclick='changeView(&apos;view-catalog&apos;)' title='Kembali ke Katalog'>
+        <i class='fa-solid fa-arrow-left text-sm text-white'></i>
       </button>
-      <h1 class='text-sm font-semibold text-slate-900 dark:text-white tracking-tight'>Favorit Saya</h1>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-50 dark:bg-rose-900/30 border-2 border-rose-200 dark:border-rose-800 text-rose-500 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/50 transition-all shadow-sm hidden' id='btn-clear-wishlist' onclick='clearWishlist()'>
-        <i class='fa-solid fa-trash-can text-xs'></i>
+      <h1 class='text-sm sm:text-base font-bold text-white tracking-tight'>Favorit Saya</h1>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-500 hover:bg-rose-600 border border-rose-400 text-white transition-all shadow-sm hidden active:scale-95' id='btn-clear-wishlist' onclick='clearWishlist()' title='Hapus Semua'>
+        <i class='fa-solid fa-trash-can text-xs text-white'></i>
       </button>
       <div class='w-9 hidden' id='spacer-wishlist'></div>
     </div>
