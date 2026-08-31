@@ -385,11 +385,12 @@ const rCat = () => {
   const v = f.slice(0, cPage * iPP);
 
   c.innerHTML = v.map(p => {
-    // Cek apakah produk kehabisan stok
+    // Cek apakah produk kehabisan stok atau stok unlimited
+    const isUnlimited = (appData.store?.stockMode === 'unlimited') || p.isUnlimited === true || p.isUnlimited === 'true';
     const hasVars = p.variants && p.variants.length > 0;
-    const isOutOfStock = hasVars 
+    const isOutOfStock = !isUnlimited && (hasVars 
       ? p.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0)
-      : (p.stock !== undefined && p.stock !== null && p.stock !== '' && Number(p.stock) <= 0);
+      : (p.stock !== undefined && p.stock !== null && p.stock !== '' && Number(p.stock) <= 0));
 
     let nH = isOutOfStock ? `<div class="absolute top-1.5 right-1.5 z-20"><span class="bg-amber-500/95 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wider">STOK HABIS</span></div>` : '';
     let bH = `
@@ -561,8 +562,9 @@ const rProdMod = () => {
     </div>
   ` : '');
   
+  const isUnlimited = (appData.store?.stockMode === 'unlimited') || p.isUnlimited === true || p.isUnlimited === 'true' || (hV && (v?.isUnlimited === true || v?.isUnlimited === 'true'));
   const curStock = hV ? (v?.stock) : p.stock;
-  const isOutOfStock = curStock !== undefined && curStock !== null && curStock !== '' && Number(curStock) <= 0;
+  const isOutOfStock = !isUnlimited && (curStock !== undefined && curStock !== null && curStock !== '' && Number(curStock) <= 0);
 
   if (isOutOfStock) {
     hide('modal-active-controls');
@@ -584,7 +586,7 @@ const rProdMod = () => {
   if (hV) {
     show('product-modal-options-container');
     setH('product-modal-options', p.variants.map((r, x) => {
-      const vStock = r.stock !== undefined && r.stock !== null && r.stock !== '' && Number(r.stock) <= 0;
+      const vStock = !isUnlimited && (r.stock !== undefined && r.stock !== null && r.stock !== '' && Number(r.stock) <= 0);
       return `
       <button class="px-3.5 py-2 rounded-xl text-xs font-bold border-2 transition-all flex items-center gap-1.5 ${x === cVar ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-500 text-emerald-700 dark:text-emerald-400 shadow-sm' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-emerald-300 dark:hover:border-emerald-600'}" onclick="selectVariant(${x})">
         <span>${esc(r.name)}</span>

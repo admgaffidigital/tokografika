@@ -424,9 +424,10 @@ const _getPosMainPrice = (p) => {
 
 const renderPosProductCardGrid = (p) => {
   const hasVariants = p.variants && p.variants.length > 0;
+  const isUnlimited = (appData.store?.stockMode === 'unlimited') || p.isUnlimited === true || p.isUnlimited === 'true';
   const stock = typeof p.stock !== 'undefined' && p.stock !== '' ? (parseInt(p.stock) || 0) : 100;
   const totalStock = hasVariants ? (p.variants || []).reduce((acc, v) => acc + (parseInt(v.stock) || 0), 0) : stock;
-  const isOutOfStock = (p.isActive === 'false' || p.isActive === false) || totalStock <= 0;
+  const isOutOfStock = (p.isActive === 'false' || p.isActive === false) || (!isUnlimited && totalStock <= 0);
   const price = _getPosMainPrice(p);
   const rawImg = p.img || p.image || (p.images && p.images[0]) || '';
   const imgUrl = rawImg ? (typeof fixD === 'function' ? fixD(rawImg) : rawImg) : '';
@@ -470,7 +471,7 @@ const renderPosProductCardGrid = (p) => {
 
         <div class="mt-1.5 sm:mt-2.5 pt-1.5 sm:pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-1">
           <div class="min-w-0">
-            ${hasVariants ? `<span class="text-[8px] sm:text-[9px] font-bold text-slate-400 block leading-tight">Mulai · Stok ${totalStock}</span>` : `<span class="text-[8px] sm:text-[9px] font-bold ${stock > 5 ? 'text-slate-400' : (stock > 0 ? 'text-amber-500 font-black' : 'text-rose-500 font-black')} block leading-tight">Stok ${stock} ${esc(p.unit || 'pcs')}</span>`}
+            ${isUnlimited ? `<span class="text-[8px] sm:text-[9px] font-bold text-cyan-600 dark:text-cyan-400 block leading-tight"><i class="fa-solid fa-infinity text-[8px]"></i> Stok Bebas</span>` : (hasVariants ? `<span class="text-[8px] sm:text-[9px] font-bold text-slate-400 block leading-tight">Mulai · Stok ${totalStock}</span>` : `<span class="text-[8px] sm:text-[9px] font-bold ${stock > 5 ? 'text-slate-400' : (stock > 0 ? 'text-amber-500 font-black' : 'text-rose-500 font-black')} block leading-tight">Stok ${stock} ${esc(p.unit || 'pcs')}</span>`)}
             <span class="text-xs sm:text-base font-black text-emerald-600 dark:text-emerald-400 leading-none">${fCur(price)}</span>
           </div>
           
@@ -485,9 +486,10 @@ const renderPosProductCardGrid = (p) => {
 
 const renderPosProductCardList = (p) => {
   const hasVariants = p.variants && p.variants.length > 0;
+  const isUnlimited = (appData.store?.stockMode === 'unlimited') || p.isUnlimited === true || p.isUnlimited === 'true';
   const stock = typeof p.stock !== 'undefined' && p.stock !== '' ? (parseInt(p.stock) || 0) : 100;
   const totalStock = hasVariants ? (p.variants || []).reduce((acc, v) => acc + (parseInt(v.stock) || 0), 0) : stock;
-  const isOutOfStock = (p.isActive === 'false' || p.isActive === false) || totalStock <= 0;
+  const isOutOfStock = (p.isActive === 'false' || p.isActive === false) || (!isUnlimited && totalStock <= 0);
   const price = _getPosMainPrice(p);
   const rawImg = p.img || p.image || (p.images && p.images[0]) || '';
   const imgUrl = rawImg ? (typeof fixD === 'function' ? fixD(rawImg) : rawImg) : '';
@@ -509,7 +511,7 @@ const renderPosProductCardList = (p) => {
           <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${esc(p.category || 'Umum')}</span>
           ${isGrosir ? `<span class="text-[8px] font-black bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 px-1.5 py-0.2 rounded-md uppercase">Grosir</span>` : ''}
           ${hasVariants ? `<span class="text-[8px] font-black bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.2 rounded-md">${p.variants.length} Varian</span>` : ''}
-          <span class="text-[8px] font-black ${totalStock > 5 ? 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300' : (totalStock > 0 ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700')} px-1.5 py-0.2 rounded-md">Stok: ${totalStock}</span>
+          ${isUnlimited ? `<span class="text-[8px] font-black bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 px-1.5 py-0.2 rounded-md"><i class="fa-solid fa-infinity text-[8px]"></i> Bebas Stok</span>` : `<span class="text-[8px] font-black ${totalStock > 5 ? 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300' : (totalStock > 0 ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700')} px-1.5 py-0.2 rounded-md">Stok: ${totalStock}</span>`}
           ${isOutOfStock ? `<span class="text-[9px] font-black text-rose-600 bg-rose-50 px-1.5 py-0.2 rounded-md">Habis</span>` : ''}
         </div>
         <h4 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 truncate group-hover:text-emerald-600 transition-colors">${esc(p.name)}</h4>
@@ -691,6 +693,7 @@ window.openPosVariantModal = (productId) => {
   if (!currentSelectedVariantProduct || !currentSelectedVariantProduct.variants) return;
 
   const p = currentSelectedVariantProduct;
+  const isUnlimited = (appData.store?.stockMode === 'unlimited') || p.isUnlimited === true || p.isUnlimited === 'true';
   const rawImg = p.img || p.image || (p.images && p.images[0]) || '';
   const imgUrl = rawImg ? (typeof fixD === 'function' ? fixD(rawImg) : rawImg) : '';
   const variantImgEl = el('pos-variant-prod-img');
@@ -710,14 +713,14 @@ window.openPosVariantModal = (productId) => {
       const vKey = v.id || v.name;
       const cartQty = posCart.filter(c => String(c.id) === String(p.id) && String(c.variantId) === String(vKey)).reduce((s, c) => s + c.qty, 0);
       const vStock = typeof v.stock !== 'undefined' && v.stock !== '' ? (parseInt(v.stock) || 0) : 100;
-      const isOut = v.isActive === 'false' || v.isActive === false || vStock <= 0;
+      const isOut = (v.isActive === 'false' || v.isActive === false) || (!isUnlimited && vStock <= 0);
       return `
         <button type="button" onclick="addToCartPos('${esc(p.id)}', '${esc(vKey)}', 1); closePosVariantModal();" 
           class="w-full flex items-center justify-between p-3 rounded-xl border ${isOut ? 'border-slate-200 dark:border-slate-800 opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-800/40' : 'border-slate-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 active:scale-98'} transition-all cursor-pointer"
           ${isOut ? 'disabled' : ''}>
           <div class="text-left">
             <p class="text-sm font-bold text-slate-800 dark:text-slate-200">${esc(v.name)} ${isOut ? '<span class="text-[9px] text-rose-500 font-black ml-1">(Habis)</span>' : ''}</p>
-            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">SKU: ${esc(v.sku || '-')} · Stok: ${vStock} ${esc(v.unit || p.unit || 'PCS')}</p>
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400">SKU: ${esc(v.sku || '-')} · ${isUnlimited ? '<span class="text-cyan-600 dark:text-cyan-400 font-bold"><i class="fa-solid fa-infinity text-[9px]"></i> Bebas Stok</span>' : `Stok: ${vStock} ${esc(v.unit || p.unit || 'PCS')}`}</p>
           </div>
           <div class="flex items-center gap-2.5">
             ${cartQty > 0 ? `<span class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-full">${cartQty} di keranjang</span>` : ''}
@@ -1558,27 +1561,31 @@ window.submitPosTransaction = async () => {
       await db.collection('freshmart_orders').doc(orderId).set(orderData);
     }
 
-    // Pengurangan Stok Produk & Varian Otomatis
+    // Pengurangan Stok Produk & Varian Otomatis (Hanya jika mode catat stok aktif)
+    const isGlobalUnlimited = appData.store?.stockMode === 'unlimited';
     posCart.forEach(cartItem => {
       const prod = (appData.products || []).find(p => String(p.id) === String(cartItem.id));
       if (prod) {
-        if (cartItem.variantName || cartItem.variantId) {
-          if (prod.variants && prod.variants.length > 0) {
-            const vObj = prod.variants.find(v => (v.name === cartItem.variantName || String(v.id || v.name) === String(cartItem.variantId)));
-            if (vObj) {
-              const currentVStock = typeof vObj.stock !== 'undefined' && vObj.stock !== '' ? (parseInt(vObj.stock) || 0) : 100;
-              vObj.stock = Math.max(0, currentVStock - cartItem.qty);
+        const isItemUnlimited = isGlobalUnlimited || prod.isUnlimited === true || prod.isUnlimited === 'true';
+        if (!isItemUnlimited) {
+          if (cartItem.variantName || cartItem.variantId) {
+            if (prod.variants && prod.variants.length > 0) {
+              const vObj = prod.variants.find(v => (v.name === cartItem.variantName || String(v.id || v.name) === String(cartItem.variantId)));
+              if (vObj) {
+                const currentVStock = typeof vObj.stock !== 'undefined' && vObj.stock !== '' ? (parseInt(vObj.stock) || 0) : 100;
+                vObj.stock = Math.max(0, currentVStock - cartItem.qty);
+              }
+              prod.stock = prod.variants.reduce((sum, v) => sum + (parseInt(v.stock) || 0), 0);
             }
-            prod.stock = prod.variants.reduce((sum, v) => sum + (parseInt(v.stock) || 0), 0);
+          } else {
+            const currentStock = typeof prod.stock !== 'undefined' && prod.stock !== '' ? (parseInt(prod.stock) || 0) : 100;
+            prod.stock = Math.max(0, currentStock - cartItem.qty);
           }
-        } else {
-          const currentStock = typeof prod.stock !== 'undefined' && prod.stock !== '' ? (parseInt(prod.stock) || 0) : 100;
-          prod.stock = Math.max(0, currentStock - cartItem.qty);
-        }
-        
-        // Sync perubahan stok ke Firestore
-        if (typeof db !== 'undefined' && db.collection) {
-          db.collection('freshmart').doc('cms_data').collection('products').doc(prod.id.toString()).set(prod).catch(() => {});
+          
+          // Sync perubahan stok ke Firestore
+          if (typeof db !== 'undefined' && db.collection) {
+            db.collection('freshmart').doc('cms_data').collection('products').doc(prod.id.toString()).set(prod).catch(() => {});
+          }
         }
       }
     });

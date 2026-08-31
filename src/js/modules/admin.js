@@ -14,11 +14,12 @@ const aF = {
     { key: 'price', label: 'Harga Jual Dasar (Rp)', type: 'number' }, 
     { key: 'costPrice', label: 'Harga Modal / HPP (Rp)', type: 'costPrice' }, 
     { key: 'stock', label: 'Stok Tersedia (Jumlah)', type: 'stock' }, 
+    { key: 'isUnlimited', label: 'Tipe Manajemen Stok', type: 'select', options: [{ val: 'false', text: 'Terbatas (Sesuai Jumlah Stok)' }, { val: 'true', text: '∞ Unlimited (Selalu Tersedia / Tanpa Batas Stok)' }] },
     { key: 'unit', label: 'Satuan (cth: pcs, kg, lusin)', type: 'unit_selector' },
     { key: 'img', label: 'URL Gambar', type: 'text' },
     { key: 'category', label: 'Kategori', type: 'dynamic_select_category' }, 
     { key: 'tag', label: 'Label/Tag', type: 'text' },
-    { key: 'isActive', label: 'Status', type: 'select', options: [{ val: 'true', text: 'Tersedia' }, { val: 'false', text: 'Habis' }] },
+    { key: 'isActive', label: 'Status Visibilitas Toko', type: 'select', options: [{ val: 'true', text: 'Aktif (Tampil di Toko)' }, { val: 'false', text: 'Nonaktif (Disembunyikan)' }] },
     { key: 'desc', label: 'Deskripsi', type: 'textarea' }, 
     { key: 'wholesale', label: 'Grosir', type: 'wholesale_builder' },
     { key: 'variants', label: 'Varian', type: 'variants_builder' }
@@ -2060,6 +2061,30 @@ const rAdmSet = () => {
           </div>
         </div>
 
+        <!-- Pengaturan Mode Manajemen Stok Toko & POS Kasir -->
+        <div class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 mt-4">
+          <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">
+            <i class="fa-solid fa-boxes-stacked text-emerald-500 mr-1"></i> Mode Manajemen Stok Toko & POS Kasir
+          </label>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mb-3 leading-relaxed">Tentukan apakah toko membatasi penjualan sesuai jumlah stok barang nyata atau mengizinkan transaksi bebas tanpa batas stok (Unlimited Stock).</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label class="flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all bg-white dark:bg-slate-800 ${appData.store.stockMode !== 'unlimited' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700'}">
+              <input type="radio" name="store-stock-mode" value="tracked" ${appData.store.stockMode !== 'unlimited' ? 'checked' : ''} onchange="appData.store.stockMode='tracked'" class="text-emerald-600 focus:ring-emerald-500" />
+              <div>
+                <div class="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1.5"><i class="fa-solid fa-box-archive text-emerald-500"></i> Mode Catat Stok (Ketat)</div>
+                <div class="text-[10px] text-slate-400">Transaksi memotong stok & dibatasi jika stok 0 / habis.</div>
+              </div>
+            </label>
+            <label class="flex items-center gap-3 p-3.5 rounded-xl border-2 cursor-pointer transition-all bg-white dark:bg-slate-800 ${appData.store.stockMode === 'unlimited' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700'}">
+              <input type="radio" name="store-stock-mode" value="unlimited" ${appData.store.stockMode === 'unlimited' ? 'checked' : ''} onchange="appData.store.stockMode='unlimited'" class="text-emerald-600 focus:ring-emerald-500" />
+              <div>
+                <div class="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1.5"><i class="fa-solid fa-infinity text-cyan-500"></i> Mode Bebas Stok (Unlimited)</div>
+                <div class="text-[10px] text-slate-400">Transaksi selalu bisa dilakukan bebas tanpa batasan stok.</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
         <!-- Pengaturan Ukuran Printer Struk Kasir (58mm / 80mm) -->
         <div class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 mt-4">
           <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-widest">
@@ -2309,6 +2334,8 @@ window.saveAdminSettings = async () => {
     appData.store.bgImage = fixD(getV('set-bg-image'));
     const selPaper = document.querySelector('input[name="store-printer-paper"]:checked')?.value || '58';
     appData.store.printerPaper = selPaper;
+    const selStockMode = document.querySelector('input[name="store-stock-mode"]:checked')?.value || 'tracked';
+    appData.store.stockMode = selStockMode;
     try { 
       localStorage.setItem('freshmart_bg_style', appData.store.bgStyle); 
       localStorage.setItem('freshmart_bg_image', appData.store.bgImage || '');
@@ -2448,13 +2475,12 @@ window.rAdmItms = t => {
     if (t === 'products' && !m && x.variants) m = x.variants.some(v => v.sku && v.sku.toLowerCase().includes(aSq));
     if (!m) return false;
 
-    if (t === 'products' && window.aPrtSort && window.aPrtSort !== 'all') {
-      let isOff = (x.isActive === 'false' || x.isActive === false);
-      let hasVars = x.variants && x.variants.length > 0;
-      let isOutOfStock = hasVars 
-        ? x.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0)
-        : (x.stock !== undefined && x.stock !== null && x.stock !== '' && Number(x.stock) <= 0);
-
+    if (t === 'products') {
+      const isOff = x.isActive === 'false' || x.isActive === false;
+      const isUnlimited = (appData.store?.stockMode === 'unlimited') || x.isUnlimited === true || x.isUnlimited === 'true';
+      const hasVars = x.variants && x.variants.length > 0;
+      const isOutOfStock = !isOff && !isUnlimited && (hasVars ? x.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0) : (x.stock !== undefined && x.stock !== null && x.stock !== '' && Number(x.stock) <= 0));
+      
       if (window.aPrtSort === 'active') return !isOff && !isOutOfStock;
       if (window.aPrtSort === 'empty') return !isOff && isOutOfStock;
       if (window.aPrtSort === 'inactive') return isOff;
@@ -2467,9 +2493,10 @@ window.rAdmItms = t => {
   setH('admin-list-container', i.map(x => {
     let isP = t === 'products';
     let isOff = isP && (x.isActive === 'false' || x.isActive === false);
+    let isUnlimited = isP && ((appData.store?.stockMode === 'unlimited') || x.isUnlimited === true || x.isUnlimited === 'true');
     let hasVars = isP && x.variants && x.variants.length > 0;
     let totalStock = isP ? (hasVars ? x.variants.reduce((sum, v) => sum + Number(v.stock || 0), 0) : Number(x.stock ?? 100)) : 0;
-    let isOutOfStock = isP && !isOff && (hasVars ? x.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0) : (x.stock !== undefined && x.stock !== null && x.stock !== '' && Number(x.stock) <= 0));
+    let isOutOfStock = isP && !isOff && !isUnlimited && (hasVars ? x.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0) : (x.stock !== undefined && x.stock !== null && x.stock !== '' && Number(x.stock) <= 0));
 
     let bC = isOff 
       ? 'border-rose-200 dark:border-rose-900/50 bg-rose-50/20' 
@@ -2483,6 +2510,8 @@ window.rAdmItms = t => {
     if (isP) {
       if (isOff) {
         statusBadge = `<span class="badge badge-xs bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 font-bold"><i class="fa-solid fa-eye-slash text-[8px]"></i> Nonaktif (Sembunyi)</span>`;
+      } else if (isUnlimited) {
+        statusBadge = `<span class="badge badge-xs bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 font-bold"><i class="fa-solid fa-infinity text-[8px]"></i> Stok Bebas (Unlimited)</span>`;
       } else if (isOutOfStock) {
         statusBadge = `<span class="badge badge-xs bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-800 font-bold"><i class="fa-solid fa-box-open text-[8px]"></i> Stok Kosong (Tampil)</span>`;
       } else {
@@ -3004,6 +3033,18 @@ window.openQuickEditProduct = (id) => {
         <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-emerald-600"></div>
       </label>
     </div>
+
+    <!-- Unlimited Stock Toggle -->
+    <div class="p-3 bg-cyan-50/60 dark:bg-cyan-950/30 rounded-xl border border-cyan-200 dark:border-cyan-800/60 flex items-center justify-between">
+      <div>
+        <label class="block text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1.5"><i class="fa-solid fa-infinity text-cyan-500"></i> Stok Unlimited (Bebas Transaksi)</label>
+        <p class="text-[10px] text-slate-400">Jika aktif, produk selalu bisa dijual di kasir & online tanpa batasan kuota stok</p>
+      </div>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" id="qe-is-unlimited" class="sr-only peer" ${p.isUnlimited === true || p.isUnlimited === 'true' ? 'checked' : ''} />
+        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-cyan-600"></div>
+      </label>
+    </div>
   `;
 
   if (!hasVars) {
@@ -3086,6 +3127,9 @@ window.saveQuickEditProduct = async () => {
 
   const isActive = el('qe-is-active') ? el('qe-is-active').checked : true;
   p.isActive = isActive ? 'true' : 'false';
+
+  const isUnlimited = el('qe-is-unlimited') ? el('qe-is-unlimited').checked : false;
+  p.isUnlimited = isUnlimited ? 'true' : 'false';
 
   const hasVars = p.variants && p.variants.length > 0;
   if (!hasVars) {
