@@ -95,22 +95,22 @@
         box-sizing: border-box !important;
     }
 
-    /* 4. MODE: CETAK STRUK THERMAL 80MM */
+    /* 4. MODE: CETAK STRUK THERMAL 80MM (PRECISE 72MM PRINTHEAD ZONE) */
     body.print-paper-80:not(.print-mode-report) {
         background-color: #ffffff !important;
         color: #000000 !important;
         margin: 0 auto !important;
         padding: 0 !important;
-        width: 80mm !important;
-        max-width: 80mm !important;
+        width: 72mm !important;
+        max-width: 72mm !important;
     }
     
     body.print-paper-80:not(.print-mode-report) #thermal-print-section {
         display: block !important;
-        width: 80mm !important;
-        max-width: 80mm !important;
+        width: 72mm !important;
+        max-width: 72mm !important;
         margin: 0 auto !important;
-        padding: 2mm 3.5mm 8mm 3.5mm !important;
+        padding: 1.5mm 2.5mm 8mm 2.5mm !important;
         background-color: #ffffff !important;
         color: #000000 !important;
         opacity: 1 !important;
