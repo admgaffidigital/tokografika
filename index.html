@@ -3867,7 +3867,6 @@ window.verifyLicenseInDb = async (keyCode, expectedType = 'PRO') => {
 };
 
 const loadAppData = async () => {
-  console.log('[FreshMart] 1. loadAppData started');
   if (document.documentElement.classList.contains('dark')) { 
     const icon = el('icon-theme'); 
     if (icon) icon.className = 'fa-solid fa-sun text-sm text-amber-500'; 
@@ -3910,13 +3909,11 @@ const loadAppData = async () => {
 
   // 2. BACKGROUND / ASYNC SYNC: Ambil data terbaru dari Firestore
   try {
-    console.log('[FreshMart] 2. Fetching cms_data from Firestore...');
     const d = await withTimeout(db.collection("freshmart").doc("cms_data").get(), 4000);
     let localProducts = JSON.parse(sL('freshmart_products') || 'null');
     let localUpdate = parseInt(sL('freshmart_last_update') || '0');
     
     if (d.exists) {
-      console.log('[FreshMart] 2a. cms_data document exists');
       const f = d.data(); 
       let oldLic = appData.licenseKey; 
       appData = { ...defApp, ...f }; 
@@ -3951,7 +3948,7 @@ const loadAppData = async () => {
       ssL('freshmart_cms_data', JSON.stringify(copyData));
     }
   } catch (e) { 
-    console.warn('[FreshMart] 2c. Firestore offline or failed:', e.message); 
+    console.warn('[FreshMart] Firestore offline, using local cache fallback'); 
     if (!hasLocalData) {
       const l = JSON.parse(sL('freshmart_cms_data') || 'null'); 
       const lp = JSON.parse(sL('freshmart_products') || 'null');
@@ -4009,7 +4006,6 @@ const loadAppData = async () => {
       console.error('[FreshMart] Final render error:', err);
     } finally {
       hLoad();
-      console.log('[FreshMart] App initialization complete!');
     }
   }
 };
