@@ -309,9 +309,6 @@ const buildAndInjectManifest = async () => {
     categories: ['shopping','business'],
     lang: 'id'
   };
-    categories: ['shopping','business'],
-    lang: 'id'
-  };
 
   const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
   const manifestUrl = URL.createObjectURL(manifestBlob);
