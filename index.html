@@ -967,11 +967,12 @@ html.dark .badge-counter {
 }
 
 /* ==========================================================================
-   GRAFIKA PWA STORE - PRINT STYLESHEET (THERMAL 58MM & A4 FINANCIAL REPORT)
+   GRAFIKA PWA STORE - PRINT STYLESHEET (A4 INVOICE, REPORT, PRICETAG & THERMAL)
    ========================================================================== */
 
 #thermal-print-section,
-#report-print-section {
+#report-print-section,
+#pricetag-print-section {
     display: none;
 }
 
@@ -985,9 +986,10 @@ html.dark .badge-counter {
         margin: 0 !important;
         padding: 0 !important;
         background: #ffffff !important;
+        width: 100% !important;
     }
 
-    /* 1. Sembunyikan elemen aplikasi umum */
+    /* 1. Sembunyikan elemen aplikasi umum & modal saat cetak */
     #app-container,
     #global-loader,
     #toast,
@@ -1005,7 +1007,66 @@ html.dark .badge-counter {
         box-sizing: border-box !important;
     }
 
-    /* 2. MODE: CETAK LAPORAN KEUANGAN A4 */
+    /* ======================================================================= */
+    /* 2. MODE: CETAK PRICETAG & LABEL HARGA RAK (A4 PORTRAIT)                 */
+    /* ======================================================================= */
+    body.print-mode-pricetag {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    body.print-mode-pricetag #pricetag-print-section {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        box-sizing: border-box !important;
+    }
+
+    body.print-mode-pricetag .pt-print-a4-page {
+        width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        margin: 0 auto !important;
+        padding: 6mm 6mm !important;
+        box-sizing: border-box !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        overflow: hidden !important;
+        background: #ffffff !important;
+        position: relative !important;
+    }
+
+    body.print-mode-pricetag .pt-print-a4-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+    }
+
+    body.print-mode-pricetag .pricetag-label-card {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    body.print-mode-pricetag #thermal-print-section,
+    body.print-mode-pricetag #report-print-section,
+    body.print-mode-pricetag #document-templates,
+    body.print-mode-pricetag #template-invoice,
+    body.print-mode-pricetag #template-surat-jalan {
+        display: none !important;
+    }
+
+    /* ======================================================================= */
+    /* 3. MODE: CETAK LAPORAN KEUANGAN A4                                      */
+    /* ======================================================================= */
     body.print-mode-report {
         background-color: #ffffff !important;
         color: #0f172a !important;
@@ -1027,12 +1088,15 @@ html.dark .badge-counter {
         box-sizing: border-box !important;
     }
     
-    body.print-mode-report #thermal-print-section {
+    body.print-mode-report #thermal-print-section,
+    body.print-mode-report #pricetag-print-section {
         display: none !important;
     }
 
-    /* 3. MODE: CETAK STRUK THERMAL 58MM (PERFECTLY CENTERED 48MM ZONE) */
-    body:not(.print-mode-report):not(.print-paper-80) {
+    /* ======================================================================= */
+    /* 4. MODE: CETAK STRUK THERMAL 58MM & 80MM (HANYA JIKA BUKAN PRICETAG/A4) */
+    /* ======================================================================= */
+    body:not(.print-mode-report):not(.print-mode-pricetag):not(.print-paper-80) {
         background-color: #ffffff !important;
         color: #000000 !important;
         margin: 0 auto !important;
@@ -1041,7 +1105,7 @@ html.dark .badge-counter {
         max-width: 58mm !important;
     }
     
-    body:not(.print-mode-report):not(.print-paper-80) #thermal-print-section {
+    body:not(.print-mode-report):not(.print-mode-pricetag):not(.print-paper-80) #thermal-print-section {
         display: block !important;
         width: 48mm !important;
         max-width: 48mm !important;
@@ -1054,7 +1118,7 @@ html.dark .badge-counter {
         box-sizing: border-box !important;
     }
     
-    body:not(.print-mode-report):not(.print-paper-80) #thermal-print-section * {
+    body:not(.print-mode-report):not(.print-mode-pricetag):not(.print-paper-80) #thermal-print-section * {
         font-family: 'JetBrains Mono', 'Courier New', Courier, monospace !important;
         font-size: 9.5px !important;
         font-weight: 700 !important;
@@ -1063,8 +1127,7 @@ html.dark .badge-counter {
         box-sizing: border-box !important;
     }
 
-    /* 4. MODE: CETAK STRUK THERMAL 80MM (PERFECTLY CENTERED 72MM ZONE) */
-    body.print-paper-80:not(.print-mode-report) {
+    body.print-paper-80:not(.print-mode-report):not(.print-mode-pricetag) {
         background-color: #ffffff !important;
         color: #000000 !important;
         margin: 0 auto !important;
@@ -1073,7 +1136,7 @@ html.dark .badge-counter {
         max-width: 80mm !important;
     }
     
-    body.print-paper-80:not(.print-mode-report) #thermal-print-section {
+    body.print-paper-80:not(.print-mode-report):not(.print-mode-pricetag) #thermal-print-section {
         display: block !important;
         width: 72mm !important;
         max-width: 72mm !important;
@@ -1086,7 +1149,7 @@ html.dark .badge-counter {
         box-sizing: border-box !important;
     }
     
-    body.print-paper-80:not(.print-mode-report) #thermal-print-section * {
+    body.print-paper-80:not(.print-mode-report):not(.print-mode-pricetag) #thermal-print-section * {
         font-family: 'JetBrains Mono', 'Courier New', Courier, monospace !important;
         font-size: 11.5px !important;
         font-weight: 700 !important;
@@ -1100,62 +1163,7 @@ html.dark .badge-counter {
         margin-left: 0 !important;
         margin-right: auto !important;
     }
-
-    /* 5. MODE: CETAK PRICETAG & LABEL HARGA RAK / GONDOLA (A4 PORTRAIT) */
-    body.print-mode-pricetag {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-        max-width: 100% !important;
-    }
-
-    body.print-mode-pricetag #pricetag-print-section {
-        display: block !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 auto !important;
-        padding: 0 !important;
-        background-color: #ffffff !important;
-        color: #000000 !important;
-        opacity: 1 !important;
-        visibility: visible !important;
-        box-sizing: border-box !important;
-    }
-
-    body.print-mode-pricetag .pt-print-a4-page {
-        width: 210mm !important;
-        height: 297mm !important;
-        max-height: 297mm !important;
-        margin: 0 auto !important;
-        padding: 6mm 6mm !important;
-        box-sizing: border-box !important;
-        page-break-after: always !important;
-        break-after: page !important;
-        overflow: hidden !important;
-        background: #ffffff !important;
-    }
-
-    body.print-mode-pricetag .pt-print-a4-page:last-child {
-        page-break-after: avoid !important;
-        break-after: avoid !important;
-    }
-
-    body.print-mode-pricetag .pricetag-label-card {
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-    }
-
-    body.print-mode-pricetag #thermal-print-section,
-    body.print-mode-pricetag #report-print-section,
-    body.print-mode-pricetag #template-invoice,
-    body.print-mode-pricetag #template-surat-jalan {
-        display: none !important;
-    }
 }
-
-
 
     </style>
 </head>
