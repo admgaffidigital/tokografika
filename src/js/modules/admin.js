@@ -3905,6 +3905,71 @@ const guideTopicsData = {
       </div>
     `
   },
+  purchases: {
+    title: 'Panduan Pembelian Supplier, Buku Hutang & Pembayaran',
+    icon: 'fa-cart-flatbed',
+    content: `
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl border bg-teal-50/60 dark:bg-teal-950/30 border-teal-200 dark:border-teal-800/60">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2 text-teal-700 dark:text-teal-400">
+            <i class="fa-solid fa-cart-flatbed"></i> Kelola Pembelian Barang Masuk, Hutang Supplier & HPP Otomatis
+          </h4>
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Modul <b>Pembelian & Hutang</b> memudahkan Anda mencatat barang masuk dari distributor, memperbarui stok toko & harga modal (HPP) secara otomatis, memantau tagihan tempo yang mendekati jatuh tempo, hingga mencatat pembayaran cicilan atau titipan dana.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-2">
+            <span class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs">
+              <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-emerald-600">1</span>
+              Input Faktur & Tambah Stok:
+            </span>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Klik <b>+ Input Pembelian Baru</b>, pilih Supplier, cari/scan produk yang dibeli, isi jumlah (qty) dan harga beli satuan. Saat disimpan, <b>stok etalase & POS bertambah otomatis</b> dan HPP produk ikut terupdate.
+            </p>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-2">
+            <span class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs">
+              <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-amber-600">2</span>
+              Pembelian CASH vs TEMPO:
+            </span>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Pilih <b>CASH</b> jika pembelian langsung lunas, atau pilih <b>TEMPO</b> jika pembayaran bertahap. Tentukan termin (7, 14, 30 hari atau custom) dan isi uang muka/DP awal jika ada.
+            </p>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-2">
+            <span class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs">
+              <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-indigo-600">3</span>
+              Buku Hutang & Catat Cicilan:
+            </span>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Pada tab <b>Buku Hutang</b>, pantau tagihan yang belum lunas dan yang lewat jatuh tempo. Klik tombol <b>Catat Pembayaran</b> untuk mencatat uang titipan/transfer cicilan hingga lunas.
+            </p>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-2">
+            <span class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs">
+              <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-cyan-600">4</span>
+              Kontak Supplier & Rekap:
+            </span>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Kelola nomor WhatsApp sales, alamat, dan rekening bank supplier di tab <b>Data Supplier</b>. Lihat rekapitulasi total belanja dan sisa kewajiban di tab <b>Rekap Keuangan</b>.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+          <span class="font-bold text-slate-800 dark:text-white text-xs block"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Tips Efisiensi:</span>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+            Gunakan barcode scanner fisik USB atau tombol scan kamera di kolom pencarian produk untuk memasukkan barang masuk secara kilat tanpa perlu memilih satu per satu di dropdown!
+          </p>
+        </div>
+      </div>
+    `
+  },
   unlimited_stock: {
     title: 'Panduan Transaksi Bebas / Tanpa Stok (Unlimited Stock)',
     icon: 'fa-infinity',

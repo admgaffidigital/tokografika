@@ -909,6 +909,26 @@ window.rAdmPurchases = () => {
   content.innerHTML = `
     <div class="space-y-5 pb-20 w-full">
       
+      <!-- Helper Banner Panduan Cepat -->
+      <div class="bg-teal-50/70 dark:bg-teal-950/20 border border-teal-200/80 dark:border-teal-800/40 rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-8 h-8 rounded-xl bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center text-sm shrink-0">
+            <i class="fa-solid fa-cart-flatbed"></i>
+          </div>
+          <div class="min-w-0">
+            <p class="text-[11.5px] font-bold text-slate-800 dark:text-slate-200 leading-tight">
+              Pusat Pengadaan & Hutang Supplier Toko
+            </p>
+            <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+              Catat faktur masuk, auto-update stok & HPP, pantau jatuh tempo, dan kelola cicilan supplier.
+            </p>
+          </div>
+        </div>
+        <button type="button" onclick="openCmsGuide('purchases')" class="px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs active:scale-95 transition-all shrink-0">
+          <i class="fa-solid fa-book-open-reader text-xs"></i> <span>Buku Panduan</span>
+        </button>
+      </div>
+
       <!-- Top Overview Stat Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <!-- Card 1: Total Pembelian -->
