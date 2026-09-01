@@ -2568,9 +2568,13 @@ window.switchBackupTab = (tabKey) => {
     const isActive = k === tabKey;
     if (btn) {
       if (isActive) {
-        btn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shadow-xs';
+        btn.className = 'flex-1 sm:flex-none px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 shrink-0 bg-white dark:bg-slate-700 shadow-xs border-2';
+        btn.style.color = 'var(--clr-p, #059669)';
+        btn.style.borderColor = 'var(--clr-p, #059669)';
       } else {
-        btn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent';
+        btn.className = 'flex-1 sm:flex-none px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shrink-0 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white border-2 border-transparent';
+        btn.style.color = '';
+        btn.style.borderColor = 'transparent';
       }
     }
     if (content) {
@@ -2830,7 +2834,7 @@ window.renderRestorePointsList = () => {
         </div>
 
         <div class="flex items-center gap-2 shrink-0">
-          <button type="button" onclick="restoreFromSnapshot('${s.id}')" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs active:scale-95 transition-all">
+          <button type="button" onclick="restoreFromSnapshot('${s.id}')" class="px-3 py-1.5 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 shadow-xs active:scale-95 transition-all" style="background:var(--clr-p,#059669);">
             <i class="fa-solid fa-rotate-left text-[10px]"></i>
             <span>Pulihkan</span>
           </button>

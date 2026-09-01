@@ -1417,7 +1417,7 @@ const _renderReportsSubTab = (purchases, suppliers) => {
             <h4 class="font-extrabold text-sm sm:text-base text-slate-800 dark:text-white uppercase tracking-wider">
               Rekapitulasi Pembelian & Kas
             </h4>
-            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black" style="background:rgba(var(--clr-p-rgb,5,150,105),0.12);color:var(--clr-p,#059669);border:1px solid rgba(var(--clr-p-rgb,5,150,105),0.25);">
               ${purchases.length} Total Faktur
             </span>
           </div>
@@ -1456,9 +1456,9 @@ const _renderReportsSubTab = (purchases, suppliers) => {
 
         <div class="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm">
           <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">Rasio Pelunasan</p>
-          <h4 class="text-sm sm:text-base font-black text-indigo-600 dark:text-indigo-400 mt-1 leading-tight">${rateLunas}%</h4>
+          <h4 class="text-sm sm:text-base font-black mt-1 leading-tight" style="color:var(--clr-p,#059669);">${rateLunas}%</h4>
           <div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden mt-1.5">
-            <div class="h-full bg-indigo-500 rounded-full" style="width: ${rateLunas}%"></div>
+            <div class="h-full rounded-full" style="width: ${rateLunas}%; background:var(--clr-p,#059669);"></div>
           </div>
         </div>
       </div>
@@ -1503,7 +1503,7 @@ const _renderReportsSubTab = (purchases, suppliers) => {
       <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-3">
         <div class="flex items-center justify-between">
           <h4 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
-            <i class="fa-solid fa-truck-field text-indigo-500"></i> Rekapitulasi per Supplier Rekanan
+            <i class="fa-solid fa-truck-field" style="color:var(--clr-p,#059669);"></i> Rekapitulasi per Supplier Rekanan
           </h4>
           <span class="text-[10px] font-bold text-slate-400">${suppSummaryList.length} Supplier Terdaftar</span>
         </div>
