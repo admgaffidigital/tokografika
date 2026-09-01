@@ -461,14 +461,12 @@ window.openProductModal = i => {
   cProd = p; cVar = 0; cQty = 1; 
   setV('modal-qty-input', 1); 
   rProdMod();
-  if (window.updateStoreSeo) updateStoreSeo(p.name, p.desc, p.img, p);
-  
-  // Sinkronkan URL dengan parameter ?p=ID agar saat di-share atau di-refresh langsung ke produk ini
+  // Bersihkan parameter ?p dari URL address bar segera setelah produk dibuka
+  // sehingga jika halaman di-reload/muat ulang, browser kembali bersih ke katalog tanpa terus membuka modal produk
   try {
-    const u = new URL(window.location.href);
-    if (u.searchParams.get('p') !== String(p.id)) {
-      u.searchParams.set('p', p.id);
-      history.replaceState({ modal: 'product', pid: p.id }, '', u.toString());
+    if (window.location.search.includes('p=')) {
+      const cleanUrl = window.location.origin + window.location.pathname + (window.location.hash || '');
+      window.history.replaceState({ modal: 'product', pid: p.id }, '', cleanUrl);
     }
   } catch (e) {}
 

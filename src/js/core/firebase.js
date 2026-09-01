@@ -207,7 +207,13 @@ const loadAppData = async () => {
       if (pid) {
         const targetProd = (appData.products || []).find(x => String(x.id) === String(pid));
         if (targetProd) {
-          setTimeout(() => openProductModal(targetProd.id), 250);
+          setTimeout(() => {
+            openProductModal(targetProd.id);
+            try {
+              const cleanUrl = window.location.origin + window.location.pathname + (window.location.hash || '');
+              window.history.replaceState({ modal: 'product', id: targetProd.id }, '', cleanUrl);
+            } catch (e) {}
+          }, 250);
         }
       }
       
