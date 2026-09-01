@@ -49,7 +49,10 @@ window.updateStoreSeo = (customTitle, customDesc, customImg, productObj) => {
     const ogType = document.getElementById('seo-og-type');
     if (ogType) ogType.content = productObj ? 'product' : 'website';
 
-    const shareImg = customImg || storeLogo || (appData?.banners?.[0]?.img) || '';
+    let shareImg = storeLogo || (origin ? origin + '/favicon.png' : '/favicon.png');
+    if (shareImg && !shareImg.startsWith('http') && !shareImg.startsWith('data:') && origin) {
+      shareImg = origin + (shareImg.startsWith('/') ? '' : '/') + shareImg;
+    }
     const ogImg = document.getElementById('seo-og-image');
     if (ogImg) ogImg.content = shareImg;
 
