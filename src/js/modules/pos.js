@@ -255,7 +255,7 @@ const renderPosCategories = () => {
     pillsBar.innerHTML = categories.map(cat => {
       const isSelected = posActiveCategory === cat.name;
       return `
-        <button type="button" onclick="selectPosCategory('${esc(cat.name)}')" 
+        <button type="button" data-pos-cat="${esc(cat.name)}" onclick="selectPosCategory('${esc(cat.name)}')" 
           class="btn-solid no-glass px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 active:scale-95 shadow-xs ${isSelected ? '!bg-white !text-slate-900 font-black shadow-sm' : '!bg-white/15 hover:!bg-white/25 !text-white/95 border border-white/20'}" style="${isSelected ? 'background-color: #ffffff !important; color: #0f172a !important;' : 'background-color: rgba(255,255,255,0.18) !important; color: #ffffff !important;'}">
           <i class="fa-solid ${cat.icon} text-xs" style="color: ${isSelected ? 'var(--clr-p)' : 'rgba(255,255,255,0.85)'} !important;"></i>
           <span style="color: ${isSelected ? '#0f172a' : '#ffffff'} !important; font-weight: ${isSelected ? '900' : '700'};">${esc(cat.name)}</span>
@@ -309,7 +309,36 @@ window.selectPosCategory = (cat) => {
   const labelEl = el('pos-active-cat-label');
   if (labelEl) labelEl.innerText = cat;
   closePosCategoryModal();
-  renderPosCategories();
+  
+  // Update pills bar styling in-place without destroying DOM to preserve horizontal scroll position
+  const pillsBar = el('pos-category-pills-bar');
+  if (pillsBar) {
+    const buttons = pillsBar.querySelectorAll('button[data-pos-cat]');
+    buttons.forEach(btn => {
+      const isSelected = btn.getAttribute('data-pos-cat') === cat;
+      btn.className = `btn-solid no-glass px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 active:scale-95 shadow-xs ${isSelected ? '!bg-white !text-slate-900 font-black shadow-sm' : '!bg-white/15 hover:!bg-white/25 !text-white/95 border border-white/20'}`;
+      btn.style.backgroundColor = isSelected ? '#ffffff !important' : 'rgba(255,255,255,0.18) !important';
+      btn.style.color = isSelected ? '#0f172a !important' : '#ffffff !important';
+      const icon = btn.querySelector('i');
+      if (icon) icon.style.color = isSelected ? 'var(--clr-p)' : 'rgba(255,255,255,0.85)';
+      const span = btn.querySelector('span:not(.rounded-full)');
+      if (span) {
+        span.style.color = isSelected ? '#0f172a' : '#ffffff';
+        span.style.fontWeight = isSelected ? '900' : '700';
+      }
+      const countBadge = btn.querySelector('span.rounded-full');
+      if (countBadge) {
+        countBadge.style.backgroundColor = isSelected ? '#e2e8f0' : 'rgba(0,0,0,0.25)';
+        countBadge.style.color = isSelected ? '#0f172a' : '#ffffff';
+      }
+      if (isSelected) {
+        try {
+          btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        } catch(e) {}
+      }
+    });
+  }
+  
   renderPosProducts();
 };
 

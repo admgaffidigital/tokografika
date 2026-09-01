@@ -38,13 +38,11 @@ window.changeView = (v, fH = !1) => {
 
   window._cvBusy = true;
 
-  // Fade out view lama
-  current.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
+  // Pure fade out view lama
+  current.style.transition = 'opacity 0.14s ease';
   current.style.opacity = '1';
-  current.style.transform = 'translateY(0)';
   requestAnimationFrame(() => {
     current.style.opacity = '0';
-    current.style.transform = 'translateY(6px)';
   });
 
   setTimeout(() => {
@@ -58,12 +56,10 @@ window.changeView = (v, fH = !1) => {
     target.classList.remove('hidden');
     target.classList.add('flex');
     target.style.opacity = '0';
-    target.style.transform = 'translateY(6px)';
-    target.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
+    target.style.transition = 'opacity 0.14s ease';
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         target.style.opacity = '1';
-        target.style.transform = 'translateY(0)';
       });
     });
     
@@ -79,8 +75,8 @@ window.changeView = (v, fH = !1) => {
       target.style.transform = '';
       target.style.transition = '';
       window._cvBusy = false;
-    }, 200);
-  }, 180);
+    }, 160);
+  }, 140);
 };
 
 // Global Browser Navigation History (PopState)

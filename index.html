@@ -219,7 +219,6 @@
 html {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     -webkit-text-size-adjust: 100%;
-    scroll-behavior: smooth;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
 
@@ -337,7 +336,6 @@ code, kbd, samp, pre, .font-mono {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    scroll-behavior: smooth;
     overscroll-behavior-y: contain;
 }
 
@@ -5947,7 +5945,7 @@ const rDyn = () => {
     // Mode 1: Chips / Text (Pill Chips Modern + Counter Badge)
     if (catStyle === 'text' || catStyle === 'chips') {
       return `
-      <div onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="cursor-pointer shrink-0 snap-start">
+      <div data-cat-name="${esc(c.name)}" onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="cursor-pointer shrink-0 snap-start">
         <div class="px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-full border-2 transition-all duration-200 flex items-center gap-2 font-bold text-xs text-center tracking-wide ${isActive ? 'text-white border-transparent shadow-md scale-[1.03]' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200/90 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm'}" style="${isActive ? 'background-color:var(--clr-p);' : ''}">
           <i class="fa-solid ${isAll ? 'fa-boxes-stacked' : 'fa-tag'} text-[11px] ${isActive ? 'text-white' : 'text-slate-400 dark:text-slate-500'}"></i>
           <span>${esc(c.name)}</span>
@@ -5961,7 +5959,7 @@ const rDyn = () => {
     if (catStyle === 'grid') {
       const hasImg = c.img && (c.img.includes('http') || c.img.includes('data:'));
       return `
-      <div onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 w-[74px] sm:w-[88px] group snap-start">
+      <div data-cat-name="${esc(c.name)}" onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 w-[74px] sm:w-[88px] group snap-start">
         <div class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl transition-all duration-300 group-hover:scale-105 flex items-center justify-center overflow-hidden ${isActive ? 'border-2 shadow-md ring-2 ring-offset-2 ring-emerald-500' : 'border-2 border-slate-200/90 dark:border-slate-700 bg-slate-50 dark:bg-slate-750 shadow-sm hover:border-slate-300'}" style="${isActive ? 'border-color:var(--clr-p);background-color:var(--clr-p-bg);' : ''}">
           ${hasImg 
             ? `<img data-src="${esc(fixD(c.img))}" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==" onerror="this.onerror=null;this.src='https://placehold.co/150/10b981/ffffff?text=Cat'" class="lazy-load opacity-0 transition-all duration-500 absolute inset-0 w-full h-full object-cover rounded-2xl"/>` 
@@ -5979,7 +5977,7 @@ const rDyn = () => {
     // Mode 2 (Default): Image Cards (Visual Squircle E-Commerce Icon Cards)
     const hasImg = c.img && (c.img.includes('http') || c.img.includes('data:'));
     return `
-    <div onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="flex flex-col items-center gap-2 cursor-pointer shrink-0 w-[74px] sm:w-[86px] group snap-start">
+    <div data-cat-name="${esc(c.name)}" onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="flex flex-col items-center gap-2 cursor-pointer shrink-0 w-[74px] sm:w-[86px] group snap-start">
       <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl transition-all duration-300 group-hover:scale-105 flex items-center justify-center overflow-hidden ${isActive ? 'border-2 shadow-md ring-2 ring-offset-2 ring-emerald-500' : 'border-2 border-slate-200/90 dark:border-slate-700 bg-slate-50 dark:bg-slate-750 shadow-sm hover:border-slate-300'}" style="${isActive ? 'border-color:var(--clr-p);background-color:var(--clr-p-bg);' : ''}">
         ${hasImg 
           ? `<img data-src="${esc(fixD(c.img))}" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==" onerror="this.onerror=null;this.src='https://placehold.co/150/10b981/ffffff?text=Cat'" class="lazy-load opacity-0 transition-all duration-500 absolute inset-0 w-full h-full object-cover rounded-2xl"/>` 
@@ -6004,16 +6002,55 @@ const rDyn = () => {
 window.filterCategory = c => { 
   aCat = c; 
   cPage = 1; 
-  rDyn(); 
-  const s = el('catalog-scroll'); 
-  if (s) s.scrollTo({ top: 0, behavior: 'smooth' }); 
+  
+  // Update styling on category chips in-place to prevent scroll position reset
+  const catCont = el('dynamic-categories-container');
+  if (catCont) {
+    const catStyle = appData.store?.categoryStyle || 'image';
+    const chips = catCont.querySelectorAll('[data-cat-name]');
+    chips.forEach(chip => {
+      const isSelected = chip.getAttribute('data-cat-name') === c;
+      if (catStyle === 'text' || catStyle === 'chips') {
+        const inner = chip.firstElementChild;
+        if (inner) {
+          if (isSelected) {
+            inner.className = 'px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-full border-2 transition-all duration-200 flex items-center gap-2 font-bold text-xs text-center tracking-wide text-white border-transparent shadow-md scale-[1.03]';
+            inner.style.backgroundColor = 'var(--clr-p)';
+          } else {
+            inner.className = 'px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-full border-2 transition-all duration-200 flex items-center gap-2 font-bold text-xs text-center tracking-wide bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200/90 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm';
+            inner.style.backgroundColor = '';
+          }
+        }
+      } else {
+        const box = chip.querySelector('.rounded-2xl');
+        if (box) {
+          if (isSelected) {
+            box.className = 'relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl transition-all duration-300 group-hover:scale-105 flex items-center justify-center overflow-hidden border-2 shadow-md ring-2 ring-offset-2 ring-emerald-500';
+            box.style.borderColor = 'var(--clr-p)';
+            box.style.backgroundColor = 'var(--clr-p-bg)';
+          } else {
+            box.className = 'relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl transition-all duration-300 group-hover:scale-105 flex items-center justify-center overflow-hidden border-2 border-slate-200/90 dark:border-slate-700 bg-slate-50 dark:bg-slate-750 shadow-sm hover:border-slate-300';
+            box.style.borderColor = '';
+            box.style.backgroundColor = '';
+          }
+        }
+      }
+      if (isSelected) {
+        try {
+          chip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        } catch(e) {}
+      }
+    });
+  }
+  
+  rCat(); 
   if (window.updateStoreSeo) updateStoreSeo(c === 'Semua Produk' ? '' : `Kategori ${c}`);
 };
 
 window.scrollCatalogToTop = () => {
   const s = el('catalog-scroll');
-  if (s) s.scrollTo({ top: 0, behavior: 'smooth' });
-  else window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (s) s.scrollTo({ top: 0 });
+  else window.scrollTo({ top: 0 });
 };
 
 window.handleSearch = v => {
@@ -6025,8 +6062,6 @@ window.handleSearch = v => {
     sQ = val;
     cPage = 1;
     rCat();
-    const s = el('catalog-scroll');
-    if (s && val) s.scrollTo({ top: 0, behavior: 'smooth' });
   }, 200);
 };
 
@@ -10096,35 +10131,51 @@ window.rAdmItms = t => {
     let s = el('admin-product-stats');
     if (s) {
       const getPillCls = (key) => window.aPrtSort === key 
-        ? 'ring-2 ring-emerald-500 scale-[1.02] shadow-md border-emerald-500 bg-white dark:bg-slate-800' 
+        ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 shadow-sm' 
         : 'border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 hover:border-slate-300 dark:hover:border-slate-600 opacity-80 hover:opacity-100 shadow-xs';
 
-      s.innerHTML = `
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
-        <!-- Tab 1: Semua -->
-        <div onclick="window.adminProductRenderLimit=30;window.aPrtSort='all';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('all')}">
-          <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-boxes-stacked"></i></div>
-          <div class="min-w-0"><p class="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">Semua</p><h4 class="text-base sm:text-lg font-black text-slate-800 dark:text-white leading-none">${totalAll}</h4></div>
-        </div>
+      if (!s.dataset.initialized) {
+        s.dataset.initialized = 'true';
+        s.innerHTML = `
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
+          <!-- Tab 1: Semua -->
+          <div id="adm-pill-all" onclick="window.adminProductRenderLimit=30;window.aPrtSort='all';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('all')}">
+            <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-boxes-stacked"></i></div>
+            <div class="min-w-0"><p class="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">Semua</p><h4 id="adm-count-all" class="text-base sm:text-lg font-black text-slate-800 dark:text-white leading-none">${totalAll}</h4></div>
+          </div>
 
-        <!-- Tab 2: Aktif & Ready -->
-        <div onclick="window.adminProductRenderLimit=30;window.aPrtSort='active';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('active')}">
-          <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-check"></i></div>
-          <div class="min-w-0"><p class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider truncate">Aktif Ready</p><h4 class="text-base sm:text-lg font-black text-emerald-700 dark:text-emerald-300 leading-none">${countActive}</h4></div>
-        </div>
+          <!-- Tab 2: Aktif & Ready -->
+          <div id="adm-pill-active" onclick="window.adminProductRenderLimit=30;window.aPrtSort='active';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('active')}">
+            <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-check"></i></div>
+            <div class="min-w-0"><p class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider truncate">Aktif Ready</p><h4 id="adm-count-active" class="text-base sm:text-lg font-black text-emerald-700 dark:text-emerald-300 leading-none">${countActive}</h4></div>
+          </div>
 
-        <!-- Tab 3: Stok Kosong (Tampil) -->
-        <div onclick="window.adminProductRenderLimit=30;window.aPrtSort='empty';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('empty')}">
-          <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-box-open"></i></div>
-          <div class="min-w-0"><p class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider truncate">Stok Kosong</p><h4 class="text-base sm:text-lg font-black text-amber-700 dark:text-amber-300 leading-none">${countEmpty}</h4></div>
-        </div>
+          <!-- Tab 3: Stok Kosong (Tampil) -->
+          <div id="adm-pill-empty" onclick="window.adminProductRenderLimit=30;window.aPrtSort='empty';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('empty')}">
+            <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-box-open"></i></div>
+            <div class="min-w-0"><p class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider truncate">Stok Kosong</p><h4 id="adm-count-empty" class="text-base sm:text-lg font-black text-amber-700 dark:text-amber-300 leading-none">${countEmpty}</h4></div>
+          </div>
 
-        <!-- Tab 4: Nonaktif (Disembunyikan) -->
-        <div onclick="window.adminProductRenderLimit=30;window.aPrtSort='inactive';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('inactive')}">
-          <div class="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-eye-slash"></i></div>
-          <div class="min-w-0"><p class="text-[9px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider truncate">Nonaktif</p><h4 class="text-base sm:text-lg font-black text-rose-700 dark:text-rose-300 leading-none">${countInactive}</h4></div>
-        </div>
-      </div>`;
+          <!-- Tab 4: Nonaktif (Disembunyikan) -->
+          <div id="adm-pill-inactive" onclick="window.adminProductRenderLimit=30;window.aPrtSort='inactive';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('inactive')}">
+            <div class="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-eye-slash"></i></div>
+            <div class="min-w-0"><p class="text-[9px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider truncate">Nonaktif</p><h4 id="adm-count-inactive" class="text-base sm:text-lg font-black text-rose-700 dark:text-rose-300 leading-none">${countInactive}</h4></div>
+          </div>
+        </div>`;
+      } else {
+        // Update in-place to prevent DOM thrashing and layout shift
+        const cAll = el('adm-count-all'); if (cAll) cAll.innerText = totalAll;
+        const cAct = el('adm-count-active'); if (cAct) cAct.innerText = countActive;
+        const cEmp = el('adm-count-empty'); if (cEmp) cEmp.innerText = countEmpty;
+        const cIna = el('adm-count-inactive'); if (cIna) cIna.innerText = countInactive;
+        
+        ['all', 'active', 'empty', 'inactive'].forEach(k => {
+          const pill = el(`adm-pill-${k}`);
+          if (pill) {
+            pill.className = `cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls(k)}`;
+          }
+        });
+      }
     }
   }
   
@@ -12172,7 +12223,7 @@ const renderPosCategories = () => {
     pillsBar.innerHTML = categories.map(cat => {
       const isSelected = posActiveCategory === cat.name;
       return `
-        <button type="button" onclick="selectPosCategory('${esc(cat.name)}')" 
+        <button type="button" data-pos-cat="${esc(cat.name)}" onclick="selectPosCategory('${esc(cat.name)}')" 
           class="btn-solid no-glass px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 active:scale-95 shadow-xs ${isSelected ? '!bg-white !text-slate-900 font-black shadow-sm' : '!bg-white/15 hover:!bg-white/25 !text-white/95 border border-white/20'}" style="${isSelected ? 'background-color: #ffffff !important; color: #0f172a !important;' : 'background-color: rgba(255,255,255,0.18) !important; color: #ffffff !important;'}">
           <i class="fa-solid ${cat.icon} text-xs" style="color: ${isSelected ? 'var(--clr-p)' : 'rgba(255,255,255,0.85)'} !important;"></i>
           <span style="color: ${isSelected ? '#0f172a' : '#ffffff'} !important; font-weight: ${isSelected ? '900' : '700'};">${esc(cat.name)}</span>
@@ -12226,7 +12277,36 @@ window.selectPosCategory = (cat) => {
   const labelEl = el('pos-active-cat-label');
   if (labelEl) labelEl.innerText = cat;
   closePosCategoryModal();
-  renderPosCategories();
+  
+  // Update pills bar styling in-place without destroying DOM to preserve horizontal scroll position
+  const pillsBar = el('pos-category-pills-bar');
+  if (pillsBar) {
+    const buttons = pillsBar.querySelectorAll('button[data-pos-cat]');
+    buttons.forEach(btn => {
+      const isSelected = btn.getAttribute('data-pos-cat') === cat;
+      btn.className = `btn-solid no-glass px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 active:scale-95 shadow-xs ${isSelected ? '!bg-white !text-slate-900 font-black shadow-sm' : '!bg-white/15 hover:!bg-white/25 !text-white/95 border border-white/20'}`;
+      btn.style.backgroundColor = isSelected ? '#ffffff !important' : 'rgba(255,255,255,0.18) !important';
+      btn.style.color = isSelected ? '#0f172a !important' : '#ffffff !important';
+      const icon = btn.querySelector('i');
+      if (icon) icon.style.color = isSelected ? 'var(--clr-p)' : 'rgba(255,255,255,0.85)';
+      const span = btn.querySelector('span:not(.rounded-full)');
+      if (span) {
+        span.style.color = isSelected ? '#0f172a' : '#ffffff';
+        span.style.fontWeight = isSelected ? '900' : '700';
+      }
+      const countBadge = btn.querySelector('span.rounded-full');
+      if (countBadge) {
+        countBadge.style.backgroundColor = isSelected ? '#e2e8f0' : 'rgba(0,0,0,0.25)';
+        countBadge.style.color = isSelected ? '#0f172a' : '#ffffff';
+      }
+      if (isSelected) {
+        try {
+          btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        } catch(e) {}
+      }
+    });
+  }
+  
   renderPosProducts();
 };
 
@@ -16953,15 +17033,33 @@ window.updatePricetagQty = (index, deltaOrVal) => {
   } else {
     item.qty = Math.max(1, parseInt(deltaOrVal) || 1);
   }
-  renderPricetagItemList();
-  renderPricetagPreview();
+  
+  // Update specific input without rebuilding entire list DOM to prevent scroll jump
+  const inputEl = el(`pt-item-qty-${index}`);
+  if (inputEl) inputEl.value = item.qty;
+  
+  const flatLabels = _getFlatLabelsList();
+  const totalLabels = flatLabels.length;
+  const labelsPerPage = window.pricetagSettings.paperType === 'a4_2x6' ? 12 : (window.pricetagSettings.paperType === 'a4_4x10' ? 40 : 24);
+  const totalPages = Math.ceil(totalLabels / labelsPerPage) || 0;
+  
+  const topSummary = el('pt-top-summary');
+  if (topSummary) topSummary.innerText = `${totalLabels} label • ${totalPages} lembar A4`;
+  const prevSummary = el('pt-preview-summary');
+  if (prevSummary) prevSummary.innerText = `${totalLabels} label • ${totalPages} lembar A4`;
+  
+  if (window.currentPricetagTab === 'preview') {
+    renderPricetagPreview();
+  }
 };
 
 window.setAllPricetagQty = (qty) => {
   const q = Math.max(1, parseInt(qty) || 1);
   window.pricetagItems.forEach(it => it.qty = q);
   renderPricetagItemList();
-  renderPricetagPreview();
+  if (window.currentPricetagTab === 'preview') {
+    renderPricetagPreview();
+  }
   showToast(`Semua kuantitas label diatur ke ${q} lembar.`);
 };
 
@@ -16970,7 +17068,9 @@ window.togglePricetagItemWholesale = (index) => {
   if (!item) return;
   item.showWholesale = !item.showWholesale;
   renderPricetagItemList();
-  renderPricetagPreview();
+  if (window.currentPricetagTab === 'preview') {
+    renderPricetagPreview();
+  }
 };
 
 window.onPricetagSettingChange = () => {
@@ -16983,7 +17083,9 @@ window.onPricetagSettingChange = () => {
   window.pricetagSettings.showCutGuide = el('pt-opt-cut-guide') ? el('pt-opt-cut-guide').checked : true;
   window.pricetagSettings.showUnit = el('pt-opt-unit') ? el('pt-opt-unit').checked : true;
 
-  renderPricetagPreview();
+  if (window.currentPricetagTab === 'preview') {
+    renderPricetagPreview();
+  }
 };
 
 // ==========================================
@@ -17048,7 +17150,7 @@ window.renderPricetagItemList = () => {
         <div class="flex items-center gap-2 shrink-0">
           <div class="flex items-center rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-0.5 shadow-xs">
             <button type="button" onclick="updatePricetagQty(${idx}, -1)" class="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 font-black text-xs flex items-center justify-center active:scale-95 transition-all">-</button>
-            <input type="number" min="1" value="${it.qty}" onchange="updatePricetagQty(${idx}, this.value)" class="w-9 text-center bg-transparent text-xs font-black text-slate-800 dark:text-white border-none p-0 focus:ring-0 focus:outline-none" />
+            <input type="number" id="pt-item-qty-${idx}" min="1" value="${it.qty}" onchange="updatePricetagQty(${idx}, this.value)" class="w-9 text-center bg-transparent text-xs font-black text-slate-800 dark:text-white border-none p-0 focus:ring-0 focus:outline-none" />
             <button type="button" onclick="updatePricetagQty(${idx}, 1)" class="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 font-black text-xs flex items-center justify-center active:scale-95 transition-all">+</button>
           </div>
           <button type="button" onclick="removePricetagItem(${idx})" class="p-2 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all text-xs" title="Hapus dari daftar">
@@ -18172,13 +18274,11 @@ window.changeView = (v, fH = !1) => {
 
   window._cvBusy = true;
 
-  // Fade out view lama
-  current.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
+  // Pure fade out view lama
+  current.style.transition = 'opacity 0.14s ease';
   current.style.opacity = '1';
-  current.style.transform = 'translateY(0)';
   requestAnimationFrame(() => {
     current.style.opacity = '0';
-    current.style.transform = 'translateY(6px)';
   });
 
   setTimeout(() => {
@@ -18192,12 +18292,10 @@ window.changeView = (v, fH = !1) => {
     target.classList.remove('hidden');
     target.classList.add('flex');
     target.style.opacity = '0';
-    target.style.transform = 'translateY(6px)';
-    target.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
+    target.style.transition = 'opacity 0.14s ease';
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         target.style.opacity = '1';
-        target.style.transform = 'translateY(0)';
       });
     });
     
@@ -18213,8 +18311,8 @@ window.changeView = (v, fH = !1) => {
       target.style.transform = '';
       target.style.transition = '';
       window._cvBusy = false;
-    }, 200);
-  }, 180);
+    }, 160);
+  }, 140);
 };
 
 // Global Browser Navigation History (PopState)

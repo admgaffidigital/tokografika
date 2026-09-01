@@ -378,15 +378,33 @@ window.updatePricetagQty = (index, deltaOrVal) => {
   } else {
     item.qty = Math.max(1, parseInt(deltaOrVal) || 1);
   }
-  renderPricetagItemList();
-  renderPricetagPreview();
+  
+  // Update specific input without rebuilding entire list DOM to prevent scroll jump
+  const inputEl = el(`pt-item-qty-${index}`);
+  if (inputEl) inputEl.value = item.qty;
+  
+  const flatLabels = _getFlatLabelsList();
+  const totalLabels = flatLabels.length;
+  const labelsPerPage = window.pricetagSettings.paperType === 'a4_2x6' ? 12 : (window.pricetagSettings.paperType === 'a4_4x10' ? 40 : 24);
+  const totalPages = Math.ceil(totalLabels / labelsPerPage) || 0;
+  
+  const topSummary = el('pt-top-summary');
+  if (topSummary) topSummary.innerText = `${totalLabels} label • ${totalPages} lembar A4`;
+  const prevSummary = el('pt-preview-summary');
+  if (prevSummary) prevSummary.innerText = `${totalLabels} label • ${totalPages} lembar A4`;
+  
+  if (window.currentPricetagTab === 'preview') {
+    renderPricetagPreview();
+  }
 };
 
 window.setAllPricetagQty = (qty) => {
   const q = Math.max(1, parseInt(qty) || 1);
   window.pricetagItems.forEach(it => it.qty = q);
   renderPricetagItemList();
-  renderPricetagPreview();
+  if (window.currentPricetagTab === 'preview') {
+    renderPricetagPreview();
+  }
   showToast(`Semua kuantitas label diatur ke ${q} lembar.`);
 };
 
@@ -395,7 +413,9 @@ window.togglePricetagItemWholesale = (index) => {
   if (!item) return;
   item.showWholesale = !item.showWholesale;
   renderPricetagItemList();
-  renderPricetagPreview();
+  if (window.currentPricetagTab === 'preview') {
+    renderPricetagPreview();
+  }
 };
 
 window.onPricetagSettingChange = () => {
@@ -408,7 +428,9 @@ window.onPricetagSettingChange = () => {
   window.pricetagSettings.showCutGuide = el('pt-opt-cut-guide') ? el('pt-opt-cut-guide').checked : true;
   window.pricetagSettings.showUnit = el('pt-opt-unit') ? el('pt-opt-unit').checked : true;
 
-  renderPricetagPreview();
+  if (window.currentPricetagTab === 'preview') {
+    renderPricetagPreview();
+  }
 };
 
 // ==========================================
@@ -473,7 +495,7 @@ window.renderPricetagItemList = () => {
         <div class="flex items-center gap-2 shrink-0">
           <div class="flex items-center rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-0.5 shadow-xs">
             <button type="button" onclick="updatePricetagQty(${idx}, -1)" class="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 font-black text-xs flex items-center justify-center active:scale-95 transition-all">-</button>
-            <input type="number" min="1" value="${it.qty}" onchange="updatePricetagQty(${idx}, this.value)" class="w-9 text-center bg-transparent text-xs font-black text-slate-800 dark:text-white border-none p-0 focus:ring-0 focus:outline-none" />
+            <input type="number" id="pt-item-qty-${idx}" min="1" value="${it.qty}" onchange="updatePricetagQty(${idx}, this.value)" class="w-9 text-center bg-transparent text-xs font-black text-slate-800 dark:text-white border-none p-0 focus:ring-0 focus:outline-none" />
             <button type="button" onclick="updatePricetagQty(${idx}, 1)" class="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 font-black text-xs flex items-center justify-center active:scale-95 transition-all">+</button>
           </div>
           <button type="button" onclick="removePricetagItem(${idx})" class="p-2 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all text-xs" title="Hapus dari daftar">

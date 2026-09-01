@@ -2599,35 +2599,51 @@ window.rAdmItms = t => {
     let s = el('admin-product-stats');
     if (s) {
       const getPillCls = (key) => window.aPrtSort === key 
-        ? 'ring-2 ring-emerald-500 scale-[1.02] shadow-md border-emerald-500 bg-white dark:bg-slate-800' 
+        ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 shadow-sm' 
         : 'border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 hover:border-slate-300 dark:hover:border-slate-600 opacity-80 hover:opacity-100 shadow-xs';
 
-      s.innerHTML = `
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
-        <!-- Tab 1: Semua -->
-        <div onclick="window.adminProductRenderLimit=30;window.aPrtSort='all';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('all')}">
-          <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-boxes-stacked"></i></div>
-          <div class="min-w-0"><p class="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">Semua</p><h4 class="text-base sm:text-lg font-black text-slate-800 dark:text-white leading-none">${totalAll}</h4></div>
-        </div>
+      if (!s.dataset.initialized) {
+        s.dataset.initialized = 'true';
+        s.innerHTML = `
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
+          <!-- Tab 1: Semua -->
+          <div id="adm-pill-all" onclick="window.adminProductRenderLimit=30;window.aPrtSort='all';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('all')}">
+            <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-boxes-stacked"></i></div>
+            <div class="min-w-0"><p class="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">Semua</p><h4 id="adm-count-all" class="text-base sm:text-lg font-black text-slate-800 dark:text-white leading-none">${totalAll}</h4></div>
+          </div>
 
-        <!-- Tab 2: Aktif & Ready -->
-        <div onclick="window.adminProductRenderLimit=30;window.aPrtSort='active';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('active')}">
-          <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-check"></i></div>
-          <div class="min-w-0"><p class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider truncate">Aktif Ready</p><h4 class="text-base sm:text-lg font-black text-emerald-700 dark:text-emerald-300 leading-none">${countActive}</h4></div>
-        </div>
+          <!-- Tab 2: Aktif & Ready -->
+          <div id="adm-pill-active" onclick="window.adminProductRenderLimit=30;window.aPrtSort='active';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('active')}">
+            <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-check"></i></div>
+            <div class="min-w-0"><p class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider truncate">Aktif Ready</p><h4 id="adm-count-active" class="text-base sm:text-lg font-black text-emerald-700 dark:text-emerald-300 leading-none">${countActive}</h4></div>
+          </div>
 
-        <!-- Tab 3: Stok Kosong (Tampil) -->
-        <div onclick="window.adminProductRenderLimit=30;window.aPrtSort='empty';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('empty')}">
-          <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-box-open"></i></div>
-          <div class="min-w-0"><p class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider truncate">Stok Kosong</p><h4 class="text-base sm:text-lg font-black text-amber-700 dark:text-amber-300 leading-none">${countEmpty}</h4></div>
-        </div>
+          <!-- Tab 3: Stok Kosong (Tampil) -->
+          <div id="adm-pill-empty" onclick="window.adminProductRenderLimit=30;window.aPrtSort='empty';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('empty')}">
+            <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-box-open"></i></div>
+            <div class="min-w-0"><p class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider truncate">Stok Kosong</p><h4 id="adm-count-empty" class="text-base sm:text-lg font-black text-amber-700 dark:text-amber-300 leading-none">${countEmpty}</h4></div>
+          </div>
 
-        <!-- Tab 4: Nonaktif (Disembunyikan) -->
-        <div onclick="window.adminProductRenderLimit=30;window.aPrtSort='inactive';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('inactive')}">
-          <div class="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-eye-slash"></i></div>
-          <div class="min-w-0"><p class="text-[9px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider truncate">Nonaktif</p><h4 class="text-base sm:text-lg font-black text-rose-700 dark:text-rose-300 leading-none">${countInactive}</h4></div>
-        </div>
-      </div>`;
+          <!-- Tab 4: Nonaktif (Disembunyikan) -->
+          <div id="adm-pill-inactive" onclick="window.adminProductRenderLimit=30;window.aPrtSort='inactive';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('inactive')}">
+            <div class="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-eye-slash"></i></div>
+            <div class="min-w-0"><p class="text-[9px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider truncate">Nonaktif</p><h4 id="adm-count-inactive" class="text-base sm:text-lg font-black text-rose-700 dark:text-rose-300 leading-none">${countInactive}</h4></div>
+          </div>
+        </div>`;
+      } else {
+        // Update in-place to prevent DOM thrashing and layout shift
+        const cAll = el('adm-count-all'); if (cAll) cAll.innerText = totalAll;
+        const cAct = el('adm-count-active'); if (cAct) cAct.innerText = countActive;
+        const cEmp = el('adm-count-empty'); if (cEmp) cEmp.innerText = countEmpty;
+        const cIna = el('adm-count-inactive'); if (cIna) cIna.innerText = countInactive;
+        
+        ['all', 'active', 'empty', 'inactive'].forEach(k => {
+          const pill = el(`adm-pill-${k}`);
+          if (pill) {
+            pill.className = `cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls(k)}`;
+          }
+        });
+      }
     }
   }
   

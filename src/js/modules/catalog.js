@@ -242,7 +242,7 @@ const rDyn = () => {
     // Mode 1: Chips / Text (Pill Chips Modern + Counter Badge)
     if (catStyle === 'text' || catStyle === 'chips') {
       return `
-      <div onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="cursor-pointer shrink-0 snap-start">
+      <div data-cat-name="${esc(c.name)}" onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="cursor-pointer shrink-0 snap-start">
         <div class="px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-full border-2 transition-all duration-200 flex items-center gap-2 font-bold text-xs text-center tracking-wide ${isActive ? 'text-white border-transparent shadow-md scale-[1.03]' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200/90 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm'}" style="${isActive ? 'background-color:var(--clr-p);' : ''}">
           <i class="fa-solid ${isAll ? 'fa-boxes-stacked' : 'fa-tag'} text-[11px] ${isActive ? 'text-white' : 'text-slate-400 dark:text-slate-500'}"></i>
           <span>${esc(c.name)}</span>
@@ -256,7 +256,7 @@ const rDyn = () => {
     if (catStyle === 'grid') {
       const hasImg = c.img && (c.img.includes('http') || c.img.includes('data:'));
       return `
-      <div onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 w-[74px] sm:w-[88px] group snap-start">
+      <div data-cat-name="${esc(c.name)}" onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 w-[74px] sm:w-[88px] group snap-start">
         <div class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl transition-all duration-300 group-hover:scale-105 flex items-center justify-center overflow-hidden ${isActive ? 'border-2 shadow-md ring-2 ring-offset-2 ring-emerald-500' : 'border-2 border-slate-200/90 dark:border-slate-700 bg-slate-50 dark:bg-slate-750 shadow-sm hover:border-slate-300'}" style="${isActive ? 'border-color:var(--clr-p);background-color:var(--clr-p-bg);' : ''}">
           ${hasImg 
             ? `<img data-src="${esc(fixD(c.img))}" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==" onerror="this.onerror=null;this.src='https://placehold.co/150/10b981/ffffff?text=Cat'" class="lazy-load opacity-0 transition-all duration-500 absolute inset-0 w-full h-full object-cover rounded-2xl"/>` 
@@ -274,7 +274,7 @@ const rDyn = () => {
     // Mode 2 (Default): Image Cards (Visual Squircle E-Commerce Icon Cards)
     const hasImg = c.img && (c.img.includes('http') || c.img.includes('data:'));
     return `
-    <div onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="flex flex-col items-center gap-2 cursor-pointer shrink-0 w-[74px] sm:w-[86px] group snap-start">
+    <div data-cat-name="${esc(c.name)}" onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="flex flex-col items-center gap-2 cursor-pointer shrink-0 w-[74px] sm:w-[86px] group snap-start">
       <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl transition-all duration-300 group-hover:scale-105 flex items-center justify-center overflow-hidden ${isActive ? 'border-2 shadow-md ring-2 ring-offset-2 ring-emerald-500' : 'border-2 border-slate-200/90 dark:border-slate-700 bg-slate-50 dark:bg-slate-750 shadow-sm hover:border-slate-300'}" style="${isActive ? 'border-color:var(--clr-p);background-color:var(--clr-p-bg);' : ''}">
         ${hasImg 
           ? `<img data-src="${esc(fixD(c.img))}" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==" onerror="this.onerror=null;this.src='https://placehold.co/150/10b981/ffffff?text=Cat'" class="lazy-load opacity-0 transition-all duration-500 absolute inset-0 w-full h-full object-cover rounded-2xl"/>` 
@@ -299,16 +299,55 @@ const rDyn = () => {
 window.filterCategory = c => { 
   aCat = c; 
   cPage = 1; 
-  rDyn(); 
-  const s = el('catalog-scroll'); 
-  if (s) s.scrollTo({ top: 0, behavior: 'smooth' }); 
+  
+  // Update styling on category chips in-place to prevent scroll position reset
+  const catCont = el('dynamic-categories-container');
+  if (catCont) {
+    const catStyle = appData.store?.categoryStyle || 'image';
+    const chips = catCont.querySelectorAll('[data-cat-name]');
+    chips.forEach(chip => {
+      const isSelected = chip.getAttribute('data-cat-name') === c;
+      if (catStyle === 'text' || catStyle === 'chips') {
+        const inner = chip.firstElementChild;
+        if (inner) {
+          if (isSelected) {
+            inner.className = 'px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-full border-2 transition-all duration-200 flex items-center gap-2 font-bold text-xs text-center tracking-wide text-white border-transparent shadow-md scale-[1.03]';
+            inner.style.backgroundColor = 'var(--clr-p)';
+          } else {
+            inner.className = 'px-4 py-2.5 sm:px-5 sm:py-2.5 rounded-full border-2 transition-all duration-200 flex items-center gap-2 font-bold text-xs text-center tracking-wide bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200/90 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm';
+            inner.style.backgroundColor = '';
+          }
+        }
+      } else {
+        const box = chip.querySelector('.rounded-2xl');
+        if (box) {
+          if (isSelected) {
+            box.className = 'relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl transition-all duration-300 group-hover:scale-105 flex items-center justify-center overflow-hidden border-2 shadow-md ring-2 ring-offset-2 ring-emerald-500';
+            box.style.borderColor = 'var(--clr-p)';
+            box.style.backgroundColor = 'var(--clr-p-bg)';
+          } else {
+            box.className = 'relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl transition-all duration-300 group-hover:scale-105 flex items-center justify-center overflow-hidden border-2 border-slate-200/90 dark:border-slate-700 bg-slate-50 dark:bg-slate-750 shadow-sm hover:border-slate-300';
+            box.style.borderColor = '';
+            box.style.backgroundColor = '';
+          }
+        }
+      }
+      if (isSelected) {
+        try {
+          chip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        } catch(e) {}
+      }
+    });
+  }
+  
+  rCat(); 
   if (window.updateStoreSeo) updateStoreSeo(c === 'Semua Produk' ? '' : `Kategori ${c}`);
 };
 
 window.scrollCatalogToTop = () => {
   const s = el('catalog-scroll');
-  if (s) s.scrollTo({ top: 0, behavior: 'smooth' });
-  else window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (s) s.scrollTo({ top: 0 });
+  else window.scrollTo({ top: 0 });
 };
 
 window.handleSearch = v => {
@@ -320,8 +359,6 @@ window.handleSearch = v => {
     sQ = val;
     cPage = 1;
     rCat();
-    const s = el('catalog-scroll');
-    if (s && val) s.scrollTo({ top: 0, behavior: 'smooth' });
   }, 200);
 };
 
