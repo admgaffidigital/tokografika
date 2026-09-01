@@ -1877,7 +1877,7 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: FORM DATA SUPPLIER (TAMBAH / EDIT)                                -->
 <!-- ========================================================================= -->
-<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 transition-opacity duration-300 opacity-0 hidden" id="supplier-modal">
+<div class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-3 z-[70] transition-opacity duration-300 opacity-0 hidden" id="supplier-modal">
   <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[90vh] transition-all transform translate-y-5" id="supplier-modal-box">
     
     <!-- Modal Header -->
@@ -2205,7 +2205,7 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: CATAT PEMBAYARAN / TITIPAN CICILAN HUTANG SUPPLIER                 -->
 <!-- ========================================================================= -->
-<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 transition-opacity duration-300 opacity-0 hidden" id="purchase-payment-modal">
+<div class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-3 z-[60] transition-opacity duration-300 opacity-0 hidden" id="purchase-payment-modal">
   <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[90vh] transition-all transform translate-y-5" id="purchase-payment-box">
     
     <!-- Modal Header -->
@@ -2322,7 +2322,7 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: DETAIL FAKTUR PEMBELIAN & CETAK NOTA                               -->
 <!-- ========================================================================= -->
-<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 transition-opacity duration-300 opacity-0 hidden" id="purchase-detail-modal">
+<div class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-[60] transition-opacity duration-300 opacity-0 hidden" id="purchase-detail-modal">
   <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[92vh] transition-all transform translate-y-5" id="purchase-detail-box">
     
     <!-- Modal Header -->
@@ -12836,6 +12836,7 @@ window.openSupplierModal = (id = null, fromPurchase = false) => {
 };
 
 window.closeSupplierModal = () => {
+  isSupplierFromPurchase = false;
   const modal = el('supplier-modal');
   const box = el('supplier-modal-box');
   if (modal && box) {
@@ -12881,9 +12882,11 @@ window.saveSupplier = async () => {
   await saveApp();
   hLoad();
   showToast('Data supplier berhasil disimpan!');
+  
+  const wasFromPurchase = isSupplierFromPurchase;
   closeSupplierModal();
 
-  if (isSupplierFromPurchase) {
+  if (wasFromPurchase) {
     _populateSupplierDropdown(savedSupplierId);
   } else {
     rAdmPurchases();

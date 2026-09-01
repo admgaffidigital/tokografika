@@ -62,6 +62,7 @@ window.openSupplierModal = (id = null, fromPurchase = false) => {
 };
 
 window.closeSupplierModal = () => {
+  isSupplierFromPurchase = false;
   const modal = el('supplier-modal');
   const box = el('supplier-modal-box');
   if (modal && box) {
@@ -107,9 +108,11 @@ window.saveSupplier = async () => {
   await saveApp();
   hLoad();
   showToast('Data supplier berhasil disimpan!');
+  
+  const wasFromPurchase = isSupplierFromPurchase;
   closeSupplierModal();
 
-  if (isSupplierFromPurchase) {
+  if (wasFromPurchase) {
     _populateSupplierDropdown(savedSupplierId);
   } else {
     rAdmPurchases();
