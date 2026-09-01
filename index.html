@@ -1767,21 +1767,21 @@ html.dark .badge-counter {
     <div class='p-4 sm:p-6 overflow-y-auto flex-1 text-slate-700 dark:text-slate-200 space-y-4' id='stock-opname-modal-body'>
       
       <!-- 1. Pilih Produk & Barcode Scan -->
-      <div>
-        <label class='text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 flex items-center justify-between'>
-          <span>Pilih Produk</span>
-          <span class='text-[10px] text-slate-400 font-normal'>Bisa scan barcode</span>
+      <div class="space-y-2">
+        <label class='text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider block'>
+          Pilih Produk / Cari & Scan Barcode
         </label>
-        <div class='flex gap-2 items-center'>
-          <select id='so-product-select' class='admin-input !py-2.5 flex-1' onchange='handleSoProductChange(this.value)'>
-            <option value=''>-- Pilih Produk Toko --</option>
-          </select>
-          <button type='button' onclick='openCameraScanner("so-product-search-hidden")' class='px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shrink-0 active:scale-95 transition-all' title='Scan Barcode Produk'>
-            <i class='fa-solid fa-qrcode'></i>
-            <span class='hidden sm:inline'>Scan</span>
+        <div class="relative w-full">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input type="text" id="so-search-keyword" placeholder="Ketik nama produk, SKU, atau scan barcode..." class="admin-input !pl-9 !pr-10 !py-2.5 w-full text-xs font-semibold" oninput="filterSoProducts(this.value)" onkeydown="if(event.key==='Enter'){handleSoBarcodeScan(this.value);event.preventDefault();}" />
+          <button type="button" onclick="openCameraScanner('so-search-keyword')" class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all text-xs" title="Scan Barcode Kamera">
+            <i class="fa-solid fa-qrcode"></i>
           </button>
-          <input type='hidden' id='so-product-search-hidden' oninput='handleSoBarcodeScan(this.value)'/>
         </div>
+        <select id='so-product-select' class='admin-input !py-2.5 w-full' onchange='handleSoProductChange(this.value)'>
+          <option value=''>-- Pilih Produk Toko --</option>
+        </select>
+        <input type='hidden' id='so-product-search-hidden' oninput='handleSoBarcodeScan(this.value)'/>
       </div>
 
       <!-- 2. Pilihan Varian (Jika Multi-Varian) -->
@@ -2047,6 +2047,18 @@ html.dark .badge-counter {
             <i class="fa-solid fa-boxes-packing text-emerald-500"></i> Masukkan Produk yang Dibeli
           </h4>
           <span class="text-[10px] text-slate-400 font-medium">* Stok & HPP produk akan otomatis diupdate</span>
+        </div>
+
+        <!-- Cari Produk & Scan Barcode Cepat -->
+        <div class="space-y-1">
+          <label class="block font-bold text-slate-600 dark:text-slate-300 text-[10px] uppercase tracking-wider">Cari Produk / Scan Barcode</label>
+          <div class="relative w-full">
+            <i class="fa-solid fa-barcode absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input type="text" id="purch-search-keyword" placeholder="Ketik cepat nama produk, SKU, atau scan barcode..." class="admin-input !pl-9 !pr-10 !py-2.5 w-full text-xs font-semibold" oninput="filterPurchProducts(this.value)" onkeydown="if(event.key==='Enter'){handlePurchBarcodeScan(this.value);event.preventDefault();}" />
+            <button type="button" onclick="openCameraScanner('purch-search-keyword')" class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all text-xs" title="Scan Barcode Kamera">
+              <i class="fa-solid fa-qrcode"></i>
+            </button>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
@@ -8232,6 +8244,7 @@ window.openStockOpnameModal = (productId = null, variantId = null) => {
   }
 
   // Reset fields
+  setV('so-search-keyword', '');
   setV('so-physical-stock-input', '');
   setV('so-note-input', '');
   setV('so-reason-select', 'lost');
@@ -8328,6 +8341,38 @@ const updateSoProductInfoDisplay = () => {
   setIn('so-unit-label', `Unit: ${p.unit || 'Pcs'}`);
 };
 
+window.filterSoProducts = (keyword) => {
+  const select = el('so-product-select');
+  if (!select) return;
+  const q = (keyword || '').trim().toLowerCase();
+  const prods = [...(appData.products || [])];
+  prods.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+  const filtered = !q ? prods : prods.filter(p => {
+    const nameMatch = (p.name || '').toLowerCase().includes(q);
+    const skuMatch = (p.sku || '').toLowerCase().includes(q);
+    const varMatch = (p.variants || []).some(v => (v.name || '').toLowerCase().includes(q) || (v.sku || '').toLowerCase().includes(q));
+    return nameMatch || skuMatch || varMatch;
+  });
+
+  select.innerHTML = `<option value="">-- Pilih Produk Toko (${filtered.length}) --</option>` + filtered.map(p => {
+    return `<option value="${p.id}">${p.name} ${p.sku ? `[${p.sku}]` : ''} (Stok: ${p.stock ?? 0} ${p.unit || 'Pcs'})</option>`;
+  }).join('');
+
+  if (q) {
+    const exactSku = prods.find(p => p.sku && p.sku.toLowerCase() === q);
+    if (exactSku) {
+      select.value = exactSku.id;
+      handleSoProductChange(exactSku.id);
+      return;
+    }
+    if (filtered.length === 1 && q.length >= 2) {
+      select.value = filtered[0].id;
+      handleSoProductChange(filtered[0].id);
+    }
+  }
+};
+
 window.handleSoBarcodeScan = (barcode) => {
   if (!barcode) return;
   const b = barcode.trim().toLowerCase();
@@ -8352,6 +8397,8 @@ window.handleSoBarcodeScan = (barcode) => {
   }
 
   if (foundProd) {
+    filterSoProducts('');
+    setV('so-search-keyword', foundProd.name);
     const select = el('so-product-select');
     if (select) select.value = foundProd.id;
     handleSoProductChange(foundProd.id, foundVar?.id);
@@ -12935,24 +12982,71 @@ const _populateSupplierDropdown = (selectedId = null) => {
   `).join('');
 };
 
-const _populateProductDropdown = () => {
+window.filterPurchProducts = (keyword) => {
   const sel = el('purch-item-prod');
   if (!sel) return;
-  const list = appData.products || [];
-  sel.innerHTML = '<option value="">-- Pilih Produk dari Etalase --</option>' + list.map(p => `
+  const q = (keyword || '').trim().toLowerCase();
+  const list = [...(appData.products || [])];
+  list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+  const filtered = !q ? list : list.filter(p => {
+    const nameMatch = (p.name || '').toLowerCase().includes(q);
+    const skuMatch = (p.sku || '').toLowerCase().includes(q);
+    const varMatch = (p.variants || []).some(v => (v.name || '').toLowerCase().includes(q) || (v.sku || '').toLowerCase().includes(q));
+    return nameMatch || skuMatch || varMatch;
+  });
+
+  sel.innerHTML = `<option value="">-- Pilih Produk (${filtered.length}) --</option>` + filtered.map(p => `
     <option value="${esc(p.id)}">${esc(p.name)} ${p.sku ? `[${esc(p.sku)}]` : ''}</option>
   `).join('');
+
+  if (q) {
+    const exactMatch = list.find(p => p.sku && p.sku.toLowerCase() === q);
+    if (exactMatch) {
+      sel.value = exactMatch.id;
+      onPurchaseProductSelect();
+      el('purch-item-qty')?.focus();
+      return;
+    }
+    if (filtered.length === 1 && q.length >= 2) {
+      sel.value = filtered[0].id;
+      onPurchaseProductSelect();
+    }
+  }
+};
+
+window.handlePurchBarcodeScan = (barcode) => {
+  if (!barcode) return;
+  const b = barcode.trim().toLowerCase();
+  let found = (appData.products || []).find(p => (p.sku && p.sku.toLowerCase() === b) || (p.barcode && p.barcode.toLowerCase() === b));
+  if (!found) {
+    found = (appData.products || []).find(p => (p.variants || []).some(v => (v.sku && v.sku.toLowerCase() === b) || (v.barcode && v.barcode.toLowerCase() === b)));
+  }
+  if (found) {
+    filterPurchProducts('');
+    setV('purch-search-keyword', found.name);
+    const sel = el('purch-item-prod');
+    if (sel) {
+      sel.value = found.id;
+      onPurchaseProductSelect();
+      showToast(`Produk terdeteksi: ${found.name}`);
+      el('purch-item-qty')?.focus();
+    }
+  } else {
+    showToast(`Barcode "${barcode}" tidak cocok dengan produk manapun`);
+  }
 };
 
 window.openPurchaseModal = () => {
   currentPurchaseItems = [];
   setV('purch-inv-no', _generateInvoiceNo());
+  setV('purch-search-keyword', '');
   
   const todayStr = new Date().toISOString().split('T')[0];
   setV('purch-date', todayStr);
   
   _populateSupplierDropdown();
-  _populateProductDropdown();
+  filterPurchProducts('');
   
   onPurchaseProductSelect();
   _renderPurchaseItemsTable();

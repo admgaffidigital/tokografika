@@ -29,21 +29,21 @@
     <div class='p-4 sm:p-6 overflow-y-auto flex-1 text-slate-700 dark:text-slate-200 space-y-4' id='stock-opname-modal-body'>
       
       <!-- 1. Pilih Produk & Barcode Scan -->
-      <div>
-        <label class='text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5 flex items-center justify-between'>
-          <span>Pilih Produk</span>
-          <span class='text-[10px] text-slate-400 font-normal'>Bisa scan barcode</span>
+      <div class="space-y-2">
+        <label class='text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider block'>
+          Pilih Produk / Cari & Scan Barcode
         </label>
-        <div class='flex gap-2 items-center'>
-          <select id='so-product-select' class='admin-input !py-2.5 flex-1' onchange='handleSoProductChange(this.value)'>
-            <option value=''>-- Pilih Produk Toko --</option>
-          </select>
-          <button type='button' onclick='openCameraScanner("so-product-search-hidden")' class='px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shrink-0 active:scale-95 transition-all' title='Scan Barcode Produk'>
-            <i class='fa-solid fa-qrcode'></i>
-            <span class='hidden sm:inline'>Scan</span>
+        <div class="relative w-full">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input type="text" id="so-search-keyword" placeholder="Ketik nama produk, SKU, atau scan barcode..." class="admin-input !pl-9 !pr-10 !py-2.5 w-full text-xs font-semibold" oninput="filterSoProducts(this.value)" onkeydown="if(event.key==='Enter'){handleSoBarcodeScan(this.value);event.preventDefault();}" />
+          <button type="button" onclick="openCameraScanner('so-search-keyword')" class="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all text-xs" title="Scan Barcode Kamera">
+            <i class="fa-solid fa-qrcode"></i>
           </button>
-          <input type='hidden' id='so-product-search-hidden' oninput='handleSoBarcodeScan(this.value)'/>
         </div>
+        <select id='so-product-select' class='admin-input !py-2.5 w-full' onchange='handleSoProductChange(this.value)'>
+          <option value=''>-- Pilih Produk Toko --</option>
+        </select>
+        <input type='hidden' id='so-product-search-hidden' oninput='handleSoBarcodeScan(this.value)'/>
       </div>
 
       <!-- 2. Pilihan Varian (Jika Multi-Varian) -->

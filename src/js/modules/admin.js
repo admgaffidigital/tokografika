@@ -1249,6 +1249,7 @@ window.openStockOpnameModal = (productId = null, variantId = null) => {
   }
 
   // Reset fields
+  setV('so-search-keyword', '');
   setV('so-physical-stock-input', '');
   setV('so-note-input', '');
   setV('so-reason-select', 'lost');
@@ -1345,6 +1346,38 @@ const updateSoProductInfoDisplay = () => {
   setIn('so-unit-label', `Unit: ${p.unit || 'Pcs'}`);
 };
 
+window.filterSoProducts = (keyword) => {
+  const select = el('so-product-select');
+  if (!select) return;
+  const q = (keyword || '').trim().toLowerCase();
+  const prods = [...(appData.products || [])];
+  prods.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+  const filtered = !q ? prods : prods.filter(p => {
+    const nameMatch = (p.name || '').toLowerCase().includes(q);
+    const skuMatch = (p.sku || '').toLowerCase().includes(q);
+    const varMatch = (p.variants || []).some(v => (v.name || '').toLowerCase().includes(q) || (v.sku || '').toLowerCase().includes(q));
+    return nameMatch || skuMatch || varMatch;
+  });
+
+  select.innerHTML = `<option value="">-- Pilih Produk Toko (${filtered.length}) --</option>` + filtered.map(p => {
+    return `<option value="${p.id}">${p.name} ${p.sku ? `[${p.sku}]` : ''} (Stok: ${p.stock ?? 0} ${p.unit || 'Pcs'})</option>`;
+  }).join('');
+
+  if (q) {
+    const exactSku = prods.find(p => p.sku && p.sku.toLowerCase() === q);
+    if (exactSku) {
+      select.value = exactSku.id;
+      handleSoProductChange(exactSku.id);
+      return;
+    }
+    if (filtered.length === 1 && q.length >= 2) {
+      select.value = filtered[0].id;
+      handleSoProductChange(filtered[0].id);
+    }
+  }
+};
+
 window.handleSoBarcodeScan = (barcode) => {
   if (!barcode) return;
   const b = barcode.trim().toLowerCase();
@@ -1369,6 +1402,8 @@ window.handleSoBarcodeScan = (barcode) => {
   }
 
   if (foundProd) {
+    filterSoProducts('');
+    setV('so-search-keyword', foundProd.name);
     const select = el('so-product-select');
     if (select) select.value = foundProd.id;
     handleSoProductChange(foundProd.id, foundVar?.id);
