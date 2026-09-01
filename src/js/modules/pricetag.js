@@ -1,12 +1,13 @@
 // =============================================================================
-// FRESHMART PRICETAG & LABEL BARCODE STUDIO ENGINE (A4 PORTRAIT OPTIMIZED)
+// FRESHMART PRICETAG & LABEL BARCODE STUDIO ENGINE (SPACIOUS & RESPONSIVE A4)
 // =============================================================================
 // Modul pembuatan & pencetakan label harga rak (shelf price tags) dan stiker barcode.
-// Menggunakan kanvas standar Kertas A4 Potret (210 x 297 mm) dengan presisi millimeter
-// dan pagination otomatis per lembar A4.
+// Menggunakan kanvas standar Kertas A4 Potret (210 x 297 mm) dengan presisi millimeter,
+// antarmuka tab bersegmen yang lega & responsif di smartphone maupun desktop.
 // =============================================================================
 
 window.pricetagItems = []; // Array of items to be printed
+window.currentPricetagTab = 'products'; // 'products' | 'settings' | 'preview'
 
 // Settings default (A4 Portrait Standar)
 window.pricetagSettings = {
@@ -52,6 +53,36 @@ const _generatePricetagBarcodeSvg = (codeStr, w = 75, h = 15) => {
 };
 
 // ==========================================
+// TAB SWITCHER (PRODUCTS, SETTINGS, PREVIEW)
+// ==========================================
+
+window.switchPricetagTab = (tabKey) => {
+  window.currentPricetagTab = tabKey || 'products';
+
+  const tabs = ['products', 'settings', 'preview'];
+  tabs.forEach(t => {
+    const btn = el(`pt-tab-btn-${t}`);
+    const view = el(`pt-tab-view-${t}`);
+    
+    if (t === window.currentPricetagTab) {
+      if (btn) {
+        btn.className = 'flex-1 sm:flex-none px-3.5 sm:px-5 py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm';
+      }
+      if (view) view.classList.remove('hidden');
+    } else {
+      if (btn) {
+        btn.className = 'flex-1 sm:flex-none px-3.5 sm:px-5 py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white';
+      }
+      if (view) view.classList.add('hidden');
+    }
+  });
+
+  if (window.currentPricetagTab === 'preview') {
+    renderPricetagPreview();
+  }
+};
+
+// ==========================================
 // MODAL CONTROLS & ITEM MANAGEMENT
 // ==========================================
 
@@ -94,6 +125,7 @@ window.openPricetagModal = (presetProductIds = null) => {
   if (el('pt-opt-cut-guide')) el('pt-opt-cut-guide').checked = window.pricetagSettings.showCutGuide;
   if (el('pt-opt-unit')) el('pt-opt-unit').checked = window.pricetagSettings.showUnit;
 
+  switchPricetagTab('products');
   renderPricetagItemList();
   renderPricetagPreview();
 
@@ -164,22 +196,22 @@ window.openPricetagProductPicker = () => {
             const txt = it.getAttribute('data-text') || '';
             it.style.display = txt.includes(q.toLowerCase()) ? 'flex' : 'none';
           });
-        })(this.value)" class="admin-input !py-2 !pl-8 text-xs w-full" />
-        <i class="fa-solid fa-search absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+        })(this.value)" class="admin-input !py-2.5 !pl-9 text-xs w-full font-bold" />
+        <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
       </div>
-      <div class="max-h-64 overflow-y-auto space-y-1.5 pr-1" id="pt-picker-list">
+      <div class="max-h-64 overflow-y-auto space-y-2 pr-1" id="pt-picker-list">
         ${products.map(p => {
           const hasVars = p.variants && p.variants.length > 0;
           return `
-            <div data-text="${esc((p.name + ' ' + (p.sku || '') + ' ' + (p.category || '')).toLowerCase())}" class="pt-picker-item flex items-center justify-between p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-emerald-500 transition-all gap-2">
-              <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                <img src="${esc(p.img || 'https://placehold.co/100?text=Img')}" onerror="this.src='https://placehold.co/100?text=Img'" class="w-9 h-9 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0" />
-                <div class="min-w-0">
+            <div data-text="${esc((p.name + ' ' + (p.sku || '') + ' ' + (p.category || '')).toLowerCase())}" class="pt-picker-item flex items-center justify-between p-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-emerald-500 transition-all gap-2.5 shadow-xs">
+              <div class="flex items-center gap-3 min-w-0 flex-1">
+                <img src="${esc(p.img || 'https://placehold.co/100?text=Img')}" onerror="this.src='https://placehold.co/100?text=Img'" class="w-10 h-10 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0" />
+                <div class="min-w-0 flex-1">
                   <span class="block font-bold text-xs text-slate-800 dark:text-white truncate">${esc(p.name)}</span>
                   <span class="text-[10px] text-slate-400 font-semibold">${p.sku ? `SKU: ${esc(p.sku)} • ` : ''}${hasVars ? `<span class="text-indigo-500 font-bold">${p.variants.length} Varian</span>` : fCur(p.price)}</span>
                 </div>
               </div>
-              <button type="button" onclick="addPricetagProductFromPicker('${p.id}')" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1 shadow-xs shrink-0 active:scale-95 transition-all">
+              <button type="button" onclick="addPricetagProductFromPicker('${p.id}')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1 shadow-xs shrink-0 active:scale-95 transition-all">
                 <i class="fa-solid fa-plus text-[10px]"></i> Tambah
               </button>
             </div>
@@ -371,39 +403,38 @@ window.onPricetagSettingChange = () => {
   window.pricetagSettings.showCutGuide = el('pt-opt-cut-guide') ? el('pt-opt-cut-guide').checked : true;
   window.pricetagSettings.showUnit = el('pt-opt-unit') ? el('pt-opt-unit').checked : true;
 
-  const badge = el('pt-badge-paper-format');
-  if (badge) {
-    const labels = {
-      'a4_3x8': 'A4 Potret 3x8 (24 Label)',
-      'a4_2x6': 'A4 Potret 2x6 (12 Label)',
-      'a4_4x10': 'A4 Potret 4x10 (40 Label)',
-      'thermal_58': 'Thermal 58mm Roll',
-      'thermal_80': 'Thermal 80mm Roll'
-    };
-    badge.innerText = labels[window.pricetagSettings.paperType] || 'A4 Potret 3x8';
-  }
-
   renderPricetagPreview();
 };
 
 // ==========================================
-// RENDER ITEM LIST (LEFT PANE)
+// RENDER ITEM LIST (TAB 1)
 // ==========================================
 
 window.renderPricetagItemList = () => {
   const container = el('pt-items-list');
-  const countSpan = el('pt-item-count');
+  const badgeCount = el('pt-tab-badge-count');
+  const topSummary = el('pt-top-summary');
   if (!container) return;
 
   const items = window.pricetagItems || [];
-  if (countSpan) countSpan.innerText = items.length;
+  const flatLabels = _getFlatLabelsList();
+  const totalLabels = flatLabels.length;
+
+  if (badgeCount) badgeCount.innerText = items.length;
+  
+  const labelsPerPage = window.pricetagSettings.paperType === 'a4_2x6' ? 12 : (window.pricetagSettings.paperType === 'a4_4x10' ? 40 : 24);
+  const totalPages = Math.ceil(totalLabels / labelsPerPage) || 0;
+  if (topSummary) topSummary.innerText = `${totalLabels} label • ${totalPages} lembar A4`;
 
   if (!items.length) {
     container.innerHTML = `
-      <div class="p-8 text-center bg-white dark:bg-slate-800/80 rounded-2xl border border-slate-200 dark:border-slate-700">
-        <i class="fa-solid fa-tags text-3xl text-slate-300 dark:text-slate-600 mb-2 block"></i>
-        <p class="text-xs font-bold text-slate-500 dark:text-slate-400">Belum ada produk di daftar cetak</p>
-        <button type="button" onclick="openPricetagProductPicker()" class="mt-2.5 px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-xs hover:bg-emerald-700 transition-all">
+      <div class="p-8 sm:p-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+        <div class="w-16 h-16 rounded-3xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl mx-auto mb-3.5 shadow-xs">
+          <i class="fa-solid fa-tags"></i>
+        </div>
+        <h4 class="text-sm font-black text-slate-800 dark:text-white">Belum Ada Produk di Daftar Cetak</h4>
+        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Klik tombol di bawah untuk memilih produk dari katalog toko atau gunakan opsi batch cepat.</p>
+        <button type="button" onclick="openPricetagProductPicker()" class="mt-4 px-5 py-2.5 rounded-2xl bg-emerald-600 text-white font-bold text-xs shadow-md hover:bg-emerald-700 active:scale-95 transition-all">
           + Tambah Produk Sekarang
         </button>
       </div>
@@ -414,34 +445,33 @@ window.renderPricetagItemList = () => {
   container.innerHTML = items.map((it, idx) => {
     const hasWhol = Array.isArray(it.wholesale) && it.wholesale.length > 0;
     return `
-      <div class="p-3 bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md transition-all flex items-center justify-between gap-3 group">
+      <div class="p-3.5 sm:p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs hover:border-emerald-400/80 transition-all flex items-center justify-between gap-3 group">
         <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-1.5 flex-wrap">
-            <h5 class="font-bold text-xs text-slate-800 dark:text-white truncate">${esc(it.productName)}</h5>
-            ${it.variantName ? `<span class="badge badge-xs bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 font-bold border border-indigo-200 dark:border-indigo-800">${esc(it.variantName)}</span>` : ''}
+          <div class="flex items-center gap-2 flex-wrap mb-1">
+            <h5 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-white truncate">${esc(it.productName)}</h5>
+            ${it.variantName ? `<span class="px-2 py-0.5 rounded-md text-[10px] bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 font-bold border border-indigo-200 dark:border-indigo-800">${esc(it.variantName)}</span>` : ''}
           </div>
           
-          <div class="flex items-center gap-2 text-[10px] text-slate-400 font-semibold mt-0.5 flex-wrap">
-            <span class="font-mono">${esc(it.sku)}</span>
-            <span>•</span>
-            <span class="text-emerald-600 dark:text-emerald-400 font-bold">${fCur(it.price)}</span>
-            <span>/${esc(it.unit)}</span>
+          <div class="flex items-center gap-2.5 text-xs text-slate-500 dark:text-slate-400 font-semibold flex-wrap">
+            <span class="font-mono text-[11px] bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">${esc(it.sku)}</span>
+            <span class="text-emerald-600 dark:text-emerald-400 font-black text-sm">${fCur(it.price)}</span>
+            <span class="text-slate-400 text-xs">/${esc(it.unit)}</span>
             ${hasWhol ? `
-              <span class="cursor-pointer ${it.showWholesale ? 'text-amber-600 font-bold' : 'text-slate-400 line-through'}" onclick="togglePricetagItemWholesale(${idx})" title="Klik untuk toggle cetak rincian grosir">
-                <i class="fa-solid fa-tags text-[9px]"></i> ${it.wholesale.length} Grosir
+              <span class="cursor-pointer px-2 py-0.5 rounded-md text-[10px] font-bold ${it.showWholesale ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800' : 'bg-slate-100 text-slate-400 line-through'}" onclick="togglePricetagItemWholesale(${idx})" title="Klik untuk toggle cetak rincian grosir">
+                <i class="fa-solid fa-tags text-[9px]"></i> ${it.wholesale.length} Tier Grosir
               </span>
             ` : ''}
           </div>
         </div>
 
-        <!-- Quantity Controls -->
+        <!-- Quantity Stepper Controls -->
         <div class="flex items-center gap-2 shrink-0">
-          <div class="flex items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 p-0.5 shadow-xs">
-            <button type="button" onclick="updatePricetagQty(${idx}, -1)" class="w-6 h-6 rounded-lg bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-black text-xs flex items-center justify-center active:scale-95 transition-all">-</button>
-            <input type="number" min="1" value="${it.qty}" onchange="updatePricetagQty(${idx}, this.value)" class="w-10 text-center bg-transparent text-xs font-black text-slate-800 dark:text-white border-none p-0 focus:ring-0 focus:outline-none" />
-            <button type="button" onclick="updatePricetagQty(${idx}, 1)" class="w-6 h-6 rounded-lg bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-black text-xs flex items-center justify-center active:scale-95 transition-all">+</button>
+          <div class="flex items-center rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-0.5 shadow-xs">
+            <button type="button" onclick="updatePricetagQty(${idx}, -1)" class="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 font-black text-xs flex items-center justify-center active:scale-95 transition-all">-</button>
+            <input type="number" min="1" value="${it.qty}" onchange="updatePricetagQty(${idx}, this.value)" class="w-9 text-center bg-transparent text-xs font-black text-slate-800 dark:text-white border-none p-0 focus:ring-0 focus:outline-none" />
+            <button type="button" onclick="updatePricetagQty(${idx}, 1)" class="w-7 h-7 rounded-lg bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 font-black text-xs flex items-center justify-center active:scale-95 transition-all">+</button>
           </div>
-          <button type="button" onclick="removePricetagItem(${idx})" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all text-xs" title="Hapus dari daftar">
+          <button type="button" onclick="removePricetagItem(${idx})" class="p-2 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all text-xs" title="Hapus dari daftar">
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
@@ -568,7 +598,7 @@ const _buildSingleLabelHtml = (item, settings, isThermal = false, cardWidth = 'a
 };
 
 // ==========================================
-// PREVIEW BUILDER (REALISTIC A4 CANVAS)
+// PREVIEW BUILDER (REALISTIC AUTO-FIT A4 CANVAS)
 // ==========================================
 
 const _getFlatLabelsList = () => {
@@ -602,9 +632,9 @@ window.renderPricetagPreview = () => {
 
   if (totalLabels === 0) {
     sheet.innerHTML = `
-      <div style="padding: 60px 20px; text-align: center; color: #94a3b8;">
-        <i class="fa-solid fa-tags" style="font-size: 32px; margin-bottom: 12px; display: block; opacity: 0.5;"></i>
-        <span style="font-size: 12px; font-weight: bold;">Pilih produk di sebelah kiri untuk melihat kanvas A4 Potret</span>
+      <div class="py-16 text-center text-slate-400">
+        <i class="fa-solid fa-tags text-4xl mb-3 opacity-40 block"></i>
+        <span class="text-xs font-bold">Pilih produk di Tab "1. Pilih Produk" untuk melihat pratinjau lembaran A4</span>
       </div>
     `;
     if (summaryEl) summaryEl.innerText = '0 label • 0 lembar A4';
@@ -617,18 +647,14 @@ window.renderPricetagPreview = () => {
     const pages = _chunkArray(flatLabels, labelsPerPage);
     if (summaryEl) summaryEl.innerText = `${totalLabels} label • ${pages.length} lembar A4 Potret (Grid 3x8)`;
 
-    sheet.style.width = '100%';
-    sheet.style.maxWidth = '210mm';
-    sheet.style.background = 'transparent';
-    sheet.style.boxShadow = 'none';
-
     sheet.innerHTML = pages.map((pageItems, pageIdx) => `
-      <div style="background:#ffffff; width:210mm; min-height:297mm; max-height:297mm; padding:6mm 6mm; box-sizing:border-box; margin:0 auto ${pages.length > 1 ? '16px' : '0'} auto; box-shadow:0 4px 20px rgba(0,0,0,0.12); border-radius:4px; border:1px solid #e2e8f0; position:relative; overflow:hidden;">
-        <div style="position:absolute; top:2mm; right:6mm; font-size:7pt; color:#94a3b8; font-weight:bold;">
-          A4 Potret • Lembar ${pageIdx + 1} dari ${pages.length}
+      <div class="w-full max-w-[794px] bg-white rounded-2xl border border-slate-300/80 shadow-lg p-3 sm:p-5 mx-auto overflow-hidden relative" style="box-sizing:border-box;">
+        <div class="flex justify-between items-center text-[11px] text-slate-400 font-bold mb-2 pb-1.5 border-b border-slate-100">
+          <span>📄 Lembar A4 Potret (Grid 3x8)</span>
+          <span>Halaman ${pageIdx + 1} dari ${pages.length}</span>
         </div>
-        <div style="display:grid; grid-template-columns: repeat(3, 64mm); grid-auto-rows: 33.5mm; gap: 2.5mm; width:100%; justify-content:center; margin-top:2mm;">
-          ${pageItems.map(item => _buildSingleLabelHtml(item, settings, false, '64mm', '33.5mm')).join('')}
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 2mm; width:100%;">
+          ${pageItems.map(item => _buildSingleLabelHtml(item, settings, false, '100%', '33.5mm')).join('')}
         </div>
       </div>
     `).join('');
@@ -639,18 +665,14 @@ window.renderPricetagPreview = () => {
     const pages = _chunkArray(flatLabels, labelsPerPage);
     if (summaryEl) summaryEl.innerText = `${totalLabels} label • ${pages.length} lembar A4 Potret (Grid 2x6 Besar)`;
 
-    sheet.style.width = '100%';
-    sheet.style.maxWidth = '210mm';
-    sheet.style.background = 'transparent';
-    sheet.style.boxShadow = 'none';
-
     sheet.innerHTML = pages.map((pageItems, pageIdx) => `
-      <div style="background:#ffffff; width:210mm; min-height:297mm; max-height:297mm; padding:8mm 6mm; box-sizing:border-box; margin:0 auto ${pages.length > 1 ? '16px' : '0'} auto; box-shadow:0 4px 20px rgba(0,0,0,0.12); border-radius:4px; border:1px solid #e2e8f0; position:relative; overflow:hidden;">
-        <div style="position:absolute; top:2mm; right:6mm; font-size:7pt; color:#94a3b8; font-weight:bold;">
-          A4 Potret • Lembar ${pageIdx + 1} dari ${pages.length}
+      <div class="w-full max-w-[794px] bg-white rounded-2xl border border-slate-300/80 shadow-lg p-4 sm:p-6 mx-auto overflow-hidden relative" style="box-sizing:border-box;">
+        <div class="flex justify-between items-center text-[11px] text-slate-400 font-bold mb-2 pb-1.5 border-b border-slate-100">
+          <span>📄 Lembar A4 Potret (Grid 2x6 Besar)</span>
+          <span>Halaman ${pageIdx + 1} dari ${pages.length}</span>
         </div>
-        <div style="display:grid; grid-template-columns: repeat(2, 96mm); grid-auto-rows: 44.5mm; gap: 4mm; width:100%; justify-content:center; margin-top:2mm;">
-          ${pageItems.map(item => _buildSingleLabelHtml(item, settings, false, '96mm', '44.5mm')).join('')}
+        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 3.5mm; width:100%;">
+          ${pageItems.map(item => _buildSingleLabelHtml(item, settings, false, '100%', '44.5mm')).join('')}
         </div>
       </div>
     `).join('');
@@ -661,18 +683,14 @@ window.renderPricetagPreview = () => {
     const pages = _chunkArray(flatLabels, labelsPerPage);
     if (summaryEl) summaryEl.innerText = `${totalLabels} label • ${pages.length} lembar A4 Potret (Grid 4x10 Mini)`;
 
-    sheet.style.width = '100%';
-    sheet.style.maxWidth = '210mm';
-    sheet.style.background = 'transparent';
-    sheet.style.boxShadow = 'none';
-
     sheet.innerHTML = pages.map((pageItems, pageIdx) => `
-      <div style="background:#ffffff; width:210mm; min-height:297mm; max-height:297mm; padding:6mm 6mm; box-sizing:border-box; margin:0 auto ${pages.length > 1 ? '16px' : '0'} auto; box-shadow:0 4px 20px rgba(0,0,0,0.12); border-radius:4px; border:1px solid #e2e8f0; position:relative; overflow:hidden;">
-        <div style="position:absolute; top:2mm; right:6mm; font-size:7pt; color:#94a3b8; font-weight:bold;">
-          A4 Potret • Lembar ${pageIdx + 1} dari ${pages.length}
+      <div class="w-full max-w-[794px] bg-white rounded-2xl border border-slate-300/80 shadow-lg p-3 sm:p-4 mx-auto overflow-hidden relative" style="box-sizing:border-box;">
+        <div class="flex justify-between items-center text-[11px] text-slate-400 font-bold mb-2 pb-1.5 border-b border-slate-100">
+          <span>📄 Lembar A4 Potret (Grid 4x10 Mini)</span>
+          <span>Halaman ${pageIdx + 1} dari ${pages.length}</span>
         </div>
-        <div style="display:grid; grid-template-columns: repeat(4, 47mm); grid-auto-rows: 26.5mm; gap: 2mm; width:100%; justify-content:center; margin-top:2mm;">
-          ${pageItems.map(item => _buildSingleLabelHtml(item, settings, false, '47mm', '26.5mm')).join('')}
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 1.5mm; width:100%;">
+          ${pageItems.map(item => _buildSingleLabelHtml(item, settings, false, '100%', '26.5mm')).join('')}
         </div>
       </div>
     `).join('');
@@ -683,15 +701,11 @@ window.renderPricetagPreview = () => {
     const rollW = is80 ? '72mm' : '48mm';
     if (summaryEl) summaryEl.innerText = `${totalLabels} label • Thermal ${is80 ? '80mm' : '58mm'} Continuous`;
 
-    sheet.style.width = is80 ? '80mm' : '58mm';
-    sheet.style.minHeight = 'auto';
-    sheet.style.padding = '2mm 3mm';
-    sheet.style.boxSizing = 'border-box';
-    sheet.style.background = '#ffffff';
-
     sheet.innerHTML = `
-      <div style="display:flex; flex-direction:column; gap:2.5mm; width:${rollW}; margin:0 auto;">
-        ${flatLabels.map(item => _buildSingleLabelHtml(item, settings, true, '100%', 'auto')).join('')}
+      <div class="bg-white rounded-2xl border border-slate-300 shadow-md p-3 mx-auto" style="width:${rollW}; box-sizing:border-box;">
+        <div style="display:flex; flex-direction:column; gap:2.5mm; width:100%;">
+          ${flatLabels.map(item => _buildSingleLabelHtml(item, settings, true, '100%', 'auto')).join('')}
+        </div>
       </div>
     `;
   }
