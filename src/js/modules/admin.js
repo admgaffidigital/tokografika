@@ -3368,7 +3368,9 @@ window.getTabHelpBanner = (t) => {
     accounts: 'Kelola Kasir & Hak Akses',
     orders: 'Kelola Pesanan Masuk Online',
     reports: 'Laporan Penjualan & Laba Rugi',
-    settings: 'Pengaturan Profil & Tampilan Toko'
+    settings: 'Pengaturan Profil & Tampilan Toko',
+    stock_opname: 'Stok Opname & Audit Fisik Toko',
+    purchases: 'Pembelian Supplier & Buku Hutang'
   };
   
   const snippets = {
