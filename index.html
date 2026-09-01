@@ -1273,9 +1273,9 @@ html.dark .badge-counter {
 
     <div class='p-4 sm:p-5 space-y-4'>
       <!-- Product Preview Card -->
-      <div class='bg-slate-50 dark:bg-slate-900/70 rounded-2xl p-3 sm:p-3.5 border border-slate-200 dark:border-slate-700/80 flex gap-3 sm:gap-3.5 items-start'>
+      <div class='bg-slate-50 dark:bg-slate-900/70 rounded-2xl p-3 sm:p-3.5 border border-slate-200 dark:border-slate-700/80 flex gap-3 sm:gap-3.5 items-start relative group'>
         <div class='w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-slate-200 dark:bg-slate-800 overflow-hidden shrink-0 border border-slate-200 dark:border-slate-700 relative'>
-          <img id='share-preview-img' src='' alt='Foto Produk' class='w-full h-full object-cover'/>
+          <img id='share-preview-img' src='' alt='Foto Produk' onerror="if(window.imgErrRetry) window.imgErrRetry(this,'No Image',400); else this.src='https://placehold.co/100x100?text=No+Image';" class='w-full h-full object-cover'/>
         </div>
         <div class='flex-1 min-w-0 flex flex-col justify-between self-stretch'>
           <div>
@@ -1283,9 +1283,14 @@ html.dark .badge-counter {
             <div id='share-preview-price' class='text-emerald-600 dark:text-emerald-400 font-extrabold text-sm sm:text-base mt-0.5'>Rp 0</div>
           </div>
           <p id='share-preview-desc' class='text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mt-1'>Deskripsi produk...</p>
-          <div class='flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-1 truncate'>
-            <i class='fa-solid fa-link text-[9px] text-emerald-500'></i>
-            <span id='share-preview-url' class='truncate'>https://...</span>
+          <div class='flex items-center justify-between gap-1 mt-1'>
+            <div class='flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-500 font-mono truncate'>
+              <i class='fa-solid fa-link text-[9px] text-emerald-500'></i>
+              <span id='share-preview-url' class='truncate'>https://...</span>
+            </div>
+            <button type='button' onclick='downloadShareImage()' class='text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 shrink-0 bg-indigo-50 dark:bg-indigo-900/30 px-1.5 py-0.5 rounded border border-indigo-200/50 dark:border-indigo-800/50' title='Simpan Foto Produk'>
+              <i class='fa-solid fa-download text-[9px]'></i> Foto
+            </button>
           </div>
         </div>
       </div>
@@ -5242,7 +5247,7 @@ window.getProductShareData = (productOrId) => {
   const v = hV ? p.variants[cVar || 0] : null;
   const priceVal = v?.price ?? p.price ?? 0;
   const priceFormatted = fCur(priceVal) + (p.unit ? ` / ${p.unit}` : '');
-  const imgUrl = v?.img || p.img || '';
+  const imgUrl = (v?.img || p.img || '').trim();
   const descClean = (p.desc || '').trim();
 
   // Buat direct link pembelian/detail produk
@@ -5250,8 +5255,12 @@ window.getProductShareData = (productOrId) => {
   u.searchParams.set('p', p.id);
   const directUrl = u.href;
 
-  // Format pesan WhatsApp & Media Sosial yang rapi, ada nama, harga, deskripsi & link
-  const rawText = `🛍️ *${p.name}*\n💰 *Harga:* ${priceFormatted}\n\n📝 *Deskripsi:*\n${descClean || '-'}\n\n👉 *Beli / Lihat Detail Disini:*\n${directUrl}`;
+  // Format pesan WhatsApp & Media Sosial yang rapi, lengkap dengan nama, harga, gambar/foto, deskripsi & link
+  let rawText = `🛍️ *${p.name}*\n💰 *Harga:* ${priceFormatted}\n`;
+  if (imgUrl && !imgUrl.startsWith('data:')) {
+    rawText += `🖼️ *Foto Produk:* ${imgUrl}\n`;
+  }
+  rawText += `\n📝 *Deskripsi:*\n${descClean || '-'}\n\n👉 *Beli / Lihat Detail Disini:*\n${directUrl}`;
 
   return {
     id: p.id,
@@ -5300,6 +5309,25 @@ window.closeShareModal = () => {
   }
 };
 
+window.downloadShareImage = async () => {
+  if (!currentShareData || !currentShareData.img) {
+    showToast("Gambar produk tidak tersedia");
+    return;
+  }
+  try {
+    const a = document.createElement('a');
+    a.href = currentShareData.img;
+    a.download = `${(currentShareData.name || 'produk').replace(/[^a-zA-Z0-9]/g, '_')}.jpg`;
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast("Membuka / Mengunduh foto...");
+  } catch (e) {
+    window.open(currentShareData.img, '_blank');
+  }
+};
+
 window.shareViaWhatsApp = () => {
   if (!currentShareData) return;
   const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(currentShareData.rawText)}`;
@@ -5309,12 +5337,31 @@ window.shareViaWhatsApp = () => {
 window.shareViaNative = async () => {
   if (!currentShareData) return;
   if (navigator.share) {
+    let sharePayload = {
+      title: currentShareData.name,
+      text: currentShareData.rawText,
+      url: currentShareData.url
+    };
+
+    // Upayakan lampirkan file gambar asli jika didukung browser HP
+    if (currentShareData.img && navigator.canShare && !currentShareData.img.startsWith('data:')) {
+      try {
+        const res = await fetch(currentShareData.img, { mode: 'cors' });
+        if (res.ok) {
+          const blob = await res.blob();
+          const ext = blob.type.split('/')[1] || 'jpg';
+          const file = new File([blob], `${currentShareData.name.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`, { type: blob.type });
+          if (navigator.canShare({ files: [file] })) {
+            sharePayload.files = [file];
+          }
+        }
+      } catch (err) {
+        // Fallback ke payload teks jika CORS tidak mengizinkan fetch
+      }
+    }
+
     try {
-      await navigator.share({
-        title: currentShareData.name,
-        text: currentShareData.rawText,
-        url: currentShareData.url
-      });
+      await navigator.share(sharePayload);
     } catch (e) {
       if (e.name !== 'AbortError') {
         copyShareText();
