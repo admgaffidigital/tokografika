@@ -1660,9 +1660,14 @@ window.renderSupplierProductsModalContent = (searchQuery = null) => {
 
   // Footer Action
   setH('supp-prod-modal-footer-actions', `
-    <button type="button" onclick="openPurchaseModalForSupplier('${s.id}')" class="btn-solid no-glass px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all">
-      <i class="fa-solid fa-plus text-xs"></i> Buat Faktur Pembelian Supplier Ini
-    </button>
+    <div class="flex items-center gap-2 flex-wrap justify-end">
+      <button type="button" onclick="closeSupplierProductsModal(); openPricetagModal([${allSuppProds.map(p => p.id).join(',')}])" class="px-3.5 py-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500 hover:text-white border border-amber-300 dark:border-amber-800 font-bold text-xs flex items-center gap-1.5 transition-all shadow-xs" title="Cetak Price Tag untuk seluruh produk supplier ini">
+        <i class="fa-solid fa-tags text-xs"></i> Cetak Label (${allSuppProds.length})
+      </button>
+      <button type="button" onclick="openPurchaseModalForSupplier('${s.id}')" class="btn-solid no-glass px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all">
+        <i class="fa-solid fa-plus text-xs"></i> Buat Faktur Pembelian
+      </button>
+    </div>
   `);
 };
 

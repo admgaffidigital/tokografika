@@ -2552,6 +2552,9 @@ const rAdmL = t => {
         </select>
         <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[10px]"></i>
       </div>
+      <button type="button" onclick="openPricetagModal()" class="w-full sm:w-auto px-4 py-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500 hover:text-white border-2 border-amber-300 dark:border-amber-800 font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-xs active:scale-95 shrink-0" title="Cetak Label Harga & Barcode Rak (Price Tag)">
+        <i class="fa-solid fa-tags text-sm"></i> Price Tag
+      </button>
     `;
   }
 
@@ -2716,8 +2719,11 @@ window.rAdmItms = t => {
       <!-- Action Toolbar (Clean, Unified Pill Container) -->
       <div class="flex items-center gap-1.5 sm:gap-2 pt-2.5 sm:pt-0 border-t border-slate-100 dark:border-slate-700/80 sm:border-t-0 shrink-0 justify-end flex-wrap">
         ${isP ? `
+        <!-- Tombol Cetak Price Tag / Label Harga -->
+        <button type="button" onclick="event.stopPropagation(); openPricetagForSingleProduct(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500 hover:text-white transition-all border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Cetak Price Tag / Label Harga Barang Ini"><i class="fa-solid fa-tags"></i></button>
+
         <!-- Tombol Edit Cepat -->
-        <button type="button" onclick="openQuickEditProduct(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500 hover:text-white transition-all border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Edit Cepat (Stok, HPP & Harga)"><i class="fa-solid fa-bolt"></i></button>
+        <button type="button" onclick="openQuickEditProduct(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white transition-all border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Edit Cepat (Stok, HPP & Harga)"><i class="fa-solid fa-bolt"></i></button>
 
         <!-- Tombol Stok Opname Instan -->
         <button type="button" onclick="openStockOpnameModal(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 hover:text-white transition-all border border-cyan-200 dark:border-cyan-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Stok Opname (Audit Fisik)"><i class="fa-solid fa-clipboard-check"></i></button>

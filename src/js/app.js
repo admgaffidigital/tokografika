@@ -37,6 +37,9 @@
 // 9. Printing Engine (58mm Thermal & A4 Invoices)
 // @include modules/print.js
 
+// 9.1. Pricetag & Label Barcode Studio
+// @include modules/pricetag.js
+
 // 10. Progressive Web App (PWA) Engine & Manifest
 // @include modules/pwa.js
 
