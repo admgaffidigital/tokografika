@@ -360,35 +360,61 @@ window.toggleTheme = () => {
 };
 
 window.showConfirm = (t, m, cb, btnText = "Ya, Hapus", isDanger = true) => {
-  setIn('confirm-title', t);
-  // Gunakan innerHTML agar konten HTML (mis: picker produk, daftar kategori) ter-render dengan benar
+  // Dukung pemanggilan fleksibel: showConfirm(title, callback, btnText, isDanger)
+  if (typeof m === 'function') {
+    if (typeof cb === 'boolean') {
+      isDanger = cb;
+      btnText = "Ya, Lanjutkan";
+    } else if (typeof cb === 'string') {
+      btnText = cb;
+      if (typeof arguments[3] === 'boolean') isDanger = arguments[3];
+    }
+    cb = m;
+    m = '';
+  }
+
+  setIn('confirm-title', t || 'Konfirmasi');
+  
   const msgEl = el('confirm-msg');
   if (msgEl) {
-    const isHtml = typeof m === 'string' && (m.includes('<') || m.includes('&'));
-    if (isHtml) {
-      msgEl.innerHTML = m;
+    if (!m) {
+      msgEl.innerText = '';
+      msgEl.classList.add('hidden');
     } else {
-      msgEl.innerText = m;
+      msgEl.classList.remove('hidden');
+      const isHtml = typeof m === 'string' && (m.includes('<') || m.includes('&'));
+      if (isHtml) {
+        msgEl.innerHTML = m;
+      } else {
+        msgEl.innerText = m;
+      }
     }
   }
+
   const b = el('confirm-yes-btn');
   if (b) {
-    b.innerText = btnText;
+    b.innerText = btnText || "Ya, Lanjutkan";
     if (isDanger) {
       b.className = 'flex-1 py-3 bg-rose-600 text-white font-bold rounded-xl hover:bg-rose-700 transition-all text-sm shadow-md shadow-rose-500/20 border-2 border-rose-700';
-      el('confirm-icon-box').className = 'w-14 h-14 bg-rose-50 dark:bg-rose-900/30 text-rose-500 dark:text-rose-400 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 border-2 border-rose-100 dark:border-rose-800';
-      el('confirm-icon').className = 'fa-solid fa-triangle-exclamation';
+      const iconBox = el('confirm-icon-box');
+      if (iconBox) iconBox.className = 'w-14 h-14 bg-rose-50 dark:bg-rose-900/30 text-rose-500 dark:text-rose-400 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 border-2 border-rose-100 dark:border-rose-800';
+      const icon = el('confirm-icon');
+      if (icon) icon.className = 'fa-solid fa-triangle-exclamation';
     } else {
       b.className = 'flex-1 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-all text-sm shadow-md shadow-emerald-500/20 border-2 border-emerald-700';
-      el('confirm-icon-box').className = 'w-14 h-14 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500 dark:text-emerald-400 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 border-2 border-emerald-100 dark:border-emerald-800';
-      el('confirm-icon').className = 'fa-solid fa-copy';
+      const iconBox = el('confirm-icon-box');
+      if (iconBox) iconBox.className = 'w-14 h-14 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500 dark:text-emerald-400 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-4 border-2 border-emerald-100 dark:border-emerald-800';
+      const icon = el('confirm-icon');
+      if (icon) icon.className = 'fa-solid fa-check';
     }
   }
-  confirmCb = cb; 
+  confirmCb = typeof cb === 'function' ? cb : null; 
   show('custom-confirm-modal'); 
   setTimeout(() => {
-    el('custom-confirm-modal').classList.remove('opacity-0');
-    el('custom-confirm-box').classList.remove('scale-95');
+    const modal = el('custom-confirm-modal');
+    if (modal) modal.classList.remove('opacity-0');
+    const box = el('custom-confirm-box');
+    if (box) box.classList.remove('scale-95');
   }, 10);
 };
 

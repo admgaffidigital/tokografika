@@ -128,14 +128,14 @@ window.deleteSupplier = async (id) => {
     return showToast('Supplier ini memiliki riwayat transaksi faktur dan tidak bisa dihapus!');
   }
 
-  showConfirm(`Hapus supplier "${supp.name}"?`, async () => {
+  showConfirm("Hapus Supplier", `Hapus supplier "${supp.name}" dari daftar rekanan?`, async () => {
     appData.suppliers = (appData.suppliers || []).filter(x => String(x.id) !== String(id));
     sLoad('Menghapus...');
     await saveApp();
     hLoad();
     showToast('Supplier telah dihapus!');
     rAdmPurchases();
-  });
+  }, "Ya, Hapus", true);
 };
 
 // =============================================================================
@@ -653,14 +653,14 @@ window.deletePurchaseInvoice = async (id) => {
   const purch = (appData.purchases || []).find(p => String(p.id) === String(id));
   if (!purch) return;
 
-  showConfirm(`Hapus Faktur "${purch.invoiceNo}"?\n(Catatan: Stok produk tidak akan otomatis dikurangi secara sepihak)`, async () => {
+  showConfirm("Hapus Faktur", `Hapus Faktur "${purch.invoiceNo}"?\n(Catatan: Stok produk tidak akan otomatis dikurangi secara sepihak)`, async () => {
     appData.purchases = (appData.purchases || []).filter(p => String(p.id) !== String(id));
     sLoad('Menghapus...');
     await saveApp();
     hLoad();
     showToast('Faktur pembelian dihapus!');
     rAdmPurchases();
-  });
+  }, "Ya, Hapus", true);
 };
 
 // =============================================================================
@@ -1695,7 +1695,7 @@ window.linkProductToSupplier = async (productId, supplierId) => {
 window.unlinkProductFromSupplier = async (productId) => {
   const p = (appData.products || []).find(x => String(x.id) === String(productId));
   if (!p) return;
-  showConfirm(`Lepas tautan barang "${p.name}" dari supplier ini?`, async () => {
+  showConfirm("Lepas Tautan Supplier", `Lepas tautan barang "${p.name}" dari supplier ini?`, async () => {
     p.supplierId = '';
     p.supplierName = '';
     sLoad('Memperbarui...');
@@ -1709,7 +1709,7 @@ window.unlinkProductFromSupplier = async (productId) => {
       showToast('Gagal melepas tautan!');
     }
     hLoad();
-  });
+  }, "Ya, Lepas", true);
 };
 
 window.openPurchaseModalForSupplier = (supplierId) => {
