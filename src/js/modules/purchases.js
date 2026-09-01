@@ -150,6 +150,8 @@ const _generateInvoiceNo = () => {
   return `FB-${y}${m}${d}-${rand}`;
 };
 
+window.isPurchSupplierOnlyFilter = false;
+
 const _populateSupplierDropdown = (selectedId = null) => {
   const sel = el('purch-supplier-id');
   if (!sel) return;
@@ -161,12 +163,69 @@ const _populateSupplierDropdown = (selectedId = null) => {
   `).join('');
 };
 
+window.onPurchaseSupplierChange = (supplierId) => {
+  const btn = el('purch-filter-supp-only-btn');
+  const txt = el('purch-filter-supp-only-text');
+  if (!supplierId) {
+    if (btn) btn.classList.add('hidden');
+    window.isPurchSupplierOnlyFilter = false;
+    filterPurchProducts(getV('purch-search-keyword'));
+    return;
+  }
+
+  const suppProdsCount = (appData.products || []).filter(p => String(p.supplierId) === String(supplierId)).length;
+
+  if (btn && txt) {
+    btn.classList.remove('hidden');
+    if (suppProdsCount > 0) {
+      txt.innerText = window.isPurchSupplierOnlyFilter 
+        ? `Menampilkan ${suppProdsCount} Produk Supplier Ini (Klik utk Semua)` 
+        : `Hanya Produk Supplier Ini (${suppProdsCount})`;
+    } else {
+      txt.innerText = `Belum ada produk tertaut (Tampilkan Semua)`;
+      window.isPurchSupplierOnlyFilter = false;
+    }
+  }
+
+  filterPurchProducts(getV('purch-search-keyword'));
+};
+
+window.togglePurchSupplierOnlyFilter = () => {
+  const suppId = getV('purch-supplier-id');
+  if (!suppId) return showToast('Pilih supplier terlebih dahulu!');
+  
+  const suppProdsCount = (appData.products || []).filter(p => String(p.supplierId) === String(suppId)).length;
+  if (suppProdsCount === 0 && !window.isPurchSupplierOnlyFilter) {
+    return showToast('Supplier ini belum memiliki produk tertaut. Anda bisa memilih produk bebas di bawah untuk ditautkan otomatis saat faktur disimpan.');
+  }
+
+  window.isPurchSupplierOnlyFilter = !window.isPurchSupplierOnlyFilter;
+  const btn = el('purch-filter-supp-only-btn');
+  const txt = el('purch-filter-supp-only-text');
+  if (btn && txt) {
+    if (window.isPurchSupplierOnlyFilter) {
+      btn.className = 'text-[10px] font-bold px-2.5 py-1 rounded-lg bg-amber-500 text-white border border-amber-600 shadow-sm flex items-center gap-1 transition-all';
+      txt.innerText = `Menampilkan ${suppProdsCount} Produk Supplier Ini`;
+    } else {
+      btn.className = 'text-[10px] font-bold px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/80 hover:bg-amber-100 transition-all flex items-center gap-1';
+      txt.innerText = `Hanya Produk Supplier Ini (${suppProdsCount})`;
+    }
+  }
+
+  filterPurchProducts(getV('purch-search-keyword'));
+};
+
 window.filterPurchProducts = (keyword) => {
   const sel = el('purch-item-prod');
   if (!sel) return;
   const q = (keyword || '').trim().toLowerCase();
-  const list = [...(appData.products || [])];
+  const selectedSuppId = getV('purch-supplier-id');
+  let list = [...(appData.products || [])];
   list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+  if (window.isPurchSupplierOnlyFilter && selectedSuppId) {
+    list = list.filter(p => String(p.supplierId) === String(selectedSuppId));
+  }
 
   const filtered = !q ? list : list.filter(p => {
     const nameMatch = (p.name || '').toLowerCase().includes(q);
@@ -175,9 +234,11 @@ window.filterPurchProducts = (keyword) => {
     return nameMatch || skuMatch || varMatch;
   });
 
-  sel.innerHTML = `<option value="">-- Pilih Produk (${filtered.length}) --</option>` + filtered.map(p => `
-    <option value="${esc(p.id)}">${esc(p.name)} ${p.sku ? `[${esc(p.sku)}]` : ''}</option>
-  `).join('');
+  sel.innerHTML = `<option value="">-- Pilih Produk (${filtered.length}) --</option>` + filtered.map(p => {
+    const suppTag = p.supplierName ? ` [📦 ${esc(p.supplierName)}]` : '';
+    const skuTag = p.sku ? ` [${esc(p.sku)}]` : '';
+    return `<option value="${esc(p.id)}">${esc(p.name)}${skuTag}${suppTag}</option>`;
+  }).join('');
 
   if (q) {
     const exactMatch = list.find(p => p.sku && p.sku.toLowerCase() === q);
@@ -218,6 +279,7 @@ window.handlePurchBarcodeScan = (barcode) => {
 
 window.openPurchaseModal = () => {
   currentPurchaseItems = [];
+  window.isPurchSupplierOnlyFilter = false;
   setV('purch-inv-no', _generateInvoiceNo());
   setV('purch-search-keyword', '');
   
@@ -225,6 +287,13 @@ window.openPurchaseModal = () => {
   setV('purch-date', todayStr);
   
   _populateSupplierDropdown();
+  
+  const filterBtn = el('purch-filter-supp-only-btn');
+  if (filterBtn) {
+    filterBtn.classList.add('hidden');
+    filterBtn.className = 'hidden text-[10px] font-bold px-2 py-0.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/80 hover:bg-amber-100 transition-all flex items-center gap-1';
+  }
+
   filterPurchProducts('');
   
   onPurchaseProductSelect();
@@ -528,12 +597,21 @@ window.savePurchaseInvoice = async () => {
     createdAt: Date.now()
   };
 
-  // 1. UPDATE STOK & HPP PRODUK SECARA OTOMATIS
+  // 1. UPDATE STOK & HPP PRODUK SECARA OTOMATIS + RECORD ASAL SUPPLIER
   if (!appData.products) appData.products = [];
   currentPurchaseItems.forEach(item => {
     const pIdx = appData.products.findIndex(p => String(p.id) === String(item.productId));
     if (pIdx > -1) {
       const prod = appData.products[pIdx];
+      // Tautkan asal rekanan supplier & record kulakan terakhir
+      if (supplierId) {
+        prod.supplierId = String(supplierId);
+        prod.supplierName = supplierName;
+      }
+      prod.lastPurchasePrice = item.buyPrice;
+      prod.lastPurchaseDate = Date.now();
+      prod.lastPurchaseInvoice = invoiceNo;
+
       if (item.variantId && prod.variants && prod.variants.length > 0) {
         const vIdx = prod.variants.findIndex(v => String(v.id || v.name) === String(item.variantId));
         if (vIdx > -1) {
@@ -541,6 +619,8 @@ window.savePurchaseInvoice = async () => {
           v.stock = (parseInt(v.stock) || 0) + item.qty;
           v.costPrice = item.buyPrice; // Update HPP Varian
           v.buyPrice = item.buyPrice;
+          v.lastPurchasePrice = item.buyPrice;
+          v.lastPurchaseDate = Date.now();
         }
       } else {
         prod.stock = (parseInt(prod.stock) || 0) + item.qty;
@@ -1194,6 +1274,7 @@ const _renderSuppliersSubTab = (suppliers, purchases) => {
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
           ${suppliers.map(s => {
             const suppPurchases = purchases.filter(p => String(p.supplierId) === String(s.id));
+            const suppProducts = (appData.products || []).filter(p => String(p.supplierId) === String(s.id));
             const totalBuy = suppPurchases.reduce((acc, p) => acc + p.totalAmount, 0);
             const totalDebt = suppPurchases.reduce((acc, p) => acc + (p.remainingDebt || 0), 0);
 
@@ -1216,16 +1297,33 @@ const _renderSuppliersSubTab = (suppliers, purchases) => {
                   ${s.phone ? `<p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5 flex items-center gap-1"><i class="fa-brands fa-whatsapp text-xs"></i> ${esc(s.phone)}</p>` : ''}
                   ${s.address ? `<p class="text-[10px] text-slate-400 mt-1 line-clamp-1"><i class="fa-solid fa-location-dot mr-1"></i>${esc(s.address)}</p>` : ''}
                   ${s.bankInfo ? `<p class="text-[10px] text-indigo-500 dark:text-indigo-400 font-medium mt-1"><i class="fa-solid fa-credit-card mr-1"></i>${esc(s.bankInfo)}</p>` : ''}
+                  
+                  <div class="flex items-center gap-1.5 mt-2 flex-wrap">
+                    <span class="badge badge-xs bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/80 font-bold">
+                      <i class="fa-solid fa-boxes-stacked text-[8px]"></i> ${suppProducts.length} Produk Tertaut
+                    </span>
+                  </div>
                 </div>
 
-                <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center text-[10px] font-bold">
-                  <div>
-                    <span class="text-slate-400 block text-[9px] uppercase">Total Beli</span>
-                    <span class="text-slate-800 dark:text-slate-200">${fCur(totalBuy)}</span>
+                <div class="pt-2.5 border-t border-slate-100 dark:border-slate-700 space-y-2">
+                  <div class="flex justify-between items-center text-[10px] font-bold">
+                    <div>
+                      <span class="text-slate-400 block text-[9px] uppercase">Total Beli</span>
+                      <span class="text-slate-800 dark:text-slate-200">${fCur(totalBuy)}</span>
+                    </div>
+                    <div class="text-right">
+                      <span class="text-slate-400 block text-[9px] uppercase">Sisa Hutang</span>
+                      <span class="${totalDebt > 0 ? 'text-amber-600 font-black' : 'text-emerald-600'}">${fCur(totalDebt)}</span>
+                    </div>
                   </div>
-                  <div class="text-right">
-                    <span class="text-slate-400 block text-[9px] uppercase">Sisa Hutang</span>
-                    <span class="${totalDebt > 0 ? 'text-amber-600 font-black' : 'text-emerald-600'}">${fCur(totalDebt)}</span>
+
+                  <div class="grid grid-cols-2 gap-1.5 pt-1">
+                    <button type="button" onclick="openSupplierProductsModal('${s.id}')" class="px-2.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all shadow-xs" title="Lihat & Kelola Produk Asal Supplier Ini">
+                      <i class="fa-solid fa-layer-group text-[10px] text-amber-500"></i> Produk (${suppProducts.length})
+                    </button>
+                    <button type="button" onclick="openPurchaseModalForSupplier('${s.id}')" class="px-2.5 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-600 hover:text-white text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all shadow-xs" title="Beli Barang dari Supplier Ini">
+                      <i class="fa-solid fa-cart-plus text-[10px]"></i> Beli Barang
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1324,3 +1422,327 @@ const _renderReportsSubTab = (purchases, suppliers) => {
     </div>
   `;
 };
+
+// ==========================================
+// MODAL KATALOG & PENGELOMPOKAN PRODUK SUPPLIER
+// ==========================================
+window.suppProdModalSubTab = 'list'; // 'list' | 'link'
+window._suppProdSearchQuery = '';
+
+window.openSupplierProductsModal = (supplierId) => {
+  const s = (appData.suppliers || []).find(x => String(x.id) === String(supplierId));
+  if (!s) return showToast('Data supplier tidak ditemukan!');
+  window._currentViewingSupplierId = s.id;
+  window.suppProdModalSubTab = 'list';
+  window._suppProdSearchQuery = '';
+
+  setIn('supp-prod-modal-title', `Katalog Produk: ${s.name}`);
+  setIn('supp-prod-modal-subtitle', `${s.pic ? `PIC: ${s.pic} • ` : ''}${s.phone ? `WA: ${s.phone}` : ''}`);
+
+  renderSupplierProductsModalContent();
+
+  const modal = el('supplier-products-modal');
+  const box = el('supplier-products-modal-box');
+  if (modal && box) {
+    show('supplier-products-modal');
+    setTimeout(() => {
+      modal.classList.remove('opacity-0');
+      box.classList.remove('translate-y-5');
+    }, 10);
+  }
+};
+
+window.closeSupplierProductsModal = () => {
+  const modal = el('supplier-products-modal');
+  const box = el('supplier-products-modal-box');
+  if (modal && box) {
+    modal.classList.add('opacity-0');
+    box.classList.add('translate-y-5');
+    setTimeout(() => hide('supplier-products-modal'), 250);
+  }
+  window._currentViewingSupplierId = null;
+};
+
+window.setSupplierProductsSubTab = (tab) => {
+  window.suppProdModalSubTab = tab;
+  renderSupplierProductsModalContent();
+};
+
+window.renderSupplierProductsModalContent = (searchQuery = null) => {
+  if (searchQuery !== null) window._suppProdSearchQuery = searchQuery;
+  const suppId = window._currentViewingSupplierId;
+  const s = (appData.suppliers || []).find(x => String(x.id) === String(suppId));
+  if (!s) return;
+
+  const q = (window._suppProdSearchQuery || '').trim().toLowerCase();
+  const allSuppProds = (appData.products || []).filter(p => String(p.supplierId) === String(s.id));
+  const unlinkedProds = (appData.products || []).filter(p => String(p.supplierId) !== String(s.id));
+
+  const totalItems = allSuppProds.length;
+  const totalStock = allSuppProds.reduce((sum, p) => {
+    if (p.variants && p.variants.length > 0) {
+      return sum + p.variants.reduce((vSum, v) => vSum + Number(v.stock || 0), 0);
+    }
+    return sum + Number(p.stock || 0);
+  }, 0);
+  const totalAssetHpp = allSuppProds.reduce((sum, p) => {
+    if (p.variants && p.variants.length > 0) {
+      return sum + p.variants.reduce((vSum, v) => vSum + (Number(v.stock || 0) * Number(v.costPrice || p.costPrice || 0)), 0);
+    }
+    return sum + (Number(p.stock || 0) * Number(p.costPrice || 0));
+  }, 0);
+
+  const activeTab = window.suppProdModalSubTab || 'list';
+
+  let subTabNav = `
+    <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">
+      <button type="button" onclick="setSupplierProductsSubTab('list')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${activeTab === 'list' ? 'bg-amber-500 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">
+        <i class="fa-solid fa-boxes-stacked text-xs"></i>
+        <span>Produk Asal Supplier (${totalItems})</span>
+      </button>
+      <button type="button" onclick="setSupplierProductsSubTab('link')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${activeTab === 'link' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">
+        <i class="fa-solid fa-link text-xs"></i>
+        <span>Tautkan Produk Toko (${unlinkedProds.length})</span>
+      </button>
+    </div>
+  `;
+
+  let contentHtml = '';
+
+  if (activeTab === 'list') {
+    const filtered = !q ? allSuppProds : allSuppProds.filter(p => {
+      return (p.name || '').toLowerCase().includes(q) || (p.sku || '').toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q);
+    });
+
+    contentHtml = `
+      <!-- Top Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+        <div class="p-3 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-base shrink-0">
+            <i class="fa-solid fa-boxes-stacked"></i>
+          </div>
+          <div>
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Total Produk Asal</span>
+            <h4 class="text-sm sm:text-base font-black text-slate-800 dark:text-white leading-none mt-0.5">${totalItems} Produk</h4>
+          </div>
+        </div>
+
+        <div class="p-3 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-base shrink-0">
+            <i class="fa-solid fa-warehouse"></i>
+          </div>
+          <div>
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Total Stok di Rak</span>
+            <h4 class="text-sm sm:text-base font-black text-emerald-600 dark:text-emerald-400 leading-none mt-0.5">${totalStock} Unit</h4>
+          </div>
+        </div>
+
+        <div class="p-3 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-base shrink-0">
+            <i class="fa-solid fa-coins"></i>
+          </div>
+          <div>
+            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Nilai Modal (HPP)</span>
+            <h4 class="text-sm sm:text-base font-black text-indigo-600 dark:text-indigo-400 leading-none mt-0.5">${fCur(totalAssetHpp)}</h4>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Input -->
+      <div class="relative w-full">
+        <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+        <input type="text" value="${esc(window._suppProdSearchQuery)}" placeholder="Cari nama produk, SKU, kategori dari supplier ini..." oninput="renderSupplierProductsModalContent(this.value)" class="admin-input !py-2.5 !pl-9 w-full text-xs font-bold" />
+      </div>
+
+      <!-- Product Cards List -->
+      <div class="space-y-2.5 max-h-[50vh] overflow-y-auto pr-1">
+        ${!filtered.length ? `
+          <div class="p-10 text-center bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+            <i class="fa-solid fa-box-open text-3xl text-slate-300 dark:text-slate-600 mb-2 block"></i>
+            <p class="text-xs font-bold text-slate-500 dark:text-slate-400">${q ? `Tidak ada produk yang cocok dengan "${q}"` : 'Belum ada produk toko yang ditautkan ke supplier ini.'}</p>
+            <button type="button" onclick="setSupplierProductsSubTab('link')" class="mt-3 px-4 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 font-bold text-xs border border-emerald-200 dark:border-emerald-800/80 hover:bg-emerald-600 hover:text-white transition-all">
+              + Tautkan Produk Sekarang
+            </button>
+          </div>
+        ` : filtered.map(p => {
+          const hasVars = p.variants && p.variants.length > 0;
+          const curStock = hasVars ? p.variants.reduce((sum, v) => sum + Number(v.stock || 0), 0) : Number(p.stock ?? 0);
+          const lastBuyDateStr = p.lastPurchaseDate ? _fDate(p.lastPurchaseDate) : 'Belum Ada';
+          const lastBuyPriceStr = p.lastPurchasePrice ? fCur(p.lastPurchasePrice) : (p.costPrice ? fCur(p.costPrice) : '-');
+
+          return `
+            <div class="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-xs hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="flex items-center gap-3 min-w-0 flex-1">
+                <img src="${esc(p.img || 'https://placehold.co/100?text=Img')}" onerror="this.src='https://placehold.co/100?text=Img'" class="w-12 h-12 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0" />
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h4 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-white truncate">${esc(p.name)}</h4>
+                    <span class="badge badge-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-mono font-bold">${esc(p.sku || '-')}</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-[10px] text-slate-400 font-semibold mt-0.5 flex-wrap">
+                    <span>Kategori: <b>${esc(p.category || 'Umum')}</b></span>
+                    <span>•</span>
+                    <span>Stok: <b class="${curStock <= 5 ? 'text-rose-500 font-black' : 'text-emerald-600'}">${curStock} ${esc(p.unit || 'Pcs')}</b></span>
+                    <span>•</span>
+                    <span>HPP: <b class="text-slate-700 dark:text-slate-300">${fCur(p.costPrice || 0)}</b></span>
+                    <span>•</span>
+                    <span>Jual: <b class="text-emerald-600">${fCur(p.price || 0)}</b></span>
+                  </div>
+                  ${p.lastPurchaseDate ? `
+                    <div class="text-[9px] text-amber-600 dark:text-amber-400 font-medium mt-1 flex items-center gap-1">
+                      <i class="fa-solid fa-clock-rotate-left"></i> Asal Kulakan Terakhir: <b>${lastBuyPriceStr}</b> (${lastBuyDateStr})
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+
+              <div class="flex items-center gap-1.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-700 justify-end">
+                <button type="button" onclick="createPurchaseForSpecificProduct('${s.id}', '${p.id}')" class="px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-600 hover:text-white transition-all font-bold text-xs flex items-center gap-1 shadow-xs" title="Beli / Buat Faktur Barang Ini">
+                  <i class="fa-solid fa-cart-plus text-[10px]"></i> Beli
+                </button>
+                <button type="button" onclick="unlinkProductFromSupplier('${p.id}')" class="p-2 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all text-xs" title="Lepas Hubungan dari Supplier Ini">
+                  <i class="fa-solid fa-link-slash"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  } else {
+    // TAB LINK
+    const filteredUnlinked = !q ? unlinkedProds : unlinkedProds.filter(p => {
+      return (p.name || '').toLowerCase().includes(q) || (p.sku || '').toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q);
+    });
+
+    contentHtml = `
+      <div class="p-3 bg-indigo-50/60 dark:bg-indigo-950/30 rounded-2xl border border-indigo-200 dark:border-indigo-800/60 text-xs space-y-1">
+        <h5 class="font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5">
+          <i class="fa-solid fa-link"></i> Hubungkan Produk Toko ke Supplier "${esc(s.name)}"
+        </h5>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400">
+          Pilih produk di bawah untuk menandai bahwa barang tersebut disuplai oleh vendor ini. Pengelompokan ini mempermudah pencarian saat membuat faktur pembelian.
+        </p>
+      </div>
+
+      <!-- Search Input -->
+      <div class="relative w-full">
+        <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+        <input type="text" value="${esc(window._suppProdSearchQuery)}" placeholder="Cari nama produk yang ingin ditautkan..." oninput="renderSupplierProductsModalContent(this.value)" class="admin-input !py-2.5 !pl-9 w-full text-xs font-bold" />
+      </div>
+
+      <div class="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+        ${!filteredUnlinked.length ? `
+          <div class="p-8 text-center bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs text-slate-400 font-medium">
+            Tidak ada produk lain yang tersedia untuk ditautkan.
+          </div>
+        ` : filteredUnlinked.map(p => {
+          return `
+            <div class="p-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-xs hover:border-indigo-400 flex items-center justify-between gap-3 transition-all">
+              <div class="flex items-center gap-3 min-w-0 flex-1">
+                <img src="${esc(p.img || 'https://placehold.co/100?text=Img')}" onerror="this.src='https://placehold.co/100?text=Img'" class="w-10 h-10 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0" />
+                <div class="min-w-0 flex-1">
+                  <h4 class="font-bold text-xs text-slate-800 dark:text-white truncate">${esc(p.name)}</h4>
+                  <p class="text-[10px] text-slate-400">${p.sku ? `SKU: ${esc(p.sku)} • ` : ''}${p.supplierName ? `<span class="text-amber-600 font-semibold">Saat ini: ${esc(p.supplierName)}</span>` : '<span class="text-slate-400">Belum Ada Supplier</span>'}</p>
+                </div>
+              </div>
+              <button type="button" onclick="linkProductToSupplier('${p.id}', '${s.id}')" class="px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white border border-indigo-200 dark:border-indigo-800 font-bold text-xs flex items-center gap-1 shadow-xs transition-all shrink-0">
+                <i class="fa-solid fa-link text-[10px]"></i> Tautkan
+              </button>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  setH('supp-prod-modal-body', subTabNav + contentHtml);
+
+  // Footer Action
+  setH('supp-prod-modal-footer-actions', `
+    <button type="button" onclick="openPurchaseModalForSupplier('${s.id}')" class="btn-solid no-glass px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all">
+      <i class="fa-solid fa-plus text-xs"></i> Buat Faktur Pembelian Supplier Ini
+    </button>
+  `);
+};
+
+window.linkProductToSupplier = async (productId, supplierId) => {
+  const s = (appData.suppliers || []).find(x => String(x.id) === String(supplierId));
+  const p = (appData.products || []).find(x => String(x.id) === String(productId));
+  if (!s || !p) return;
+
+  p.supplierId = s.id;
+  p.supplierName = s.name;
+
+  sLoad('Menautkan Produk...');
+  try {
+    await db.collection("freshmart").doc("cms_data").collection("products").doc(p.id.toString()).update({ supplierId: s.id, supplierName: s.name });
+    await saveApp();
+    showToast(`Produk "${p.name}" berhasil ditautkan ke ${s.name}!`);
+    renderSupplierProductsModalContent();
+    rAdmPurchases();
+  } catch(e) {
+    showToast('Gagal menautkan produk!');
+  }
+  hLoad();
+};
+
+window.unlinkProductFromSupplier = async (productId) => {
+  const p = (appData.products || []).find(x => String(x.id) === String(productId));
+  if (!p) return;
+  showConfirm(`Lepas tautan barang "${p.name}" dari supplier ini?`, async () => {
+    p.supplierId = '';
+    p.supplierName = '';
+    sLoad('Memperbarui...');
+    try {
+      await db.collection("freshmart").doc("cms_data").collection("products").doc(p.id.toString()).update({ supplierId: '', supplierName: '' });
+      await saveApp();
+      showToast('Tautan supplier berhasil dilepas!');
+      renderSupplierProductsModalContent();
+      rAdmPurchases();
+    } catch(e) {
+      showToast('Gagal melepas tautan!');
+    }
+    hLoad();
+  });
+};
+
+window.openPurchaseModalForSupplier = (supplierId) => {
+  closeSupplierProductsModal();
+  openPurchaseModal();
+  setTimeout(() => {
+    const suppSel = el('purch-supplier-id');
+    if (suppSel) {
+      suppSel.value = supplierId;
+      onPurchaseSupplierChange(supplierId);
+      window.isPurchSupplierOnlyFilter = true;
+      filterPurchProducts('');
+      const btn = el('purch-filter-supp-only-btn');
+      const suppProdsCount = (appData.products || []).filter(p => String(p.supplierId) === String(supplierId)).length;
+      if (btn) {
+        btn.className = 'text-[10px] font-bold px-2.5 py-1 rounded-lg bg-amber-500 text-white border border-amber-600 shadow-sm flex items-center gap-1 transition-all';
+        const txt = el('purch-filter-supp-only-text');
+        if (txt) txt.innerText = `Menampilkan ${suppProdsCount} Produk Supplier Ini`;
+      }
+    }
+  }, 100);
+};
+
+window.createPurchaseForSpecificProduct = (supplierId, productId) => {
+  closeSupplierProductsModal();
+  openPurchaseModal();
+  setTimeout(() => {
+    const suppSel = el('purch-supplier-id');
+    if (suppSel) {
+      suppSel.value = supplierId;
+      onPurchaseSupplierChange(supplierId);
+    }
+    const prodSel = el('purch-item-prod');
+    if (prodSel) {
+      prodSel.value = productId;
+      onPurchaseProductSelect();
+      el('purch-item-qty')?.focus();
+    }
+  }, 100);
+};
+

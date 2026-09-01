@@ -1,0 +1,41 @@
+<!-- ========================================================================= -->
+<!-- MODAL: DAFTAR PRODUK DARI SUPPLIER & PENGELOMPOKAN BARANG                -->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[75] bg-slate-900/70 hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4' id='supplier-products-modal' onclick='if(event.target===this) closeSupplierProductsModal()'>
+  <div class='w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl max-h-[92dvh] flex flex-col transform translate-y-5 sm:translate-y-0 transition-transform duration-300 shadow-2xl border border-slate-200 dark:border-slate-700 relative overflow-hidden' id='supplier-products-modal-box'>
+    
+    <!-- Synchronized Glass Theme Header -->
+    <div class='glass-header sticky top-0 z-20 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between shadow-md shrink-0 sm:rounded-t-2xl' style='background-color:var(--clr-p)!important;'>
+      <div class='flex items-center gap-2.5 min-w-0 flex-1 text-white'>
+        <div class='w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/20 flex items-center justify-center text-white shrink-0 border border-white/30 backdrop-blur-sm shadow-xs'>
+          <i class='fa-solid fa-truck-ramp-box text-sm text-white'></i>
+        </div>
+        <div class='min-w-0'>
+          <h3 class='text-xs sm:text-sm font-black text-white tracking-tight truncate' id='supp-prod-modal-title'>Katalog Produk Asal Supplier</h3>
+          <p class='text-[10px] sm:text-[11px] text-white/80 font-medium truncate' id='supp-prod-modal-subtitle'>Pengelompokan barang & riwayat kulakan</p>
+        </div>
+      </div>
+      <div class='flex items-center gap-2 shrink-0'>
+        <button type='button' class='w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-600/90 text-white transition-all border border-white/30 shadow-sm backdrop-blur-sm active:scale-95' onclick='closeSupplierProductsModal()' title='Tutup'>
+          <i class='fa-solid fa-xmark text-xs sm:text-sm text-white'></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal Content Body -->
+    <div class='p-4 sm:p-6 overflow-y-auto flex-1 bg-slate-50 dark:bg-slate-900 space-y-4' id='supp-prod-modal-body'>
+      <!-- Dynamic Content Rendered by purchases.js -->
+    </div>
+
+    <!-- Modal Footer -->
+    <div class='p-3.5 sm:p-4 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3 shrink-0 rounded-b-2xl'>
+      <button type='button' onclick='closeSupplierProductsModal()' class='px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-100 dark:hover:bg-slate-700 transition-all'>
+        Tutup
+      </button>
+      <div class='flex items-center gap-2' id='supp-prod-modal-footer-actions'>
+        <!-- Action Buttons -->
+      </div>
+    </div>
+
+  </div>
+</div>

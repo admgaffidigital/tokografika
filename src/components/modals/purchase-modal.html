@@ -52,7 +52,7 @@
                 <i class="fa-solid fa-plus text-[8px]"></i> Tambah
               </button>
             </div>
-            <select id="purch-supplier-id" class="admin-input !py-2.5 w-full font-bold">
+            <select id="purch-supplier-id" class="admin-input !py-2.5 w-full font-bold" onchange="onPurchaseSupplierChange(this.value)">
               <option value="">-- Pilih Supplier --</option>
             </select>
           </div>
@@ -70,7 +70,12 @@
 
         <!-- Cari Produk & Scan Barcode Cepat -->
         <div class="space-y-1">
-          <label class="block font-bold text-slate-600 dark:text-slate-300 text-[10px] uppercase tracking-wider">Cari Produk / Scan Barcode</label>
+          <div class="flex items-center justify-between">
+            <label class="block font-bold text-slate-600 dark:text-slate-300 text-[10px] uppercase tracking-wider">Cari Produk / Scan Barcode</label>
+            <button type="button" id="purch-filter-supp-only-btn" onclick="togglePurchSupplierOnlyFilter()" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/80 hover:bg-amber-100 transition-all flex items-center gap-1">
+              <i class="fa-solid fa-truck-field text-[9px]"></i> <span id="purch-filter-supp-only-text">Hanya Produk Supplier Ini</span>
+            </button>
+          </div>
           <div class="relative w-full">
             <i class="fa-solid fa-barcode absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
             <input type="text" id="purch-search-keyword" placeholder="Ketik cepat nama produk, SKU, atau scan barcode..." class="admin-input !pl-9 !pr-10 !py-2.5 w-full text-xs font-semibold" oninput="filterPurchProducts(this.value)" onkeydown="if(event.key==='Enter'){handlePurchBarcodeScan(this.value);event.preventDefault();}" />

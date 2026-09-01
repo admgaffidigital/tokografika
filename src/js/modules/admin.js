@@ -18,6 +18,7 @@ const aF = {
     { key: 'unit', label: 'Satuan (cth: pcs, kg, lusin)', type: 'unit_selector' },
     { key: 'img', label: 'URL Gambar', type: 'text' },
     { key: 'category', label: 'Kategori', type: 'dynamic_select_category' }, 
+    { key: 'supplierId', label: 'Asal Rekanan Supplier (Vendor)', type: 'dynamic_select_supplier' },
     { key: 'tag', label: 'Label/Tag', type: 'text' },
     { key: 'isActive', label: 'Status Visibilitas Toko', type: 'select', options: [{ val: 'true', text: 'Aktif (Tampil di Toko)' }, { val: 'false', text: 'Nonaktif (Disembunyikan)' }] },
     { key: 'desc', label: 'Deskripsi', type: 'textarea' }, 
@@ -2538,7 +2539,20 @@ const rAdmL = t => {
   let extraBtns = '';
   if (t === 'products') {
     stats = `<div id="admin-product-stats" class="mb-4"></div>`;
-    extraBtns = ``;
+    const suppList = appData.suppliers || [];
+    extraBtns = `
+      <div class="relative w-full sm:w-auto shrink-0">
+        <select id="admin-supplier-filter" onchange="window.aPrtSupplierFilter=this.value;rAdmItms('products')" class="admin-input !py-3 !pl-3.5 !pr-8 !text-xs font-bold w-full sm:w-48 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl appearance-none cursor-pointer">
+          <option value="all">Semua Supplier</option>
+          <option value="unassigned" ${window.aPrtSupplierFilter === 'unassigned' ? 'selected' : ''}>Tanpa Supplier</option>
+          ${suppList.map(s => {
+            const pCount = (appData.products || []).filter(p => String(p.supplierId) === String(s.id)).length;
+            return `<option value="${s.id}" ${String(window.aPrtSupplierFilter) === String(s.id) ? 'selected' : ''}>${esc(s.name)} (${pCount})</option>`;
+          }).join('')}
+        </select>
+        <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[10px]"></i>
+      </div>
+    `;
   }
 
   setH('admin-content', helpBanner + stats + `<div class="mb-5 flex flex-col sm:flex-row gap-3 items-center"><div class="relative w-full flex-1"><i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i><input id="admin-search-input" placeholder="Cari nama, SKU..." oninput="clearTimeout(window._admST);const _v=this.value;window._admST=setTimeout(()=>{aSq=_v.toLowerCase();rAdmItms('${t}')},200)" class="admin-input !pl-10 !pr-[2.5rem] !py-3 !text-sm !rounded-xl shadow-sm" /><button onclick="openCameraScanner('admin-search-input')" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-500 transition-all"><i class="fa-solid fa-qrcode text-sm"></i></button></div>${extraBtns}<button onclick="oAAdd()" class="w-full sm:w-auto text-white font-bold px-6 py-3 rounded-xl transition-all flex items-center justify-center gap-2 text-sm shadow-md active:scale-95 shrink-0" style="background-color:var(--clr-p)"><i class="fa-solid fa-plus"></i> Tambah Baru</button></div><div id="admin-list-container" class="space-y-3 pb-12"></div>`);
@@ -2547,6 +2561,7 @@ const rAdmL = t => {
 
 window.rAdmItms = t => {
   window.aPrtSort = window.aPrtSort || 'all';
+  window.aPrtSupplierFilter = window.aPrtSupplierFilter || 'all';
   
   if (t === 'products') {
     let totalAll = (appData.products || []).length;
@@ -2621,6 +2636,14 @@ window.rAdmItms = t => {
       if (window.aPrtSort === 'active') return !isOff && !isOutOfStock;
       if (window.aPrtSort === 'empty') return !isOff && isOutOfStock;
       if (window.aPrtSort === 'inactive') return isOff;
+
+      if (window.aPrtSupplierFilter && window.aPrtSupplierFilter !== 'all') {
+        if (window.aPrtSupplierFilter === 'unassigned') {
+          if (x.supplierId) return false;
+        } else if (String(x.supplierId) !== String(window.aPrtSupplierFilter)) {
+          return false;
+        }
+      }
     }
     return true;
   });
@@ -2661,6 +2684,7 @@ window.rAdmItms = t => {
       : `<div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-slate-50 dark:bg-slate-700 border-2 border-slate-100 dark:border-slate-600 flex items-center justify-center text-slate-300 dark:text-slate-400 shrink-0 shadow-sm"><i class="fa-solid fa-image text-xl"></i></div>`;
     
     let skuBadge = isP && x.sku ? `<span class="badge badge-xs badge-slate badge-normal-case"><i class="fa-solid fa-barcode"></i> ${esc(x.sku)}</span>` : '';
+    let suppBadge = (isP && (x.supplierName || x.supplierId)) ? `<span class="badge badge-xs bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/80 font-bold" title="Rekanan Asal Supplier"><i class="fa-solid fa-truck-field text-[8px]"></i> ${esc(x.supplierName || 'Supplier Tertaut')}</span>` : '';
     let varsBadge = isP && hasVars ? `<span class="badge badge-xs badge-indigo">${x.variants.length} Varian</span>` : '';
     let wholBadge = isP && x.wholesale && x.wholesale.length ? `<span class="badge badge-xs badge-purple"><i class="fa-solid fa-tags"></i> Grosir</span>` : '';
     let costBadge = (isP && x.costPrice) ? `<span class="text-[10px] text-slate-400 font-medium bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">HPP: <b class="text-slate-700 dark:text-slate-300">${fCur(x.costPrice)}</b></span>` : '';
@@ -2681,6 +2705,7 @@ window.rAdmItms = t => {
             ${skuBadge}
           </div>
           <div class="flex flex-wrap gap-1.5">
+            ${suppBadge}
             ${varsBadge}
             ${wholBadge}
           </div>
@@ -2742,7 +2767,7 @@ window.oAEd = (t, id) => {
   const getIcon = (key) => {
     const icons = {
       name: 'fa-box-open', sku: 'fa-barcode', price: 'fa-tag', costPrice: 'fa-coins', stock: 'fa-boxes-stacked', unit: 'fa-ruler', img: 'fa-image',
-      category: 'fa-layer-group', tag: 'fa-hashtag', isActive: 'fa-power-off',
+      category: 'fa-layer-group', supplierId: 'fa-truck-field', tag: 'fa-hashtag', isActive: 'fa-power-off',
       desc: 'fa-align-left', wholesale: 'fa-boxes-stacked', variants: 'fa-sitemap',
       code: 'fa-ticket', type: 'fa-filter', value: 'fa-coins',
       bankName: 'fa-building-columns', bankAccount: 'fa-money-check-dollar', bankOwner: 'fa-user-tie',
@@ -2771,6 +2796,12 @@ window.oAEd = (t, id) => {
       h += `<div class="relative"><select id="af-${k.key}" class="admin-input cursor-pointer !py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full appearance-none font-bold text-slate-700 dark:text-slate-200 focus:bg-white dark:focus:bg-slate-800 transition-all"><option value="">Pilih Kategori</option>`;
       appData.categories.forEach(c => { h += `<option value="${esc(c.name)}" ${v === c.name ? 'selected' : ''}>${esc(c.name)}</option>`; });
       h += `</select><i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[10px]"></i></div>`;
+    } else if (k.type === 'dynamic_select_supplier') {
+      const suppliers = appData.suppliers || [];
+      h += `<div class="relative"><select id="af-${k.key}" class="admin-input cursor-pointer !py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full appearance-none font-bold text-slate-700 dark:text-slate-200 focus:bg-white dark:focus:bg-slate-800 transition-all"><option value="">-- Tanpa Rekanan Supplier (Beli Bebas) --</option>`;
+      suppliers.forEach(s => { h += `<option value="${esc(s.id)}" ${v === s.id || String(v) === String(s.id) ? 'selected' : ''}>${esc(s.name)} ${s.pic ? `(PIC: ${esc(s.pic)})` : ''}</option>`; });
+      h += `</select><i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[10px]"></i></div>
+      <p class="text-[10px] text-slate-400 font-semibold mt-1 italic">*Tautkan barang ke supplier untuk memudahkan pengelompokan produk dan pencatatan asal barang kulakan.</p>`;
     } else if (k.type === 'unit_selector') {
       const unitList = ['pcs','kg','gram','liter','ml','dus','karton','lusin','gross','pak','roll','lembar','meter','cm','botol','kaleng','bungkus','ikat','renceng','slop','buah','porsi'];
       h += `<div class="flex gap-2">
@@ -3054,7 +3085,16 @@ window.submitAdminForm = async () => {
     return showToast("Data penting wajib diisi!");
   }
   
-  if (activeTab === 'products' && !d.sku) d.sku = 'SKU' + Date.now().toString().slice(-6);
+  if (activeTab === 'products') {
+    if (!d.sku) d.sku = 'SKU' + Date.now().toString().slice(-6);
+    if (d.supplierId) {
+      const supp = (appData.suppliers || []).find(s => String(s.id) === String(d.supplierId));
+      d.supplierName = supp ? supp.name : '';
+    } else {
+      d.supplierId = '';
+      d.supplierName = '';
+    }
+  }
   
   if (!appData[activeTab]) appData[activeTab] = [];
   
@@ -3200,6 +3240,17 @@ window.openQuickEditProduct = (id) => {
         <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-cyan-600"></div>
       </label>
     </div>
+    <!-- Rekanan Asal Supplier Selector -->
+    <div class="p-3 bg-amber-50/60 dark:bg-amber-950/30 rounded-xl border border-amber-200 dark:border-amber-800/60">
+      <label class="block text-xs font-bold text-slate-800 dark:text-white mb-1 flex items-center gap-1.5"><i class="fa-solid fa-truck-field text-amber-500"></i> Rekanan Asal Supplier (Vendor)</label>
+      <div class="relative">
+        <select id="qe-supplier-id" class="admin-input !py-2.5 !text-xs font-bold w-full appearance-none cursor-pointer bg-white dark:bg-slate-800">
+          <option value="">-- Tanpa Supplier Tertaut (Beli Bebas) --</option>
+          ${(appData.suppliers || []).map(s => `<option value="${s.id}" ${String(p.supplierId) === String(s.id) ? 'selected' : ''}>${esc(s.name)} ${s.pic ? `(PIC: ${esc(s.pic)})` : ''}</option>`).join('')}
+        </select>
+        <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[10px]"></i>
+      </div>
+    </div>
   `;
 
   if (!hasVars) {
@@ -3303,6 +3354,16 @@ window.saveQuickEditProduct = async () => {
     // Set base price & cost to lowest variant
     p.price = Math.min(...p.variants.map(v => v.price));
     p.costPrice = Math.min(...p.variants.map(v => v.costPrice || 0));
+  }
+
+  const qeSuppId = getV('qe-supplier-id');
+  if (qeSuppId) {
+    const sObj = (appData.suppliers || []).find(s => String(s.id) === String(qeSuppId));
+    p.supplierId = qeSuppId;
+    p.supplierName = sObj ? sObj.name : '';
+  } else {
+    p.supplierId = '';
+    p.supplierName = '';
   }
 
   sLoad('Menyimpan perubahan...');
