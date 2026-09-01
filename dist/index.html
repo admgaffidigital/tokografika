@@ -9919,12 +9919,13 @@ window.rVarsB = () => {
   let h = `<div class="space-y-3 mb-4">` + tVars.map((v, i) => {
     const profit = (parseFloat(v.price) || 0) - (parseFloat(v.costPrice) || 0);
     const marginPct = (v.price > 0 && profit > 0) ? Math.round((profit / v.price) * 100) : 0;
+    const showProfit = isCostPriceAllowed && (parseFloat(v.costPrice) || 0) > 0;
     return `
     <div class="bg-white dark:bg-slate-800 p-3.5 sm:p-4 rounded-2xl border-2 border-indigo-100 dark:border-indigo-900/40 shadow-sm relative overflow-hidden group">
       <div class="flex items-center justify-between mb-3 border-b-2 border-slate-50 dark:border-slate-700 pb-2">
         <div class="flex items-center gap-2 flex-wrap">
           <span class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-1.5"><i class="fa-solid fa-sitemap"></i> Varian ${i+1}</span>
-          ${isCostPriceAllowed && (parseFloat(v.costPrice) || 0) > 0 ? `<span class="text-[9px] px-2 py-0.5 rounded-full font-black ${profit >= 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-rose-50 text-rose-700'}">Laba: ${fCur(profit)} (${marginPct}%)</span>` : ''}
+          <span id="var-profit-badge-${i}" class="text-[9px] px-2 py-0.5 rounded-full font-black ${profit >= 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-rose-50 text-rose-700'}" style="${showProfit ? '' : 'display:none;'}">Laba: ${fCur(profit)} (${marginPct}%)</span>
         </div>
         <button onclick="rmVar(${i})" class="w-7 h-7 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center" title="Hapus Varian"><i class="fa-solid fa-xmark text-sm"></i></button>
       </div>
@@ -9934,7 +9935,7 @@ window.rVarsB = () => {
         <div class="grid grid-cols-3 gap-2">
           <div class="col-span-2">
             <label class="text-[9px] font-bold text-slate-500 block mb-1">NAMA VARIAN</label>
-            <input placeholder="Cth: 22 Oz / Merah / 1 Kg" class="admin-input !py-2.5 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold w-full" value="${esc(v.name)}" onchange="uVar(${i},'name',this.value)"/>
+            <input placeholder="Cth: 22 Oz / Merah / 1 Kg" class="admin-input !py-2.5 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold w-full" value="${esc(v.name)}" oninput="uVar(${i},'name',this.value)"/>
           </div>
           <div>
             <label class="text-[9px] font-bold text-slate-500 block mb-1">STOK</label>
@@ -9948,7 +9949,7 @@ window.rVarsB = () => {
             <label class="text-[9px] font-bold text-slate-500 block mb-1">HARGA JUAL (Rp)</label>
             <div class="relative">
               <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">Rp</span>
-              <input placeholder="0" type="number" min="0" class="admin-input !py-2 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold" value="${v.price || ''}" oninput="uVar(${i},'price',this.value); rVarsB();"/>
+              <input placeholder="0" type="number" min="0" class="admin-input !py-2 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold" value="${v.price || ''}" oninput="uVar(${i},'price',this.value)"/>
             </div>
           </div>
           ${isCostPriceAllowed ? `
@@ -9956,7 +9957,7 @@ window.rVarsB = () => {
             <label class="text-[9px] font-bold text-slate-500 block mb-1">MODAL / HPP (Rp)</label>
             <div class="relative">
               <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">Rp</span>
-              <input placeholder="0" type="number" min="0" class="admin-input !py-2 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold" value="${v.costPrice || ''}" oninput="uVar(${i},'costPrice',this.value); rVarsB();"/>
+              <input placeholder="0" type="number" min="0" class="admin-input !py-2 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold" value="${v.costPrice || ''}" oninput="uVar(${i},'costPrice',this.value)"/>
             </div>
           </div>` : ''}
         </div>
@@ -9965,13 +9966,13 @@ window.rVarsB = () => {
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div class="relative flex items-center gap-1">
             <div class="relative flex-1">
-              <input id="var-sku-${i}" placeholder="SKU Barcode" class="admin-input !py-2.5 !pr-7 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-mono text-xs w-full font-bold" value="${esc(v.sku||'')}" onchange="uVar(${i},'sku',this.value)"/>
+              <input id="var-sku-${i}" placeholder="SKU Barcode" class="admin-input !py-2.5 !pr-7 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-mono text-xs w-full font-bold" value="${esc(v.sku||'')}" oninput="uVar(${i},'sku',this.value)"/>
               <button type="button" onclick="openCameraScanner('var-sku-${i}')" class="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-slate-400 hover:text-emerald-600 rounded transition-all" title="Scan Barcode"><i class="fa-solid fa-qrcode text-[10px]"></i></button>
             </div>
             <button type="button" onclick="generateAutoVarSku(${i})" class="px-2.5 py-2.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white border border-indigo-200 dark:border-indigo-800 rounded-xl font-bold text-[10px] shrink-0 transition-all flex items-center gap-1" title="Auto SKU Varian"><i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> <span>Auto</span></button>
           </div>
           <div class="flex gap-1.5">
-            <input id="var-img-${i}" placeholder="URL Gambar Varian" class="admin-input !py-2.5 !text-xs flex-1 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 min-w-0" value="${esc(v.img||'')}" onchange="uVar(${i},'img',this.value)"/>
+            <input id="var-img-${i}" placeholder="URL Gambar Varian" class="admin-input !py-2.5 !text-xs flex-1 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 min-w-0" value="${esc(v.img||'')}" oninput="uVar(${i},'img',this.value)"/>
             <label onclick="if(window.AppInventor){ event.preventDefault(); window.AppInventor.setWebViewString('BUKA_GALERI|||var-img-${i}|||${i}'); }" class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 border border-emerald-200 dark:border-emerald-800 rounded-xl w-10 flex items-center justify-center cursor-pointer hover:bg-emerald-600 hover:text-white transition-all shrink-0"><i class="fa-solid fa-image text-[11px]"></i><input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(this, 'var-img-${i}', ${i})" /></label>
           </div>
         </div>
@@ -9985,7 +9986,24 @@ window.rVarsB = () => {
 window.addVar = () => { tVars.push({ name: '', price: 0, costPrice: 0, stock: 100, sku: '', img: '' }); rVarsB(); };
 window.rmVar = i => { tVars.splice(i, 1); rVarsB(); };
 window.uVar = (i, k, v) => { 
+  if (!tVars[i]) return;
   tVars[i][k] = (k === 'price' || k === 'costPrice' || k === 'stock') ? parseFloat(v) || 0 : (k === 'img' ? fixD(v) : v); 
+  if (k === 'price' || k === 'costPrice') {
+    const badge = el(`var-profit-badge-${i}`);
+    if (badge && window.canViewCostPrice()) {
+      const pVal = parseFloat(tVars[i].price) || 0;
+      const cVal = parseFloat(tVars[i].costPrice) || 0;
+      const profit = pVal - cVal;
+      const marginPct = (pVal > 0 && profit > 0) ? Math.round((profit / pVal) * 100) : 0;
+      if (cVal > 0) {
+        badge.className = `text-[9px] px-2 py-0.5 rounded-full font-black ${profit >= 0 ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-rose-50 text-rose-700'}`;
+        badge.innerText = `Laba: ${fCur(profit)} (${marginPct}%)`;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  }
 };
 
 window.rWholB = () => {
@@ -9994,11 +10012,11 @@ window.rWholB = () => {
     <div class="flex-1 flex gap-2 items-center relative z-10">
       <div class="relative w-1/3">
         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-medium text-amber-500">>=</span>
-        <input type="number" placeholder="Min. Qty" class="admin-input !py-2.5 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700" value="${w.minQty}" onchange="uWhol(${i},'minQty',this.value)"/>
+        <input type="number" placeholder="Min. Qty" class="admin-input !py-2.5 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold" value="${w.minQty}" oninput="uWhol(${i},'minQty',this.value)"/>
       </div>
       <div class="relative flex-1">
         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-medium text-amber-500">Rp</span>
-        <input type="number" placeholder="Harga Satuan Grosir" class="admin-input !py-2.5 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700" value="${w.price}" onchange="uWhol(${i},'price',this.value)"/>
+        <input type="number" placeholder="Harga Satuan Grosir" class="admin-input !py-2.5 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold" value="${w.price}" oninput="uWhol(${i},'price',this.value)"/>
       </div>
     </div>
     <button onclick="rmWhol(${i})" class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-500 hover:bg-rose-500 hover:text-white transition-all shrink-0 relative z-10 flex items-center justify-center shadow-sm"><i class="fa-solid fa-trash text-[11px]"></i></button>
