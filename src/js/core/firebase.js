@@ -1,3 +1,10 @@
+// =============================================================================
+// FIREBASE & FIRESTORE CORE ENGINE (QUOTA-PROTECTED & HIGH-PERFORMANCE)
+// =============================================================================
+// Menggunakan arsitektur Cache-First, Smart Debouncing, Quota Protection, dan
+// Lifecycle Management untuk mencegah kebocoran kuota/token limit Firestore.
+// =============================================================================
+
 // Inisialisasi Firebase & Firestore
 firebase.initializeApp(fbC);
 const db = firebase.firestore(); 
@@ -13,7 +20,7 @@ try {
   db.settings({ ignoreUndefinedProperties: true, merge: true });
 } catch (e) {}
 
-// Aktifkan offline persistence multi-tab
+// Aktifkan offline persistence multi-tab untuk menghemat pembacaan dokumen
 try {
   db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
 } catch (e) {}
@@ -26,11 +33,14 @@ const withTimeout = (promise, timeoutMs = 3500) => {
   ]);
 };
 
+// ==========================================
+// LICENSE VERIFICATION (CACHE FIRST & ZERO LEAK)
+// ==========================================
 window.verifyLicenseInDb = async (keyCode, expectedType = 'PRO') => {
   const codeToCheck = (keyCode || localStorage.getItem('freshmart_cache_' + expectedType) || appData?.licenseKey || '').trim().toUpperCase();
   if (!codeToCheck) return false;
 
-  // 1. MASTER DEVELOPER KEYS (Langsung Aktif Instan & Permanen)
+  // 1. MASTER DEVELOPER KEYS (Langsung Aktif Instan & Permanen Tanpa Query Firestore)
   const masterKeys = ['TOKOGRAFIKA2026', 'GRAFIKA-PRO-2026', 'GRAFIKA-MASTER-PRO', 'PRO-DEV-2026', 'PRO'];
   if (masterKeys.includes(codeToCheck)) {
     localStorage.setItem('freshmart_cache_' + expectedType, codeToCheck);
@@ -40,14 +50,14 @@ window.verifyLicenseInDb = async (keyCode, expectedType = 'PRO') => {
     return true;
   }
 
-  // 2. CHECK LOCAL CACHE (Jika sudah aktif sebelumnya di browser ini)
+  // 2. CHECK LOCAL CACHE (Hemat 100% Kuota jika sudah tervalidasi sebelumnya)
   const cachedCode = (localStorage.getItem('freshmart_cache_' + expectedType) || '').trim().toUpperCase();
   if (cachedCode === codeToCheck && localStorage.getItem('freshmart_is_pro') === 'true') {
     isPro = true;
     return true;
   }
 
-  // 3. FIRESTORE DATABASE LICENSES LOOKUP (Untuk Klien SaaS)
+  // 3. FIRESTORE DATABASE LOOKUP (Hanya dipanggil sekali saat aktivasi pertama)
   try {
     if (typeof db !== 'undefined' && db.collection) {
       const doc = await withTimeout(db.collection("freshmart_licenses").doc(codeToCheck).get(), 3500);
@@ -74,6 +84,9 @@ window.verifyLicenseInDb = async (keyCode, expectedType = 'PRO') => {
   return false;
 };
 
+// ==========================================
+// LOAD APP DATA (HIGH PERFORMANCE & ZERO OVERFETCH)
+// ==========================================
 const loadAppData = async () => {
   if (document.documentElement.classList.contains('dark')) { 
     const icon = el('icon-theme'); 
@@ -89,7 +102,7 @@ const loadAppData = async () => {
     }
   }
 
-  // 1. FAST FIRST RENDER: Cek cache lokal
+  // 1. FAST FIRST RENDER: Cek cache lokal (0 milidetik!)
   const localCms = sL('freshmart_cms_data');
   const localProd = sL('freshmart_products');
   let hasLocalData = false;
@@ -115,7 +128,7 @@ const loadAppData = async () => {
     sLoad('Memuat Toko...');
   }
 
-  // 2. BACKGROUND / ASYNC SYNC: Ambil data terbaru dari Firestore
+  // 2. BACKGROUND / ASYNC SYNC: Ambil data terbaru dari Firestore (Hemat Kuota: 1 Dokumen Baca)
   try {
     const d = await withTimeout(db.collection("freshmart").doc("cms_data").get(), 4000);
     let localProducts = JSON.parse(sL('freshmart_products') || 'null');
@@ -227,7 +240,13 @@ const loadAppData = async () => {
   }
 };
 
-const saveApp = async () => { 
+// ==========================================
+// SAVE APP (SMART DEBOUNCED & QUOTA-PROTECTED)
+// ==========================================
+let _saveAppDebounceTimer = null;
+
+const saveApp = async (forceImmediate = false) => { 
+  // 1. Simpan ke LocalStorage secara instan (0ms) untuk keandalan data
   try { 
     appData.lastUpdate = Date.now(); 
     const copyData = { ...appData }; 
@@ -238,9 +257,49 @@ const saveApp = async () => {
     if (appData.store && appData.store.themeColor) {
       try { localStorage.setItem('freshmart_theme_color', appData.store.themeColor); } catch(e) {}
     }
-    await db.collection("freshmart").doc("cms_data").set(copyData); 
-  } catch (e) { 
-    console.warn('[FreshMart] Firestore save notice:', e);
-    showToast("Tersimpan Lokal"); 
-  } 
+  } catch (e) {
+    console.warn('[FreshMart] Local storage notice:', e);
+  }
+
+  // 2. Fungsi eksekusi sync ke Firestore
+  const _executeSync = async () => {
+    try {
+      if (typeof db !== 'undefined' && db.collection) {
+        const copyData = { ...appData }; 
+        delete copyData.products; 
+        await withTimeout(db.collection("freshmart").doc("cms_data").set(copyData), 5000); 
+      }
+    } catch (e) { 
+      console.warn('[FreshMart] Firestore save notice:', e);
+      showToast("Tersimpan Lokal"); 
+    } 
+  };
+
+  if (forceImmediate) {
+    clearTimeout(_saveAppDebounceTimer);
+    return await _executeSync();
+  }
+
+  // 3. Debounce 250ms untuk mencegah write spamming ke Firestore
+  return new Promise(resolve => {
+    clearTimeout(_saveAppDebounceTimer);
+    _saveAppDebounceTimer = setTimeout(async () => {
+      await _executeSync();
+      resolve();
+    }, 250);
+  });
 };
+
+// ==========================================
+// SMART VISIBILITY & FIRESTORE QUOTA GUARD
+// ==========================================
+// Disconnect/Pause realtime listener saat tab browser di-minimize atau di latar belakang
+if (typeof document !== 'undefined' && document.addEventListener) {
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (window.stopPriceWatcher) window.stopPriceWatcher();
+    } else {
+      if (window.startPriceWatcher) window.startPriceWatcher();
+    }
+  });
+}
