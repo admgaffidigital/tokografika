@@ -1173,6 +1173,44 @@ const buyerGuideTopicsData = {
         </div>
       </div>
     `
+  },
+  pwa_install: {
+    title: 'Panduan Install Aplikasi Toko di Layar HP (Android & iOS)',
+    icon: 'fa-mobile-screen-button',
+    content: `
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl border bg-purple-50/60 dark:bg-purple-950/30 border-purple-200 dark:border-purple-800/60">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2 text-purple-700 dark:text-purple-400">
+            <i class="fa-solid fa-mobile-screen"></i> Belanja Lebih Praktis & Cepat Langsung dari Layar HP
+          </h4>
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Anda dapat memasang toko online kami langsung ke layar utama smartphone (Homescreen) tanpa perlu download dari Play Store atau App Store. Bebas memori, cepat, dan ringan!
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-2">
+            <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs"><i class="fa-brands fa-android text-emerald-500 text-sm"></i> Pengguna Android (Chrome):</h5>
+            <ol class="list-decimal list-inside text-xs text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
+              <li>Buka website toko di browser <b>Google Chrome</b>.</li>
+              <li>Ketuk banner <b>"Install Aplikasi"</b> di bagian bawah layar atau tekan menu titik 3 di pojok kanan atas Chrome.</li>
+              <li>Pilih opsi <b>"Tambahkan ke Layar Utama" / "Install Aplikasi"</b>.</li>
+              <li>Ikon toko akan langsung muncul di menu HP Anda dan siap digunakan belanja kapan saja!</li>
+            </ol>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-2">
+            <h5 class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs"><i class="fa-brands fa-apple text-slate-800 dark:text-white text-sm"></i> Pengguna iPhone (Safari):</h5>
+            <ol class="list-decimal list-inside text-xs text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
+              <li>Buka website toko di browser <b>Safari</b>.</li>
+              <li>Ketuk tombol <b>Share</b> (ikon kotak dengan tanda panah ke atas di bilah bawah Safari).</li>
+              <li>Gulir ke bawah dan pilih <b>"Add to Home Screen" (Tambah ke Layar Utama)</b>.</li>
+              <li>Ketuk <b>Add</b> di pojok kanan atas. Aplikasi toko siap dibuka dalam mode layar penuh!</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    `
   }
 };
 

@@ -4220,6 +4220,116 @@ const guideTopicsData = {
         </div>
       </div>
     `
+  },
+  pricetag: {
+    title: 'Panduan Studio Cetak Price Tag, Label Rak Gondola & Barcode A4',
+    icon: 'fa-tags',
+    content: `
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl border bg-rose-50/60 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800/60">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2 text-rose-700 dark:text-rose-400">
+            <i class="fa-solid fa-tags"></i> Cetak Label Harga Rak & Barcode Presisi Standar Minimarket
+          </h4>
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Fitur <b>Pricetag & Label Barcode Studio</b> memudahkan Anda mencetak label harga rak gondola toko, stiker barcode varian produk, serta label promo grosir pada lembaran <b>Kertas A4 Potret</b> standar (kompatibel stiker Tom & Jerry No. 108 / Universal Grid) maupun printer thermal kasir roll.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-2">
+            <span class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs">
+              <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-rose-600">1</span>
+              Pilih Produk & Atur Jumlah Salinan:
+            </span>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Buka menu <b>Pricetag Studio</b> atau klik tombol cetak label pada kartu produk. Anda dapat memilih produk satu per satu, memilih <b>+ Semua Produk</b>, atau filter cepat <b>+ Per Kategori</b> / <b>+ Per Supplier</b>. Tentukan jumlah salinan label per item (misal: 2x untuk rak depan & belakang).
+            </p>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-2">
+            <span class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs">
+              <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-indigo-600">2</span>
+              3 Opsi Grid Kertas A4 Potret:
+            </span>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Pilih format kertas yang sesuai:
+              <br>&bull; <b>A4 3x8 (24 Label/Lembar)</b>: Standar rak minimarket universal (Tom & Jerry 108).
+              <br>&bull; <b>A4 2x6 (12 Label/Lembar)</b>: Format besar untuk rak gondola utama supermarket.
+              <br>&bull; <b>A4 4x10 (40 Label/Lembar)</b>: Format stiker barcode mini kompak.
+            </p>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-2">
+            <span class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs">
+              <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-emerald-600">3</span>
+              3 Gaya Desain Label Profesional:
+            </span>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              &bull; <b>Standar Gondola</b>: Harga jual besar tebal, nama toko, tanggal cetak, dan barcode SKU.
+              <br>&bull; <b>Grosir & Promo</b>: Dilengkapi kotak rincian harga eceran vs tier potongan harga grosir.
+              <br>&bull; <b>Kompak Mini</b>: Barcode di tengah dengan harga ringkas untuk stiker kemasan kecil.
+            </p>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-2">
+            <span class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs">
+              <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-amber-600">4</span>
+              Auto-Scaling Font & Barcode Vektor:
+            </span>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Dilengkapi kecerdasan <b>Auto-Scale Font</b>: teks nama produk yang panjang otomatis menyesuaikan ukuran font agar pas dan tidak terpotong atau tumpang tindih. Barcode dihasilkan dalam format vektor SVG tajam 100% tanpa pecah.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+          <span class="font-bold text-slate-800 dark:text-white text-xs block"><i class="fa-solid fa-print text-emerald-500 mr-1"></i> Tips Mencetak ke Kertas Stiker:</span>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+            Pada dialog cetak browser (Ctrl+P / Command+P), pastikan opsi <b>Paper Size = A4</b>, <b>Layout = Portrait (Tegak)</b>, dan <b>Margins = None / Default</b>. Kertas stiker label Tom & Jerry Anda akan tercetak dengan presisi sempurna!
+          </p>
+        </div>
+      </div>
+    `
+  },
+  backup_restore: {
+    title: 'Panduan Backup Data Toko, Ekspor JSON & Pemulihan Cloud',
+    icon: 'fa-database',
+    content: `
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl border bg-indigo-50/60 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-800/60">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2 text-indigo-700 dark:text-indigo-400">
+            <i class="fa-solid fa-shield-halved"></i> Keamanan Data Bisnis Toko Anda Terjamin 100%
+          </h4>
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Data transaksi, katalog produk, stok gudang, buku hutang supplier, dan laporan keuangan toko Anda terlindungi dengan sinkronisasi cloud Firebase/Firestore, caching lokal cepat, serta fitur ekspor cadangan file JSON manual yang bisa diunduh kapan saja.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-download text-emerald-500"></i> Backup Manual JSON</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Masuk ke menu <b>Pengaturan Toko</b> lalu klik tombol <b>Backup Data (JSON)</b>. File database toko lengkap akan tersimpan di memori perangkat Anda sebagai arsip aman.</p>
+          </div>
+
+          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-upload text-indigo-500"></i> Restore / Pulihkan Data</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Saat berganti perangkat baru (HP / Komputer Kasir), klik tombol <b>Restore Data</b> lalu pilih file backup JSON Anda. Seluruh data seketika pulih 100% tanpa ada yang hilang.</p>
+          </div>
+
+          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-cloud text-blue-500"></i> Sinkronisasi Cloud Aman</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Sistem dilengkapi arsitektur hemat token & anti kebocoran kuota dengan caching cerdas. Data tersimpan real-time tanpa membebani kuota internet toko.</p>
+          </div>
+        </div>
+
+        <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+          <span class="font-bold text-slate-800 dark:text-white text-xs block"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Rekomendasi Backup:</span>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+            Disarankan untuk mengunduh backup file JSON secara berkala (misal: setiap akhir minggu atau setelah rekap stok opname bulanan) dan menyimpannya di Google Drive / Flashdisk Anda.
+          </p>
+        </div>
+      </div>
+    `
   }
 };
 

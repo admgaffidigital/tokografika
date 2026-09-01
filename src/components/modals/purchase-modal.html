@@ -15,9 +15,14 @@
           <p class="text-[10px] text-slate-400 font-medium">Tambah stok otomatis & kelola tagihan supplier</p>
         </div>
       </div>
-      <button type="button" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition-colors" onclick="closePurchaseModal()" title="Tutup">
-        <i class="fa-solid fa-xmark text-sm"></i>
-      </button>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button type="button" class="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 flex items-center justify-center transition-colors text-xs" onclick='openCmsGuide("purchases")' title="Panduan Pembelian Supplier">
+          <i class="fa-solid fa-circle-question text-amber-500"></i>
+        </button>
+        <button type="button" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition-colors" onclick="closePurchaseModal()" title="Tutup">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
     </div>
 
     <!-- Body (Scrollable) -->

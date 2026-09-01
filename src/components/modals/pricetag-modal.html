@@ -1,4 +1,4 @@
-﻿<!-- ========================================================================= -->
+<!-- ========================================================================= -->
 <!-- MODAL: PRICETAG & LABEL BARCODE STUDIO (RESPONSIVE • THEME-SYNC • A4)   -->
 <!-- ========================================================================= -->
 <div class='fixed inset-0 z-[85] bg-slate-950/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4' id='pricetag-modal' onclick='if(event.target===this) closePricetagModal()'>
@@ -19,6 +19,9 @@
         </div>
       </div>
       <div class='flex items-center gap-2 shrink-0'>
+        <button type='button' onclick='openCmsGuide("pricetag")' class='w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-all border border-white/20 shadow-sm active:scale-95' title='Buku Panduan Pricetag'>
+          <i class='fa-solid fa-circle-question text-amber-300 text-sm'></i>
+        </button>
         <button type='button' onclick='printPricetags()' class='hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-white/95 hover:bg-white font-extrabold text-xs shadow-lg transition-all active:scale-95' style='color:var(--clr-p,#059669);'>
           <i class='fa-solid fa-print'></i> Cetak Sekarang
         </button>
