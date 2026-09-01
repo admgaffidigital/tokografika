@@ -2593,25 +2593,25 @@ window.rAdmItms = t => {
       s.innerHTML = `
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
         <!-- Tab 1: Semua -->
-        <div onclick="window.aPrtSort='all';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('all')}">
+        <div onclick="window.adminProductRenderLimit=30;window.aPrtSort='all';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('all')}">
           <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-boxes-stacked"></i></div>
           <div class="min-w-0"><p class="text-[9px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">Semua</p><h4 class="text-base sm:text-lg font-black text-slate-800 dark:text-white leading-none">${totalAll}</h4></div>
         </div>
 
         <!-- Tab 2: Aktif & Ready -->
-        <div onclick="window.aPrtSort='active';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('active')}">
+        <div onclick="window.adminProductRenderLimit=30;window.aPrtSort='active';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('active')}">
           <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-check"></i></div>
           <div class="min-w-0"><p class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider truncate">Aktif Ready</p><h4 class="text-base sm:text-lg font-black text-emerald-700 dark:text-emerald-300 leading-none">${countActive}</h4></div>
         </div>
 
         <!-- Tab 3: Stok Kosong (Tampil) -->
-        <div onclick="window.aPrtSort='empty';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('empty')}">
+        <div onclick="window.adminProductRenderLimit=30;window.aPrtSort='empty';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('empty')}">
           <div class="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-box-open"></i></div>
           <div class="min-w-0"><p class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider truncate">Stok Kosong</p><h4 class="text-base sm:text-lg font-black text-amber-700 dark:text-amber-300 leading-none">${countEmpty}</h4></div>
         </div>
 
         <!-- Tab 4: Nonaktif (Disembunyikan) -->
-        <div onclick="window.aPrtSort='inactive';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('inactive')}">
+        <div onclick="window.adminProductRenderLimit=30;window.aPrtSort='inactive';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('inactive')}">
           <div class="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-eye-slash"></i></div>
           <div class="min-w-0"><p class="text-[9px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider truncate">Nonaktif</p><h4 class="text-base sm:text-lg font-black text-rose-700 dark:text-rose-300 leading-none">${countInactive}</h4></div>
         </div>
@@ -2653,7 +2653,13 @@ window.rAdmItms = t => {
   
   if (!i.length) return setH('admin-list-container', `<div class="text-center py-16 text-slate-400 font-bold bg-white dark:bg-slate-800 rounded-2xl border-2 border-slate-200 dark:border-slate-700 shadow-sm"><i class="fa-solid fa-folder-open text-4xl mb-3 opacity-40 block"></i>Data tidak ditemukan</div>`);
 
-  setH('admin-list-container', i.map(x => {
+  // Progressive rendering limit for ultra-fast INP & 60fps responsiveness
+  window.adminProductRenderLimit = window.adminProductRenderLimit || 30;
+  const isProductTab = t === 'products';
+  const renderList = isProductTab ? i.slice(0, window.adminProductRenderLimit) : i;
+  const hasMore = isProductTab && i.length > window.adminProductRenderLimit;
+
+  const itemsHtml = renderList.map(x => {
     let isP = t === 'products';
     let isOff = isP && (x.isActive === 'false' || x.isActive === false);
     let isUnlimited = isP && ((appData.store?.stockMode === 'unlimited') || x.isUnlimited === true || x.isUnlimited === 'true');
@@ -2750,7 +2756,20 @@ window.rAdmItms = t => {
         </button>
       </div>
     </div>`;
-  }).join(''));
+  }).join('');
+
+  const loadMoreHtml = hasMore ? `
+    <div class="pt-4 pb-8 flex flex-col sm:flex-row items-center justify-center gap-2.5">
+      <button type="button" onclick="window.adminProductRenderLimit = (window.adminProductRenderLimit || 30) + 40; rAdmItms('products')" class="px-6 py-3 rounded-2xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-white border-2 border-slate-200 dark:border-slate-700 font-bold text-xs shadow-xs hover:shadow active:scale-95 transition-all flex items-center gap-2">
+        <i class="fa-solid fa-angles-down text-emerald-600"></i> Tampilkan Lebih Banyak (${renderList.length} dari ${i.length} Produk)
+      </button>
+      <button type="button" onclick="window.adminProductRenderLimit = ${i.length}; rAdmItms('products')" class="px-4 py-3 rounded-2xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 text-slate-600 dark:text-slate-300 font-bold text-xs transition-all">
+        Muat Semua (${i.length})
+      </button>
+    </div>
+  ` : '';
+
+  setH('admin-list-container', itemsHtml + loadMoreHtml);
 };
 
 window.oAAdd = () => { if (!isAdm) return; oAEd(cTab, null); };
