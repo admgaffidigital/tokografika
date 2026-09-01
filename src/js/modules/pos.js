@@ -270,10 +270,10 @@ const renderPosCategories = () => {
       const isSelected = posActiveCategory === cat.name;
       return `
         <button type="button" onclick="selectPosCategory('${esc(cat.name)}')" 
-          class="btn-solid no-glass px-4 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all shrink-0 flex items-center gap-2 active:scale-95 shadow-xs ${isSelected ? '!bg-white !text-slate-900 font-black shadow-md ring-2 ring-white/60' : '!bg-white/20 hover:!bg-white/30 !text-white border border-white/25'}" style="${isSelected ? 'background-color: #ffffff !important; color: #0f172a !important;' : 'background-color: rgba(255,255,255,0.2) !important; color: #ffffff !important;'}">
-          <i class="fa-solid ${cat.icon} text-xs" style="color: ${isSelected ? 'var(--clr-p)' : '#ffffff'} !important;"></i>
+          class="btn-solid no-glass px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 active:scale-95 shadow-xs ${isSelected ? '!bg-white !text-slate-900 font-black shadow-sm' : '!bg-white/15 hover:!bg-white/25 !text-white/95 border border-white/20'}" style="${isSelected ? 'background-color: #ffffff !important; color: #0f172a !important;' : 'background-color: rgba(255,255,255,0.18) !important; color: #ffffff !important;'}">
+          <i class="fa-solid ${cat.icon} text-xs" style="color: ${isSelected ? 'var(--clr-p)' : 'rgba(255,255,255,0.85)'} !important;"></i>
           <span style="color: ${isSelected ? '#0f172a' : '#ffffff'} !important; font-weight: ${isSelected ? '900' : '700'};">${esc(cat.name)}</span>
-          <span class="text-[10px] px-2 py-0.5 rounded-full font-black ml-0.5" style="background-color: ${isSelected ? '#f1f5f9' : 'rgba(0,0,0,0.3)'} !important; color: ${isSelected ? '#0f172a' : '#ffffff'} !important;">${cat.count}</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full font-black ml-0.5" style="background-color: ${isSelected ? '#e2e8f0' : 'rgba(0,0,0,0.25)'} !important; color: ${isSelected ? '#0f172a' : '#ffffff'} !important;">${cat.count}</span>
         </button>
       `;
     }).join('');
@@ -435,48 +435,48 @@ const renderPosProductCardGrid = (p) => {
   const isGrosir = (p.wholesalePrice > 0 && p.wholesaleMinQty > 0) || (p.wholesale && p.wholesale.length > 0);
 
   return `
-    <div class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border ${isOutOfStock ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-200/90 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 hover:shadow-xl'} overflow-hidden transition-all duration-200 cursor-pointer group flex flex-col justify-between active:scale-[0.98] shadow-xs hover:-translate-y-0.5" onclick="${isOutOfStock ? '' : (hasVariants ? `openPosVariantModal('${esc(p.id)}')` : `addToCartPos('${esc(p.id)}', null, 1)`)}" title="${esc(p.name)}">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isOutOfStock ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-200/90 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 hover:shadow-lg'} overflow-hidden transition-all duration-200 cursor-pointer group flex flex-col justify-between active:scale-[0.98] shadow-xs" onclick="${isOutOfStock ? '' : (hasVariants ? `openPosVariantModal('${esc(p.id)}')` : `addToCartPos('${esc(p.id)}', null, 1)`)}" title="${esc(p.name)}">
       
-      <!-- Image Box with Badges -->
-      <div class="relative aspect-square bg-slate-50 dark:bg-slate-800/60 overflow-hidden m-1.5 sm:m-2.5 rounded-xl sm:rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-center">
+      <!-- Image Container -->
+      <div class="relative aspect-square bg-slate-50 dark:bg-slate-800/50 overflow-hidden m-2 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-center">
         ${imgUrl ? `<img src="${esc(imgUrl)}" alt="${esc(p.name)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="if(window.imgErrRetry) window.imgErrRetry(this, 'No Image', 400); else this.style.display='none';"/>` : `<div class="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600"><i class="fa-solid fa-image text-2xl sm:text-3xl"></i></div>`}
         
         <!-- Cart Counter Badge (Floating Top Right) -->
         ${cartQty > 0 ? `
-          <div class="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 bg-emerald-600 text-white text-[9px] sm:text-xs font-black px-1.5 sm:px-2 py-0.5 rounded-lg sm:rounded-xl shadow-md border border-white/50 flex items-center gap-1">
-            <i class="fa-solid fa-check text-[8px] sm:text-[9px]"></i>
+          <div class="absolute top-1.5 right-1.5 bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded-lg shadow-md border border-white/40 flex items-center gap-1">
+            <i class="fa-solid fa-check text-[9px]"></i>
             <span>${cartQty}</span>
           </div>` : ''}
 
         <!-- Wholesale Badge (Top Left) -->
-        ${isGrosir ? `<div class="absolute top-1 left-1 sm:top-1.5 sm:left-1.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[7px] sm:text-[9px] font-black px-1.5 py-0.5 rounded-md sm:rounded-lg shadow-xs tracking-wider uppercase">Grosir</div>` : ''}
+        ${isGrosir ? `<div class="absolute top-1.5 left-1.5 bg-amber-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-md shadow-xs uppercase tracking-wider">Grosir</div>` : ''}
 
         <!-- Variant Count Badge (Bottom Right) -->
         ${hasVariants ? `
-          <div class="absolute bottom-1 right-1 sm:bottom-1.5 sm:right-1.5 bg-slate-900/85 text-white text-[7px] sm:text-[9px] font-extrabold px-1.5 py-0.5 rounded-md sm:rounded-lg border border-white/20 backdrop-blur-xs flex items-center gap-1">
-            <i class="fa-solid fa-layer-group text-[7px] sm:text-[8px]"></i>
+          <div class="absolute bottom-1.5 right-1.5 bg-slate-900/80 text-white text-[8px] sm:text-[9px] font-bold px-1.5 py-0.5 rounded-md border border-white/20 backdrop-blur-xs flex items-center gap-1">
+            <i class="fa-solid fa-layer-group text-[8px]"></i>
             <span>${p.variants.length} Varian</span>
           </div>` : ''}
 
         <!-- Out of Stock Overlay -->
-        ${isOutOfStock ? `<div class="absolute inset-0 bg-white/70 dark:bg-black/70 backdrop-blur-xs flex items-center justify-center"><span class="text-[9px] sm:text-[10px] font-black text-rose-600 bg-white dark:bg-slate-900 px-2 py-0.5 rounded-full shadow-md">Habis</span></div>` : ''}
+        ${isOutOfStock ? `<div class="absolute inset-0 bg-white/75 dark:bg-black/75 backdrop-blur-xs flex items-center justify-center"><span class="text-[10px] font-black text-rose-600 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-full shadow-md">Habis</span></div>` : ''}
       </div>
 
       <!-- Info & Price Content -->
-      <div class="p-2 sm:p-3 pt-0 sm:pt-1 flex flex-col flex-1 justify-between">
+      <div class="px-2.5 pb-2.5 sm:px-3 sm:pb-3 flex flex-col flex-1 justify-between">
         <div>
-          <h4 class="text-[11px] sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 leading-tight sm:leading-snug line-clamp-2 mb-0.5 sm:mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
-          <p class="text-[9px] sm:text-[10px] font-semibold text-slate-400 dark:text-slate-500 truncate">${esc(p.category || 'Umum')}${p.sku ? ' · ' + esc(p.sku) : ''}</p>
+          <h4 class="text-xs sm:text-[13px] font-bold text-slate-800 dark:text-slate-100 leading-snug line-clamp-2 min-h-[2rem] sm:min-h-[2.35rem] group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
+          <p class="text-[9px] sm:text-[10px] font-medium text-slate-400 dark:text-slate-500 truncate mt-0.5">${esc(p.category || 'Umum')}${p.sku ? ' • ' + esc(p.sku) : ''}</p>
         </div>
 
-        <div class="mt-1.5 sm:mt-2.5 pt-1.5 sm:pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-1">
+        <div class="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-end justify-between gap-1">
           <div class="min-w-0">
-            ${isUnlimited ? `<span class="text-[8px] sm:text-[9px] font-bold text-cyan-600 dark:text-cyan-400 block leading-tight"><i class="fa-solid fa-infinity text-[8px]"></i> Stok Bebas</span>` : (hasVariants ? `<span class="text-[8px] sm:text-[9px] font-bold text-slate-400 block leading-tight">Mulai · Stok ${totalStock}</span>` : `<span class="text-[8px] sm:text-[9px] font-bold ${stock > 5 ? 'text-slate-400' : (stock > 0 ? 'text-amber-500 font-black' : 'text-rose-500 font-black')} block leading-tight">Stok ${stock} ${esc(p.unit || 'pcs')}</span>`)}
-            <span class="text-xs sm:text-base font-black text-emerald-600 dark:text-emerald-400 leading-none">${fCur(price)}</span>
+            ${isUnlimited ? `<span class="text-[9px] font-bold text-slate-400 block leading-tight">∞ Stok Bebas</span>` : (hasVariants ? `<span class="text-[9px] font-medium text-slate-400 block leading-tight">Stok ${totalStock}</span>` : `<span class="text-[9px] font-semibold ${stock > 5 ? 'text-slate-400' : (stock > 0 ? 'text-amber-500 font-bold' : 'text-rose-500 font-bold')} block leading-tight">Stok ${stock} ${esc(p.unit || 'pcs')}</span>`)}
+            <div class="text-xs sm:text-[15px] font-black text-emerald-600 dark:text-emerald-400 leading-tight mt-0.5">${fCur(price)}</div>
           </div>
           
-          <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-xs shrink-0">
-            <i class="fa-solid fa-plus text-[10px] sm:text-[11px]"></i>
+          <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-xs shrink-0">
+            <i class="fa-solid fa-plus text-[10px] sm:text-xs"></i>
           </div>
         </div>
       </div>
