@@ -1,0 +1,83 @@
+<!-- ========================================================================= -->
+<!-- MODAL: PRODUCT SHARE DIALOG                                              -->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[80] bg-slate-900/70 hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4' id='share-product-modal' onclick='if(event.target===this) closeShareModal()'>
+  <div class='w-full max-w-md bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl max-h-[90dvh] overflow-y-auto transform translate-y-full sm:translate-y-0 transition-transform duration-300 hide-scrollbar shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col relative' id='share-product-content'>
+    
+    <!-- Glass Header -->
+    <div class='glass-header sticky top-0 right-0 left-0 z-20 px-4 sm:px-5 py-3 flex items-center justify-between shadow-md shrink-0 sm:rounded-t-2xl' style='background-color:var(--clr-p)!important;'>
+      <div class='flex items-center gap-2 min-w-0 flex-1 text-white'>
+        <div class='w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-white shrink-0 border border-white/30 backdrop-blur-sm'>
+          <i class='fa-solid fa-share-nodes text-sm text-white'></i>
+        </div>
+        <div>
+          <span class='text-sm font-bold text-white tracking-tight block leading-tight'>Bagikan Produk</span>
+          <span class='text-[10px] text-white/80 font-medium block'>Kirim detail produk & link pembelian</span>
+        </div>
+      </div>
+      <button class='w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-600/90 text-white transition-all border border-white/30 shadow-sm backdrop-blur-sm active:scale-95' onclick='closeShareModal()' title='Tutup'>
+        <i class='fa-solid fa-xmark text-sm text-white'></i>
+      </button>
+    </div>
+
+    <div class='p-4 sm:p-5 space-y-4'>
+      <!-- Product Preview Card -->
+      <div class='bg-slate-50 dark:bg-slate-900/70 rounded-2xl p-3 sm:p-3.5 border border-slate-200 dark:border-slate-700/80 flex gap-3 sm:gap-3.5 items-start'>
+        <div class='w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-slate-200 dark:bg-slate-800 overflow-hidden shrink-0 border border-slate-200 dark:border-slate-700 relative'>
+          <img id='share-preview-img' src='' alt='Foto Produk' class='w-full h-full object-cover'/>
+        </div>
+        <div class='flex-1 min-w-0 flex flex-col justify-between self-stretch'>
+          <div>
+            <h4 id='share-preview-title' class='text-sm sm:text-base font-bold text-slate-900 dark:text-white line-clamp-1 leading-snug'>Nama Produk</h4>
+            <div id='share-preview-price' class='text-emerald-600 dark:text-emerald-400 font-extrabold text-sm sm:text-base mt-0.5'>Rp 0</div>
+          </div>
+          <p id='share-preview-desc' class='text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mt-1'>Deskripsi produk...</p>
+          <div class='flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-1 truncate'>
+            <i class='fa-solid fa-link text-[9px] text-emerald-500'></i>
+            <span id='share-preview-url' class='truncate'>https://...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class='space-y-2.5 pt-1'>
+        <!-- WhatsApp Share Button -->
+        <button type='button' onclick='shareViaWhatsApp()' class='w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-md shadow-emerald-600/20 transition-all border border-emerald-500'>
+          <i class='fa-brands fa-whatsapp text-lg text-white'></i>
+          <span>Bagikan ke WhatsApp</span>
+        </button>
+
+        <!-- Native Share / App Share (Android / iOS) -->
+        <button type='button' id='btn-native-share' onclick='shareViaNative()' class='w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 active:scale-[0.99] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-sm transition-all border border-slate-700'>
+          <i class='fa-solid fa-paper-plane text-xs text-white'></i>
+          <span>Bagikan via Menu HP / Aplikasi Lain</span>
+        </button>
+
+        <!-- Grid of Copy Buttons -->
+        <div class='grid grid-cols-2 gap-2 pt-1'>
+          <!-- Copy Full Text & Link -->
+          <button type='button' onclick='copyShareText()' class='py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-600 active:scale-95 transition-all'>
+            <i class='fa-solid fa-copy text-indigo-500'></i>
+            <span>Salin Teks Lengkap</span>
+          </button>
+
+          <!-- Copy Link Only -->
+          <button type='button' onclick='copyShareLink()' class='py-2.5 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-600 active:scale-95 transition-all'>
+            <i class='fa-solid fa-link text-emerald-500'></i>
+            <span>Salin Link Saja</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview Text Box -->
+      <div class='bg-slate-50 dark:bg-slate-900 rounded-xl p-3 border border-slate-200 dark:border-slate-700/80 text-[11px] text-slate-600 dark:text-slate-300 font-normal leading-relaxed'>
+        <div class='text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1 flex items-center justify-between'>
+          <span>Pratinjau Format Pesan:</span>
+          <i class='fa-solid fa-message text-[10px]'></i>
+        </div>
+        <div id='share-preview-rawtext' class='whitespace-pre-wrap font-sans select-all bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-[11px] max-h-36 overflow-y-auto'></div>
+      </div>
+
+    </div>
+  </div>
+</div>

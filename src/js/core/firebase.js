@@ -204,8 +204,11 @@ const loadAppData = async () => {
       } catch (e) {}
       
       const pid = new URLSearchParams(window.location.search).get('p'); 
-      if (pid && appData.products.find(x => x.id == parseInt(pid))) {
-        setTimeout(() => openProductModal(parseInt(pid)), 600);
+      if (pid) {
+        const targetProd = (appData.products || []).find(x => String(x.id) === String(pid));
+        if (targetProd) {
+          setTimeout(() => openProductModal(targetProd.id), 250);
+        }
       }
       
       buildAndInjectManifest();

@@ -456,17 +456,26 @@ window.loadMoreProducts = async () => {
 };
 
 window.openProductModal = i => {
-  const p = appData.products.find(x => x.id === i);
+  const p = (appData.products || []).find(x => x.id === i || String(x.id) === String(i));
   if (!p) return;
   cProd = p; cVar = 0; cQty = 1; 
   setV('modal-qty-input', 1); 
   rProdMod();
   if (window.updateStoreSeo) updateStoreSeo(p.name, p.desc, p.img, p);
   
+  // Sinkronkan URL dengan parameter ?p=ID agar saat di-share atau di-refresh langsung ke produk ini
+  try {
+    const u = new URL(window.location.href);
+    if (u.searchParams.get('p') !== String(p.id)) {
+      u.searchParams.set('p', p.id);
+      history.replaceState({ modal: 'product', pid: p.id }, '', u.toString());
+    }
+  } catch (e) {}
+
   const m = el('product-modal'), c = el('product-modal-content');
   if (m && c) {
     if (m.classList.contains('hidden')) {
-      history.pushState({ modal: 'product' }, '', '');
+      history.pushState({ modal: 'product', pid: p.id }, '', '');
       oMods.push('product');
     }
     show('product-modal'); 
@@ -492,24 +501,169 @@ window.closeProductModal = (fH = !1) => {
     setTimeout(() => hide('product-modal'), 300);
     if (window.updateStoreSeo) updateStoreSeo();
   }
+  // Bersihkan parameter ?p dari URL secara halus tanpa reload
+  try {
+    const u = new URL(window.location.href);
+    if (u.searchParams.has('p')) {
+      u.searchParams.delete('p');
+      history.replaceState({}, '', u.toString());
+    }
+  } catch (e) {}
 };
 
-window.shareProduct = async () => {
-  if (!cProd) return;
-  const u = new URL(window.location.href);
-  u.searchParams.set('p', cProd.id);
+// Objek helper untuk menyimpan data produk yang sedang siap dibagikan
+let currentShareData = null;
+
+window.getProductShareData = (productOrId) => {
+  let p = productOrId;
+  if (!p && cProd) p = cProd;
+  if (typeof p === 'number' || typeof p === 'string') {
+    p = (appData.products || []).find(x => x.id === p || String(x.id) === String(p));
+  }
+  if (!p) return null;
+
+  const hV = p.variants?.length > 0;
+  const v = hV ? p.variants[cVar || 0] : null;
+  const priceVal = v?.price ?? p.price ?? 0;
+  const priceFormatted = fCur(priceVal) + (p.unit ? ` / ${p.unit}` : '');
+  const imgUrl = v?.img || p.img || '';
+  const descClean = (p.desc || '').trim();
+
+  // Buat direct link pembelian/detail produk
+  const u = new URL(window.location.origin + window.location.pathname);
+  u.searchParams.set('p', p.id);
+  const directUrl = u.href;
+
+  // Format pesan WhatsApp & Media Sosial yang rapi, ada nama, harga, deskripsi & link
+  const rawText = `🛍️ *${p.name}*\n💰 *Harga:* ${priceFormatted}\n\n📝 *Deskripsi:*\n${descClean || '-'}\n\n👉 *Beli / Lihat Detail Disini:*\n${directUrl}`;
+
+  return {
+    id: p.id,
+    name: p.name,
+    price: priceFormatted,
+    desc: descClean,
+    img: imgUrl,
+    url: directUrl,
+    rawText: rawText
+  };
+};
+
+window.shareProduct = (productOrId) => {
+  const data = getProductShareData(productOrId);
+  if (!data) return;
+  currentShareData = data;
+
+  // Isi data ke modal pratinjau share
+  const imgEl = el('share-preview-img');
+  if (imgEl) {
+    imgEl.src = data.img || 'https://placehold.co/100x100?text=No+Image';
+  }
+  setIn('share-preview-title', data.name);
+  setIn('share-preview-price', data.price);
+  setIn('share-preview-desc', data.desc || 'Tanpa deskripsi tambahan.');
+  setIn('share-preview-url', data.url);
+  setIn('share-preview-rawtext', data.rawText);
+
+  // Buka modal share
+  const m = el('share-product-modal'), c = el('share-product-content');
+  if (m && c) {
+    show('share-product-modal');
+    setTimeout(() => {
+      m.classList.remove('opacity-0');
+      c.classList.remove('translate-y-full', 'sm:translate-y-5');
+    }, 10);
+  }
+};
+
+window.closeShareModal = () => {
+  const m = el('share-product-modal'), c = el('share-product-content');
+  if (m && c) {
+    m.classList.add('opacity-0');
+    c.classList.add('translate-y-full', 'sm:translate-y-5');
+    setTimeout(() => hide('share-product-modal'), 300);
+  }
+};
+
+window.shareViaWhatsApp = () => {
+  if (!currentShareData) return;
+  const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(currentShareData.rawText)}`;
+  window.open(waUrl, '_blank');
+};
+
+window.shareViaNative = async () => {
+  if (!currentShareData) return;
   if (navigator.share) {
     try {
-      await navigator.share({ title: cProd.name, text: `Cek ${cProd.name}`, url: u.href });
-    } catch (e) {}
+      await navigator.share({
+        title: currentShareData.name,
+        text: currentShareData.rawText,
+        url: currentShareData.url
+      });
+    } catch (e) {
+      if (e.name !== 'AbortError') {
+        copyShareText();
+      }
+    }
   } else {
-    const e = document.createElement('textarea');
-    e.value = u.href;
-    document.body.appendChild(e);
-    e.select();
-    document.execCommand('copy');
-    document.body.removeChild(e);
-    showToast("Link disalin!");
+    copyShareText();
+  }
+};
+
+window.copyShareText = () => {
+  if (!currentShareData) return;
+  const text = currentShareData.rawText;
+  const copyProses = () => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      showToast("Teks & Link Produk disalin!");
+    } catch (err) {
+      showToast("Gagal menyalin teks.");
+    }
+    document.body.removeChild(textArea);
+  };
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast("Teks & Link Produk disalin!");
+    }).catch(() => copyProses());
+  } else {
+    copyProses();
+  }
+};
+
+window.copyShareLink = () => {
+  if (!currentShareData) return;
+  const link = currentShareData.url;
+  const copyProses = () => {
+    const textArea = document.createElement("textarea");
+    textArea.value = link;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      showToast("Link Produk disalin!");
+    } catch (err) {
+      showToast("Gagal menyalin link.");
+    }
+    document.body.removeChild(textArea);
+  };
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(link).then(() => {
+      showToast("Link Produk disalin!");
+    }).catch(() => copyProses());
+  } else {
+    copyProses();
   }
 };
 
