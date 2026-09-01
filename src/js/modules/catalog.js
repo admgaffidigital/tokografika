@@ -534,12 +534,8 @@ window.getProductShareData = (productOrId) => {
   u.searchParams.set('p', p.id);
   const directUrl = u.href;
 
-  // Format pesan WhatsApp & Media Sosial yang rapi, lengkap dengan nama, harga, gambar/foto, deskripsi & link
-  let rawText = `🛍️ *${p.name}*\n💰 *Harga:* ${priceFormatted}\n`;
-  if (imgUrl && !imgUrl.startsWith('data:')) {
-    rawText += `🖼️ *Foto Produk:* ${imgUrl}\n`;
-  }
-  rawText += `\n📝 *Deskripsi:*\n${descClean || '-'}\n\n👉 *Beli / Lihat Detail Disini:*\n${directUrl}`;
+  // Format pesan WhatsApp & Media Sosial yang rapi & bersih: Nama, Harga, Deskripsi, dan Link
+  const rawText = `🛍️ *${p.name}*\n💰 *Harga:* ${priceFormatted}\n\n📝 *Deskripsi:*\n${descClean || '-'}\n\n👉 *Beli / Lihat Detail Disini:*\n${directUrl}`;
 
   return {
     id: p.id,
@@ -588,25 +584,6 @@ window.closeShareModal = () => {
   }
 };
 
-window.downloadShareImage = async () => {
-  if (!currentShareData || !currentShareData.img) {
-    showToast("Gambar produk tidak tersedia");
-    return;
-  }
-  try {
-    const a = document.createElement('a');
-    a.href = currentShareData.img;
-    a.download = `${(currentShareData.name || 'produk').replace(/[^a-zA-Z0-9]/g, '_')}.jpg`;
-    a.target = '_blank';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    showToast("Membuka / Mengunduh foto...");
-  } catch (e) {
-    window.open(currentShareData.img, '_blank');
-  }
-};
-
 window.shareViaWhatsApp = () => {
   if (!currentShareData) return;
   const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(currentShareData.rawText)}`;
@@ -616,31 +593,12 @@ window.shareViaWhatsApp = () => {
 window.shareViaNative = async () => {
   if (!currentShareData) return;
   if (navigator.share) {
-    let sharePayload = {
-      title: currentShareData.name,
-      text: currentShareData.rawText,
-      url: currentShareData.url
-    };
-
-    // Upayakan lampirkan file gambar asli jika didukung browser HP
-    if (currentShareData.img && navigator.canShare && !currentShareData.img.startsWith('data:')) {
-      try {
-        const res = await fetch(currentShareData.img, { mode: 'cors' });
-        if (res.ok) {
-          const blob = await res.blob();
-          const ext = blob.type.split('/')[1] || 'jpg';
-          const file = new File([blob], `${currentShareData.name.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`, { type: blob.type });
-          if (navigator.canShare({ files: [file] })) {
-            sharePayload.files = [file];
-          }
-        }
-      } catch (err) {
-        // Fallback ke payload teks jika CORS tidak mengizinkan fetch
-      }
-    }
-
     try {
-      await navigator.share(sharePayload);
+      await navigator.share({
+        title: currentShareData.name,
+        text: currentShareData.rawText,
+        url: currentShareData.url
+      });
     } catch (e) {
       if (e.name !== 'AbortError') {
         copyShareText();
