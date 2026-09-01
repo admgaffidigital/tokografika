@@ -133,7 +133,7 @@
         margin-right: auto !important;
     }
 
-    /* 5. MODE: CETAK PRICETAG & LABEL HARGA RAK / GONDOLA */
+    /* 5. MODE: CETAK PRICETAG & LABEL HARGA RAK / GONDOLA (A4 PORTRAIT) */
     body.print-mode-pricetag {
         background-color: #ffffff !important;
         color: #000000 !important;
@@ -156,8 +156,33 @@
         box-sizing: border-box !important;
     }
 
+    body.print-mode-pricetag .pt-print-a4-page {
+        width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        margin: 0 auto !important;
+        padding: 6mm 6mm !important;
+        box-sizing: border-box !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        overflow: hidden !important;
+        background: #ffffff !important;
+    }
+
+    body.print-mode-pricetag .pt-print-a4-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+    }
+
+    body.print-mode-pricetag .pricetag-label-card {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
     body.print-mode-pricetag #thermal-print-section,
-    body.print-mode-pricetag #report-print-section {
+    body.print-mode-pricetag #report-print-section,
+    body.print-mode-pricetag #template-invoice,
+    body.print-mode-pricetag #template-surat-jalan {
         display: none !important;
     }
 }

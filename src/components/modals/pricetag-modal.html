@@ -89,17 +89,14 @@
               <label class='block text-[10px] font-bold text-slate-400 uppercase mb-1'>Ukuran &amp; Jenis Kertas</label>
               <div class='relative'>
                 <select id='pt-paper-type' onchange='onPricetagSettingChange()' class='admin-input !py-2 !text-xs font-bold w-full appearance-none cursor-pointer bg-slate-50 dark:bg-slate-900'>
-                  <optgroup label="📄 Kertas Standar / Stiker A4 Grid (Tom &amp; Jerry)">
-                    <option value="a4_3x8" selected>A4 Grid (3 Kolom x 8 Baris = 24 Label)</option>
-                    <option value="a4_2x6">A4 Grid Besar (2 Kolom x 6 Baris = 12 Label)</option>
-                    <option value="a4_4x10">A4 Grid Mini (4 Kolom x 10 Baris = 40 Label)</option>
+                  <optgroup label="📄 Kertas A4 Potret Standar (Tom &amp; Jerry / HVS)">
+                    <option value="a4_3x8" selected>A4 Potret (3 Kolom x 8 Baris = 24 Label/Lembar)</option>
+                    <option value="a4_2x6">A4 Potret Besar (2 Kolom x 6 Baris = 12 Label/Lembar)</option>
+                    <option value="a4_4x10">A4 Potret Mini (4 Kolom x 10 Baris = 40 Label/Lembar)</option>
                   </optgroup>
-                  <optgroup label="🖨️ Printer Thermal POS / Roll">
-                    <option value="thermal_58">Thermal 58mm (Roll Continuous)</option>
-                    <option value="thermal_80">Thermal 80mm (Roll Continuous)</option>
-                    <option value="sticker_40x30">Stiker Thermal Label (40x30 mm)</option>
-                    <option value="sticker_60x40">Stiker Thermal Label (60x40 mm)</option>
-                    <option value="sticker_70x40">Stiker Thermal Label (70x40 mm)</option>
+                  <optgroup label="🖨️ Printer Thermal POS Kasir (Opsional)">
+                    <option value="thermal_58">Thermal 58mm Roll</option>
+                    <option value="thermal_80">Thermal 80mm Roll</option>
                   </optgroup>
                 </select>
                 <i class='fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[10px]'></i>

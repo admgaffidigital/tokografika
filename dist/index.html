@@ -1101,7 +1101,7 @@ html.dark .badge-counter {
         margin-right: auto !important;
     }
 
-    /* 5. MODE: CETAK PRICETAG & LABEL HARGA RAK / GONDOLA */
+    /* 5. MODE: CETAK PRICETAG & LABEL HARGA RAK / GONDOLA (A4 PORTRAIT) */
     body.print-mode-pricetag {
         background-color: #ffffff !important;
         color: #000000 !important;
@@ -1124,8 +1124,33 @@ html.dark .badge-counter {
         box-sizing: border-box !important;
     }
 
+    body.print-mode-pricetag .pt-print-a4-page {
+        width: 210mm !important;
+        height: 297mm !important;
+        max-height: 297mm !important;
+        margin: 0 auto !important;
+        padding: 6mm 6mm !important;
+        box-sizing: border-box !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        overflow: hidden !important;
+        background: #ffffff !important;
+    }
+
+    body.print-mode-pricetag .pt-print-a4-page:last-child {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+    }
+
+    body.print-mode-pricetag .pricetag-label-card {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
     body.print-mode-pricetag #thermal-print-section,
-    body.print-mode-pricetag #report-print-section {
+    body.print-mode-pricetag #report-print-section,
+    body.print-mode-pricetag #template-invoice,
+    body.print-mode-pricetag #template-surat-jalan {
         display: none !important;
     }
 }
@@ -2552,17 +2577,14 @@ html.dark .badge-counter {
               <label class='block text-[10px] font-bold text-slate-400 uppercase mb-1'>Ukuran &amp; Jenis Kertas</label>
               <div class='relative'>
                 <select id='pt-paper-type' onchange='onPricetagSettingChange()' class='admin-input !py-2 !text-xs font-bold w-full appearance-none cursor-pointer bg-slate-50 dark:bg-slate-900'>
-                  <optgroup label="📄 Kertas Standar / Stiker A4 Grid (Tom &amp; Jerry)">
-                    <option value="a4_3x8" selected>A4 Grid (3 Kolom x 8 Baris = 24 Label)</option>
-                    <option value="a4_2x6">A4 Grid Besar (2 Kolom x 6 Baris = 12 Label)</option>
-                    <option value="a4_4x10">A4 Grid Mini (4 Kolom x 10 Baris = 40 Label)</option>
+                  <optgroup label="📄 Kertas A4 Potret Standar (Tom &amp; Jerry / HVS)">
+                    <option value="a4_3x8" selected>A4 Potret (3 Kolom x 8 Baris = 24 Label/Lembar)</option>
+                    <option value="a4_2x6">A4 Potret Besar (2 Kolom x 6 Baris = 12 Label/Lembar)</option>
+                    <option value="a4_4x10">A4 Potret Mini (4 Kolom x 10 Baris = 40 Label/Lembar)</option>
                   </optgroup>
-                  <optgroup label="🖨️ Printer Thermal POS / Roll">
-                    <option value="thermal_58">Thermal 58mm (Roll Continuous)</option>
-                    <option value="thermal_80">Thermal 80mm (Roll Continuous)</option>
-                    <option value="sticker_40x30">Stiker Thermal Label (40x30 mm)</option>
-                    <option value="sticker_60x40">Stiker Thermal Label (60x40 mm)</option>
-                    <option value="sticker_70x40">Stiker Thermal Label (70x40 mm)</option>
+                  <optgroup label="🖨️ Printer Thermal POS Kasir (Opsional)">
+                    <option value="thermal_58">Thermal 58mm Roll</option>
+                    <option value="thermal_80">Thermal 80mm Roll</option>
                   </optgroup>
                 </select>
                 <i class='fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[10px]'></i>
@@ -16237,18 +16259,18 @@ window.generatePosA4Document = (type, orderData) => {
 
 // 9.1. Pricetag & Label Barcode Studio
 // =============================================================================
-// FRESHMART PRICETAG & LABEL BARCODE STUDIO ENGINE
+// FRESHMART PRICETAG & LABEL BARCODE STUDIO ENGINE (A4 PORTRAIT OPTIMIZED)
 // =============================================================================
 // Modul pembuatan & pencetakan label harga rak (shelf price tags) dan stiker barcode.
-// Mendukung kertas A4 Grid (Tom & Jerry 3x8, 2x6, 4x10), Thermal Roll (58/80mm),
-// serta stiker thermal roll khusus (40x30, 60x40mm) dengan rincian varian & grosir.
+// Menggunakan kanvas standar Kertas A4 Potret (210 x 297 mm) dengan presisi millimeter
+// dan pagination otomatis per lembar A4.
 // =============================================================================
 
 window.pricetagItems = []; // Array of items to be printed
 
-// Settings default
+// Settings default (A4 Portrait Standar)
 window.pricetagSettings = {
-  paperType: 'a4_3x8', // 'a4_3x8' | 'a4_2x6' | 'a4_4x10' | 'thermal_58' | 'thermal_80' | 'sticker_40x30' | 'sticker_60x40' | 'sticker_70x40'
+  paperType: 'a4_3x8', // 'a4_3x8' | 'a4_2x6' | 'a4_4x10' | 'thermal_58' | 'thermal_80'
   layoutTemplate: 'gondola_standard', // 'gondola_standard' | 'gondola_wholesale' | 'mini_barcode'
   showStoreName: true,
   showBarcode: true,
@@ -16258,10 +16280,12 @@ window.pricetagSettings = {
   showUnit: true
 };
 
-// SVG Barcode Generator (Super Crisp Vector Barcode)
-const _generatePricetagBarcodeSvg = (codeStr, w = 130, h = 28) => {
+// SVG Barcode Generator (Super Crisp Vector Barcode - 100% Vector No Pixelation)
+const _generatePricetagBarcodeSvg = (codeStr, w = 75, h = 15) => {
   const clean = String(codeStr || '000000').toUpperCase().replace(/[^A-Z0-9]/g, '');
-  // Deterministic Code-128 style pattern
+  if (!clean) return '';
+
+  // Deterministic Code-128 style vector bar pattern
   const pattern = [2, 1, 1, 2, 1, 3, 1, 1, 2, 2, 1, 1, 3, 1, 2, 1, 1, 2, 2, 1, 3, 1, 1, 2, 1, 2, 2, 1, 1, 3, 1, 2, 1, 1, 2, 2, 1, 3, 1, 1, 2, 1, 2, 2, 1, 1, 3, 1, 2, 1];
   
   const totalUnits = pattern.reduce((a, b) => a + b, 0);
@@ -16278,11 +16302,11 @@ const _generatePricetagBarcodeSvg = (codeStr, w = 130, h = 28) => {
   }
 
   return `
-    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; margin:2px 0;">
-      <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="max-width:100%; height:${h}px; display:block;">
+    <div style="display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end; width:${w}px; max-width:100%; margin:0;">
+      <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="width:${w}px; height:${h}px; display:block;">
         ${rects}
       </svg>
-      <span style="font-size:8px; font-family:'Courier New', monospace; font-weight:700; letter-spacing:1px; line-height:1; color:#000000; margin-top:1.5px;">${clean}</span>
+      <span style="font-size:6pt; font-family:'Courier New', monospace; font-weight:800; letter-spacing:0.3px; line-height:1; color:#000000; margin-top:1px;">${clean}</span>
     </div>
   `;
 };
@@ -16610,16 +16634,13 @@ window.onPricetagSettingChange = () => {
   const badge = el('pt-badge-paper-format');
   if (badge) {
     const labels = {
-      'a4_3x8': 'A4 Grid 3x8 (24 pcs)',
-      'a4_2x6': 'A4 Grid Besar 2x6 (12 pcs)',
-      'a4_4x10': 'A4 Grid Mini 4x10 (40 pcs)',
+      'a4_3x8': 'A4 Potret 3x8 (24 Label)',
+      'a4_2x6': 'A4 Potret 2x6 (12 Label)',
+      'a4_4x10': 'A4 Potret 4x10 (40 Label)',
       'thermal_58': 'Thermal 58mm Roll',
-      'thermal_80': 'Thermal 80mm Roll',
-      'sticker_40x30': 'Stiker 40x30 mm',
-      'sticker_60x40': 'Stiker 60x40 mm',
-      'sticker_70x40': 'Stiker 70x40 mm'
+      'thermal_80': 'Thermal 80mm Roll'
     };
-    badge.innerText = labels[window.pricetagSettings.paperType] || 'Format Cetak';
+    badge.innerText = labels[window.pricetagSettings.paperType] || 'A4 Potret 3x8';
   }
 
   renderPricetagPreview();
@@ -16690,7 +16711,7 @@ window.renderPricetagItemList = () => {
 };
 
 // ==========================================
-// RENDER LIVE PREVIEW & PRINT ENGINE (RIGHT PANE)
+// RENDER LABEL CARD HTML
 // ==========================================
 
 const _buildSingleLabelHtml = (item, settings, isThermal = false, cardWidth = 'auto', cardHeight = 'auto') => {
@@ -16698,42 +16719,42 @@ const _buildSingleLabelHtml = (item, settings, isThermal = false, cardWidth = 'a
   const dateStr = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: '2-digit' });
   const hasWholesale = settings.showWholesale && item.showWholesale && Array.isArray(item.wholesale) && item.wholesale.length > 0;
   
-  const borderStyle = settings.showCutGuide ? 'border: 1px dashed #cbd5e1;' : 'border: 1px solid transparent;';
+  const borderStyle = settings.showCutGuide ? 'border: 1px dashed #94a3b8;' : 'border: 1px solid transparent;';
   
   // Format Layout 1: Gondola Standar Minimarket
   if (settings.layoutTemplate === 'gondola_standard') {
     return `
-      <div class="pricetag-label-card" style="width:${cardWidth}; height:${cardHeight}; box-sizing:border-box; ${borderStyle} padding:4px 6px; background:#ffffff; color:#000000; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; font-family:'Plus Jakarta Sans', Arial, sans-serif; page-break-inside:avoid;">
-        <!-- Header: Store Name & Unit -->
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #000000; padding-bottom:1.5px; margin-bottom:2px;">
-          ${settings.showStoreName ? `<span style="font-size:7.5px; font-weight:900; letter-spacing:0.5px; color:#000000; text-transform:uppercase;">${esc(storeName)}</span>` : `<span></span>`}
-          ${settings.showDate ? `<span style="font-size:7px; font-weight:700; color:#555555;">${dateStr}</span>` : ''}
+      <div class="pricetag-label-card" style="width:${cardWidth}; height:${cardHeight}; max-height:${cardHeight}; box-sizing:border-box; ${borderStyle} padding:2.5mm 3mm; background:#ffffff; color:#000000; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; font-family:'Plus Jakarta Sans', Arial, sans-serif; page-break-inside:avoid; border-radius:2px;">
+        <!-- Header: Store Name & Date -->
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #000000; padding-bottom:1px; margin-bottom:1px;">
+          ${settings.showStoreName ? `<span style="font-size:7.5pt; font-weight:900; letter-spacing:0.3px; color:#000000; text-transform:uppercase;">${esc(storeName)}</span>` : `<span></span>`}
+          ${settings.showDate ? `<span style="font-size:6.5pt; font-weight:700; color:#555555;">${dateStr}</span>` : ''}
         </div>
 
         <!-- Product Name & Variant -->
-        <div style="margin:1px 0; min-height:16px;">
-          <h4 style="font-size:9.5px; font-weight:900; line-height:1.15; color:#000000; margin:0; word-break:break-word; max-height:22px; overflow:hidden; text-transform:uppercase;">
+        <div style="margin:0.5mm 0; line-height:1.15; max-height:18px; overflow:hidden;">
+          <h4 style="font-size:8.5pt; font-weight:900; color:#000000; margin:0; word-break:break-word; text-transform:uppercase; letter-spacing:-0.2px;">
             ${esc(item.productName)} ${item.variantName ? `(${esc(item.variantName)})` : ''}
           </h4>
         </div>
 
         <!-- Middle / Bottom Section: Barcode on Left, Big Price on Right -->
-        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:4px; margin-top:auto;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:2mm; margin-top:auto;">
           <!-- Barcode & SKU -->
-          <div style="flex:1; min-width:0; display:flex; flex-direction:column; justify-content:flex-end;">
-            ${settings.showBarcode ? _generatePricetagBarcodeSvg(item.sku, 85, 20) : `<span style="font-size:8px; font-family:monospace; font-weight:bold;">${esc(item.sku)}</span>`}
+          <div style="flex:1; min-width:0; display:flex; flex-direction:column; justify-content:flex-end; align-items:flex-start;">
+            ${settings.showBarcode ? _generatePricetagBarcodeSvg(item.sku, 75, 14) : `<span style="font-size:7pt; font-family:monospace; font-weight:bold;">${esc(item.sku)}</span>`}
           </div>
 
           <!-- Price Box (Big & Clear) -->
           <div style="text-align:right; shrink-0; display:flex; flex-direction:column; align-items:flex-end;">
-            <div style="font-size:7.5px; font-weight:bold; color:#444; line-height:1;">
-              ${settings.showUnit ? `PER ${esc(item.unit).toUpperCase()}` : 'HARGA'}
+            <div style="font-size:6pt; font-weight:800; color:#444444; line-height:1; text-transform:uppercase;">
+              ${settings.showUnit ? `PER ${esc(item.unit)}` : 'HARGA'}
             </div>
-            <div style="font-size:15px; font-weight:900; color:#000000; line-height:1; letter-spacing:-0.5px; font-family:Arial, sans-serif;">
+            <div style="font-size:13pt; font-weight:900; color:#000000; line-height:1.05; letter-spacing:-0.5px; font-family:Arial, sans-serif;">
               ${fCur(item.price)}
             </div>
             ${hasWholesale ? `
-              <div style="font-size:7px; font-weight:800; background:#000; color:#fff; padding:1px 3px; border-radius:2px; margin-top:1.5px; line-height:1; white-space:nowrap;">
+              <div style="font-size:5.5pt; font-weight:800; background:#000000; color:#ffffff; padding:1px 2.5px; border-radius:1.5px; margin-top:1px; line-height:1; white-space:nowrap;">
                 ≥${item.wholesale[0].minQty} ${esc(item.unit)}: ${fCur(item.wholesale[0].price)}
               </div>
             ` : ''}
@@ -16746,40 +16767,40 @@ const _buildSingleLabelHtml = (item, settings, isThermal = false, cardWidth = 'a
   // Format Layout 2: Gondola Grosir & Promo Lengkap
   else if (settings.layoutTemplate === 'gondola_wholesale') {
     return `
-      <div class="pricetag-label-card" style="width:${cardWidth}; height:${cardHeight}; box-sizing:border-box; ${borderStyle} padding:4px 6px; background:#ffffff; color:#000000; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; font-family:'Plus Jakarta Sans', Arial, sans-serif; page-break-inside:avoid;">
+      <div class="pricetag-label-card" style="width:${cardWidth}; height:${cardHeight}; max-height:${cardHeight}; box-sizing:border-box; ${borderStyle} padding:2.5mm 3mm; background:#ffffff; color:#000000; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; font-family:'Plus Jakarta Sans', Arial, sans-serif; page-break-inside:avoid; border-radius:2px;">
         <!-- Header -->
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #000000; padding-bottom:1.5px;">
-          <span style="font-size:8px; font-weight:900; color:#000; text-transform:uppercase;">${esc(storeName)}</span>
-          <span style="font-size:7px; font-weight:800; background:#000; color:#fff; padding:0.5px 3px; border-radius:2px;">HEMAT GROSIR</span>
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid #000000; padding-bottom:1px;">
+          <span style="font-size:7.5pt; font-weight:900; color:#000; text-transform:uppercase;">${esc(storeName)}</span>
+          <span style="font-size:6pt; font-weight:800; background:#000; color:#fff; padding:0.5px 3px; border-radius:2px;">HEMAT GROSIR</span>
         </div>
 
         <!-- Name -->
-        <div style="margin:2px 0;">
-          <h4 style="font-size:9.5px; font-weight:900; line-height:1.15; color:#000; margin:0; text-transform:uppercase;">
+        <div style="margin:0.5mm 0; line-height:1.15; max-height:16px; overflow:hidden;">
+          <h4 style="font-size:8pt; font-weight:900; color:#000; margin:0; text-transform:uppercase;">
             ${esc(item.productName)} ${item.variantName ? `(${esc(item.variantName)})` : ''}
           </h4>
         </div>
 
         <!-- Price & Wholesale Tier Box -->
-        <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #000; padding:2px 4px; border-radius:3px; margin:2px 0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #000; padding:1.5px 3px; border-radius:2px; margin:1px 0;">
           <div>
-            <span style="font-size:7px; font-weight:bold; color:#444; display:block;">ECERAN:</span>
-            <span style="font-size:12px; font-weight:900; color:#000;">${fCur(item.price)}</span>
+            <span style="font-size:5.5pt; font-weight:bold; color:#444; display:block; line-height:1;">ECERAN:</span>
+            <span style="font-size:10pt; font-weight:900; color:#000; line-height:1;">${fCur(item.price)}</span>
           </div>
           ${hasWholesale ? `
-            <div style="border-left:1px dashed #000; padding-left:4px; text-align:right;">
-              <span style="font-size:7px; font-weight:900; color:#000; display:block;">GROSIR (≥${item.wholesale[0].minQty} ${esc(item.unit)}):</span>
-              <span style="font-size:12px; font-weight:900; color:#000;">${fCur(item.wholesale[0].price)}</span>
+            <div style="border-left:1px dashed #000; padding-left:3px; text-align:right;">
+              <span style="font-size:5.5pt; font-weight:900; color:#000; display:block; line-height:1;">GROSIR (≥${item.wholesale[0].minQty} ${esc(item.unit)}):</span>
+              <span style="font-size:10pt; font-weight:900; color:#000; line-height:1;">${fCur(item.wholesale[0].price)}</span>
             </div>
           ` : `
-            <div style="font-size:8px; font-weight:bold; color:#666;">/${esc(item.unit)}</div>
+            <div style="font-size:7pt; font-weight:bold; color:#666;">/${esc(item.unit)}</div>
           `}
         </div>
 
         <!-- Barcode Footer -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
-          ${settings.showBarcode ? _generatePricetagBarcodeSvg(item.sku, 75, 16) : `<span style="font-size:7.5px; font-mono; font-weight:bold;">${esc(item.sku)}</span>`}
-          ${settings.showDate ? `<span style="font-size:6.5px; font-weight:bold; color:#666;">${dateStr}</span>` : ''}
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:auto;">
+          ${settings.showBarcode ? _generatePricetagBarcodeSvg(item.sku, 70, 13) : `<span style="font-size:6.5pt; font-family:monospace; font-weight:bold;">${esc(item.sku)}</span>`}
+          ${settings.showDate ? `<span style="font-size:6pt; font-weight:bold; color:#666;">${dateStr}</span>` : ''}
         </div>
       </div>
     `;
@@ -16788,33 +16809,30 @@ const _buildSingleLabelHtml = (item, settings, isThermal = false, cardWidth = 'a
   // Format Layout 3: Mini Barcode Kompak
   else {
     return `
-      <div class="pricetag-label-card" style="width:${cardWidth}; height:${cardHeight}; box-sizing:border-box; ${borderStyle} padding:3px 4px; background:#ffffff; color:#000000; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; font-family:'Plus Jakarta Sans', Arial, sans-serif; page-break-inside:avoid; text-align:center;">
-        <div style="font-size:8px; font-weight:900; line-height:1.1; color:#000; text-transform:uppercase; max-height:18px; overflow:hidden;">
+      <div class="pricetag-label-card" style="width:${cardWidth}; height:${cardHeight}; max-height:${cardHeight}; box-sizing:border-box; ${borderStyle} padding:2mm 2.5mm; background:#ffffff; color:#000000; display:flex; flex-direction:column; justify-content:space-between; overflow:hidden; font-family:'Plus Jakarta Sans', Arial, sans-serif; page-break-inside:avoid; text-align:center; border-radius:2px;">
+        <div style="font-size:7.5pt; font-weight:900; line-height:1.1; color:#000; text-transform:uppercase; max-height:16px; overflow:hidden;">
           ${esc(item.productName)} ${item.variantName ? `(${esc(item.variantName)})` : ''}
         </div>
         
-        <div style="margin:1px 0;">
-          ${settings.showBarcode ? _generatePricetagBarcodeSvg(item.sku, 90, 18) : `<span style="font-size:7.5px; font-family:monospace; font-weight:bold;">${esc(item.sku)}</span>`}
+        <div style="margin:1px auto;">
+          ${settings.showBarcode ? _generatePricetagBarcodeSvg(item.sku, 75, 14) : `<span style="font-size:7pt; font-family:monospace; font-weight:bold;">${esc(item.sku)}</span>`}
         </div>
 
         <div style="display:flex; justify-content:space-between; align-items:baseline; border-top:1px solid #000; padding-top:1px;">
-          <span style="font-size:7px; font-weight:bold; color:#444;">${esc(item.unit)}</span>
-          <span style="font-size:11px; font-weight:900; color:#000;">${fCur(item.price)}</span>
+          <span style="font-size:6pt; font-weight:bold; color:#444;">${esc(item.unit)}</span>
+          <span style="font-size:10.5pt; font-weight:900; color:#000;">${fCur(item.price)}</span>
         </div>
       </div>
     `;
   }
 };
 
-window.renderPricetagPreview = () => {
-  const sheet = el('pt-live-preview-sheet');
-  const summaryEl = el('pt-preview-summary');
-  if (!sheet) return;
+// ==========================================
+// PREVIEW BUILDER (REALISTIC A4 CANVAS)
+// ==========================================
 
+const _getFlatLabelsList = () => {
   const items = window.pricetagItems || [];
-  const settings = window.pricetagSettings;
-
-  // Flatten items according to each item's qty
   const flatLabels = [];
   items.forEach(it => {
     const q = Math.max(1, it.qty || 1);
@@ -16822,77 +16840,105 @@ window.renderPricetagPreview = () => {
       flatLabels.push(it);
     }
   });
+  return flatLabels;
+};
 
+const _chunkArray = (arr, size) => {
+  const res = [];
+  for (let i = 0; i < arr.length; i += size) {
+    res.push(arr.slice(i, i + size));
+  }
+  return res;
+};
+
+window.renderPricetagPreview = () => {
+  const sheet = el('pt-live-preview-sheet');
+  const summaryEl = el('pt-preview-summary');
+  if (!sheet) return;
+
+  const flatLabels = _getFlatLabelsList();
   const totalLabels = flatLabels.length;
+  const settings = window.pricetagSettings;
 
   if (totalLabels === 0) {
     sheet.innerHTML = `
-      <div style="padding: 40px 20px; text-align: center; color: #94a3b8;">
-        <i class="fa-solid fa-tags" style="font-size: 28px; margin-bottom: 8px; display: block;"></i>
-        <span style="font-size: 11px; font-weight: bold;">Pilih produk di sebelah kiri untuk melihat pratinjau lembar label harga</span>
+      <div style="padding: 60px 20px; text-align: center; color: #94a3b8;">
+        <i class="fa-solid fa-tags" style="font-size: 32px; margin-bottom: 12px; display: block; opacity: 0.5;"></i>
+        <span style="font-size: 12px; font-weight: bold;">Pilih produk di sebelah kiri untuk melihat kanvas A4 Potret</span>
       </div>
     `;
-    if (summaryEl) summaryEl.innerText = '0 label • 0 lembar';
+    if (summaryEl) summaryEl.innerText = '0 label • 0 lembar A4';
     return;
   }
 
-  // Handle Paper Types:
-  // 1. A4 GRID 3x8 (24 per page)
+  // 1. A4 GRID 3x8 (24 label per lembar A4 Potret)
   if (settings.paperType === 'a4_3x8') {
     const labelsPerPage = 24;
-    const totalPages = Math.ceil(totalLabels / labelsPerPage);
-    if (summaryEl) summaryEl.innerText = `${totalLabels} label • ${totalPages} lembar A4 (Grid 3x8)`;
+    const pages = _chunkArray(flatLabels, labelsPerPage);
+    if (summaryEl) summaryEl.innerText = `${totalLabels} label • ${pages.length} lembar A4 Potret (Grid 3x8)`;
 
-    sheet.style.width = '210mm';
-    sheet.style.minHeight = '297mm';
-    sheet.style.padding = '8mm 6mm';
-    sheet.style.boxSizing = 'border-box';
-    sheet.style.background = '#ffffff';
+    sheet.style.width = '100%';
+    sheet.style.maxWidth = '210mm';
+    sheet.style.background = 'transparent';
+    sheet.style.boxShadow = 'none';
 
-    sheet.innerHTML = `
-      <div style="display:grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 34mm; gap: 2.5mm; width: 100%;">
-        ${flatLabels.map(item => _buildSingleLabelHtml(item, settings, false, '100%', '34mm')).join('')}
+    sheet.innerHTML = pages.map((pageItems, pageIdx) => `
+      <div style="background:#ffffff; width:210mm; min-height:297mm; max-height:297mm; padding:6mm 6mm; box-sizing:border-box; margin:0 auto ${pages.length > 1 ? '16px' : '0'} auto; box-shadow:0 4px 20px rgba(0,0,0,0.12); border-radius:4px; border:1px solid #e2e8f0; position:relative; overflow:hidden;">
+        <div style="position:absolute; top:2mm; right:6mm; font-size:7pt; color:#94a3b8; font-weight:bold;">
+          A4 Potret • Lembar ${pageIdx + 1} dari ${pages.length}
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(3, 64mm); grid-auto-rows: 33.5mm; gap: 2.5mm; width:100%; justify-content:center; margin-top:2mm;">
+          ${pageItems.map(item => _buildSingleLabelHtml(item, settings, false, '64mm', '33.5mm')).join('')}
+        </div>
       </div>
-    `;
+    `).join('');
   }
-  // 2. A4 GRID BESAR 2x6 (12 per page)
+  // 2. A4 GRID BESAR 2x6 (12 label per lembar A4 Potret)
   else if (settings.paperType === 'a4_2x6') {
     const labelsPerPage = 12;
-    const totalPages = Math.ceil(totalLabels / labelsPerPage);
-    if (summaryEl) summaryEl.innerText = `${totalLabels} label • ${totalPages} lembar A4 (Grid 2x6 Besar)`;
+    const pages = _chunkArray(flatLabels, labelsPerPage);
+    if (summaryEl) summaryEl.innerText = `${totalLabels} label • ${pages.length} lembar A4 Potret (Grid 2x6 Besar)`;
 
-    sheet.style.width = '210mm';
-    sheet.style.minHeight = '297mm';
-    sheet.style.padding = '10mm 8mm';
-    sheet.style.boxSizing = 'border-box';
-    sheet.style.background = '#ffffff';
+    sheet.style.width = '100%';
+    sheet.style.maxWidth = '210mm';
+    sheet.style.background = 'transparent';
+    sheet.style.boxShadow = 'none';
 
-    sheet.innerHTML = `
-      <div style="display:grid; grid-template-columns: repeat(2, 1fr); grid-auto-rows: 45mm; gap: 4mm; width: 100%;">
-        ${flatLabels.map(item => _buildSingleLabelHtml(item, settings, false, '100%', '45mm')).join('')}
+    sheet.innerHTML = pages.map((pageItems, pageIdx) => `
+      <div style="background:#ffffff; width:210mm; min-height:297mm; max-height:297mm; padding:8mm 6mm; box-sizing:border-box; margin:0 auto ${pages.length > 1 ? '16px' : '0'} auto; box-shadow:0 4px 20px rgba(0,0,0,0.12); border-radius:4px; border:1px solid #e2e8f0; position:relative; overflow:hidden;">
+        <div style="position:absolute; top:2mm; right:6mm; font-size:7pt; color:#94a3b8; font-weight:bold;">
+          A4 Potret • Lembar ${pageIdx + 1} dari ${pages.length}
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(2, 96mm); grid-auto-rows: 44.5mm; gap: 4mm; width:100%; justify-content:center; margin-top:2mm;">
+          ${pageItems.map(item => _buildSingleLabelHtml(item, settings, false, '96mm', '44.5mm')).join('')}
+        </div>
       </div>
-    `;
+    `).join('');
   }
-  // 3. A4 GRID MINI 4x10 (40 per page)
+  // 3. A4 GRID MINI 4x10 (40 label per lembar A4 Potret)
   else if (settings.paperType === 'a4_4x10') {
     const labelsPerPage = 40;
-    const totalPages = Math.ceil(totalLabels / labelsPerPage);
-    if (summaryEl) summaryEl.innerText = `${totalLabels} label • ${totalPages} lembar A4 (Grid 4x10 Mini)`;
+    const pages = _chunkArray(flatLabels, labelsPerPage);
+    if (summaryEl) summaryEl.innerText = `${totalLabels} label • ${pages.length} lembar A4 Potret (Grid 4x10 Mini)`;
 
-    sheet.style.width = '210mm';
-    sheet.style.minHeight = '297mm';
-    sheet.style.padding = '8mm 6mm';
-    sheet.style.boxSizing = 'border-box';
-    sheet.style.background = '#ffffff';
+    sheet.style.width = '100%';
+    sheet.style.maxWidth = '210mm';
+    sheet.style.background = 'transparent';
+    sheet.style.boxShadow = 'none';
 
-    sheet.innerHTML = `
-      <div style="display:grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 27mm; gap: 2mm; width: 100%;">
-        ${flatLabels.map(item => _buildSingleLabelHtml(item, settings, false, '100%', '27mm')).join('')}
+    sheet.innerHTML = pages.map((pageItems, pageIdx) => `
+      <div style="background:#ffffff; width:210mm; min-height:297mm; max-height:297mm; padding:6mm 6mm; box-sizing:border-box; margin:0 auto ${pages.length > 1 ? '16px' : '0'} auto; box-shadow:0 4px 20px rgba(0,0,0,0.12); border-radius:4px; border:1px solid #e2e8f0; position:relative; overflow:hidden;">
+        <div style="position:absolute; top:2mm; right:6mm; font-size:7pt; color:#94a3b8; font-weight:bold;">
+          A4 Potret • Lembar ${pageIdx + 1} dari ${pages.length}
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(4, 47mm); grid-auto-rows: 26.5mm; gap: 2mm; width:100%; justify-content:center; margin-top:2mm;">
+          ${pageItems.map(item => _buildSingleLabelHtml(item, settings, false, '47mm', '26.5mm')).join('')}
+        </div>
       </div>
-    `;
+    `).join('');
   }
   // 4. THERMAL ROLL (58mm / 80mm)
-  else if (settings.paperType === 'thermal_58' || settings.paperType === 'thermal_80') {
+  else {
     const is80 = settings.paperType === 'thermal_80';
     const rollW = is80 ? '72mm' : '48mm';
     if (summaryEl) summaryEl.innerText = `${totalLabels} label • Thermal ${is80 ? '80mm' : '58mm'} Continuous`;
@@ -16904,37 +16950,69 @@ window.renderPricetagPreview = () => {
     sheet.style.background = '#ffffff';
 
     sheet.innerHTML = `
-      <div style="display:flex; flex-direction:column; gap:3mm; width:${rollW}; margin:0 auto;">
+      <div style="display:flex; flex-direction:column; gap:2.5mm; width:${rollW}; margin:0 auto;">
         ${flatLabels.map(item => _buildSingleLabelHtml(item, settings, true, '100%', 'auto')).join('')}
-      </div>
-    `;
-  }
-  // 5. THERMAL STICKER LABELS (40x30 / 60x40 / 70x40)
-  else {
-    const is60 = settings.paperType === 'sticker_60x40';
-    const is70 = settings.paperType === 'sticker_70x40';
-    const stkW = is70 ? '70mm' : (is60 ? '60mm' : '40mm');
-    const stkH = is70 ? '40mm' : (is60 ? '40mm' : '30mm');
-
-    if (summaryEl) summaryEl.innerText = `${totalLabels} label • Stiker Label (${stkW} x ${stkH})`;
-
-    sheet.style.width = stkW;
-    sheet.style.minHeight = 'auto';
-    sheet.style.padding = '1mm';
-    sheet.style.boxSizing = 'border-box';
-    sheet.style.background = '#ffffff';
-
-    sheet.innerHTML = `
-      <div style="display:flex; flex-direction:column; gap:2mm; width:100%;">
-        ${flatLabels.map(item => _buildSingleLabelHtml(item, settings, true, '100%', stkH)).join('')}
       </div>
     `;
   }
 };
 
 // ==========================================
-// PRINT EXECUTION
+// PRINT EXECUTION (PRECISE A4 PORTRAIT PAGINATION)
 // ==========================================
+
+const _generatePricetagPrintSheetHtml = () => {
+  const flatLabels = _getFlatLabelsList();
+  const settings = window.pricetagSettings;
+
+  if (settings.paperType === 'a4_3x8') {
+    const labelsPerPage = 24;
+    const pages = _chunkArray(flatLabels, labelsPerPage);
+    return pages.map(pageItems => `
+      <div class="pt-print-a4-page">
+        <div style="display:grid; grid-template-columns: repeat(3, 64mm); grid-auto-rows: 33.5mm; gap: 2.5mm; width:100%; justify-content:center;">
+          ${pageItems.map(item => _buildSingleLabelHtml(item, settings, false, '64mm', '33.5mm')).join('')}
+        </div>
+      </div>
+    `).join('');
+  } else if (settings.paperType === 'a4_2x6') {
+    const labelsPerPage = 12;
+    const pages = _chunkArray(flatLabels, labelsPerPage);
+    return pages.map(pageItems => `
+      <div class="pt-print-a4-page">
+        <div style="display:grid; grid-template-columns: repeat(2, 96mm); grid-auto-rows: 44.5mm; gap: 4mm; width:100%; justify-content:center;">
+          ${pageItems.map(item => _buildSingleLabelHtml(item, settings, false, '96mm', '44.5mm')).join('')}
+        </div>
+      </div>
+    `).join('');
+  } else if (settings.paperType === 'a4_4x10') {
+    const labelsPerPage = 40;
+    const pages = _chunkArray(flatLabels, labelsPerPage);
+    return pages.map(pageItems => `
+      <div class="pt-print-a4-page">
+        <div style="display:grid; grid-template-columns: repeat(4, 47mm); grid-auto-rows: 26.5mm; gap: 2mm; width:100%; justify-content:center;">
+          ${pageItems.map(item => _buildSingleLabelHtml(item, settings, false, '47mm', '26.5mm')).join('')}
+        </div>
+      </div>
+    `).join('');
+  } else if (settings.paperType === 'thermal_58') {
+    return `
+      <div style="width:48mm; margin:0 auto; padding:0; box-sizing:border-box;">
+        <div style="display:flex; flex-direction:column; gap:2mm; width:100%;">
+          ${flatLabels.map(item => _buildSingleLabelHtml(item, settings, true, '100%', 'auto')).join('')}
+        </div>
+      </div>
+    `;
+  } else {
+    return `
+      <div style="width:72mm; margin:0 auto; padding:0; box-sizing:border-box;">
+        <div style="display:flex; flex-direction:column; gap:2.5mm; width:100%;">
+          ${flatLabels.map(item => _buildSingleLabelHtml(item, settings, true, '100%', 'auto')).join('')}
+        </div>
+      </div>
+    `;
+  }
+};
 
 window.printPricetags = () => {
   const items = window.pricetagItems || [];
@@ -16947,22 +17025,21 @@ window.printPricetags = () => {
     document.body.appendChild(printSection);
   }
 
-  const liveSheet = el('pt-live-preview-sheet');
-  if (!liveSheet) return;
+  // Bersihkan kelas mode print sebelumnya
+  document.body.classList.remove('print-mode-report', 'print-mode-pricetag');
 
-  // Salin konten preview langsung ke print section
-  printSection.innerHTML = liveSheet.innerHTML;
-  printSection.style.cssText = liveSheet.style.cssText;
-
-  // Pasang print class di body
+  // Pasang kelas mode print
   document.body.classList.add('print-mode-pricetag');
+
+  // Render HTML cetak murni dengan pagination A4 Potret
+  printSection.innerHTML = _generatePricetagPrintSheetHtml();
 
   setTimeout(() => {
     window.print();
     setTimeout(() => {
       document.body.classList.remove('print-mode-pricetag');
-    }, 500);
-  }, 150);
+    }, 600);
+  }, 200);
 };
 
 
