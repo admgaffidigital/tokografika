@@ -343,17 +343,25 @@ window.setPosViewMode = (mode) => {
   
   if (mode === 'grid') {
     if (btnGrid) {
-      btnGrid.className = 'px-2.5 sm:px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-xs font-black transition-all text-emerald-700 dark:text-emerald-300 bg-white dark:bg-slate-900 shadow-md border border-slate-200/50 dark:border-slate-700';
+      btnGrid.className = 'btn-solid no-glass w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-slate-900 !bg-white shadow-sm';
+      const icon = btnGrid.querySelector('i');
+      if (icon) icon.className = 'fa-solid fa-border-all text-xs !text-slate-900';
     }
     if (btnList) {
-      btnList.className = 'px-2.5 sm:px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-xs font-black transition-all text-white/70 hover:text-white';
+      btnList.className = 'btn-solid no-glass w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-white hover:!bg-white/20';
+      const icon = btnList.querySelector('i');
+      if (icon) icon.className = 'fa-solid fa-list-ul text-xs !text-white';
     }
   } else {
     if (btnGrid) {
-      btnGrid.className = 'px-2.5 sm:px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-xs font-black transition-all text-white/70 hover:text-white';
+      btnGrid.className = 'btn-solid no-glass w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-white hover:!bg-white/20';
+      const icon = btnGrid.querySelector('i');
+      if (icon) icon.className = 'fa-solid fa-border-all text-xs !text-white';
     }
     if (btnList) {
-      btnList.className = 'px-2.5 sm:px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-xs font-black transition-all text-emerald-700 dark:text-emerald-300 bg-white dark:bg-slate-900 shadow-md border border-slate-200/50 dark:border-slate-700';
+      btnList.className = 'btn-solid no-glass w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-slate-900 !bg-white shadow-sm';
+      const icon = btnList.querySelector('i');
+      if (icon) icon.className = 'fa-solid fa-list-ul text-xs !text-slate-900';
     }
   }
 
