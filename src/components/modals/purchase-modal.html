@@ -99,7 +99,7 @@
         </div>
 
         <div class="flex justify-end pt-1">
-          <button type="button" class="btn-solid no-glass px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all" onclick="addPurchaseItemRow()">
+          <button type="button" class="btn-solid no-glass w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all" onclick="addPurchaseItemRow()">
             <i class="fa-solid fa-plus text-xs"></i> Tambahkan Barang
           </button>
         </div>
@@ -209,11 +209,11 @@
     </div>
 
     <!-- Footer -->
-    <div class="px-5 py-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50 shrink-0">
-      <button type="button" class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-xs" onclick="closePurchaseModal()">
+    <div class="px-4 sm:px-5 py-3 border-t border-slate-100 dark:border-slate-800 flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-2 bg-slate-50/70 dark:bg-slate-800/50 shrink-0">
+      <button type="button" class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-xs text-center" onclick="closePurchaseModal()">
         Batal
       </button>
-      <button type="button" class="btn-primary !py-2.5 !px-6 text-xs font-black shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2" onclick="savePurchaseInvoice()">
+      <button type="button" class="btn-primary w-full sm:w-auto justify-center !py-2.5 !px-6 text-xs font-black shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2" onclick="savePurchaseInvoice()">
         <i class="fa-solid fa-check-double"></i> Simpan Transaksi Pembelian
       </button>
     </div>

@@ -2080,7 +2080,7 @@ html.dark .badge-counter {
         </div>
 
         <div class="flex justify-end pt-1">
-          <button type="button" class="btn-solid no-glass px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all" onclick="addPurchaseItemRow()">
+          <button type="button" class="btn-solid no-glass w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all" onclick="addPurchaseItemRow()">
             <i class="fa-solid fa-plus text-xs"></i> Tambahkan Barang
           </button>
         </div>
@@ -2190,11 +2190,11 @@ html.dark .badge-counter {
     </div>
 
     <!-- Footer -->
-    <div class="px-5 py-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50 shrink-0">
-      <button type="button" class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-xs" onclick="closePurchaseModal()">
+    <div class="px-4 sm:px-5 py-3 border-t border-slate-100 dark:border-slate-800 flex flex-col-reverse sm:flex-row sm:items-center justify-between gap-2 bg-slate-50/70 dark:bg-slate-800/50 shrink-0">
+      <button type="button" class="w-full sm:w-auto px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-xs text-center" onclick="closePurchaseModal()">
         Batal
       </button>
-      <button type="button" class="btn-primary !py-2.5 !px-6 text-xs font-black shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2" onclick="savePurchaseInvoice()">
+      <button type="button" class="btn-primary w-full sm:w-auto justify-center !py-2.5 !px-6 text-xs font-black shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2" onclick="savePurchaseInvoice()">
         <i class="fa-solid fa-check-double"></i> Simpan Transaksi Pembelian
       </button>
     </div>
@@ -13616,8 +13616,8 @@ window.rAdmPurchases = () => {
   if (!content) return;
 
   const tabBtnClass = (t) => purchasesActiveSubTab === t
-    ? '!bg-emerald-600 !text-white font-black shadow-md'
-    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60 font-bold border border-slate-200/80 dark:border-slate-700';
+    ? '!bg-emerald-600 !text-white font-black shadow-md whitespace-nowrap shrink-0'
+    : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60 font-bold border border-slate-200/80 dark:border-slate-700 whitespace-nowrap shrink-0';
 
   let subTabHtml = '';
   if (purchasesActiveSubTab === 'invoices') {
@@ -13634,71 +13634,71 @@ window.rAdmPurchases = () => {
     <div class="space-y-5 pb-20 w-full">
       
       <!-- Top Overview Stat Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <!-- Card 1: Total Pembelian -->
         <div class="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm flex items-center gap-3.5">
-          <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl shrink-0">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg sm:text-xl shrink-0">
             <i class="fa-solid fa-cart-flatbed"></i>
           </div>
-          <div>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-tight">Total Pembelian Barang</p>
-            <h4 class="text-base sm:text-lg font-black text-slate-800 dark:text-white leading-tight mt-0.5">${fCur(totalPurchaseVal)}</h4>
+          <div class="min-w-0">
+            <p class="text-[9.5px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-tight truncate">Total Pembelian Barang</p>
+            <h4 class="text-base sm:text-lg font-black text-slate-800 dark:text-white leading-tight mt-0.5 truncate">${fCur(totalPurchaseVal)}</h4>
             <p class="text-[9px] text-slate-400 font-medium">${purchases.length} Transaksi Faktur</p>
           </div>
         </div>
 
         <!-- Card 2: Total Pembayaran Keluar -->
         <div class="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm flex items-center gap-3.5">
-          <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl shrink-0">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg sm:text-xl shrink-0">
             <i class="fa-solid fa-money-bill-transfer"></i>
           </div>
-          <div>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-tight">Total Sudah Terbayar</p>
-            <h4 class="text-base sm:text-lg font-black text-indigo-600 dark:text-indigo-400 leading-tight mt-0.5">${fCur(totalPaidVal)}</h4>
+          <div class="min-w-0">
+            <p class="text-[9.5px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-tight truncate">Total Sudah Terbayar</p>
+            <h4 class="text-base sm:text-lg font-black text-indigo-600 dark:text-indigo-400 leading-tight mt-0.5 truncate">${fCur(totalPaidVal)}</h4>
             <p class="text-[9px] text-slate-400 font-medium">Cash & Cicilan Keluar</p>
           </div>
         </div>
 
         <!-- Card 3: Sisa Hutang ke Supplier -->
         <div class="p-4 rounded-2xl bg-white dark:bg-slate-800 border ${totalRemainingDebt > 0 ? 'border-amber-300 dark:border-amber-700/80 bg-amber-50/20' : 'border-slate-200/80 dark:border-slate-700'} shadow-sm flex items-center gap-3.5">
-          <div class="w-12 h-12 rounded-2xl ${totalRemainingDebt > 0 ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-400'} flex items-center justify-center text-xl shrink-0">
+          <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl ${totalRemainingDebt > 0 ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-400'} flex items-center justify-center text-lg sm:text-xl shrink-0">
             <i class="fa-solid fa-hourglass-half"></i>
           </div>
-          <div>
-            <p class="text-[10px] font-bold ${totalRemainingDebt > 0 ? 'text-amber-700 dark:text-amber-300 font-black' : 'text-slate-400'} uppercase tracking-wider leading-tight">Total Sisa Hutang Supplier</p>
-            <h4 class="text-base sm:text-lg font-black text-amber-600 dark:text-amber-400 leading-tight mt-0.5">${fCur(totalRemainingDebt)}</h4>
+          <div class="min-w-0">
+            <p class="text-[9.5px] sm:text-[10px] font-bold ${totalRemainingDebt > 0 ? 'text-amber-700 dark:text-amber-300 font-black' : 'text-slate-400'} uppercase tracking-wider leading-tight truncate">Total Sisa Hutang Supplier</p>
+            <h4 class="text-base sm:text-lg font-black text-amber-600 dark:text-amber-400 leading-tight mt-0.5 truncate">${fCur(totalRemainingDebt)}</h4>
             <p class="text-[9px] text-slate-400 font-medium">${totalDebtsCount} Tagihan Belum Lunas</p>
           </div>
         </div>
       </div>
 
-      <!-- Sub-Tab Navigation Bar -->
-      <div class="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar pb-1">
-        <div class="flex items-center gap-2 shrink-0">
-          <button type="button" class="px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-1.5 ${tabBtnClass('invoices')}" onclick="setPurchasesSubTab('invoices')">
+      <!-- Sub-Tab Navigation Bar (Smooth Mobile Horizontal Scroll) -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+        <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 w-full sm:w-auto -mx-1 px-1">
+          <button type="button" class="px-3.5 py-2 rounded-xl text-xs transition-all flex items-center gap-1.5 ${tabBtnClass('invoices')}" onclick="setPurchasesSubTab('invoices')">
             <i class="fa-solid fa-file-invoice text-xs"></i>
-            <span>Faktur Pembelian (${purchases.length})</span>
+            <span>Faktur (${purchases.length})</span>
           </button>
 
-          <button type="button" class="px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-1.5 ${tabBtnClass('debts')}" onclick="setPurchasesSubTab('debts')">
+          <button type="button" class="px-3.5 py-2 rounded-xl text-xs transition-all flex items-center gap-1.5 ${tabBtnClass('debts')}" onclick="setPurchasesSubTab('debts')">
             <i class="fa-solid fa-book-bookmark text-xs"></i>
-            <span>Buku Hutang & Tempo</span>
+            <span>Buku Hutang</span>
             ${totalDebtsCount > 0 ? `<span class="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-amber-500 text-white ml-0.5">${totalDebtsCount}</span>` : ''}
           </button>
 
-          <button type="button" class="px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-1.5 ${tabBtnClass('suppliers')}" onclick="setPurchasesSubTab('suppliers')">
+          <button type="button" class="px-3.5 py-2 rounded-xl text-xs transition-all flex items-center gap-1.5 ${tabBtnClass('suppliers')}" onclick="setPurchasesSubTab('suppliers')">
             <i class="fa-solid fa-truck-field text-xs"></i>
-            <span>Data Supplier (${suppliers.length})</span>
+            <span>Supplier (${suppliers.length})</span>
           </button>
 
-          <button type="button" class="px-4 py-2 rounded-xl text-xs transition-all flex items-center gap-1.5 ${tabBtnClass('reports')}" onclick="setPurchasesSubTab('reports')">
+          <button type="button" class="px-3.5 py-2 rounded-xl text-xs transition-all flex items-center gap-1.5 ${tabBtnClass('reports')}" onclick="setPurchasesSubTab('reports')">
             <i class="fa-solid fa-chart-pie text-xs"></i>
-            <span>Rekap Keuangan</span>
+            <span>Rekap</span>
           </button>
         </div>
 
-        <div class="flex items-center gap-2 shrink-0">
-          <button type="button" class="btn-solid no-glass px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all" onclick="openPurchaseModal()">
+        <div class="flex items-center shrink-0 w-full sm:w-auto">
+          <button type="button" class="btn-solid no-glass w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all whitespace-nowrap" onclick="openPurchaseModal()">
             <i class="fa-solid fa-plus text-xs"></i>
             <span>+ Input Pembelian Baru</span>
           </button>
