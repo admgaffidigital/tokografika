@@ -1041,15 +1041,15 @@ window.rAdmStockOpname = () => {
               <p class="text-[11px] font-semibold text-slate-400 mt-0.5">Penyesuaian stok sistem dengan hitung fisik nyata & audit selisih HPP.</p>
             </div>
           </div>
-          <div class="flex items-center gap-2 shrink-0 flex-wrap">
-            <button type="button" onclick="printStockOpnameReport()" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95">
+          <div class="flex items-center gap-2 shrink-0 flex-wrap w-full sm:w-auto">
+            <button type="button" onclick="printStockOpnameReport()" class="flex-1 sm:flex-initial px-3.5 py-2 bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95">
               <i class="fa-solid fa-print text-sm"></i> <span>Cetak Log</span>
             </button>
-            <button type="button" onclick="exportStockOpnameCsv()" class="px-3.5 py-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 border border-emerald-200/80 dark:border-emerald-800/60 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95">
+            <button type="button" onclick="exportStockOpnameCsv()" class="flex-1 sm:flex-initial px-3.5 py-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 border border-emerald-200/80 dark:border-emerald-800/60 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95">
               <i class="fa-solid fa-file-excel text-sm"></i> <span>Export CSV</span>
             </button>
-            <button type="button" onclick="openStockOpnameModal()" class="px-4 py-2 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-95" style="background-color:var(--clr-p)">
-              <i class="fa-solid fa-plus"></i> <span>+ Catat Opname</span>
+            <button type="button" onclick="openStockOpnameModal()" class="w-full sm:w-auto px-4 py-2.5 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-95" style="background-color:var(--clr-p)">
+              <i class="fa-solid fa-plus"></i> <span>Catat Opname</span>
             </button>
           </div>
         </div>
