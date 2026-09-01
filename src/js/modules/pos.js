@@ -78,20 +78,6 @@ window.switchLoginTab = (tab) => {
   }
 };
 
-window.checkAdminAccess = () => {
-  if (isAdm) {
-    if (cRole === 'cashier') {
-      initPosView();
-    } else {
-      changeView('view-admin');
-      openAdminMenu();
-    }
-  } else {
-    changeView('view-admin-login');
-    switchLoginTab('admin');
-  }
-};
-
 window.openSubscriptionModal = (msg) => {
   const modal = el('pos-subscription-modal');
   const box = el('pos-subscription-box');

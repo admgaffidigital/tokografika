@@ -38,7 +38,19 @@ const aF = {
   ]
 };
 
-window.checkAdminAccess = () => isAdm ? (changeView('view-admin'), openAdminMenu()) : (setV('login-username', ''), setV('login-password', ''), changeView('view-admin-login'));
+window.checkAdminAccess = () => {
+  if (isAdm) {
+    if (cRole === 'cashier') {
+      initPosView();
+    } else {
+      changeView('view-admin');
+      openAdminMenu();
+    }
+  } else {
+    changeView('view-admin-login');
+    if (typeof switchLoginTab === 'function') switchLoginTab('admin');
+  }
+};
 
 window.openAdminMenu = () => {
   show('admin-dashboard-view'); 
