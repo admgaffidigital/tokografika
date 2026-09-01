@@ -270,6 +270,8 @@ const buildAndInjectManifest = async () => {
     _pwaIconCache[cacheKey] = { icon192, icon512, icon180, iconMaskable192, iconMaskable512 };
   }
 
+  const activeFaviconUrl = icon180 || icon192 || (logo && (logo.startsWith('http') || logo.startsWith('data:')) ? logo : '/favicon.png');
+
   ['pwa-favicon', 'pwa-favicon-shortcut'].forEach(id => {
     let elFav = document.getElementById(id);
     if (!elFav) {
@@ -279,14 +281,24 @@ const buildAndInjectManifest = async () => {
       elFav.type = 'image/png';
       document.head.appendChild(elFav);
     }
-    elFav.href = icon180 || icon192 || (logo && (logo.startsWith('http') || logo.startsWith('data:')) ? logo : '');
+    elFav.href = activeFaviconUrl;
   });
 
   ['pwa-apple-touch-icon','pwa-apple-touch-icon-76','pwa-apple-touch-icon-120',
    'pwa-apple-touch-icon-152','pwa-apple-touch-icon-180'].forEach(id => {
     const el2 = document.getElementById(id);
-    if (el2) el2.href = icon180;
+    if (el2) el2.href = icon180 || activeFaviconUrl;
   });
+
+  // Sinkronkan pratinjau Open Graph & Twitter Card ke Logo Toko / Favicon PWA
+  const ogImg = document.getElementById('seo-og-image');
+  if (ogImg && !ogImg.dataset.productCustom) {
+    ogImg.content = (logo && (logo.startsWith('http') || logo.startsWith('data:'))) ? logo : (icon512 || activeFaviconUrl);
+  }
+  const twImg = document.getElementById('seo-tw-image');
+  if (twImg && !twImg.dataset.productCustom) {
+    twImg.content = (logo && (logo.startsWith('http') || logo.startsWith('data:'))) ? logo : (icon512 || activeFaviconUrl);
+  }
 
   _injectIosSplashScreen(logo, themeHex, storeName);
 

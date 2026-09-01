@@ -155,13 +155,21 @@
 
         let savedBg = localStorage.getItem('freshmart_bg_style');
         let savedImg = localStorage.getItem('freshmart_bg_image');
-        if (!savedBg || !savedImg) {
-          try {
-            const cms = JSON.parse(localStorage.getItem('freshmart_cms_data') || '{}');
-            if (!savedBg && cms?.store?.bgStyle) savedBg = cms.store.bgStyle;
-            if (!savedImg && cms?.store?.bgImage) savedImg = cms.store.bgImage;
-          } catch(e) {}
-        }
+        let savedStoreLogo = '';
+        try {
+          const cms = JSON.parse(localStorage.getItem('freshmart_cms_data') || '{}');
+          if (!savedBg && cms?.store?.bgStyle) savedBg = cms.store.bgStyle;
+          if (!savedImg && cms?.store?.bgImage) savedImg = cms.store.bgImage;
+          if (cms?.store?.logo && (cms.store.logo.startsWith('http') || cms.store.logo.startsWith('data:'))) {
+            savedStoreLogo = cms.store.logo;
+            const fav1 = document.getElementById('pwa-favicon');
+            const fav2 = document.getElementById('pwa-favicon-shortcut');
+            const fav3 = document.getElementById('pwa-apple-touch-icon');
+            if (fav1) fav1.href = savedStoreLogo;
+            if (fav2) fav2.href = savedStoreLogo;
+            if (fav3) fav3.href = savedStoreLogo;
+          }
+        } catch(e) {}
         document.addEventListener('DOMContentLoaded', () => {
           const elBg = document.getElementById('app-bg-shapes');
           if (elBg) elBg.className = 'app-bg-shapes bg-style-' + (savedBg || 'hero-arch') + ' pointer-events-none';
