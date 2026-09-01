@@ -1,0 +1,41 @@
+<!-- ========================================================================= -->
+<!-- MODAL: DETAIL FAKTUR PEMBELIAN & CETAK NOTA                               -->
+<!-- ========================================================================= -->
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 transition-opacity duration-300 opacity-0 hidden" id="purchase-detail-modal">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[92vh] transition-all transform translate-y-5" id="purchase-detail-box">
+    
+    <!-- Modal Header -->
+    <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-file-invoice"></i>
+        </div>
+        <div>
+          <h3 class="font-extrabold text-sm sm:text-base text-slate-800 dark:text-white leading-tight" id="purch-detail-inv-title">Faktur Pembelian</h3>
+          <p class="text-[10px] text-slate-400 font-medium" id="purch-detail-inv-date">-</p>
+        </div>
+      </div>
+      <button type="button" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition-colors" onclick="closePurchaseDetailModal()" title="Tutup">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body (Printable Area) -->
+    <div class="p-5 overflow-y-auto space-y-4 custom-scrollbar text-xs flex-1" id="purch-detail-printable-content">
+      <!-- Populated dynamically by JS -->
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="px-5 py-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50 shrink-0">
+      <div class="flex items-center gap-2">
+        <button type="button" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-200 transition-all text-xs flex items-center gap-1.5" onclick="printPurchaseInvoice()">
+          <i class="fa-solid fa-print"></i> Cetak Faktur
+        </button>
+      </div>
+      <button type="button" class="px-5 py-2.5 rounded-xl bg-slate-800 dark:bg-slate-700 text-white font-bold hover:bg-slate-900 transition-all text-xs" onclick="closePurchaseDetailModal()">
+        Tutup
+      </button>
+    </div>
+
+  </div>
+</div>

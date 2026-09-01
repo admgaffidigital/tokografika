@@ -1,0 +1,104 @@
+<!-- ========================================================================= -->
+<!-- MODAL: FORM DATA SUPPLIER (TAMBAH / EDIT)                                -->
+<!-- ========================================================================= -->
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 transition-opacity duration-300 opacity-0 hidden" id="supplier-modal">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[90vh] transition-all transform translate-y-5" id="supplier-modal-box">
+    
+    <!-- Modal Header -->
+    <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-truck-field"></i>
+        </div>
+        <div>
+          <h3 class="font-extrabold text-sm sm:text-base text-slate-800 dark:text-white leading-tight" id="supplier-modal-title">Tambah Supplier Baru</h3>
+          <p class="text-[10px] text-slate-400 font-medium">Kelola data vendor, distributor, atau sales</p>
+        </div>
+      </div>
+      <button type="button" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition-colors" onclick="closeSupplierModal()" title="Tutup">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="p-5 overflow-y-auto space-y-4 custom-scrollbar text-xs">
+      <input type="hidden" id="supp-id" value="" />
+      
+      <!-- Nama Supplier -->
+      <div>
+        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wider text-[10px]">
+          Nama Supplier / Distributor <span class="text-rose-500">*</span>
+        </label>
+        <div class="relative">
+          <i class="fa-solid fa-building absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input type="text" id="supp-name" class="admin-input !pl-10 !py-2.5 w-full font-bold" placeholder="Contoh: PT. Sumber Makmur Jaya" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+        <!-- No WA / Telp -->
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wider text-[10px]">
+            No. WhatsApp / Telepon <span class="text-rose-500">*</span>
+          </label>
+          <div class="relative">
+            <i class="fa-brands fa-whatsapp absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-500"></i>
+            <input type="text" id="supp-phone" class="admin-input !pl-10 !py-2.5 w-full" placeholder="081234567890" />
+          </div>
+        </div>
+
+        <!-- Nama Sales / PIC -->
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wider text-[10px]">
+            Nama Sales / PIC
+          </label>
+          <div class="relative">
+            <i class="fa-solid fa-user-tie absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" id="supp-pic" class="admin-input !pl-10 !py-2.5 w-full" placeholder="Nama petugas sales" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Alamat Supplier -->
+      <div>
+        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wider text-[10px]">
+          Alamat / Kota Supplier
+        </label>
+        <div class="relative">
+          <i class="fa-solid fa-map-location-dot absolute left-3.5 top-3 text-slate-400"></i>
+          <textarea id="supp-address" class="admin-input !pl-10 !py-2.5 w-full resize-none leading-relaxed" rows="2" placeholder="Detail alamat kantor / gudang supplier"></textarea>
+        </div>
+      </div>
+
+      <!-- Info Rekening Bank -->
+      <div>
+        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wider text-[10px]">
+          Info Rekening Pembayaran (Bank / No. Rek / A.N)
+        </label>
+        <div class="relative">
+          <i class="fa-solid fa-credit-card absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+          <input type="text" id="supp-bank" class="admin-input !pl-10 !py-2.5 w-full" placeholder="Contoh: BCA 123456789 a/n PT Sumber Makmur" />
+        </div>
+      </div>
+
+      <!-- Catatan -->
+      <div>
+        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wider text-[10px]">
+          Catatan Tambahan
+        </label>
+        <input type="text" id="supp-notes" class="admin-input !py-2.5 w-full" placeholder="Contoh: Jadwal kirim hari Selasa & Jumat" />
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="px-5 py-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2.5 bg-slate-50/70 dark:bg-slate-800/50">
+      <button type="button" class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-xs" onclick="closeSupplierModal()">
+        Batal
+      </button>
+      <button type="button" class="btn-primary !py-2.5 !px-5 text-xs font-black shadow-md hover:-translate-y-0.5 active:scale-95" onclick="saveSupplier()">
+        <i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan Supplier
+      </button>
+    </div>
+
+  </div>
+</div>

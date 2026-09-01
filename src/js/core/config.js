@@ -72,7 +72,10 @@ const defApp = {
     }
   ], 
   licenseKey: "",
-  accounts: [] 
+  accounts: [],
+  suppliers: [],
+  purchases: [],
+  stockOpname: []
 };
 
 // Global Runtime State Variables

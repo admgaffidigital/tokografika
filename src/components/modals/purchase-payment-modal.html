@@ -1,0 +1,116 @@
+<!-- ========================================================================= -->
+<!-- MODAL: CATAT PEMBAYARAN / TITIPAN CICILAN HUTANG SUPPLIER                 -->
+<!-- ========================================================================= -->
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 z-50 transition-opacity duration-300 opacity-0 hidden" id="purchase-payment-modal">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[90vh] transition-all transform translate-y-5" id="purchase-payment-box">
+    
+    <!-- Modal Header -->
+    <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-money-check-dollar"></i>
+        </div>
+        <div>
+          <h3 class="font-extrabold text-sm sm:text-base text-slate-800 dark:text-white leading-tight">Catat Pembayaran Hutang</h3>
+          <p class="text-[10px] text-slate-400 font-medium" id="pay-modal-subtitle">Faktur: -</p>
+        </div>
+      </div>
+      <button type="button" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition-colors" onclick="closePurchasePaymentModal()" title="Tutup">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="p-5 overflow-y-auto space-y-4 custom-scrollbar text-xs">
+      <input type="hidden" id="pay-purchase-id" value="" />
+
+      <!-- Ringkasan Hutang Faktur -->
+      <div class="bg-amber-50/70 dark:bg-amber-950/20 p-3.5 rounded-2xl border border-amber-200/80 dark:border-amber-800/50 space-y-2">
+        <div class="flex justify-between items-center text-slate-600 dark:text-slate-300">
+          <span>Supplier</span>
+          <span class="font-bold text-slate-900 dark:text-white" id="pay-supplier-name">-</span>
+        </div>
+        <div class="flex justify-between items-center text-slate-600 dark:text-slate-300">
+          <span>Total Faktur Pembelian</span>
+          <span class="font-bold text-slate-900 dark:text-white" id="pay-total-amount">Rp 0</span>
+        </div>
+        <div class="flex justify-between items-center text-emerald-700 dark:text-emerald-400">
+          <span>Sudah Terbayar Sebelumnya</span>
+          <span class="font-bold" id="pay-already-paid">Rp 0</span>
+        </div>
+        <div class="pt-2 border-t border-amber-200 dark:border-amber-800/60 flex justify-between items-baseline">
+          <span class="font-black text-amber-800 dark:text-amber-300 uppercase tracking-wide">Sisa Hutang Saat Ini</span>
+          <span class="text-base font-black text-amber-600 dark:text-amber-400" id="pay-remaining-debt">Rp 0</span>
+        </div>
+      </div>
+
+      <!-- Form Input Pembayaran -->
+      <div class="space-y-3 pt-1">
+        <!-- Tanggal Pembayaran -->
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wider text-[10px]">
+            Tanggal Pembayaran <span class="text-rose-500">*</span>
+          </label>
+          <input type="date" id="pay-date" class="admin-input !py-2.5 w-full font-bold" />
+        </div>
+
+        <!-- Nominal Bayar -->
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[10px]">
+              Nominal yang Dibayarkan (Rp) <span class="text-rose-500">*</span>
+            </label>
+            <button type="button" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline" onclick="fillPayFullAmount()">
+              <i class="fa-solid fa-bolt mr-0.5"></i> Lunasi Semua
+            </button>
+          </div>
+          <div class="relative">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-slate-400">Rp</span>
+            <input type="number" id="pay-amount" min="1" class="admin-input !pl-10 !py-2.5 w-full font-black text-sm text-emerald-600 dark:text-emerald-400" placeholder="0" />
+          </div>
+        </div>
+
+        <!-- Metode Pembayaran -->
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wider text-[10px]">
+            Metode Pembayaran
+          </label>
+          <select id="pay-method" class="admin-input !py-2.5 w-full font-bold">
+            <option value="cash">Tunai (Kas Kasir / Kas Toko)</option>
+            <option value="transfer">Transfer Bank (Rekening)</option>
+            <option value="deposit">Titipan Sales / Giro</option>
+          </select>
+        </div>
+
+        <!-- Catatan / No Referensi -->
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wider text-[10px]">
+            Catatan / No. Bukti Transfer
+          </label>
+          <input type="text" id="pay-notes" class="admin-input !py-2.5 w-full" placeholder="Contoh: Titip lewat sales Pak Budi / Trf BCA" />
+        </div>
+      </div>
+
+      <!-- Riwayat Pembayaran Sebelumnya -->
+      <div class="pt-2">
+        <label class="block font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wider text-[10px]">
+          <i class="fa-solid fa-clock-rotate-left mr-1"></i> Riwayat Pembayaran Pada Faktur Ini
+        </label>
+        <div id="pay-history-list" class="space-y-2 max-h-36 overflow-y-auto custom-scrollbar">
+          <!-- Populated dynamically by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="px-5 py-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2.5 bg-slate-50/70 dark:bg-slate-800/50">
+      <button type="button" class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-xs" onclick="closePurchasePaymentModal()">
+        Batal
+      </button>
+      <button type="button" class="btn-primary !py-2.5 !px-5 text-xs font-black shadow-md hover:-translate-y-0.5 active:scale-95" onclick="savePurchasePayment()">
+        <i class="fa-solid fa-check mr-1.5"></i> Simpan Pembayaran
+      </button>
+    </div>
+
+  </div>
+</div>

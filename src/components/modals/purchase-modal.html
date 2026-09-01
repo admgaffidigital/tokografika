@@ -1,0 +1,222 @@
+<!-- ========================================================================= -->
+<!-- MODAL: FORM INPUT TRANSAKSI PEMBELIAN SUPPLIER                             -->
+<!-- ========================================================================= -->
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 transition-opacity duration-300 opacity-0 hidden" id="purchase-modal">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-3xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[92vh] transition-all transform translate-y-5" id="purchase-modal-box">
+    
+    <!-- Header -->
+    <div class="px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50 shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-cart-flatbed"></i>
+        </div>
+        <div>
+          <h3 class="font-extrabold text-sm sm:text-base text-slate-800 dark:text-white leading-tight">Input Faktur Pembelian Barang</h3>
+          <p class="text-[10px] text-slate-400 font-medium">Tambah stok otomatis & kelola tagihan supplier</p>
+        </div>
+      </div>
+      <button type="button" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center transition-colors" onclick="closePurchaseModal()" title="Tutup">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+    </div>
+
+    <!-- Body (Scrollable) -->
+    <div class="p-4 sm:p-5 overflow-y-auto space-y-4 custom-scrollbar text-xs flex-1">
+      
+      <!-- Baris 1: Info Faktur, Tanggal & Supplier -->
+      <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- No Faktur -->
+          <div>
+            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wider text-[10px]">
+              No. Faktur / Nota
+            </label>
+            <input type="text" id="purch-inv-no" class="admin-input !py-2.5 w-full font-mono font-bold" placeholder="FB-20260901-001" />
+          </div>
+
+          <!-- Tanggal Pembelian -->
+          <div>
+            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wider text-[10px]">
+              Tanggal Transaksi
+            </label>
+            <input type="date" id="purch-date" class="admin-input !py-2.5 w-full font-bold" />
+          </div>
+
+          <!-- Supplier -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[10px]">
+                Supplier <span class="text-rose-500">*</span>
+              </label>
+              <button type="button" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-0.5" onclick="openSupplierModal(null, true)">
+                <i class="fa-solid fa-plus text-[8px]"></i> Tambah
+              </button>
+            </div>
+            <select id="purch-supplier-id" class="admin-input !py-2.5 w-full font-bold">
+              <option value="">-- Pilih Supplier --</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Baris 2: Pemilih Barang Masuk -->
+      <div class="bg-white dark:bg-slate-800/90 p-4 rounded-2xl border-2 border-dashed border-emerald-300 dark:border-emerald-700/60 space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 class="font-extrabold text-slate-800 dark:text-white text-xs flex items-center gap-2">
+            <i class="fa-solid fa-boxes-packing text-emerald-500"></i> Masukkan Produk yang Dibeli
+          </h4>
+          <span class="text-[10px] text-slate-400 font-medium">* Stok & HPP produk akan otomatis diupdate</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
+          <!-- Pilih Produk -->
+          <div class="sm:col-span-5">
+            <label class="block font-bold text-slate-600 dark:text-slate-300 mb-1 text-[10px]">Pilih Produk</label>
+            <select id="purch-item-prod" class="admin-input !py-2 w-full text-xs" onchange="onPurchaseProductSelect()">
+              <option value="">-- Pilih Produk dari Etalase --</option>
+            </select>
+          </div>
+
+          <!-- Pilih Varian (Jika Ada) -->
+          <div class="sm:col-span-3" id="purch-variant-wrapper">
+            <label class="block font-bold text-slate-600 dark:text-slate-300 mb-1 text-[10px]">Varian</label>
+            <select id="purch-item-var" class="admin-input !py-2 w-full text-xs">
+              <option value="">- Tanpa Varian -</option>
+            </select>
+          </div>
+
+          <!-- Qty Masuk -->
+          <div class="sm:col-span-2">
+            <label class="block font-bold text-slate-600 dark:text-slate-300 mb-1 text-[10px]">Jumlah (Qty)</label>
+            <input type="number" id="purch-item-qty" min="1" value="1" class="admin-input !py-2 w-full text-xs font-bold text-center" placeholder="1" />
+          </div>
+
+          <!-- Harga Beli / HPP Satuan -->
+          <div class="sm:col-span-2">
+            <label class="block font-bold text-slate-600 dark:text-slate-300 mb-1 text-[10px]">Harga Beli Satuan (Rp)</label>
+            <input type="number" id="purch-item-price" min="0" value="0" class="admin-input !py-2 w-full text-xs font-bold text-right" placeholder="Rp" />
+          </div>
+        </div>
+
+        <div class="flex justify-end pt-1">
+          <button type="button" class="btn-solid no-glass px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all" onclick="addPurchaseItemRow()">
+            <i class="fa-solid fa-plus text-xs"></i> Tambahkan Barang
+          </button>
+        </div>
+
+        <!-- Tabel Daftar Barang Terpilih -->
+        <div class="mt-3 overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold uppercase text-[9px]">
+              <tr>
+                <th class="p-2.5">No</th>
+                <th class="p-2.5">Nama Produk & Varian</th>
+                <th class="p-2.5 text-center">Jumlah</th>
+                <th class="p-2.5 text-right">Harga Beli Satuan</th>
+                <th class="p-2.5 text-right">Subtotal</th>
+                <th class="p-2.5 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="purch-items-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
+              <tr>
+                <td colspan="6" class="p-4 text-center text-slate-400 font-medium">Belum ada barang dimasukkan</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Baris 3: Pembayaran & Opsi Tempo / Hutang -->
+      <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-3.5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-slate-700">
+          <div>
+            <label class="block font-extrabold text-slate-800 dark:text-white uppercase tracking-wider text-xs">
+              Metode Pembayaran ke Supplier
+            </label>
+            <p class="text-[10px] text-slate-400 font-medium">Pilih apakah faktur dibayar langsung (CASH) atau bertahap/jatuh tempo (TEMPO)</p>
+          </div>
+
+          <!-- Radio Switch CASH vs TEMPO -->
+          <div class="flex bg-slate-200/80 dark:bg-slate-900 p-1 rounded-xl gap-1 shrink-0">
+            <label class="cursor-pointer">
+              <input type="radio" name="purch-payment-type" value="cash" checked onchange="togglePurchasePaymentType()" class="sr-only peer" />
+              <span class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all block peer-checked:bg-emerald-600 peer-checked:text-white text-slate-600 dark:text-slate-300">
+                <i class="fa-solid fa-money-bill-wave mr-1"></i> CASH (Lunas)
+              </span>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="purch-payment-type" value="credit" onchange="togglePurchasePaymentType()" class="sr-only peer" />
+              <span class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all block peer-checked:bg-amber-500 peer-checked:text-white text-slate-600 dark:text-slate-300">
+                <i class="fa-solid fa-hourglass-half mr-1"></i> TEMPO / Hutang
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Box Khusus Jika TEMPO / Piutang-Hutang -->
+        <div id="purch-tempo-details" class="hidden bg-amber-50/80 dark:bg-amber-950/20 p-3.5 rounded-xl border border-amber-200 dark:border-amber-800/40 space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+            <!-- Termin Cepat -->
+            <div>
+              <label class="block font-bold text-amber-800 dark:text-amber-300 mb-1 text-[10px]">Termin Pembayaran</label>
+              <select id="purch-term-preset" class="admin-input !py-2 w-full text-xs font-bold" onchange="onPurchaseTermPresetChange()">
+                <option value="7">7 Hari (1 Minggu)</option>
+                <option value="14" selected>14 Hari (2 Minggu)</option>
+                <option value="30">30 Hari (1 Bulan)</option>
+                <option value="custom">Custom Tanggal Jatuh Tempo</option>
+              </select>
+            </div>
+
+            <!-- Tanggal Jatuh Tempo -->
+            <div>
+              <label class="block font-bold text-amber-800 dark:text-amber-300 mb-1 text-[10px]">Tanggal Jatuh Tempo</label>
+              <input type="date" id="purch-due-date" class="admin-input !py-2 w-full text-xs font-bold" />
+            </div>
+
+            <!-- Uang Muka / Titipan Awal -->
+            <div>
+              <label class="block font-bold text-amber-800 dark:text-amber-300 mb-1 text-[10px]">Uang Muka / DP Awal (Rp)</label>
+              <input type="number" id="purch-initial-paid" min="0" value="0" class="admin-input !py-2 w-full text-xs font-bold text-right" oninput="calculatePurchaseTotals()" placeholder="0" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Ringkasan Total & Sisa Hutang -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          <div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
+            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Total Faktur Pembelian</span>
+            <span class="text-base font-black text-slate-800 dark:text-white" id="purch-total-amount-display">Rp 0</span>
+          </div>
+          <div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
+            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider block">Dibayar Sekarang</span>
+            <span class="text-base font-black text-emerald-600 dark:text-emerald-400" id="purch-paid-amount-display">Rp 0</span>
+          </div>
+          <div class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700" id="purch-debt-box">
+            <span class="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider block">Sisa Hutang ke Supplier</span>
+            <span class="text-base font-black text-amber-600 dark:text-amber-400" id="purch-remaining-debt-display">Rp 0</span>
+          </div>
+        </div>
+
+        <!-- Catatan Faktur -->
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wider text-[10px]">
+            Catatan Faktur / Keterangan
+          </label>
+          <input type="text" id="purch-notes" class="admin-input !py-2 w-full" placeholder="Contoh: Barang diterima lengkap di gudang" />
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="px-5 py-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50 shrink-0">
+      <button type="button" class="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-xs" onclick="closePurchaseModal()">
+        Batal
+      </button>
+      <button type="button" class="btn-primary !py-2.5 !px-6 text-xs font-black shadow-md hover:-translate-y-0.5 active:scale-95 flex items-center gap-2" onclick="savePurchaseInvoice()">
+        <i class="fa-solid fa-check-double"></i> Simpan Transaksi Pembelian
+      </button>
+    </div>
+
+  </div>
+</div>

@@ -204,6 +204,7 @@ window.openAdminTab = (t, fH = !1) => {
   const titles = { 
     'orders': 'Daftar Pesanan', 
     'reports': 'Laporan Penjualan & Laba Rugi',
+    'purchases': 'Pembelian, Hutang & Supplier',
     'stock_opname': 'Stok Opname & Audit Fisik',
     'settings': 'Pengaturan Toko', 
     'products': 'Kelola Produk', 
@@ -219,6 +220,7 @@ window.openAdminTab = (t, fH = !1) => {
   if (t === 'settings') rAdmSet(); 
   else if (t === 'orders') rAdmOrd(); 
   else if (t === 'reports') rAdmReports();
+  else if (t === 'purchases') rAdmPurchases();
   else if (t === 'stock_opname') rAdmStockOpname();
   else rAdmL(t);
 };

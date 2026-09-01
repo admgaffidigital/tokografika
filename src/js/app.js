@@ -28,6 +28,9 @@
 // 8. POS Kasir (Point of Sale) & Cashier Engine
 // @include modules/pos.js
 
+// 8.1. Pembelian, Supplier, Hutang/Tempo & Pembayaran
+// @include modules/purchases.js
+
 // 9. Barcode Scanner & Hardware Hybrid Bridge
 // @include modules/scanner.js
 
