@@ -15043,45 +15043,209 @@ const _renderSuppliersSubTab = (suppliers, purchases) => {
   `;
 };
 
-// Sub-Tab 4: Rekap & Laporan Keuangan Pembelian
+// Sub-Tab 4: Rekap & Laporan Keuangan Pembelian (Executive Financial Dashboard)
 const _renderReportsSubTab = (purchases, suppliers) => {
+  const totalBeli = purchases.reduce((acc, p) => acc + (Number(p.totalAmount) || 0), 0);
+  const totalBayar = purchases.reduce((acc, p) => acc + (Number(p.paidAmount) || 0), 0);
+  const totalHutang = purchases.reduce((acc, p) => acc + (Number(p.remainingDebt) || 0), 0);
+  const rateLunas = totalBeli > 0 ? Math.min(100, Math.round((totalBayar / totalBeli) * 100)) : 100;
+
+  // Breakdown Status Faktur
+  const paidInvoices = purchases.filter(p => p.status === 'paid');
+  const partialInvoices = purchases.filter(p => p.status === 'partial');
+  const unpaidInvoices = purchases.filter(p => p.status === 'unpaid');
+
+  const paidNominal = paidInvoices.reduce((a, b) => a + (Number(b.totalAmount) || 0), 0);
+  const partialDebt = partialInvoices.reduce((a, b) => a + (Number(b.remainingDebt) || 0), 0);
+  const unpaidDebt = unpaidInvoices.reduce((a, b) => a + (Number(b.remainingDebt) || 0), 0);
+
+  // Unified Supplier List (termasuk supplier dari riwayat faktur)
+  const suppMap = new Map();
+  (suppliers || []).forEach(s => {
+    suppMap.set(String(s.id), { id: s.id, name: s.name, pic: s.pic, phone: s.phone, invoiceCount: 0, totalBuy: 0, totalPaid: 0, totalDebt: 0 });
+  });
+
+  purchases.forEach(p => {
+    const sId = String(p.supplierId || 'general');
+    if (!suppMap.has(sId)) {
+      suppMap.set(sId, { id: sId, name: p.supplierName || 'Supplier Umum', pic: '', phone: '', invoiceCount: 0, totalBuy: 0, totalPaid: 0, totalDebt: 0 });
+    }
+    const row = suppMap.get(sId);
+    row.invoiceCount += 1;
+    row.totalBuy += (Number(p.totalAmount) || 0);
+    row.totalPaid += (Number(p.paidAmount) || 0);
+    row.totalDebt += (Number(p.remainingDebt) || 0);
+  });
+
+  const suppSummaryList = Array.from(suppMap.values()).filter(s => s.invoiceCount > 0 || suppliers.some(orig => String(orig.id) === String(s.id)));
+
+  // Riwayat Seluruh Kas Keluar (Semua Cicilan & DP)
+  const allPayments = [];
+  purchases.forEach(p => {
+    (p.payments || []).forEach(pay => {
+      allPayments.push({
+        ...pay,
+        invoiceNo: p.invoiceNo,
+        supplierName: p.supplierName,
+        purchaseId: p.id
+      });
+    });
+  });
+  allPayments.sort((a, b) => (b.recordedAt || (b.date ? new Date(b.date).getTime() : 0)) - (a.recordedAt || (a.date ? new Date(a.date).getTime() : 0)));
+
+  // Top 5 Komoditas Barang yang Dibeli
+  const productAggMap = new Map();
+  purchases.forEach(p => {
+    (p.items || []).forEach(it => {
+      const pKey = it.productId || it.productName;
+      if (!productAggMap.has(pKey)) {
+        productAggMap.set(pKey, {
+          name: it.productName,
+          variant: it.variantName || '',
+          totalQty: 0,
+          totalSubtotal: 0
+        });
+      }
+      const agg = productAggMap.get(pKey);
+      agg.totalQty += (Number(it.qty) || 0);
+      agg.totalSubtotal += (Number(it.subtotal) || 0);
+    });
+  });
+  const topProducts = Array.from(productAggMap.values())
+    .sort((a, b) => b.totalSubtotal - a.totalSubtotal)
+    .slice(0, 5);
+
   return `
-    <div class="space-y-4">
-      <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-3 sm:space-y-4">
-        <div class="flex items-center justify-between">
-          <h4 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white uppercase tracking-wider">Rekapitulasi Pembelian & Kas</h4>
-          <span class="text-[10px] sm:text-[11px] font-bold text-slate-400">${purchases.length} Total Faktur</span>
+    <div class="space-y-4 sm:space-y-5">
+      
+      <!-- 1. Header Toolbar & Action Bar -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h4 class="font-extrabold text-sm sm:text-base text-slate-800 dark:text-white uppercase tracking-wider">
+              Rekapitulasi Pembelian & Kas
+            </h4>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-teal-100 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+              ${purchases.length} Total Faktur
+            </span>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Laporan terpadu pengadaan barang, perputaran kas keluar, status hutang supplier, dan komoditas belanja.
+          </p>
         </div>
 
-        <!-- Mobile Card List View (No Horizontal Scrollbar) -->
+        <div class="flex items-center gap-2 shrink-0">
+          <button type="button" onclick="printPurchaseRecapReport()" class="px-4 py-2.5 rounded-xl bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white font-bold text-xs flex items-center gap-2 shadow-sm active:scale-95 transition-all">
+            <i class="fa-solid fa-print text-amber-400"></i>
+            <span>Cetak Rekap (A4)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Executive Stat Cards (4 Metrik Utama) -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3.5">
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm">
+          <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Pengadaan (HPP)</p>
+          <h4 class="text-sm sm:text-base font-black text-slate-800 dark:text-white mt-1 leading-tight">${fCur(totalBeli)}</h4>
+          <span class="text-[9px] text-slate-400 font-medium mt-0.5 block">${purchases.length} Transaksi Faktur</span>
+        </div>
+
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm">
+          <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">Kas Keluar Terbayar</p>
+          <h4 class="text-sm sm:text-base font-black text-emerald-600 dark:text-emerald-400 mt-1 leading-tight">${fCur(totalBayar)}</h4>
+          <span class="text-[9px] text-emerald-600/80 font-bold mt-0.5 block">${allPayments.length} Bukti Bayar/DP</span>
+        </div>
+
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-800 border ${totalHutang > 0 ? 'border-amber-300 dark:border-amber-700/80 bg-amber-50/20' : 'border-slate-200/80 dark:border-slate-700'} shadow-sm">
+          <p class="text-[9px] sm:text-[10px] font-bold ${totalHutang > 0 ? 'text-amber-700 dark:text-amber-300 font-black' : 'text-slate-400'} uppercase tracking-wider">Sisa Hutang Supplier</p>
+          <h4 class="text-sm sm:text-base font-black text-amber-600 dark:text-amber-400 mt-1 leading-tight">${fCur(totalHutang)}</h4>
+          <span class="text-[9px] text-slate-400 font-medium mt-0.5 block">${partialInvoices.length + unpaidInvoices.length} Faktur Tertunggak</span>
+        </div>
+
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm">
+          <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider">Rasio Pelunasan</p>
+          <h4 class="text-sm sm:text-base font-black text-indigo-600 dark:text-indigo-400 mt-1 leading-tight">${rateLunas}%</h4>
+          <div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden mt-1.5">
+            <div class="h-full bg-indigo-500 rounded-full" style="width: ${rateLunas}%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Status Faktur Breakdown -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3.5">
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/50 flex items-center justify-between">
+          <div>
+            <span class="px-2 py-0.5 rounded-md text-[9px] font-black bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300">FAKTUR LUNAS</span>
+            <h5 class="text-xs sm:text-sm font-black text-emerald-700 dark:text-emerald-300 mt-1.5">${paidInvoices.length} Faktur</h5>
+          </div>
+          <div class="text-right">
+            <span class="text-[9px] text-emerald-600/80 font-bold block uppercase">Nominal Lunas</span>
+            <span class="text-xs sm:text-sm font-black text-emerald-700 dark:text-emerald-300">${fCur(paidNominal)}</span>
+          </div>
+        </div>
+
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/50 flex items-center justify-between">
+          <div>
+            <span class="px-2 py-0.5 rounded-md text-[9px] font-black bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300">SEDANG DICICIL</span>
+            <h5 class="text-xs sm:text-sm font-black text-amber-700 dark:text-amber-300 mt-1.5">${partialInvoices.length} Faktur</h5>
+          </div>
+          <div class="text-right">
+            <span class="text-[9px] text-amber-600/80 font-bold block uppercase">Sisa Tagihan</span>
+            <span class="text-xs sm:text-sm font-black text-amber-700 dark:text-amber-300">${fCur(partialDebt)}</span>
+          </div>
+        </div>
+
+        <div class="p-3.5 sm:p-4 rounded-2xl bg-rose-50/60 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-800/50 flex items-center justify-between">
+          <div>
+            <span class="px-2 py-0.5 rounded-md text-[9px] font-black bg-rose-100 dark:bg-rose-900/60 text-rose-800 dark:text-rose-300">BELUM DIBAYAR</span>
+            <h5 class="text-xs sm:text-sm font-black text-rose-700 dark:text-rose-300 mt-1.5">${unpaidInvoices.length} Faktur</h5>
+          </div>
+          <div class="text-right">
+            <span class="text-[9px] text-rose-600/80 font-bold block uppercase">Total Hutang</span>
+            <span class="text-xs sm:text-sm font-black text-rose-700 dark:text-rose-300">${fCur(unpaidDebt)}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Rekapitulasi per Supplier Rekanan -->
+      <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+          <h4 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
+            <i class="fa-solid fa-truck-field text-indigo-500"></i> Rekapitulasi per Supplier Rekanan
+          </h4>
+          <span class="text-[10px] font-bold text-slate-400">${suppSummaryList.length} Supplier Terdaftar</span>
+        </div>
+
+        <!-- Mobile Card List View -->
         <div class="sm:hidden space-y-2.5">
-          ${!suppliers.length ? `
+          ${!suppSummaryList.length ? `
             <div class="p-4 text-center text-slate-400 text-xs font-medium bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700">
-              <i class="fa-solid fa-truck-field text-slate-300 mr-1.5"></i> Belum ada data supplier
+              Belum ada data transaksi supplier
             </div>
-          ` : suppliers.map(s => {
-            const sPurch = purchases.filter(p => String(p.supplierId) === String(s.id));
-            const totalB = sPurch.reduce((acc, p) => acc + p.totalAmount, 0);
-            const totalP = sPurch.reduce((acc, p) => acc + p.paidAmount, 0);
-            const totalH = sPurch.reduce((acc, p) => acc + (p.remainingDebt || 0), 0);
+          ` : suppSummaryList.map(s => {
             return `
               <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-700/80 space-y-2 text-xs">
                 <div class="flex items-center justify-between gap-2">
-                  <span class="font-extrabold text-slate-800 dark:text-white truncate text-xs">${esc(s.name)}</span>
-                  ${totalH <= 0 ? '<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">LUNAS</span>' : `<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">HUTANG</span>`}
+                  <div>
+                    <span class="font-extrabold text-slate-800 dark:text-white truncate text-xs block">${esc(s.name)}</span>
+                    ${s.phone ? `<span class="text-[10px] text-emerald-600 font-semibold">${esc(s.phone)}</span>` : ''}
+                  </div>
+                  ${s.totalDebt <= 0 
+                    ? '<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 shrink-0">LUNAS</span>' 
+                    : `<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 shrink-0">HUTANG</span>`}
                 </div>
                 <div class="grid grid-cols-3 gap-2 pt-1.5 border-t border-slate-200/60 dark:border-slate-800 text-[10px]">
                   <div>
-                    <span class="text-slate-400 block uppercase font-bold text-[9px]">Total Beli</span>
-                    <span class="font-bold text-slate-800 dark:text-slate-200">${fCur(totalB)}</span>
+                    <span class="text-slate-400 block uppercase font-bold text-[9px]">Total Beli (${s.invoiceCount} Fkt)</span>
+                    <span class="font-bold text-slate-800 dark:text-slate-200">${fCur(s.totalBuy)}</span>
                   </div>
                   <div>
                     <span class="text-slate-400 block uppercase font-bold text-[9px]">Terbayar</span>
-                    <span class="font-bold text-emerald-600">${fCur(totalP)}</span>
+                    <span class="font-bold text-emerald-600">${fCur(s.totalPaid)}</span>
                   </div>
                   <div class="text-right">
                     <span class="text-slate-400 block uppercase font-bold text-[9px]">Sisa Hutang</span>
-                    <span class="font-black ${totalH > 0 ? 'text-amber-600' : 'text-slate-400'}">${fCur(totalH)}</span>
+                    <span class="font-black ${s.totalDebt > 0 ? 'text-amber-600' : 'text-slate-400'}">${fCur(s.totalDebt)}</span>
                   </div>
                 </div>
               </div>
@@ -15095,30 +15259,29 @@ const _renderReportsSubTab = (purchases, suppliers) => {
             <thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold uppercase text-[9px]">
               <tr>
                 <th class="p-3">Nama Supplier</th>
-                <th class="p-3 text-center">Jml Faktur</th>
-                <th class="p-3 text-right">Total Pembelian</th>
-                <th class="p-3 text-right">Total Terbayar</th>
+                <th class="p-3 text-center">Faktur</th>
+                <th class="p-3 text-right">Total Pengadaan</th>
+                <th class="p-3 text-right">Sudah Dibayar</th>
                 <th class="p-3 text-right">Sisa Hutang</th>
                 <th class="p-3 text-center">Status</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900 font-medium">
-              ${!suppliers.length ? `
-                <tr><td colspan="6" class="p-4 text-center text-slate-400">Belum ada data supplier</td></tr>
-              ` : suppliers.map(s => {
-                const sPurch = purchases.filter(p => String(p.supplierId) === String(s.id));
-                const totalB = sPurch.reduce((acc, p) => acc + p.totalAmount, 0);
-                const totalP = sPurch.reduce((acc, p) => acc + p.paidAmount, 0);
-                const totalH = sPurch.reduce((acc, p) => acc + (p.remainingDebt || 0), 0);
+              ${!suppSummaryList.length ? `
+                <tr><td colspan="6" class="p-4 text-center text-slate-400">Belum ada data transaksi supplier</td></tr>
+              ` : suppSummaryList.map(s => {
                 return `
                   <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                    <td class="p-3 font-extrabold text-slate-800 dark:text-slate-200">${esc(s.name)}</td>
-                    <td class="p-3 text-center font-bold">${sPurch.length}</td>
-                    <td class="p-3 text-right font-bold text-slate-800 dark:text-slate-200">${fCur(totalB)}</td>
-                    <td class="p-3 text-right font-bold text-emerald-600">${fCur(totalP)}</td>
-                    <td class="p-3 text-right font-black ${totalH > 0 ? 'text-amber-600' : 'text-slate-400'}">${fCur(totalH)}</td>
+                    <td class="p-3">
+                      <p class="font-extrabold text-slate-800 dark:text-slate-200">${esc(s.name)}</p>
+                      ${s.phone ? `<p class="text-[10px] text-emerald-600 font-semibold">${esc(s.phone)}</p>` : ''}
+                    </td>
+                    <td class="p-3 text-center font-bold">${s.invoiceCount}</td>
+                    <td class="p-3 text-right font-bold text-slate-800 dark:text-slate-200">${fCur(s.totalBuy)}</td>
+                    <td class="p-3 text-right font-bold text-emerald-600">${fCur(s.totalPaid)}</td>
+                    <td class="p-3 text-right font-black ${s.totalDebt > 0 ? 'text-amber-600' : 'text-slate-400'}">${fCur(s.totalDebt)}</td>
                     <td class="p-3 text-center">
-                      ${totalH <= 0 ? '<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-100 text-emerald-700">LUNAS</span>' : `<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-100 text-amber-800">HUTANG</span>`}
+                      ${s.totalDebt <= 0 ? '<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-100 text-emerald-700">LUNAS</span>' : `<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-100 text-amber-800">HUTANG</span>`}
                     </td>
                   </tr>
                 `;
@@ -15127,8 +15290,207 @@ const _renderReportsSubTab = (purchases, suppliers) => {
           </table>
         </div>
       </div>
+
+      <!-- 5. Buku Riwayat Kas Keluar & Top Komoditas Pengadaan (2 Kolom) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        
+        <!-- Kolom Kiri: Buku Kas Keluar (Semua Pembayaran Tunai & Cicilan) -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-money-bill-transfer text-emerald-500"></i> Riwayat Kas Keluar (${allPayments.length})
+            </h4>
+            <span class="text-[10px] font-bold text-emerald-600">${fCur(totalBayar)} Total Kas</span>
+          </div>
+
+          <div class="space-y-2 max-h-[320px] overflow-y-auto pr-1">
+            ${!allPayments.length ? `
+              <div class="p-6 text-center text-slate-400 text-xs font-medium bg-slate-50 dark:bg-slate-900/60 rounded-xl">
+                Belum ada transaksi kas keluar / pembayaran faktur
+              </div>
+            ` : allPayments.map(pay => {
+              return `
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800 flex items-center justify-between gap-2.5 text-xs">
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-2">
+                      <span class="font-bold text-slate-800 dark:text-white">${esc(pay.supplierName || 'Supplier')}</span>
+                      <span class="font-mono text-[10px] text-slate-400 bg-white dark:bg-slate-800 px-1.5 py-0.2 rounded border border-slate-200 dark:border-slate-700">${esc(pay.invoiceNo)}</span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-0.5">
+                      ${pay.date || '-'} • <span class="capitalize font-semibold text-slate-600 dark:text-slate-300">${esc(pay.note || pay.method || 'Kas Keluar')}</span>
+                    </p>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <span class="font-black text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 block">${fCur(pay.amount)}</span>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+        <!-- Kolom Kanan: Top 5 Komoditas Pengadaan Barang Terbanyak -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
+              <i class="fa-solid fa-boxes-stacked text-amber-500"></i> Top Pengadaan Barang
+            </h4>
+            <span class="text-[10px] font-bold text-slate-400">Berdasarkan Nilai Belanja</span>
+          </div>
+
+          <div class="space-y-2 max-h-[320px] overflow-y-auto pr-1">
+            ${!topProducts.length ? `
+              <div class="p-6 text-center text-slate-400 text-xs font-medium bg-slate-50 dark:bg-slate-900/60 rounded-xl">
+                Belum ada rincian item barang yang dicatat
+              </div>
+            ` : topProducts.map((tp, idx) => {
+              const avgCost = tp.totalQty > 0 ? Math.round(tp.totalSubtotal / tp.totalQty) : 0;
+              return `
+                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800 flex items-center justify-between gap-2.5 text-xs">
+                  <div class="flex items-center gap-2.5 min-w-0">
+                    <span class="w-6 h-6 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 font-black text-[10px] flex items-center justify-center shrink-0">#${idx + 1}</span>
+                    <div class="min-w-0">
+                      <p class="font-bold text-slate-800 dark:text-white truncate">${esc(tp.name)}${tp.variant ? ` <span class="text-indigo-600 font-semibold text-[10px]">(${esc(tp.variant)})</span>` : ''}</p>
+                      <p class="text-[10px] text-slate-400 mt-0.5">
+                        Total Masuk: <b class="text-slate-700 dark:text-slate-200">${tp.totalQty} unit</b> • Rata-rata HPP: <b>${fCur(avgCost)}</b>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <span class="font-black text-xs sm:text-sm text-slate-800 dark:text-white block">${fCur(tp.totalSubtotal)}</span>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+      </div>
+
     </div>
   `;
+};
+
+// Cetak Laporan Rekapitulasi Pembelian & Kas (A4 Print / PDF View)
+window.printPurchaseRecapReport = () => {
+  const purchases = appData.purchases || [];
+  const suppliers = appData.suppliers || [];
+
+  const totalBeli = purchases.reduce((acc, p) => acc + (Number(p.totalAmount) || 0), 0);
+  const totalBayar = purchases.reduce((acc, p) => acc + (Number(p.paidAmount) || 0), 0);
+  const totalHutang = purchases.reduce((acc, p) => acc + (Number(p.remainingDebt) || 0), 0);
+
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) return showToast('Izinkan pop-up browser untuk mencetak laporan!');
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Laporan Rekapitulasi Pembelian & Kas - ${esc(appData.store?.name || 'Toko')}</title>
+      <style>
+        @page { size: A4 portrait; margin: 15mm; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1e293b; font-size: 11pt; line-height: 1.4; }
+        .header { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 10px; margin-bottom: 20px; }
+        .header h1 { margin: 0; font-size: 16pt; text-transform: uppercase; }
+        .header p { margin: 2px 0 0; font-size: 9pt; color: #64748b; }
+        .summary-grid { display: flex; gap: 15px; margin-bottom: 20px; }
+        .summary-box { flex: 1; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; background: #f8fafc; }
+        .summary-box .label { font-size: 8pt; text-transform: uppercase; color: #64748b; font-weight: bold; }
+        .summary-box .val { font-size: 13pt; font-weight: 900; color: #0f172a; margin-top: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 9.5pt; }
+        th { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; font-size: 8.5pt; text-transform: uppercase; }
+        td { border: 1px solid #e2e8f0; padding: 6px 8px; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .section-title { font-size: 11pt; font-weight: 800; text-transform: uppercase; margin: 15px 0 8px; border-left: 4px solid #059669; padding-left: 8px; }
+      </style>
+    </head>
+    <body onload="window.print();">
+      <div class="header">
+        <h1>${esc(appData.store?.name || 'TOKO')}</h1>
+        <p>LAPORAN REKAPITULASI PENGADAAN BARANG & KAS KELUAR SUPPLIER</p>
+        <p>Dicetak pada: ${new Date().toLocaleString('id-ID')}</p>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-box">
+          <div class="label">Total Pengadaan (HPP)</div>
+          <div class="val">${fCur(totalBeli)}</div>
+        </div>
+        <div class="summary-box">
+          <div class="label">Total Kas Terbayar</div>
+          <div class="val" style="color:#059669;">${fCur(totalBayar)}</div>
+        </div>
+        <div class="summary-box">
+          <div class="label">Total Sisa Hutang</div>
+          <div class="val" style="color:#d97706;">${fCur(totalHutang)}</div>
+        </div>
+      </div>
+
+      <div class="section-title">Rekapitulasi per Supplier Rekanan</div>
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Supplier</th>
+            <th class="text-center">Jml Faktur</th>
+            <th class="text-right">Total Belanja</th>
+            <th class="text-right">Total Terbayar</th>
+            <th class="text-right">Sisa Hutang</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${suppliers.map((s, idx) => {
+            const sP = purchases.filter(p => String(p.supplierId) === String(s.id));
+            const tb = sP.reduce((a, b) => a + (Number(b.totalAmount) || 0), 0);
+            const tp = sP.reduce((a, b) => a + (Number(b.paidAmount) || 0), 0);
+            const th = sP.reduce((a, b) => a + (Number(b.remainingDebt) || 0), 0);
+            return `
+              <tr>
+                <td class="text-center">${idx + 1}</td>
+                <td><b>${esc(s.name)}</b></td>
+                <td class="text-center">${sP.length}</td>
+                <td class="text-right">${fCur(tb)}</td>
+                <td class="text-right">${fCur(tp)}</td>
+                <td class="text-right"><b>${fCur(th)}</b></td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+
+      <div class="section-title">Daftar Transaksi Faktur Pembelian</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Tanggal</th>
+            <th>No. Faktur</th>
+            <th>Supplier</th>
+            <th class="text-center">Status</th>
+            <th class="text-right">Total Faktur</th>
+            <th class="text-right">Terbayar</th>
+            <th class="text-right">Sisa Hutang</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${purchases.map(p => `
+            <tr>
+              <td>${p.date || '-'}</td>
+              <td><b>${esc(p.invoiceNo)}</b></td>
+              <td>${esc(p.supplierName || '-')}</td>
+              <td class="text-center uppercase" style="font-size:8pt;font-weight:bold;">${p.status}</td>
+              <td class="text-right">${fCur(p.totalAmount)}</td>
+              <td class="text-right">${fCur(p.paidAmount)}</td>
+              <td class="text-right">${fCur(p.remainingDebt || 0)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
 };
 
 // ==========================================
