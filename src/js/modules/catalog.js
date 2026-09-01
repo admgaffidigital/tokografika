@@ -567,6 +567,10 @@ window.shareProduct = (productOrId) => {
   // Buka modal share
   const m = el('share-product-modal'), c = el('share-product-content');
   if (m && c) {
+    if (m.classList.contains('hidden')) {
+      history.pushState({ modal: 'share' }, '', '');
+      oMods.push('share');
+    }
     show('share-product-modal');
     setTimeout(() => {
       m.classList.remove('opacity-0');
@@ -575,9 +579,15 @@ window.shareProduct = (productOrId) => {
   }
 };
 
-window.closeShareModal = () => {
+window.closeShareModal = (fH = !1) => {
   const m = el('share-product-modal'), c = el('share-product-content');
   if (m && c) {
+    if (!fH && oMods[oMods.length - 1] === 'share') {
+      oMods.pop();
+      history.back();
+    } else if (fH && oMods[oMods.length - 1] === 'share') {
+      oMods.pop();
+    }
     m.classList.add('opacity-0');
     c.classList.add('translate-y-full', 'sm:translate-y-5');
     setTimeout(() => hide('share-product-modal'), 300);

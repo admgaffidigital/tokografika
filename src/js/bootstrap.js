@@ -88,6 +88,7 @@ window.addEventListener('popstate', e => {
   if (oMods.length) {
     const m = oMods.pop();
     if (m === 'product') closeProductModal(!0);
+    else if (m === 'share') closeShareModal(!0);
     else closeAdminModal();
   } else {
     const st = e.state;
