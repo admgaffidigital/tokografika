@@ -134,10 +134,11 @@ window.openPricetagModal = (presetProductIds = null) => {
   renderPricetagPreview();
 
   show('pricetag-modal');
-  setTimeout(() => {
+  requestAnimationFrame(() => {
     modal.classList.remove('opacity-0');
-    box.classList.remove('translate-y-6');
-  }, 10);
+    box.classList.remove('translate-y-4');
+    box.classList.remove('sm:scale-95');
+  });
 };
 
 window.closePricetagModal = () => {
@@ -145,8 +146,8 @@ window.closePricetagModal = () => {
   const box = el('pricetag-modal-box');
   if (modal && box) {
     modal.classList.add('opacity-0');
-    box.classList.add('translate-y-6');
-    setTimeout(() => hide('pricetag-modal'), 250);
+    box.classList.add('translate-y-4');
+    setTimeout(() => hide('pricetag-modal'), 280);
   }
 };
 
