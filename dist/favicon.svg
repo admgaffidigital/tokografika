@@ -1,13 +1,58 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#059669"/>
       <stop offset="100%" stop-color="#047857"/>
     </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
   </defs>
-  <rect x="36" y="36" width="440" height="440" rx="110" fill="url(#grad)"/>
-  <path d="M196 210 A60 60 0 0 1 316 210" fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round"/>
-  <rect x="156" y="210" width="200" height="190" rx="35" fill="#ffffff"/>
-  <circle cx="256" cy="305" r="32" fill="#059669"/>
-  <path d="M244 305 L252 313 L268 297" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Background Rounded Badge -->
+  <rect x="36" y="36" width="440" height="440" rx="110" fill="url(#bgGrad)"/>
+
+  <!-- Storefront Group with Shadow -->
+  <g filter="url(#shadow)">
+    <!-- Store Base Building Wall -->
+    <rect x="130" y="235" width="252" height="150" fill="#ffffff" rx="10"/>
+
+    <!-- Left Store Window Display -->
+    <rect x="152" y="260" width="84" height="84" rx="8" fill="#ecfdf5" stroke="#059669" stroke-width="6"/>
+    <!-- Window Cross Glazing -->
+    <line x1="194" y1="260" x2="194" y2="344" stroke="#059669" stroke-width="4"/>
+    <line x1="152" y1="302" x2="236" y2="302" stroke="#059669" stroke-width="4"/>
+
+    <!-- Right Entrance Door -->
+    <rect x="256" y="260" width="108" height="125" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="5"/>
+    <rect x="270" y="274" width="80" height="66" rx="6" fill="#ecfeff" stroke="#0891b2" stroke-width="4"/>
+    <!-- Door Golden Handle -->
+    <circle cx="274" cy="354" r="5" fill="#f59e0b"/>
+
+    <!-- Ground Floor Base Line -->
+    <rect x="114" y="385" width="284" height="14" rx="7" fill="#ffffff"/>
+
+    <!-- Store Awning / Canopy Roof (Kanopi Garis-Garis Khas Toko) -->
+    <!-- Awning Main Shadow / Backing -->
+    <path d="M106 172 L128 140 L384 140 L406 172 Z" fill="#f1f5f9"/>
+
+    <!-- Awning Stripes (Garis Putih & Kuning Emas Toko) -->
+    <polygon points="106,172 128,140 179,140 166,220 106,220" fill="#ffffff"/>
+    <polygon points="179,140 230,140 226,220 166,220" fill="#f59e0b"/>
+    <polygon points="230,140 282,140 286,220 226,220" fill="#ffffff"/>
+    <polygon points="282,140 333,140 346,220 286,220" fill="#f59e0b"/>
+    <polygon points="333,140 384,140 406,220 346,220" fill="#ffffff"/>
+
+    <!-- Awning Bottom Scallops (Rumbai-rumbai Kanopi Toko) -->
+    <path d="M106 220 Q136 244 166 220 Q196 244 226 220 Q256 244 286 220 Q316 244 346 220 Q376 244 406 220" fill="none" stroke="#e2e8f0" stroke-width="4"/>
+    <path d="M106 220 Q136 244 166 220" fill="#ffffff"/>
+    <path d="M166 220 Q196 244 226 220" fill="#f59e0b"/>
+    <path d="M226 220 Q256 244 286 220" fill="#ffffff"/>
+    <path d="M286 220 Q316 244 346 220" fill="#f59e0b"/>
+    <path d="M346 220 Q376 244 406 220" fill="#ffffff"/>
+
+    <!-- Store Signboard "TG" (Toko Grafika) -->
+    <rect x="206" y="112" width="100" height="34" rx="8" fill="#ffffff" stroke="#f59e0b" stroke-width="3"/>
+    <text x="256" y="136" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="20" fill="#059669" text-anchor="middle" letter-spacing="2">TG</text>
+  </g>
 </svg>
