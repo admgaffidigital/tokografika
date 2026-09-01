@@ -1031,7 +1031,7 @@ window.rAdmPurchases = () => {
         <div class="flex items-center shrink-0 w-full sm:w-auto">
           <button type="button" class="btn-solid no-glass w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all whitespace-nowrap" onclick="openPurchaseModal()">
             <i class="fa-solid fa-plus text-xs"></i>
-            <span>+ Input Pembelian Baru</span>
+            <span>Input Pembelian Baru</span>
           </button>
         </div>
       </div>
@@ -1054,7 +1054,7 @@ const _renderInvoicesSubTab = (purchases) => {
           <i class="fa-solid fa-cart-flatbed"></i>
         </div>
         <h4 class="font-black text-sm text-slate-800 dark:text-white">Belum Ada Transaksi Pembelian</h4>
-        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Klik tombol "+ Input Pembelian Baru" di atas untuk mencatat faktur pembelian barang dari supplier.</p>
+        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Klik tombol "Input Pembelian Baru" di atas untuk mencatat faktur pembelian barang dari supplier.</p>
       </div>
     `;
   }
@@ -1149,20 +1149,19 @@ const _renderDebtsSubTab = (purchases) => {
               <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">
                 Jatuh Tempo: <b class="${isOverdue ? 'text-rose-600 font-black' : 'text-amber-600'}">${_fDate(p.dueDate)}</b> • Transaksi: ${_fDate(p.date)}
               </p>
-              <div class="flex items-center gap-4 text-[10px] text-slate-400 mt-1">
-                <span>Total: ${fCur(p.totalAmount)}</span>
-                <span>Terbayar: <b class="text-emerald-600">${fCur(p.paidAmount)}</b></span>
+              <div class="flex items-center gap-3 mt-1 text-[11px] font-bold">
+                <span class="text-slate-400">Total: ${fCur(p.totalAmount)}</span>
+                <span class="text-emerald-600">Terbayar: ${fCur(p.paidAmount)}</span>
               </div>
             </div>
 
-            <div class="flex items-center justify-between sm:justify-end gap-4 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-700">
-              <div class="text-right">
-                <span class="text-[9px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider block">Sisa Hutang</span>
-                <span class="text-base sm:text-lg font-black text-amber-600 dark:text-amber-400">${fCur(p.remainingDebt || (p.totalAmount - p.paidAmount))}</span>
+            <div class="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-700">
+              <div class="text-left sm:text-right">
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Sisa Hutang</span>
+                <span class="text-base font-black text-amber-600 dark:text-amber-400">${fCur(p.remainingDebt)}</span>
               </div>
-
-              <button type="button" class="btn-solid no-glass px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-black text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all" onclick="openPurchasePaymentModal('${p.id}')">
-                <i class="fa-solid fa-money-check-dollar"></i> Catat Pembayaran
+              <button type="button" class="btn-solid no-glass px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95" onclick="openPurchasePaymentModal('${p.id}')">
+                <i class="fa-solid fa-money-bill-wave"></i> Bayar
               </button>
             </div>
           </div>
@@ -1172,10 +1171,10 @@ const _renderDebtsSubTab = (purchases) => {
   `;
 };
 
-// Sub-Tab 3: Data Supplier
+// Sub-Tab 3: Daftar Rekanan Supplier
 const _renderSuppliersSubTab = (suppliers, purchases) => {
   return `
-    <div class="space-y-4">
+    <div class="space-y-3">
       <div class="flex items-center justify-between">
         <h4 class="font-extrabold text-xs text-slate-800 dark:text-white uppercase tracking-wider">Daftar Rekanan Supplier (${suppliers.length})</h4>
         <button type="button" class="px-3.5 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 font-bold text-xs flex items-center gap-1 hover:bg-indigo-600 hover:text-white transition-all" onclick="openSupplierModal()">
@@ -1242,13 +1241,50 @@ const _renderSuppliersSubTab = (suppliers, purchases) => {
 const _renderReportsSubTab = (purchases, suppliers) => {
   return `
     <div class="space-y-4">
-      <div class="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-4">
+      <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-3 sm:space-y-4">
         <div class="flex items-center justify-between">
-          <h4 class="font-extrabold text-sm text-slate-800 dark:text-white uppercase tracking-wider">Rekapitulasi Pembelian & Pengeluaran Kas</h4>
-          <span class="text-[11px] font-bold text-slate-400">${purchases.length} Total Faktur</span>
+          <h4 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white uppercase tracking-wider">Rekapitulasi Pembelian & Kas</h4>
+          <span class="text-[10px] sm:text-[11px] font-bold text-slate-400">${purchases.length} Total Faktur</span>
         </div>
 
-        <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+        <!-- Mobile Card List View (No Horizontal Scrollbar) -->
+        <div class="sm:hidden space-y-2.5">
+          ${!suppliers.length ? `
+            <div class="p-4 text-center text-slate-400 text-xs font-medium bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700">
+              <i class="fa-solid fa-truck-field text-slate-300 mr-1.5"></i> Belum ada data supplier
+            </div>
+          ` : suppliers.map(s => {
+            const sPurch = purchases.filter(p => String(p.supplierId) === String(s.id));
+            const totalB = sPurch.reduce((acc, p) => acc + p.totalAmount, 0);
+            const totalP = sPurch.reduce((acc, p) => acc + p.paidAmount, 0);
+            const totalH = sPurch.reduce((acc, p) => acc + (p.remainingDebt || 0), 0);
+            return `
+              <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-700/80 space-y-2 text-xs">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-extrabold text-slate-800 dark:text-white truncate text-xs">${esc(s.name)}</span>
+                  ${totalH <= 0 ? '<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">LUNAS</span>' : `<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">HUTANG</span>`}
+                </div>
+                <div class="grid grid-cols-3 gap-2 pt-1.5 border-t border-slate-200/60 dark:border-slate-800 text-[10px]">
+                  <div>
+                    <span class="text-slate-400 block uppercase font-bold text-[9px]">Total Beli</span>
+                    <span class="font-bold text-slate-800 dark:text-slate-200">${fCur(totalB)}</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-400 block uppercase font-bold text-[9px]">Terbayar</span>
+                    <span class="font-bold text-emerald-600">${fCur(totalP)}</span>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-slate-400 block uppercase font-bold text-[9px]">Sisa Hutang</span>
+                    <span class="font-black ${totalH > 0 ? 'text-amber-600' : 'text-slate-400'}">${fCur(totalH)}</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <!-- Desktop Table View -->
+        <div class="hidden sm:block overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
           <table class="w-full text-left text-xs border-collapse">
             <thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold uppercase text-[9px]">
               <tr>
