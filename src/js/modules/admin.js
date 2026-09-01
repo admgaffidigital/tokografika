@@ -4431,22 +4431,17 @@ const guideTopicsData = {
           <div class="p-3.5 rounded-2xl border flex items-center gap-2.5 text-xs font-semibold" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06);color:var(--clr-p)">
             <i class="fa-brands fa-whatsapp text-lg"></i>
             <span>Klik tombol WhatsApp pada pesanan untuk langsung chat konfirmasi status pengiriman ke nomor pembeli tanpa simpan kontak!</span>
-          </div>
-        </div>
-      </div>
-    `
-  },
-  purchases: {
-    title: 'Panduan Pembelian Supplier, Buku Hutang & Pembayaran',
+      purchases: {
+    title: 'Panduan Pembelian Supplier, Buku Hutang, Kas & Rekapitulasi Eksekutif',
     icon: 'fa-cart-flatbed',
     content: `
       <div class="space-y-4 text-xs sm:text-sm">
-        <div class="p-4 rounded-2xl border bg-teal-50/60 dark:bg-teal-950/30 border-teal-200 dark:border-teal-800/60">
-          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2 text-teal-700 dark:text-teal-400">
-            <i class="fa-solid fa-cart-flatbed"></i> Kelola Pembelian Barang Masuk, Hutang Supplier & HPP Otomatis
+        <div class="p-4 rounded-2xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06)">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2" style="color:var(--clr-p)">
+            <i class="fa-solid fa-cart-flatbed"></i> Kelola Pembelian Barang Masuk, Hutang Supplier, Buku Kas & Rekapitulasi
           </h4>
           <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
-            Modul <b>Pembelian & Hutang</b> memudahkan Anda mencatat barang masuk dari distributor, memperbarui stok toko & harga modal (HPP) secara otomatis, memantau tagihan tempo yang mendekati jatuh tempo, hingga mencatat pembayaran cicilan atau titipan dana.
+            Modul <b>Pembelian & Hutang</b> memudahkan Anda mencatat barang masuk dari distributor, memperbarui stok toko & harga modal (HPP) secara otomatis, memantau tagihan tempo yang mendekati jatuh tempo, mencatat pembayaran cicilan, hingga melihat <b>Dashboard Rekapitulasi Pembelian & Kas</b> eksekutif lengkap dengan cetak laporan A4.
           </p>
         </div>
 
@@ -4484,10 +4479,10 @@ const guideTopicsData = {
           <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-2">
             <span class="font-bold text-slate-900 dark:text-white flex items-center gap-2 text-xs">
               <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-cyan-600">4</span>
-              Kontak Supplier & Rekap:
+              Dashboard Rekapitulasi & Cetak A4:
             </span>
             <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              Kelola nomor WhatsApp sales, alamat, dan rekening bank supplier di tab <b>Data Supplier</b>. Lihat rekapitulasi total belanja dan sisa kewajiban di tab <b>Rekap Keuangan</b>.
+              Pada tab <b>Rekapitulasi</b>, nikmati dashboard finansial dengan 4 KPI metrik (Total HPP, Kas Terbayar, Sisa Hutang, Rasio Pelunasan), Rekapitulasi per Supplier, Buku Kas Keluar, dan tombol <b>Cetak Rekap (A4)</b> resmi.
             </p>
           </div>
         </div>
@@ -4616,23 +4611,23 @@ const guideTopicsData = {
     `
   },
   settings: {
-    title: 'Panduan Pengaturan Toko, Rekening & Akun Kasir',
+    title: 'Panduan Pengaturan Toko, Rekening, Tema & Akun Kasir',
     icon: 'fa-gear',
     content: `
       <div class="space-y-4 text-xs sm:text-sm">
         <div class="p-4 rounded-2xl border" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06)">
           <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2" style="color:var(--clr-p)">
-            <i class="fa-solid fa-sliders"></i> Konfigurasi Sistem & Hak Akses Kasir
+            <i class="fa-solid fa-sliders"></i> Konfigurasi Sistem, Tema & Hak Akses Kasir
           </h4>
           <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
-            Atur identitas toko, nomor WhatsApp admin, rekening bank & QRIS dinamis, voucher promo, banner slider promo, hingga pembatasan hak akses akun kasir.
+            Atur identitas toko, warna tema dinamis, nomor WhatsApp admin, rekening bank & QRIS dinamis, voucher promo, banner slider promo, hingga pembatasan hak akses akun kasir.
           </p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
-            <h5 class="font-bold text-slate-900 dark:text-white text-xs mb-1 flex items-center gap-1.5"><i class="fa-solid fa-store" style="color:var(--clr-p)"></i> Profil & Kontak</h5>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400">Atur Nama Toko, Slogan, Alamat Lengkap, dan Nomor WhatsApp CS untuk menerima pesanan online.</p>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs mb-1 flex items-center gap-1.5"><i class="fa-solid fa-store" style="color:var(--clr-p)"></i> Profil & Warna Tema</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">Atur Nama Toko, Slogan, Alamat, No. WA CS, serta pilih 14 pilihan warna tema toko yang berganti seketika.</p>
           </div>
           <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
             <h5 class="font-bold text-slate-900 dark:text-white text-xs mb-1 flex items-center gap-1.5"><i class="fa-solid fa-credit-card" style="color:var(--clr-p)"></i> Rekening & QRIS</h5>
@@ -4717,7 +4712,7 @@ const guideTopicsData = {
     `
   },
   backup_restore: {
-    title: 'Panduan Pusat Cadangan, Restore Point & Sinkronisasi Cloud',
+    title: 'Panduan Pusat Cadangan, Restore Points, CSV & Sinkronisasi Cloud',
     icon: 'fa-cloud-arrow-up',
     content: `
       <div class="space-y-4 text-xs sm:text-sm">
@@ -4734,10 +4729,10 @@ const guideTopicsData = {
           <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
             <h5 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-2">
               <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-indigo-600">1</span>
-              File Cadangan Pintar (.JSON):
+              File Cadangan Pintar (.JSON & .CSV):
             </h5>
             <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              Klik menu <b>Backup & Cloud</b> lalu tekan <b>Unduh File Cadangan</b>. File bernama otomatis <code>[NamaToko]_Backup_[Tanggal].json</code> memuat seluruh entitas toko lengkap dengan ringkasan metadata.
+              Klik menu <b>Backup & Cloud</b> lalu tekan <b>Unduh File Cadangan</b>. File bernama otomatis <code>[NamaToko]_Backup_[Tanggal].json</code> memuat seluruh entitas toko lengkap dengan ringkasan metadata. Anda juga dapat mengekspor spreadsheet CSV Data Produk dan Rekap Pembelian.
             </p>
           </div>
 
@@ -4767,7 +4762,7 @@ const guideTopicsData = {
               Sinkronisasi Cloud Dua Arah (*Two-Way Sync*):
             </h5>
             <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              Pada tab <b>Koneksi Cloud</b>, Anda dapat menekan <b>Sinkronkan Data Cloud Sekarang</b> untuk memaksa penggabungan data antara perangkat lokal dan database Google Cloud Firestore secara instan.
+              Pada tab <b>Koneksi Cloud</b>, Anda dapat menekan <b>Sinkronkan Data Cloud Sekarang</b> atau <b>Tarik & Timpa dari Cloud</b> untuk memastikan data multi-kasir Anda tersinkronisasi 100% realtime.
             </p>
           </div>
         </div>

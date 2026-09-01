@@ -6,13 +6,18 @@ const html = fs.readFileSync('dist/index.html', 'utf8');
 // 1. Extract and test <script> tags
 const scripts = html.match(/<script[\s\S]*?<\/script>/gi) || [];
 console.log('Found ' + scripts.length + ' script tags');
+let idx = 0;
 for (const s of scripts) {
+  idx++;
+  if (s.includes('type="application/ld+json"')) continue;
+  if (s.includes('src=')) continue;
   const code = s.replace(/<script[^>]*>/i, '').replace(/<\/script>/i, '');
   if (code.trim()) {
     try {
       new vm.Script(code);
     } catch(e) {
-      console.error('Script block error:', e.message);
+      console.error(`Script block #${idx} error:`, e.message);
+      console.error('Preview:', code.substring(0, 200));
       process.exit(1);
     }
   }
