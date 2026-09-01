@@ -1193,16 +1193,17 @@ html.dark .badge-counter {
 <!-- 2. POPUP MODALS & DIALOGS                                                 -->
 <!-- ========================================================================= -->
 <!-- ========================================================================= -->
-<!-- MODAL: CONFIRM DIALOG                                                     -->
+<!-- MODAL: CONFIRM DIALOG (ADAPTIVE - SUPPORTS HTML-RICH PICKER CONTENT)     -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[120] bg-slate-900 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300' id='custom-confirm-modal' onclick='if(event.target===this) closeConfirm()'>
-  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-[320px] p-6 shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform scale-95 transition-transform duration-300 flex flex-col text-center' id='custom-confirm-box'>
-    <div class='w-12 h-12 bg-rose-50 dark:bg-rose-900/30 text-rose-500 dark:text-rose-400 rounded-xl flex items-center justify-center text-xl mx-auto mb-4 border border-rose-100 dark:border-rose-800' id='confirm-icon-box'>
+<div class='fixed inset-0 z-[120] bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300' id='custom-confirm-modal' onclick='if(event.target===this) closeConfirm()'>
+  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-[340px] sm:max-w-lg p-5 sm:p-6 shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform scale-95 transition-transform duration-300 flex flex-col max-h-[90dvh] overflow-hidden' id='custom-confirm-box'>
+    <div class='w-12 h-12 bg-rose-50 dark:bg-rose-900/30 text-rose-500 dark:text-rose-400 rounded-xl flex items-center justify-center text-xl mx-auto mb-3 border border-rose-100 dark:border-rose-800 shrink-0' id='confirm-icon-box'>
       <i class='fa-solid fa-triangle-exclamation' id='confirm-icon'></i>
     </div>
-    <h3 class='font-bold text-slate-900 dark:text-white text-base mb-1' id='confirm-title'>Konfirmasi</h3>
-    <p class='text-xs text-slate-500 dark:text-slate-400 font-bold mb-6' id='confirm-msg'>Apakah Anda yakin?</p>
-    <div class='flex gap-3'>
+    <h3 class='font-black text-slate-900 dark:text-white text-sm sm:text-base mb-2 text-center shrink-0' id='confirm-title'>Konfirmasi</h3>
+    <!-- confirm-msg: mendukung teks biasa maupun konten HTML (picker produk, kategori, dll) -->
+    <div class='text-xs text-slate-500 dark:text-slate-400 font-medium mb-4 overflow-y-auto flex-1 text-left' id='confirm-msg'>Apakah Anda yakin?</div>
+    <div class='flex gap-3 shrink-0 pt-2 border-t border-slate-100 dark:border-slate-700'>
       <button class='flex-1 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-all text-xs border border-slate-200 dark:border-slate-600' onclick='closeConfirm()'>Batal</button>
       <button class='flex-1 py-2.5 bg-rose-600 text-white font-bold rounded-xl hover:bg-rose-700 transition-all text-xs shadow-md shadow-rose-500/20 border border-rose-700' id='confirm-yes-btn' onclick='executeConfirm()'>Ya, Hapus</button>
     </div>
@@ -5332,8 +5333,17 @@ window.toggleTheme = () => {
 };
 
 window.showConfirm = (t, m, cb, btnText = "Ya, Hapus", isDanger = true) => {
-  setIn('confirm-title', t); 
-  setIn('confirm-msg', m); 
+  setIn('confirm-title', t);
+  // Gunakan innerHTML agar konten HTML (mis: picker produk, daftar kategori) ter-render dengan benar
+  const msgEl = el('confirm-msg');
+  if (msgEl) {
+    const isHtml = typeof m === 'string' && (m.includes('<') || m.includes('&'));
+    if (isHtml) {
+      msgEl.innerHTML = m;
+    } else {
+      msgEl.innerText = m;
+    }
+  }
   const b = el('confirm-yes-btn');
   if (b) {
     b.innerText = btnText;

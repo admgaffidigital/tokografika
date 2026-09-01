@@ -360,8 +360,17 @@ window.toggleTheme = () => {
 };
 
 window.showConfirm = (t, m, cb, btnText = "Ya, Hapus", isDanger = true) => {
-  setIn('confirm-title', t); 
-  setIn('confirm-msg', m); 
+  setIn('confirm-title', t);
+  // Gunakan innerHTML agar konten HTML (mis: picker produk, daftar kategori) ter-render dengan benar
+  const msgEl = el('confirm-msg');
+  if (msgEl) {
+    const isHtml = typeof m === 'string' && (m.includes('<') || m.includes('&'));
+    if (isHtml) {
+      msgEl.innerHTML = m;
+    } else {
+      msgEl.innerText = m;
+    }
+  }
   const b = el('confirm-yes-btn');
   if (b) {
     b.innerText = btnText;
