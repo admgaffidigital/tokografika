@@ -291,6 +291,66 @@ const saveApp = async (forceImmediate = false) => {
 };
 
 // ==========================================
+// TWO-WAY MANUAL CLOUD SYNC & REFRESH
+// ==========================================
+window.syncCloudDataNow = async () => {
+  sLoad('Menyinkronkan Cloud...');
+  try {
+    // 1. Simpan data lokal saat ini ke Firestore
+    await saveApp(true);
+
+    // 2. Tarik update terbaru dari subkoleksi produk dan metadata
+    if (typeof db !== 'undefined' && db.collection) {
+      const pSnap = await withTimeout(db.collection("freshmart").doc("cms_data").collection("products").get(), 5000);
+      if (pSnap && !pSnap.empty) {
+        const cloudProds = pSnap.docs.map(doc => doc.data());
+        if (cloudProds.length > 0) {
+          appData.products = cloudProds.sort((a, b) => (b.id || 0) - (a.id || 0));
+          ssL('freshmart_products', JSON.stringify(appData.products));
+        }
+      }
+    }
+
+    // 3. Update stempel waktu dan render ulang tampilan aktif
+    const nowStr = new Date().toLocaleString('id-ID');
+    const syncTimeEl = el('bs-cloud-last-sync-time');
+    if (syncTimeEl) syncTimeEl.innerText = nowStr;
+    const prodCountEl = el('bs-cloud-prod-count');
+    if (prodCountEl) prodCountEl.innerText = `${(appData.products || []).length} Produk`;
+
+    // Buat auto snapshot sebagai restore point setelah sync sukses
+    if (window.createAutoRestorePoint) {
+      window.createAutoRestorePoint('Sync Cloud Manual');
+    }
+
+    hLoad();
+    showToast('Data berhasil disinkronkan ke Cloud! ☁️');
+  } catch (e) {
+    console.warn('[SyncCloud] Error:', e);
+    hLoad();
+    showToast('Tersimpan di Lokal (Koneksi Cloud Timeout)');
+  }
+};
+
+window.refreshFromCloud = async () => {
+  sLoad('Mengambil Data Cloud...');
+  try {
+    localStorage.removeItem('freshmart_last_update');
+    localStorage.removeItem('freshmart_products');
+    localStorage.removeItem('freshmart_cms_data');
+    if (typeof loadAppData === 'function') {
+      await loadAppData();
+    }
+    hLoad();
+    showToast('Data toko diperbarui dari Cloud! 🔄');
+    setTimeout(() => location.reload(), 600);
+  } catch(e) {
+    hLoad();
+    showToast('Gagal memuat ulang data cloud!');
+  }
+};
+
+// ==========================================
 // SMART VISIBILITY & FIRESTORE QUOTA GUARD
 // ==========================================
 // Disconnect/Pause realtime listener saat tab browser di-minimize atau di latar belakang

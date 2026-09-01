@@ -1,0 +1,262 @@
+<!-- ========================================================================= -->
+<!-- MODAL: CLOUD & BACKUP CENTER (PUSAT CADANGAN & SINKRONISASI DATA)        -->
+<!-- ========================================================================= -->
+<div id="backup-sync-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-all duration-300">
+  <div id="backup-sync-modal-box" class="bg-white dark:bg-slate-900 rounded-[1.75rem] sm:rounded-[2rem] max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200/80 dark:border-slate-800 transition-all duration-300 translate-y-5 overflow-hidden">
+    
+    <!-- Modal Header -->
+    <div class="px-5 py-4 sm:px-6 sm:py-4.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50/50 dark:bg-slate-850/50">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg shrink-0 shadow-xs" style="background:rgba(var(--clr-p-rgb, 5, 150, 105), 0.12); color:var(--clr-p, #059669);">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+        </div>
+        <div class="min-w-0">
+          <h3 class="font-black text-sm sm:text-base text-slate-800 dark:text-white leading-tight truncate">
+            Pusat Cadangan & Sinkronisasi Cloud
+          </h3>
+          <p class="text-[11px] text-slate-400 font-medium mt-0.5 truncate">
+            Amankan data toko, buat restore point, dan sinkronkan ke cloud.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button type="button" onclick="openCmsGuide('backup_restore')" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 flex items-center justify-center text-xs transition-all" title="Buku Panduan Backup & Keamanan">
+          <i class="fa-solid fa-circle-question"></i>
+        </button>
+        <button type="button" onclick="closeBackupSyncModal()" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-rose-100 hover:text-rose-600 text-slate-400 flex items-center justify-center text-sm transition-all">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="px-5 sm:px-6 pt-3 pb-2 border-b border-slate-100 dark:border-slate-800 shrink-0 bg-white dark:bg-slate-900">
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+        <button type="button" id="tab-btn-bs-main" onclick="switchBackupTab('main')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shadow-xs">
+          <i class="fa-solid fa-hard-drive text-[11px]"></i>
+          <span>Cadangan & Pulihkan</span>
+        </button>
+
+        <button type="button" id="tab-btn-bs-snapshots" onclick="switchBackupTab('snapshots')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent">
+          <i class="fa-solid fa-clock-rotate-left text-[11px]"></i>
+          <span>Restore Points Lokal</span>
+          <span id="bs-snapshots-badge-count" class="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">0</span>
+        </button>
+
+        <button type="button" id="tab-btn-bs-cloud" onclick="switchBackupTab('cloud')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent">
+          <i class="fa-solid fa-cloud text-[11px]"></i>
+          <span>Koneksi Cloud</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal Body (Scrollable) -->
+    <div class="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs">
+      
+      <!-- ======================================================== -->
+      <!-- TAB 1: CADANGAN & PULIHKAN (MAIN)                        -->
+      <!-- ======================================================== -->
+      <div id="bs-tab-content-main" class="space-y-4">
+        
+        <!-- Card 1: Unduh Backup Pintar -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800 space-y-3">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg shrink-0 mt-0.5">
+                <i class="fa-solid fa-file-arrow-down"></i>
+              </div>
+              <div>
+                <h4 class="font-extrabold text-sm text-slate-800 dark:text-white leading-tight">
+                  Unduh File Cadangan (.JSON)
+                </h4>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                  Menyimpan seluruh produk, transaksi, stok opname, supplier, buku hutang, dan tema ke dalam 1 file cadangan khusus bertanggal.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-2.5 border-t border-slate-200/60 dark:border-slate-800">
+            <span class="text-[10px] text-slate-400 font-semibold" id="bs-last-backup-hint">
+              Format: [NamaToko]_Backup_[Tanggal].json
+            </span>
+            <button type="button" onclick="downloadSmartBackup()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm active:scale-95 transition-all">
+              <i class="fa-solid fa-download text-emerald-400"></i>
+              <span>Unduh File Cadangan Sekarang</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Card 2: Pulihkan dari File -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800 space-y-3">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg shrink-0 mt-0.5">
+                <i class="fa-solid fa-file-arrow-up"></i>
+              </div>
+              <div>
+                <h4 class="font-extrabold text-sm text-slate-800 dark:text-white leading-tight">
+                  Pulihkan Toko dari File (.JSON)
+                </h4>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                  Unggah file cadangan untuk memulihkan seluruh data toko. Sistem akan menampilkan pratinjau sebelum data diterapkan.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="pt-2 flex flex-col sm:flex-row items-center justify-between gap-2.5 border-t border-slate-200/60 dark:border-slate-800">
+            <span class="text-[10px] text-slate-400 font-semibold">
+              Dilengkapi pemeriksaan integritas data
+            </span>
+            <label class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-bold text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer active:scale-95 transition-all">
+              <i class="fa-solid fa-upload text-indigo-500"></i>
+              <span>Pilih File untuk Dipulihkan</span>
+              <input type="file" id="bs-file-input" accept=".json,.tgbackup" class="hidden" onchange="previewRestoreFile(this)" />
+            </label>
+          </div>
+        </div>
+
+        <!-- Card 3: Ekspor Spreadsheet (Excel / CSV) -->
+        <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800 space-y-3">
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg shrink-0 mt-0.5">
+              <i class="fa-solid fa-file-csv"></i>
+            </div>
+            <div>
+              <h4 class="font-extrabold text-sm text-slate-800 dark:text-white leading-tight">
+                Ekspor Data ke Spreadsheet (CSV / Excel)
+              </h4>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
+                Buka dan kelola data di Microsoft Excel atau Google Sheets untuk pembukuan eksternal.
+              </p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-slate-200/60 dark:border-slate-800">
+            <button type="button" onclick="exportProductsCsv()" class="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-all">
+              <i class="fa-solid fa-boxes-stacked text-emerald-600"></i> Ekspor Katalog Produk (CSV)
+            </button>
+            <button type="button" onclick="exportPurchasesCsv()" class="px-3.5 py-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-bold text-xs flex items-center justify-center gap-1.5 transition-all">
+              <i class="fa-solid fa-cart-flatbed text-indigo-600"></i> Ekspor Rekap Pembelian (CSV)
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- TAB 2: RESTORE POINTS LOKAL                              -->
+      <!-- ======================================================== -->
+      <div id="bs-tab-content-snapshots" class="space-y-4 hidden">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <h4 class="font-extrabold text-sm text-slate-800 dark:text-white">
+              Titik Pemulihan Lokal (Restore Points)
+            </h4>
+            <p class="text-[11px] text-slate-400">
+              Salinan cadangan otomatis yang tersimpan di memori perangkat browser untuk pemulihan 1-klik.
+            </p>
+          </div>
+          <button type="button" onclick="createLocalSnapshot()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs active:scale-95 transition-all shrink-0">
+            <i class="fa-solid fa-camera text-[11px]"></i>
+            <span>Buat Snapshot Baru</span>
+          </button>
+        </div>
+
+        <div id="bs-snapshots-list-container" class="space-y-2.5">
+          <!-- Rendered dynamically by renderRestorePointsList() -->
+        </div>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- TAB 3: KONEKSI CLOUD                                     -->
+      <!-- ======================================================== -->
+      <div id="bs-tab-content-cloud" class="space-y-4 hidden">
+        <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800 space-y-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400 flex items-center justify-center text-lg shrink-0">
+                <i class="fa-solid fa-database"></i>
+              </div>
+              <div>
+                <h4 class="font-extrabold text-sm text-slate-800 dark:text-white leading-tight">
+                  Status Database Cloud Firestore
+                </h4>
+                <p class="text-[11px] text-slate-400 font-medium" id="bs-cloud-status-text">
+                  Koneksi Online • Terhubung ke Server Google Cloud
+                </p>
+              </div>
+            </div>
+            <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" title="Online"></span>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+            <div class="flex justify-between items-center text-[11px]">
+              <span class="text-slate-400">Penyimpanan Terkini:</span>
+              <span class="font-mono font-bold text-slate-700 dark:text-slate-200" id="bs-cloud-last-sync-time">-</span>
+            </div>
+            <div class="flex justify-between items-center text-[11px]">
+              <span class="text-slate-400">Total Produk di Memori:</span>
+              <span class="font-mono font-bold text-slate-700 dark:text-slate-200" id="bs-cloud-prod-count">0 Produk</span>
+            </div>
+            <div class="flex justify-between items-center text-[11px]">
+              <span class="text-slate-400">Proteksi Token Limit:</span>
+              <span class="font-bold text-emerald-600">Aktif (Smart Debounce & Zero Leak)</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-2.5 pt-1">
+            <button type="button" onclick="syncCloudDataNow()" class="flex-1 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md active:scale-95 transition-all">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              <span>Sinkronkan Data Cloud Sekarang (Two-Way Sync)</span>
+            </button>
+            <button type="button" onclick="refreshFromCloud()" class="py-3 px-4 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-1.5 transition-all">
+              <i class="fa-solid fa-cloud-arrow-down"></i>
+              <span>Segarkan dari Cloud</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="px-5 py-3.5 sm:px-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50/50 dark:bg-slate-850/50">
+      <span class="text-[10px] text-slate-400 font-medium">
+        Toko Grafika Cloud & Storage Security
+      </span>
+      <button type="button" onclick="closeBackupSyncModal()" class="px-5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 text-slate-700 dark:text-slate-300 font-bold text-xs transition-all">
+        Tutup
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MODAL: RESTORE PREVIEW CONFIRMATION (PRATINJAU SEBELUM RESTORE)           -->
+<!-- ========================================================================= -->
+<div id="restore-preview-modal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-xs z-60 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+  <div id="restore-preview-modal-box" class="bg-white dark:bg-slate-900 rounded-[1.75rem] max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 transition-all duration-300 scale-95 space-y-4">
+    <div class="text-center">
+      <div class="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-500 flex items-center justify-center text-2xl mx-auto mb-3 border border-amber-200 dark:border-amber-800">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3 class="font-black text-base text-slate-800 dark:text-white">Konfirmasi Pemulihan Data</h3>
+      <p class="text-xs text-slate-400 mt-1">
+        Data toko saat ini akan digantikan dengan data dari file cadangan berikut:
+      </p>
+    </div>
+
+    <div id="restore-preview-summary-box" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+      <!-- Injected by previewRestoreFile() -->
+    </div>
+
+    <div class="flex gap-2.5 pt-1">
+      <button type="button" onclick="closeRestorePreviewModal()" class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bold text-xs transition-all">
+        Batal
+      </button>
+      <button type="button" onclick="executeRestoreData()" class="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs shadow-md shadow-emerald-600/30 active:scale-95 transition-all">
+        Ya, Terapkan Sekarang
+      </button>
+    </div>
+  </div>
+</div>

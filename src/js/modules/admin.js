@@ -2429,12 +2429,12 @@ const rAdmSet = () => {
     </div>
 
     <div class="pt-6 mt-4 border-t-2 border-slate-200 dark:border-slate-800">
-      <div class="flex flex-col sm:flex-row gap-4 mb-4">
-        <button onclick="backupData()" class="flex-1 bg-slate-800 dark:bg-slate-700 text-white font-bold py-4 rounded-2xl hover:bg-slate-900 dark:hover:bg-slate-600 transition-all text-sm flex items-center justify-center gap-2 border-2 border-slate-900 dark:border-slate-600 shadow-md">
-          <i class="fa-solid fa-download text-emerald-400"></i> Backup Data (JSON)
+      <div class="flex flex-col sm:flex-row gap-3 mb-4">
+        <button type="button" onclick="openBackupSyncModal()" class="flex-1 bg-slate-800 dark:bg-slate-700 text-white font-bold py-4 rounded-2xl hover:bg-slate-900 dark:hover:bg-slate-600 transition-all text-sm flex items-center justify-center gap-2 border-2 border-slate-900 dark:border-slate-600 shadow-md">
+          <i class="fa-solid fa-cloud-arrow-up text-teal-400"></i> Pusat Cadangan & Cloud Sync
         </button>
-        <button onclick="el('restore-file').click()" class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-bold py-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-sm flex items-center justify-center gap-2 shadow-sm">
-          <i class="fa-solid fa-upload text-blue-500"></i> Restore Data
+        <button type="button" onclick="downloadSmartBackup()" class="flex-1 bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-bold py-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-sm flex items-center justify-center gap-2 shadow-sm">
+          <i class="fa-solid fa-download text-emerald-500"></i> Unduh File Backup (.JSON)
         </button>
       </div>
       <button onclick="saveAdminSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white border-2 border-emerald-700 py-4 rounded-2xl text-sm font-semibold tracking-wide shadow-lg shadow-emerald-500/30 transition-all flex items-center justify-center gap-2">
@@ -2517,32 +2517,425 @@ window.saveAdminSettings = async () => {
   hLoad();
 };
 
-window.backupData = () => {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([JSON.stringify(appData)], { type: "application/json" }));
-  a.download = `Backup.json`;
-  a.click();
-  showToast("Terunduh");
+// =============================================================================
+// CLOUD & BACKUP CENTER (PUSAT CADANGAN, RESTORE PREVIEW & SNAPSHOT ENGINE)
+// =============================================================================
+window.currentBackupTab = 'main'; // 'main' | 'snapshots' | 'cloud'
+window._pendingRestorePayload = null;
+
+window.openBackupSyncModal = () => {
+  if (!isAdm) return showToast('Akses khusus administrator!');
+  window.switchBackupTab('main');
+
+  const storeName = (appData.store?.name || 'TokoGrafika').replace(/[^a-zA-Z0-9_-]/g, '_');
+  const d = new Date();
+  const dateStr = d.toISOString().split('T')[0];
+  const hintEl = el('bs-last-backup-hint');
+  if (hintEl) hintEl.innerText = `Nama File: ${storeName}_Backup_${dateStr}.json`;
+
+  const syncTimeEl = el('bs-cloud-last-sync-time');
+  if (syncTimeEl) {
+    const lastU = appData.lastUpdate ? new Date(appData.lastUpdate).toLocaleString('id-ID') : '-';
+    syncTimeEl.innerText = lastU;
+  }
+  const prodCountEl = el('bs-cloud-prod-count');
+  if (prodCountEl) prodCountEl.innerText = `${(appData.products || []).length} Produk`;
+
+  window.renderRestorePointsList();
+
+  const modal = el('backup-sync-modal');
+  const box = el('backup-sync-modal-box');
+  if (modal && box) {
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    box.classList.remove('translate-y-5');
+  }
 };
 
-window.restoreData = e => {
-  const r = new FileReader();
-  r.onload = v => {
-    try {
-      let currLic = appData.licenseKey;
-      const parsed = JSON.parse(v.target.result);
-      if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.products) || typeof parsed.store !== 'object' || typeof parsed.auth !== 'object') {
-        return showToast('File bukan backup FreshMart yang valid!');
+window.closeBackupSyncModal = () => {
+  const modal = el('backup-sync-modal');
+  const box = el('backup-sync-modal-box');
+  if (modal && box) {
+    modal.classList.add('opacity-0', 'pointer-events-none');
+    box.classList.add('translate-y-5');
+  }
+};
+
+window.switchBackupTab = (tabKey) => {
+  window.currentBackupTab = tabKey;
+  ['main', 'snapshots', 'cloud'].forEach(k => {
+    const btn = el(`tab-btn-bs-${k}`);
+    const content = el(`bs-tab-content-${k}`);
+    const isActive = k === tabKey;
+    if (btn) {
+      if (isActive) {
+        btn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shadow-xs';
+      } else {
+        btn.className = 'px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent';
       }
-      appData = parsed;
-      if (currLic && !appData.licenseKey) appData.licenseKey = currLic;
-      saveApp();
-      setTimeout(() => location.reload(), 1000);
-    } catch (x) {
-      showToast('Gagal! File tidak valid atau rusak.');
+    }
+    if (content) {
+      content.classList.toggle('hidden', !isActive);
+    }
+  });
+
+  if (tabKey === 'snapshots') {
+    window.renderRestorePointsList();
+  }
+};
+
+// 1. Unduh File Cadangan Pintar Ber-Metadata
+window.downloadSmartBackup = () => {
+  const storeName = (appData.store?.name || 'TokoGrafika').replace(/[^a-zA-Z0-9_-]/g, '_');
+  const now = new Date();
+  const dateStr = now.toISOString().split('T')[0];
+  const timeStr = `${String(now.getHours()).padStart(2,'0')}-${String(now.getMinutes()).padStart(2,'0')}`;
+  const filename = `${storeName}_Backup_${dateStr}_${timeStr}.json`;
+
+  const backupPayload = {
+    app: 'TokoGrafika',
+    schemaVersion: '2.0',
+    exportedAt: now.toISOString(),
+    storeName: appData.store?.name || 'Toko Grafika',
+    summary: {
+      productsCount: (appData.products || []).length,
+      categoriesCount: (appData.categories || []).length,
+      suppliersCount: (appData.suppliers || []).length,
+      purchasesCount: (appData.purchases || []).length,
+      vouchersCount: (appData.vouchers || []).length,
+      lastUpdate: appData.lastUpdate || Date.now()
+    },
+    data: appData
+  };
+
+  const blob = new Blob([JSON.stringify(backupPayload, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+
+  // Buat snapshot cadangan otomatis di lokal
+  window.createAutoRestorePoint(`Unduh File: ${filename}`);
+
+  showToast('File cadangan toko berhasil diunduh! 📁');
+};
+window.backupData = window.downloadSmartBackup;
+
+// 2. Pratinjau File Restore Sebelum Diterapkan
+window.previewRestoreFile = (inputEl) => {
+  if (!inputEl || !inputEl.files || !inputEl.files[0]) return;
+  const file = inputEl.files[0];
+  const reader = new FileReader();
+
+  reader.onload = (e) => {
+    try {
+      const rawText = e.target.result;
+      const parsed = JSON.parse(rawText);
+
+      // Ekstrak data (dukung format 2.0 ber-metadata maupun legacy flat appData)
+      let targetData = parsed;
+      let summaryMeta = null;
+
+      if (parsed && parsed.data && typeof parsed.data === 'object' && Array.isArray(parsed.data.products)) {
+        targetData = parsed.data;
+        summaryMeta = parsed.summary || null;
+      }
+
+      if (!targetData || typeof targetData !== 'object' || !Array.isArray(targetData.products) || typeof targetData.store !== 'object') {
+        inputEl.value = '';
+        return showToast('Format file bukan cadangan Toko Grafika yang valid!');
+      }
+
+      window._pendingRestorePayload = targetData;
+
+      const pCount = (targetData.products || []).length;
+      const cCount = (targetData.categories || []).length;
+      const sCount = (targetData.suppliers || []).length;
+      const fCount = (targetData.purchases || []).length;
+      const vCount = (targetData.vouchers || []).length;
+      const stName = targetData.store?.name || 'Toko Grafika';
+      const expDate = parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleString('id-ID') : (targetData.lastUpdate ? new Date(targetData.lastUpdate).toLocaleString('id-ID') : 'Tidak diketahui');
+
+      const summaryBox = el('restore-preview-summary-box');
+      if (summaryBox) {
+        summaryBox.innerHTML = `
+          <div class="space-y-1.5 pb-2 border-b border-slate-200 dark:border-slate-700">
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400">File:</span>
+              <span class="font-bold text-slate-800 dark:text-white font-mono text-[11px] truncate max-w-[200px]">${esc(file.name)}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400">Nama Toko:</span>
+              <span class="font-bold text-slate-800 dark:text-white">${esc(stName)}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-slate-400">Waktu Cadangan:</span>
+              <span class="font-semibold text-slate-600 dark:text-slate-300">${expDate}</span>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2 pt-1 font-bold text-[11px]">
+            <div class="p-2 rounded-xl bg-slate-100 dark:bg-slate-700/50">📦 ${pCount} Produk</div>
+            <div class="p-2 rounded-xl bg-slate-100 dark:bg-slate-700/50">🏷️ ${cCount} Kategori</div>
+            <div class="p-2 rounded-xl bg-slate-100 dark:bg-slate-700/50">🚚 ${sCount} Supplier</div>
+            <div class="p-2 rounded-xl bg-slate-100 dark:bg-slate-700/50">🧾 ${fCount} Faktur Pembelian</div>
+          </div>
+        `;
+      }
+
+      // Tampilkan modal konfirmasi pratinjau
+      const pModal = el('restore-preview-modal');
+      const pBox = el('restore-preview-modal-box');
+      if (pModal && pBox) {
+        pModal.classList.remove('opacity-0', 'pointer-events-none');
+        pBox.classList.remove('scale-95');
+      }
+
+      inputEl.value = '';
+    } catch(err) {
+      inputEl.value = '';
+      showToast('Gagal membaca file! Format JSON rusak.');
     }
   };
-  r.readAsText(e.target.files[0]);
+
+  reader.readAsText(file);
+};
+window.restoreData = (e) => {
+  if (e && e.target) window.previewRestoreFile(e.target);
+};
+
+window.closeRestorePreviewModal = () => {
+  const pModal = el('restore-preview-modal');
+  const pBox = el('restore-preview-modal-box');
+  if (pModal && pBox) {
+    pModal.classList.add('opacity-0', 'pointer-events-none');
+    pBox.classList.add('scale-95');
+  }
+  window._pendingRestorePayload = null;
+};
+
+window.executeRestoreData = async () => {
+  if (!window._pendingRestorePayload) return;
+  sLoad('Menerapkan Pemulihan...');
+  try {
+    // 1. Buat titik pemulihan darurat sebelum menimpa
+    window.createAutoRestorePoint(`Otomatis Sebelum Restore (${new Date().toLocaleTimeString('id-ID')})`);
+
+    const currLic = appData.licenseKey;
+    appData = window._pendingRestorePayload;
+    if (currLic && !appData.licenseKey) appData.licenseKey = currLic;
+
+    await saveApp(true);
+    hLoad();
+    showToast('Data toko berhasil dipulihkan! 🚀 Memuat ulang...');
+    setTimeout(() => location.reload(), 800);
+  } catch(e) {
+    hLoad();
+    showToast('Gagal memulihkan data toko!');
+  }
+};
+
+// 3. Titik Pemulihan Lokal (Local Restore Points Engine)
+window.getStoredSnapshots = () => {
+  try {
+    const raw = localStorage.getItem('freshmart_local_snapshots');
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) {
+    return [];
+  }
+};
+
+window.saveStoredSnapshots = (snapshots) => {
+  try {
+    localStorage.setItem('freshmart_local_snapshots', JSON.stringify(snapshots.slice(0, 8)));
+  } catch(e) {}
+};
+
+window.createLocalSnapshot = (label = '') => {
+  const snapName = label || `Snapshot Manual: ${new Date().toLocaleDateString('id-ID')} ${new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})}`;
+  const snapshots = window.getStoredSnapshots();
+  
+  const newSnap = {
+    id: 'SNAP-' + Date.now(),
+    title: snapName,
+    createdAt: Date.now(),
+    summary: {
+      productsCount: (appData.products || []).length,
+      categoriesCount: (appData.categories || []).length,
+      purchasesCount: (appData.purchases || []).length
+    },
+    data: JSON.parse(JSON.stringify(appData))
+  };
+
+  snapshots.unshift(newSnap);
+  window.saveStoredSnapshots(snapshots);
+  window.renderRestorePointsList();
+  showToast('Titik pemulihan lokal baru berhasil dibuat! 📸');
+};
+
+window.createAutoRestorePoint = (label) => {
+  try {
+    const snapshots = window.getStoredSnapshots();
+    const newSnap = {
+      id: 'SNAP-' + Date.now(),
+      title: label || `Auto Snapshot (${new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})})`,
+      createdAt: Date.now(),
+      summary: {
+        productsCount: (appData.products || []).length,
+        categoriesCount: (appData.categories || []).length,
+        purchasesCount: (appData.purchases || []).length
+      },
+      data: JSON.parse(JSON.stringify(appData))
+    };
+    snapshots.unshift(newSnap);
+    window.saveStoredSnapshots(snapshots);
+  } catch(e) {}
+};
+
+window.renderRestorePointsList = () => {
+  const container = el('bs-snapshots-list-container');
+  const badgeCount = el('bs-snapshots-badge-count');
+  const snapshots = window.getStoredSnapshots();
+
+  if (badgeCount) badgeCount.innerText = snapshots.length;
+  if (!container) return;
+
+  if (!snapshots.length) {
+    container.innerHTML = `
+      <div class="p-8 text-center bg-slate-50 dark:bg-slate-850 rounded-2xl border border-slate-200/80 dark:border-slate-800 text-slate-400 text-xs">
+        <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center text-xl mx-auto mb-2">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+        </div>
+        <p class="font-bold text-slate-700 dark:text-slate-300">Belum Ada Titik Pemulihan Lokal</p>
+        <p class="text-[11px] text-slate-400 mt-0.5">Klik tombol "Buat Snapshot Baru" di atas untuk membuat salinan cadangan instan di perangkat ini.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = snapshots.map(s => {
+    const timeStr = new Date(s.createdAt).toLocaleString('id-ID');
+    const pCount = s.summary?.productsCount ?? (s.data?.products?.length || 0);
+    return `
+      <div class="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h5 class="font-bold text-slate-800 dark:text-white truncate">${esc(s.title)}</h5>
+            <span class="px-2 py-0.2 rounded-md text-[10px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+              ${pCount} Produk
+            </span>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-0.5 font-medium flex items-center gap-1">
+            <i class="fa-regular fa-clock text-[9px]"></i> ${timeStr}
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+          <button type="button" onclick="restoreFromSnapshot('${s.id}')" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs active:scale-95 transition-all">
+            <i class="fa-solid fa-rotate-left text-[10px]"></i>
+            <span>Pulihkan</span>
+          </button>
+          <button type="button" onclick="deleteSnapshot('${s.id}')" class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all text-xs" title="Hapus Snapshot">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+};
+
+window.restoreFromSnapshot = (snapshotId) => {
+  const snapshots = window.getStoredSnapshots();
+  const snap = snapshots.find(x => x.id === snapshotId);
+  if (!snap || !snap.data) return showToast('Data snapshot tidak ditemukan!');
+
+  showConfirm(
+    'Pulihkan dari Snapshot?',
+    `Apakah Anda yakin ingin memulihkan data toko ke titik "${snap.title}" (${snap.summary?.productsCount || snap.data?.products?.length || 0} Produk)? Data saat ini akan digantikan.`,
+    async () => {
+      sLoad('Memulihkan...');
+      try {
+        window.createAutoRestorePoint(`Sebelum Restore Snapshot (${new Date().toLocaleTimeString('id-ID')})`);
+        const currLic = appData.licenseKey;
+        appData = snap.data;
+        if (currLic && !appData.licenseKey) appData.licenseKey = currLic;
+        await saveApp(true);
+        hLoad();
+        showToast('Toko berhasil dipulihkan dari snapshot! Memuat ulang...');
+        setTimeout(() => location.reload(), 800);
+      } catch(e) {
+        hLoad();
+        showToast('Gagal memulihkan snapshot!');
+      }
+    },
+    'Ya, Pulihkan',
+    true
+  );
+};
+
+window.deleteSnapshot = (snapshotId) => {
+  let snapshots = window.getStoredSnapshots();
+  snapshots = snapshots.filter(x => x.id !== snapshotId);
+  window.saveStoredSnapshots(snapshots);
+  window.renderRestorePointsList();
+  showToast('Titik pemulihan dihapus.');
+};
+
+// 4. Ekspor Data ke Format Spreadsheet CSV
+window.exportProductsCsv = () => {
+  const products = appData.products || [];
+  if (!products.length) return showToast('Katalog produk masih kosong!');
+
+  const headers = ['ID', 'Nama Produk', 'SKU / Barcode', 'Kategori', 'Harga Jual', 'HPP / Modal', 'Stok', 'Satuan', 'Supplier', 'Status Aktif'];
+  const rows = products.map(p => [
+    p.id || '',
+    `"${(p.name || '').replace(/"/g, '""')}"`,
+    `"${(p.sku || '').replace(/"/g, '""')}"`,
+    `"${(p.category || '').replace(/"/g, '""')}"`,
+    p.price || 0,
+    p.costPrice || 0,
+    p.stock ?? 100,
+    `"${(p.unit || 'pcs').replace(/"/g, '""')}"`,
+    `"${(p.supplierName || '').replace(/"/g, '""')}"`,
+    (p.isActive === false || p.isActive === 'false') ? 'Nonaktif' : 'Aktif'
+  ]);
+
+  const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  const storeName = (appData.store?.name || 'TokoGrafika').replace(/[^a-zA-Z0-9_-]/g, '_');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${storeName}_Produk_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  showToast('Katalog produk diekspor ke CSV! 📊');
+};
+
+window.exportPurchasesCsv = () => {
+  const purchases = appData.purchases || [];
+  if (!purchases.length) return showToast('Riwayat pembelian masih kosong!');
+
+  const headers = ['No. Faktur', 'Tanggal', 'Supplier', 'Status', 'Total Nominal', 'Sudah Dibayar', 'Sisa Hutang', 'Jatuh Tempo', 'Catatan'];
+  const rows = purchases.map(p => [
+    `"${(p.invoiceNo || '').replace(/"/g, '""')}"`,
+    p.date || '',
+    `"${(p.supplierName || '').replace(/"/g, '""')}"`,
+    p.status || '',
+    p.totalAmount || 0,
+    p.paidAmount || 0,
+    p.remainingDebt || 0,
+    p.dueDate || '',
+    `"${(p.notes || '').replace(/"/g, '""')}"`
+  ]);
+
+  const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  const storeName = (appData.store?.name || 'TokoGrafika').replace(/[^a-zA-Z0-9_-]/g, '_');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${storeName}_Faktur_Pembelian_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  showToast('Rekap pembelian diekspor ke CSV! 📊');
 };
 
 const rAdmL = t => {
@@ -4320,40 +4713,65 @@ const guideTopicsData = {
     `
   },
   backup_restore: {
-    title: 'Panduan Backup Data Toko, Ekspor JSON & Pemulihan Cloud',
-    icon: 'fa-database',
+    title: 'Panduan Pusat Cadangan, Restore Point & Sinkronisasi Cloud',
+    icon: 'fa-cloud-arrow-up',
     content: `
       <div class="space-y-4 text-xs sm:text-sm">
         <div class="p-4 rounded-2xl border bg-indigo-50/60 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-800/60">
           <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2 text-indigo-700 dark:text-indigo-400">
-            <i class="fa-solid fa-shield-halved"></i> Keamanan Data Bisnis Toko Anda Terjamin 100%
+            <i class="fa-solid fa-shield-halved"></i> Keamanan Data Multi-Tier Toko Grafika
           </h4>
           <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
-            Data transaksi, katalog produk, stok gudang, buku hutang supplier, dan laporan keuangan toko Anda terlindungi dengan sinkronisasi cloud Firebase/Firestore, caching lokal cepat, serta fitur ekspor cadangan file JSON manual yang bisa diunduh kapan saja.
+            Data transaksi kasir, katalog produk, stok gudang, supplier, faktur pembelian, dan buku hutang Anda terlindungi dengan 4 lapis sistem keamanan: Local Cache (0ms), Google Cloud Firestore, Titik Pemulihan Lokal (*Restore Points*), dan File Cadangan Pintar (.JSON & .CSV).
           </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
-            <h5 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-download text-emerald-500"></i> Backup Manual JSON</h5>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Masuk ke menu <b>Pengaturan Toko</b> lalu klik tombol <b>Backup Data (JSON)</b>. File database toko lengkap akan tersimpan di memori perangkat Anda sebagai arsip aman.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-indigo-600">1</span>
+              File Cadangan Pintar (.JSON):
+            </h5>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Klik menu <b>Backup & Cloud</b> lalu tekan <b>Unduh File Cadangan</b>. File bernama otomatis <code>[NamaToko]_Backup_[Tanggal].json</code> memuat seluruh entitas toko lengkap dengan ringkasan metadata.
+            </p>
           </div>
 
-          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
-            <h5 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-upload text-indigo-500"></i> Restore / Pulihkan Data</h5>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Saat berganti perangkat baru (HP / Komputer Kasir), klik tombol <b>Restore Data</b> lalu pilih file backup JSON Anda. Seluruh data seketika pulih 100% tanpa ada yang hilang.</p>
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-emerald-600">2</span>
+              Pratinjau Sebelum Pemulihan (*Restore Preview*):
+            </h5>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Saat memilih file backup untuk dipulihkan, sistem secara otomatis memeriksa keutuhan data dan menampilkan ringkasan jumlah produk, supplier, dan faktur sebelum Anda memutuskan untuk menerapkannya.
+            </p>
           </div>
 
-          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
-            <h5 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-1.5"><i class="fa-solid fa-cloud text-blue-500"></i> Sinkronisasi Cloud Aman</h5>
-            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Sistem dilengkapi arsitektur hemat token & anti kebocoran kuota dengan caching cerdas. Data tersimpan real-time tanpa membebani kuota internet toko.</p>
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-cyan-600">3</span>
+              Titik Pemulihan Lokal (*Restore Points*):
+            </h5>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Sistem otomatis membuat snapshot di memori browser setiap kali Anda mengunduh backup atau sebelum melakukan restore. Anda juga bisa menekan tombol <b>Buat Snapshot Baru</b> untuk pemulihan 1-klik tanpa perlu mencari file fisik.
+            </p>
+          </div>
+
+          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg text-white flex items-center justify-center text-xs font-black bg-teal-600">4</span>
+              Sinkronisasi Cloud Dua Arah (*Two-Way Sync*):
+            </h5>
+            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Pada tab <b>Koneksi Cloud</b>, Anda dapat menekan <b>Sinkronkan Data Cloud Sekarang</b> untuk memaksa penggabungan data antara perangkat lokal dan database Google Cloud Firestore secara instan.
+            </p>
           </div>
         </div>
 
         <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
-          <span class="font-bold text-slate-800 dark:text-white text-xs block"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Rekomendasi Backup:</span>
+          <span class="font-bold text-slate-800 dark:text-white text-xs block"><i class="fa-solid fa-file-csv text-emerald-500 mr-1"></i> Ekspor Spreadsheet (Excel / CSV):</span>
           <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-            Disarankan untuk mengunduh backup file JSON secara berkala (misal: setiap akhir minggu atau setelah rekap stok opname bulanan) dan menyimpannya di Google Drive / Flashdisk Anda.
+            Anda juga dapat mengekspor seluruh katalog produk dan rekapitulasi faktur pembelian ke format <b>.CSV</b> untuk dibuka dan diolah langsung di Microsoft Excel atau Google Sheets.
           </p>
         </div>
       </div>
