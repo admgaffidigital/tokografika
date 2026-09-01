@@ -13565,40 +13565,45 @@ const renderLogoToCanvas = async (logo, themeHex, storeName, size, isMaskable = 
   canvas.height = size;
   const ctx = canvas.getContext('2d');
 
-  // Fill background with Theme Color
-  ctx.fillStyle = themeHex;
-  ctx.fillRect(0, 0, size, size);
-
   const isImageUrl = logo && (logo.startsWith('http') || logo.startsWith('https') || logo.startsWith('data:'));
   const isFaIcon = logo && !isImageUrl && logo.trim().length > 0;
-  // Use safe zone padding (18% for maskable Android, 10% for iOS / regular)
-  const pad = isMaskable ? size * 0.18 : size * 0.10;
 
   if (isImageUrl) {
     try {
       const img = await _loadImgOnce(logo);
-      const draw = size - pad * 2;
-      let dw = draw, dh = draw;
-      if (img.width > img.height) dh = draw * (img.height / img.width);
-      else if (img.height > img.width) dw = draw * (img.width / img.height);
-      
-      // Render Solid White Circular Badge Base & Perfect Circle Clipping for Round Logo Look
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(size / 2, size / 2, draw / 2, 0, Math.PI * 2);
-      ctx.fillStyle = '#ffffff';
-      ctx.fill();
-      ctx.clip();
-      
-      ctx.drawImage(img, (size - dw) / 2, (size - dh) / 2, dw, dh);
-      ctx.restore();
-      
+      if (isMaskable) {
+        // Android maskable icon: theme background + safe zone
+        ctx.fillStyle = themeHex;
+        ctx.fillRect(0, 0, size, size);
+        const pad = size * 0.15;
+        const draw = size - pad * 2;
+        let dw = draw, dh = draw;
+        if (img.width > img.height) dh = draw * (img.height / img.width);
+        else if (img.height > img.width) dw = draw * (img.width / img.height);
+        ctx.drawImage(img, (size - dw) / 2, (size - dh) / 2, dw, dh);
+      } else {
+        // Favicon & Regular Icons: Gambar logo asli penuh & jernih (tanpa background hijau kotak)
+        ctx.clearRect(0, 0, size, size);
+        let dw = size, dh = size;
+        if (img.width > img.height) dh = size * (img.height / img.width);
+        else if (img.height > img.width) dw = size * (img.width / img.height);
+        ctx.drawImage(img, (size - dw) / 2, (size - dh) / 2, dw, dh);
+      }
       return canvas.toDataURL('image/png');
     } catch (e) {
+      ctx.fillStyle = themeHex;
+      ctx.fillRect(0, 0, size, size);
       _drawTextFallback(ctx, size, storeName);
       return canvas.toDataURL('image/png');
     }
-  } else if (isFaIcon) {
+  }
+
+  // Fill background with Theme Color for FontAwesome or Text icons
+  ctx.fillStyle = themeHex;
+  ctx.fillRect(0, 0, size, size);
+  const pad = isMaskable ? size * 0.18 : size * 0.10;
+
+  if (isFaIcon) {
     const faMap = {
       'fa-store':'\uf54e','fa-shop':'\uf54f','fa-shopping-cart':'\uf07a','fa-shopping-bag':'\uf290',
       'fa-basket-shopping':'\uf291','fa-cart-shopping':'\uf07a','fa-tag':'\uf02b','fa-tags':'\uf02c',
