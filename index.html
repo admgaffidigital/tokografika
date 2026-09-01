@@ -10989,7 +10989,7 @@ const renderPosProducts = () => {
   }
 
   if (posViewMode === 'grid') {
-    container.className = 'grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5 sm:gap-3.5';
+    container.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-3.5 items-stretch';
     container.innerHTML = filtered.map(p => renderPosProductCardGrid(p)).join('');
   } else {
     container.className = 'flex flex-col gap-2';
@@ -11001,8 +11001,8 @@ const getEffP = (item) => item.effectivePrice || item.price || 0;
 
 const _getPosMainPrice = (p) => {
   if (p.variants && p.variants.length > 0) {
-    const prices = p.variants.map(v => parseFloat(v.price) || 0);
-    return Math.min(...prices);
+    const prices = p.variants.map(v => parseFloat(v.price) || 0).filter(pr => pr > 0);
+    if (prices.length) return Math.min(...prices);
   }
   return parseFloat(p.salePrice > 0 ? p.salePrice : (p.price || 0)) || 0;
 };
@@ -11020,10 +11020,10 @@ const renderPosProductCardGrid = (p) => {
   const isGrosir = (p.wholesalePrice > 0 && p.wholesaleMinQty > 0) || (p.wholesale && p.wholesale.length > 0);
 
   return `
-    <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isOutOfStock ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-200/90 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 hover:shadow-lg'} overflow-hidden transition-all duration-200 cursor-pointer group flex flex-col justify-between active:scale-[0.98] shadow-xs" onclick="${isOutOfStock ? '' : (hasVariants ? `openPosVariantModal('${esc(p.id)}')` : `addToCartPos('${esc(p.id)}', null, 1)`)}" title="${esc(p.name)}">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border ${isOutOfStock ? 'border-slate-200 dark:border-slate-800 opacity-60' : 'border-slate-200/90 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 hover:shadow-lg'} overflow-hidden transition-all duration-200 cursor-pointer group flex flex-col justify-between h-full active:scale-[0.98] shadow-xs" onclick="${isOutOfStock ? '' : (hasVariants ? `openPosVariantModal('${esc(p.id)}')` : `addToCartPos('${esc(p.id)}', null, 1)`)}" title="${esc(p.name)}">
       
       <!-- Image Container -->
-      <div class="relative aspect-square bg-slate-50 dark:bg-slate-800/50 overflow-hidden m-2 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-center">
+      <div class="relative aspect-square bg-slate-50 dark:bg-slate-800/50 overflow-hidden m-2 sm:m-2.5 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center justify-center shrink-0">
         ${imgUrl ? `<img src="${esc(imgUrl)}" alt="${esc(p.name)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="if(window.imgErrRetry) window.imgErrRetry(this, 'No Image', 400); else this.style.display='none';"/>` : `<div class="w-full h-full flex items-center justify-center text-slate-300 dark:text-slate-600"><i class="fa-solid fa-image text-2xl sm:text-3xl"></i></div>`}
         
         <!-- Cart Counter Badge (Floating Top Right) -->
@@ -11048,16 +11048,18 @@ const renderPosProductCardGrid = (p) => {
       </div>
 
       <!-- Info & Price Content -->
-      <div class="px-2.5 pb-2.5 sm:px-3 sm:pb-3 flex flex-col flex-1 justify-between">
+      <div class="px-2.5 pb-2.5 sm:px-3 sm:pb-3 flex flex-col flex-1 justify-between min-w-0">
         <div>
-          <h4 class="text-xs sm:text-[13px] font-bold text-slate-800 dark:text-slate-100 leading-snug line-clamp-2 min-h-[2rem] sm:min-h-[2.35rem] group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
-          <p class="text-[9px] sm:text-[10px] font-medium text-slate-400 dark:text-slate-500 truncate mt-0.5">${esc(p.category || 'Umum')}${p.sku ? ' • ' + esc(p.sku) : ''}</p>
+          <h4 class="text-xs sm:text-[13px] font-bold text-slate-800 dark:text-slate-100 leading-snug line-clamp-2 min-h-[2.35rem] max-h-[2.35rem] group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
+          <p class="text-[9px] sm:text-[10px] font-medium text-slate-400 dark:text-slate-500 truncate mt-0.5 h-4 leading-4">${esc(p.category || 'Umum')}${p.sku ? ' • ' + esc(p.sku) : ''}</p>
         </div>
 
         <div class="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-end justify-between gap-1">
-          <div class="min-w-0">
-            ${isUnlimited ? `<span class="text-[9px] font-bold text-slate-400 block leading-tight">∞ Stok Bebas</span>` : (hasVariants ? `<span class="text-[9px] font-medium text-slate-400 block leading-tight">Stok ${totalStock}</span>` : `<span class="text-[9px] font-semibold ${stock > 5 ? 'text-slate-400' : (stock > 0 ? 'text-amber-500 font-bold' : 'text-rose-500 font-bold')} block leading-tight">Stok ${stock} ${esc(p.unit || 'pcs')}</span>`)}
-            <div class="text-xs sm:text-[15px] font-black text-emerald-600 dark:text-emerald-400 leading-tight mt-0.5">${fCur(price)}</div>
+          <div class="min-w-0 flex-1">
+            <div class="h-4 leading-4 flex items-center">
+              ${isUnlimited ? `<span class="text-[9px] font-bold text-slate-400 leading-none">∞ Stok Bebas</span>` : (hasVariants ? `<span class="text-[9px] font-medium text-slate-400 leading-none">Stok ${totalStock}</span>` : `<span class="text-[9px] font-semibold ${stock > 5 ? 'text-slate-400' : (stock > 0 ? 'text-amber-500 font-bold' : 'text-rose-500 font-bold')} leading-none">Stok ${stock} ${esc(p.unit || 'pcs')}</span>`)}
+            </div>
+            <div class="text-xs sm:text-[15px] font-black text-emerald-600 dark:text-emerald-400 leading-tight mt-0.5 truncate">${fCur(price)}</div>
           </div>
           
           <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-xs shrink-0">
