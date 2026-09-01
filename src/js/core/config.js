@@ -98,9 +98,38 @@ let _priceWatcherUnsub = null;
 let _priceWatcherLegacyUnsub = null;
 let _priceDebounceTimer = null;
 
-// LocalStorage Wrappers with Quota Handling
-const sL = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
-const ssL = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { if (e && (e.name === 'QuotaExceededError' || e.code === 22)) { console.warn('[FreshMart] localStorage penuh, cache lokal dilewati:', k); } } };
+// In-Memory Storage Fallback when Browser Tracking Prevention blocks access
+const _inMemStore = {};
+
+// LocalStorage Wrappers with Tracking Prevention & Quota Handling
+const sL = k => { 
+  try { 
+    return localStorage.getItem(k); 
+  } catch (e) { 
+    return _inMemStore[k] || null; 
+  } 
+};
+
+const ssL = (k, v) => { 
+  try { 
+    localStorage.setItem(k, v); 
+  } catch (e) { 
+    _inMemStore[k] = v;
+    if (e && (e.name === 'QuotaExceededError' || e.code === 22)) { 
+      console.warn('[FreshMart] localStorage penuh, cache dialihkan ke memori:', k); 
+    } 
+  } 
+};
+
+// Global Error Shield (Shield against 3rd-party toolbar/extension DOM Range errors)
+if (typeof window !== 'undefined') {
+  window.addEventListener('error', (event) => {
+    if (event && event.message && event.message.includes('selectNode')) {
+      event.preventDefault();
+      return true;
+    }
+  }, true);
+}
 
 try { cart = JSON.parse(sL('freshmart_cart')) || []; } catch (e) { console.warn('[FreshMart] Cart parse error, reset:', e); }
 try { wishlist = JSON.parse(sL('freshmart_wishlist')) || []; } catch (e) { console.warn('[FreshMart] Wishlist parse error, reset:', e); }
