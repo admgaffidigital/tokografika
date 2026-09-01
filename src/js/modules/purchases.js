@@ -353,34 +353,69 @@ window.removePurchaseItemRow = (idx) => {
 
 const _renderPurchaseItemsTable = () => {
   const tbody = el('purch-items-tbody');
-  if (!tbody) return;
+  const mList = el('purch-items-mobile-list');
 
   if (!currentPurchaseItems.length) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="6" class="p-4 text-center text-slate-400 font-medium">Belum ada barang dimasukkan</td>
-      </tr>
-    `;
+    if (tbody) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" class="p-4 text-center text-slate-400 font-medium">Belum ada barang dimasukkan</td>
+        </tr>
+      `;
+    }
+    if (mList) {
+      mList.innerHTML = `
+        <div class="p-3.5 text-center text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700/80 text-xs font-medium">
+          <i class="fa-solid fa-basket-shopping text-slate-300 dark:text-slate-600 mr-1.5"></i> Belum ada barang dimasukkan
+        </div>
+      `;
+    }
     return;
   }
 
-  tbody.innerHTML = currentPurchaseItems.map((item, i) => `
-    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-      <td class="p-2.5 font-bold text-slate-500">${i + 1}</td>
-      <td class="p-2.5 font-extrabold text-slate-800 dark:text-slate-200">
-        ${esc(item.productName)}
-        ${item.variantName ? `<span class="block text-[10px] text-slate-400 font-semibold">[${esc(item.variantName)}]</span>` : ''}
-      </td>
-      <td class="p-2.5 text-center font-black text-slate-800 dark:text-slate-200">${item.qty} ${esc(item.unit)}</td>
-      <td class="p-2.5 text-right font-bold text-slate-600 dark:text-slate-300">${fCur(item.buyPrice)}</td>
-      <td class="p-2.5 text-right font-black text-emerald-600 dark:text-emerald-400">${fCur(item.subtotal)}</td>
-      <td class="p-2.5 text-center">
-        <button type="button" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-colors" onclick="removePurchaseItemRow(${i})" title="Hapus Item">
-          <i class="fa-solid fa-trash-can"></i>
-        </button>
-      </td>
-    </tr>
-  `).join('');
+  // Desktop Table
+  if (tbody) {
+    tbody.innerHTML = currentPurchaseItems.map((item, i) => `
+      <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+        <td class="p-2.5 font-bold text-slate-500">${i + 1}</td>
+        <td class="p-2.5 font-extrabold text-slate-800 dark:text-slate-200">
+          ${esc(item.productName)}
+          ${item.variantName ? `<span class="block text-[10px] text-slate-400 font-semibold">[${esc(item.variantName)}]</span>` : ''}
+        </td>
+        <td class="p-2.5 text-center font-black text-slate-800 dark:text-slate-200">${item.qty} ${esc(item.unit)}</td>
+        <td class="p-2.5 text-right font-bold text-slate-600 dark:text-slate-300">${fCur(item.buyPrice)}</td>
+        <td class="p-2.5 text-right font-black text-emerald-600 dark:text-emerald-400">${fCur(item.subtotal)}</td>
+        <td class="p-2.5 text-center">
+          <button type="button" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-colors" onclick="removePurchaseItemRow(${i})" title="Hapus Item">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // Mobile Cards
+  if (mList) {
+    mList.innerHTML = currentPurchaseItems.map((item, i) => `
+      <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-700/80 flex justify-between items-center gap-3 text-xs">
+        <div class="min-w-0 flex-1">
+          <div class="font-extrabold text-slate-800 dark:text-slate-100 leading-tight truncate">
+            ${esc(item.productName)}
+          </div>
+          ${item.variantName ? `<span class="inline-block text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">[${esc(item.variantName)}]</span>` : ''}
+          <div class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">
+            <span class="font-bold text-slate-700 dark:text-slate-300">${item.qty} ${esc(item.unit)}</span> × ${fCur(item.buyPrice)}
+          </div>
+        </div>
+        <div class="text-right shrink-0 flex flex-col items-end gap-1">
+          <div class="font-black text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm">${fCur(item.subtotal)}</div>
+          <button type="button" class="text-rose-500 hover:text-rose-700 px-2 py-0.5 rounded-md bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/40 text-[10px] font-bold active:scale-95 transition-all" onclick="removePurchaseItemRow(${i})">
+            <i class="fa-solid fa-trash-can mr-0.5"></i> Hapus
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
 };
 
 window.togglePurchasePaymentType = () => {
