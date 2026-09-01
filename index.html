@@ -1174,7 +1174,7 @@ html.dark .badge-counter {
 <!-- MODAL: PRODUCT DETAIL & ADD TO CART                                       -->
 <!-- ========================================================================= -->
 <div class='fixed inset-0 z-[70] bg-slate-900/70 hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-5' id='product-modal' onclick='if(event.target===this) closeProductModal()'>
-  <div class='w-full max-w-md sm:max-w-lg md:max-w-xl bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl max-h-[90dvh] sm:max-h-[88dvh] overflow-y-auto transform translate-y-full sm:translate-y-0 transition-transform duration-300 hide-scrollbar shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col relative' id='product-modal-content'>
+  <div class='w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl max-h-[90dvh] sm:max-h-[88dvh] overflow-y-auto transform translate-y-full sm:translate-y-0 transition-transform duration-300 hide-scrollbar shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col relative' id='product-modal-content'>
     <!-- Synchronized Glass Theme Header -->
     <div class='glass-header sticky top-0 right-0 left-0 z-30 px-3.5 sm:px-5 py-2.5 sm:py-3 flex items-center justify-between shadow-md shrink-0 sm:rounded-t-2xl' style='background-color:var(--clr-p)!important;'>
       <div class='flex items-center gap-2 min-w-0 flex-1 text-white'>
@@ -1348,7 +1348,7 @@ html.dark .badge-counter {
 <!-- MODAL: ADMIN FORM MODAL                                                   -->
 <!-- ========================================================================= -->
 <div class='fixed inset-0 z-[80] bg-slate-900/70 hidden flex items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300' id='admin-modal' onclick='if(event.target===this) closeAdminModal()'>
-  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md sm:max-w-xl md:max-w-2xl max-h-[92dvh] flex flex-col hide-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform scale-95 transition-transform duration-300' id='admin-modal-box'>
+  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl max-h-[92dvh] flex flex-col hide-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform scale-95 transition-transform duration-300' id='admin-modal-box'>
     <div class='sticky top-0 bg-white dark:bg-slate-800 px-5 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center z-20 rounded-t-2xl'>
       <h3 class='font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2' id='admin-modal-title'>Form Data</h3>
       <button class='w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-500 dark:hover:text-rose-400 transition-all border border-slate-200 dark:border-slate-600' onclick='closeAdminModal()'>
@@ -1368,7 +1368,7 @@ html.dark .badge-counter {
 <!-- MODAL: ADMIN ORDER DETAIL & PRINT OPTIONS                                 -->
 <!-- ========================================================================= -->
 <div class='fixed inset-0 z-[100] bg-slate-900/70 hidden flex items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300' id='admin-order-modal' onclick='if(event.target===this) closeOrderDetailModal()'>
-  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md sm:max-w-lg md:max-w-xl max-h-[92dvh] overflow-y-auto hide-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform scale-95 transition-transform duration-300 flex flex-col' id='admin-order-modal-box'>
+  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-3xl xl:max-w-4xl max-h-[92dvh] overflow-y-auto hide-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform scale-95 transition-transform duration-300 flex flex-col' id='admin-order-modal-box'>
     <div class='sticky top-0 bg-white dark:bg-slate-800 px-5 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center z-20 rounded-t-2xl'>
       <h3 class='font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2'>
         <i class='fa-solid fa-file-invoice text-emerald-600 dark:text-emerald-400'></i> Detail Pesanan
@@ -1683,7 +1683,7 @@ html.dark .badge-counter {
 <!-- MODAL: DAFTAR TRANSAKSI PENDING / DITAHAN (POS KASIR)                     -->
 <!-- ========================================================================= -->
 <div class='fixed inset-0 z-[80] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4' id='pos-pending-modal' onclick='if(event.target===this) closePosPendingModal()'>
-  <div class='w-full sm:w-[540px] max-h-[92dvh] sm:max-h-[85dvh] bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 overflow-hidden' id='pos-pending-modal-box'>
+  <div class='w-full sm:max-w-xl md:max-w-2xl lg:max-w-3xl max-h-[92dvh] sm:max-h-[85dvh] bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 overflow-hidden' id='pos-pending-modal-box'>
     
     <!-- Grab Bar for Mobile -->
     <div class='w-full pt-2.5 pb-1 flex justify-center sm:hidden shrink-0 bg-slate-50 dark:bg-slate-900'>
@@ -1740,7 +1740,7 @@ html.dark .badge-counter {
 <!-- MODAL: INPUT STOK OPNAME (PENYESUAIAN STOK FISIK & AUDIT SELISIH)         -->
 <!-- ========================================================================= -->
 <div class='fixed inset-0 z-[110] bg-slate-900/70 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 transition-opacity duration-300' id='stock-opname-modal' onclick='if(event.target===this) closeStockOpnameModal()'>
-  <div class='bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-full sm:max-w-lg md:max-w-xl max-h-[92dvh] sm:max-h-[88dvh] flex flex-col hide-scrollbar no-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 overflow-hidden' id='stock-opname-modal-box'>
+  <div class='bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl max-h-[92dvh] sm:max-h-[88dvh] flex flex-col hide-scrollbar no-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 overflow-hidden' id='stock-opname-modal-box'>
     
     <!-- Mobile Grab Bar Handle -->
     <div class='w-full pt-2.5 pb-1 flex justify-center sm:hidden shrink-0 bg-white dark:bg-slate-800'>
@@ -1878,7 +1878,7 @@ html.dark .badge-counter {
 <!-- MODAL: FORM DATA SUPPLIER (TAMBAH / EDIT)                                -->
 <!-- ========================================================================= -->
 <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-3 z-[70] transition-opacity duration-300 opacity-0 hidden" id="supplier-modal">
-  <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[90vh] transition-all transform translate-y-5" id="supplier-modal-box">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-lg md:max-w-xl lg:max-w-2xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[90vh] transition-all transform translate-y-5" id="supplier-modal-box">
     
     <!-- Modal Header -->
     <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50">
@@ -1983,7 +1983,7 @@ html.dark .badge-counter {
 <!-- MODAL: FORM INPUT TRANSAKSI PEMBELIAN SUPPLIER                             -->
 <!-- ========================================================================= -->
 <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 transition-opacity duration-300 opacity-0 hidden" id="purchase-modal">
-  <div class="bg-white dark:bg-slate-900 w-full max-w-3xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[92vh] transition-all transform translate-y-5" id="purchase-modal-box">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-3xl md:max-w-4xl lg:max-w-5xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[92vh] transition-all transform translate-y-5" id="purchase-modal-box">
     
     <!-- Header -->
     <div class="px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50 shrink-0">
@@ -2206,7 +2206,7 @@ html.dark .badge-counter {
 <!-- MODAL: CATAT PEMBAYARAN / TITIPAN CICILAN HUTANG SUPPLIER                 -->
 <!-- ========================================================================= -->
 <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-3 z-[60] transition-opacity duration-300 opacity-0 hidden" id="purchase-payment-modal">
-  <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[90vh] transition-all transform translate-y-5" id="purchase-payment-box">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-lg md:max-w-xl lg:max-w-2xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[90vh] transition-all transform translate-y-5" id="purchase-payment-box">
     
     <!-- Modal Header -->
     <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50">
@@ -2323,7 +2323,7 @@ html.dark .badge-counter {
 <!-- MODAL: DETAIL FAKTUR PEMBELIAN & CETAK NOTA                               -->
 <!-- ========================================================================= -->
 <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-[60] transition-opacity duration-300 opacity-0 hidden" id="purchase-detail-modal">
-  <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[92vh] transition-all transform translate-y-5" id="purchase-detail-box">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-2xl md:max-w-3xl lg:max-w-4xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[92vh] transition-all transform translate-y-5" id="purchase-detail-box">
     
     <!-- Modal Header -->
     <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50">
