@@ -1,5 +1,5 @@
 // =============================================================================
-// FRESHMART PRICETAG & LABEL BARCODE STUDIO ENGINE (SPACIOUS & RESPONSIVE A4)
+// FRESHMART PRICETAG & LABEL BARCODE STUDIO ENGINE (THEME-SYNCHRONIZED & PRECISE)
 // =============================================================================
 // Modul pembuatan & pencetakan label harga rak (shelf price tags) dan stiker barcode.
 // Menggunakan kanvas standar Kertas A4 Potret (210 x 297 mm) dengan presisi millimeter,
@@ -66,12 +66,16 @@ window.switchPricetagTab = (tabKey) => {
     
     if (t === window.currentPricetagTab) {
       if (btn) {
-        btn.className = 'flex-1 sm:flex-none px-3.5 sm:px-5 py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm';
+        btn.className = 'flex-1 sm:flex-none px-3.5 sm:px-5 py-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition-all bg-white dark:bg-slate-700 shadow-sm border-2';
+        btn.style.color = 'var(--clr-p, #059669)';
+        btn.style.borderColor = 'var(--clr-p, #059669)';
       }
       if (view) view.classList.remove('hidden');
     } else {
       if (btn) {
-        btn.className = 'flex-1 sm:flex-none px-3.5 sm:px-5 py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white';
+        btn.className = 'flex-1 sm:flex-none px-3.5 sm:px-5 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white border-2 border-transparent';
+        btn.style.color = '';
+        btn.style.borderColor = 'transparent';
       }
       if (view) view.classList.add('hidden');
     }
@@ -211,7 +215,7 @@ window.openPricetagProductPicker = () => {
                   <span class="text-[10px] text-slate-400 font-semibold">${p.sku ? `SKU: ${esc(p.sku)} • ` : ''}${hasVars ? `<span class="text-indigo-500 font-bold">${p.variants.length} Varian</span>` : fCur(p.price)}</span>
                 </div>
               </div>
-              <button type="button" onclick="addPricetagProductFromPicker('${p.id}')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1 shadow-xs shrink-0 active:scale-95 transition-all">
+              <button type="button" onclick="addPricetagProductFromPicker('${p.id}')" class="px-3.5 py-2 rounded-xl text-white font-bold text-xs flex items-center gap-1 shadow-xs shrink-0 active:scale-95 transition-all" style="background-color:var(--clr-p, #059669);">
                 <i class="fa-solid fa-plus text-[10px]"></i> Tambah
               </button>
             </div>
@@ -273,7 +277,7 @@ window.openPricetagBatchCategoryPicker = () => {
                 <span class="font-bold text-xs text-slate-800 dark:text-white block">${esc(c.name)}</span>
                 <span class="text-[10px] text-slate-400">${pCount} Produk</span>
               </div>
-              <button type="button" onclick="addBatchPricetagByCategory('${esc(c.name)}')" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1 shadow-xs">
+              <button type="button" onclick="addBatchPricetagByCategory('${esc(c.name)}')" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1 shadow-xs">
                 + Tambahkan
               </button>
             </div>
@@ -320,7 +324,7 @@ window.openPricetagBatchSupplierPicker = () => {
                 <span class="font-bold text-xs text-slate-800 dark:text-white block">${esc(s.name)}</span>
                 <span class="text-[10px] text-slate-400">${pCount} Produk Tertaut</span>
               </div>
-              <button type="button" onclick="addBatchPricetagBySupplier('${s.id}')" class="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center gap-1 shadow-xs">
+              <button type="button" onclick="addBatchPricetagBySupplier('${s.id}')" class="px-3.5 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center gap-1 shadow-xs">
                 + Tambahkan
               </button>
             </div>
@@ -429,12 +433,12 @@ window.renderPricetagItemList = () => {
   if (!items.length) {
     container.innerHTML = `
       <div class="p-8 sm:p-12 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
-        <div class="w-16 h-16 rounded-3xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl mx-auto mb-3.5 shadow-xs">
+        <div class="w-16 h-16 rounded-3xl flex items-center justify-center text-2xl mx-auto mb-3.5 shadow-xs" style="background:rgba(var(--clr-p-rgb, 5, 150, 105), 0.12); color:var(--clr-p, #059669);">
           <i class="fa-solid fa-tags"></i>
         </div>
         <h4 class="text-sm font-black text-slate-800 dark:text-white">Belum Ada Produk di Daftar Cetak</h4>
         <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Klik tombol di bawah untuk memilih produk dari katalog toko atau gunakan opsi batch cepat.</p>
-        <button type="button" onclick="openPricetagProductPicker()" class="mt-4 px-5 py-2.5 rounded-2xl bg-emerald-600 text-white font-bold text-xs shadow-md hover:bg-emerald-700 active:scale-95 transition-all">
+        <button type="button" onclick="openPricetagProductPicker()" class="mt-4 px-5 py-2.5 rounded-2xl text-white font-bold text-xs shadow-md active:scale-95 transition-all" style="background-color:var(--clr-p, #059669);">
           + Tambah Produk Sekarang
         </button>
       </div>
@@ -445,7 +449,7 @@ window.renderPricetagItemList = () => {
   container.innerHTML = items.map((it, idx) => {
     const hasWhol = Array.isArray(it.wholesale) && it.wholesale.length > 0;
     return `
-      <div class="p-3.5 sm:p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs hover:border-emerald-400/80 transition-all flex items-center justify-between gap-3 group">
+      <div class="p-3.5 sm:p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs hover:border-slate-400 transition-all flex items-center justify-between gap-3 group">
         <div class="min-w-0 flex-1">
           <div class="flex items-center gap-2 flex-wrap mb-1">
             <h5 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-white truncate">${esc(it.productName)}</h5>
@@ -454,7 +458,7 @@ window.renderPricetagItemList = () => {
           
           <div class="flex items-center gap-2.5 text-xs text-slate-500 dark:text-slate-400 font-semibold flex-wrap">
             <span class="font-mono text-[11px] bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">${esc(it.sku)}</span>
-            <span class="text-emerald-600 dark:text-emerald-400 font-black text-sm">${fCur(it.price)}</span>
+            <span class="font-black text-sm" style="color:var(--clr-p, #059669);">${fCur(it.price)}</span>
             <span class="text-slate-400 text-xs">/${esc(it.unit)}</span>
             ${hasWhol ? `
               <span class="cursor-pointer px-2 py-0.5 rounded-md text-[10px] font-bold ${it.showWholesale ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800' : 'bg-slate-100 text-slate-400 line-through'}" onclick="togglePricetagItemWholesale(${idx})" title="Klik untuk toggle cetak rincian grosir">
@@ -648,12 +652,14 @@ window.renderPricetagPreview = () => {
     if (summaryEl) summaryEl.innerText = `${totalLabels} label • ${pages.length} lembar A4 Potret (Grid 3x8)`;
 
     sheet.innerHTML = pages.map((pageItems, pageIdx) => `
-      <div class="w-full max-w-[794px] bg-white rounded-2xl border border-slate-300/80 shadow-lg p-3 sm:p-5 mx-auto overflow-hidden relative" style="box-sizing:border-box;">
-        <div class="flex justify-between items-center text-[11px] text-slate-400 font-bold mb-2 pb-1.5 border-b border-slate-100">
-          <span>📄 Lembar A4 Potret (Grid 3x8)</span>
-          <span>Halaman ${pageIdx + 1} dari ${pages.length}</span>
+      <div class="w-full max-w-[760px] bg-white rounded-3xl border-2 border-slate-300 dark:border-slate-700 shadow-xl p-4 sm:p-6 mx-auto overflow-hidden relative" style="box-sizing:border-box;">
+        <div class="flex justify-between items-center text-xs font-bold mb-3 pb-2 border-b border-slate-100">
+          <span class="flex items-center gap-1.5" style="color:var(--clr-p, #059669);">
+            <i class="fa-solid fa-file-lines"></i> Lembar A4 Potret (Grid 3x8)
+          </span>
+          <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px]">Halaman ${pageIdx + 1} dari ${pages.length}</span>
         </div>
-        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 2mm; width:100%;">
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 2.5mm; width:100%;">
           ${pageItems.map(item => _buildSingleLabelHtml(item, settings, false, '100%', '33.5mm')).join('')}
         </div>
       </div>
@@ -666,12 +672,14 @@ window.renderPricetagPreview = () => {
     if (summaryEl) summaryEl.innerText = `${totalLabels} label • ${pages.length} lembar A4 Potret (Grid 2x6 Besar)`;
 
     sheet.innerHTML = pages.map((pageItems, pageIdx) => `
-      <div class="w-full max-w-[794px] bg-white rounded-2xl border border-slate-300/80 shadow-lg p-4 sm:p-6 mx-auto overflow-hidden relative" style="box-sizing:border-box;">
-        <div class="flex justify-between items-center text-[11px] text-slate-400 font-bold mb-2 pb-1.5 border-b border-slate-100">
-          <span>📄 Lembar A4 Potret (Grid 2x6 Besar)</span>
-          <span>Halaman ${pageIdx + 1} dari ${pages.length}</span>
+      <div class="w-full max-w-[760px] bg-white rounded-3xl border-2 border-slate-300 dark:border-slate-700 shadow-xl p-5 sm:p-7 mx-auto overflow-hidden relative" style="box-sizing:border-box;">
+        <div class="flex justify-between items-center text-xs font-bold mb-3 pb-2 border-b border-slate-100">
+          <span class="flex items-center gap-1.5" style="color:var(--clr-p, #059669);">
+            <i class="fa-solid fa-file-lines"></i> Lembar A4 Potret (Grid 2x6 Besar)
+          </span>
+          <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px]">Halaman ${pageIdx + 1} dari ${pages.length}</span>
         </div>
-        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 3.5mm; width:100%;">
+        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 4mm; width:100%;">
           ${pageItems.map(item => _buildSingleLabelHtml(item, settings, false, '100%', '44.5mm')).join('')}
         </div>
       </div>
@@ -684,10 +692,12 @@ window.renderPricetagPreview = () => {
     if (summaryEl) summaryEl.innerText = `${totalLabels} label • ${pages.length} lembar A4 Potret (Grid 4x10 Mini)`;
 
     sheet.innerHTML = pages.map((pageItems, pageIdx) => `
-      <div class="w-full max-w-[794px] bg-white rounded-2xl border border-slate-300/80 shadow-lg p-3 sm:p-4 mx-auto overflow-hidden relative" style="box-sizing:border-box;">
-        <div class="flex justify-between items-center text-[11px] text-slate-400 font-bold mb-2 pb-1.5 border-b border-slate-100">
-          <span>📄 Lembar A4 Potret (Grid 4x10 Mini)</span>
-          <span>Halaman ${pageIdx + 1} dari ${pages.length}</span>
+      <div class="w-full max-w-[760px] bg-white rounded-3xl border-2 border-slate-300 dark:border-slate-700 shadow-xl p-4 sm:p-5 mx-auto overflow-hidden relative" style="box-sizing:border-box;">
+        <div class="flex justify-between items-center text-xs font-bold mb-3 pb-2 border-b border-slate-100">
+          <span class="flex items-center gap-1.5" style="color:var(--clr-p, #059669);">
+            <i class="fa-solid fa-file-lines"></i> Lembar A4 Potret (Grid 4x10 Mini)
+          </span>
+          <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px]">Halaman ${pageIdx + 1} dari ${pages.length}</span>
         </div>
         <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 1.5mm; width:100%;">
           ${pageItems.map(item => _buildSingleLabelHtml(item, settings, false, '100%', '26.5mm')).join('')}
@@ -702,7 +712,7 @@ window.renderPricetagPreview = () => {
     if (summaryEl) summaryEl.innerText = `${totalLabels} label • Thermal ${is80 ? '80mm' : '58mm'} Continuous`;
 
     sheet.innerHTML = `
-      <div class="bg-white rounded-2xl border border-slate-300 shadow-md p-3 mx-auto" style="width:${rollW}; box-sizing:border-box;">
+      <div class="bg-white rounded-3xl border-2 border-slate-300 shadow-md p-3 mx-auto" style="width:${rollW}; box-sizing:border-box;">
         <div style="display:flex; flex-direction:column; gap:2.5mm; width:100%;">
           ${flatLabels.map(item => _buildSingleLabelHtml(item, settings, true, '100%', 'auto')).join('')}
         </div>
