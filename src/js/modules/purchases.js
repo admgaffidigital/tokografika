@@ -1827,7 +1827,26 @@ window.closeSupplierProductsModal = () => {
 
 window.setSupplierProductsSubTab = (tab) => {
   window.suppProdModalSubTab = tab;
+  window._suppProdSearchQuery = '';
   renderSupplierProductsModalContent();
+};
+
+window.filterSupplierProductsModalLive = (q) => {
+  window._suppProdSearchQuery = q;
+  const query = (q || '').trim().toLowerCase();
+  const items = document.querySelectorAll('.supp-prod-item-row');
+  let matchCount = 0;
+  items.forEach(it => {
+    const text = (it.getAttribute('data-search') || '').toLowerCase();
+    const isMatch = !query || text.includes(query);
+    it.style.display = isMatch ? '' : 'none';
+    if (isMatch) matchCount++;
+  });
+
+  const emptyEl = el('supp-prod-empty-state');
+  if (emptyEl) {
+    emptyEl.style.display = matchCount === 0 ? 'block' : 'none';
+  }
 };
 
 window.renderSupplierProductsModalContent = (searchQuery = null) => {
@@ -1856,15 +1875,19 @@ window.renderSupplierProductsModalContent = (searchQuery = null) => {
 
   const activeTab = window.suppProdModalSubTab || 'list';
 
+  // Preserve scroll position if list container already exists
+  const existingListEl = el('supp-prod-items-container');
+  const prevScrollTop = existingListEl ? existingListEl.scrollTop : 0;
+
   let subTabNav = `
-    <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2">
+    <div class="flex items-center gap-2 border-b border-slate-200 dark:border-slate-700 pb-2 shrink-0">
       <button type="button" onclick="setSupplierProductsSubTab('list')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${activeTab === 'list' ? 'bg-amber-500 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">
         <i class="fa-solid fa-boxes-stacked text-xs"></i>
-        <span>Produk Asal Supplier (${totalItems})</span>
+        <span id="supp-tab-count-list">Produk Asal Supplier (${totalItems})</span>
       </button>
       <button type="button" onclick="setSupplierProductsSubTab('link')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${activeTab === 'link' ? 'bg-indigo-600 text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'}">
         <i class="fa-solid fa-link text-xs"></i>
-        <span>Tautkan Produk Toko (${unlinkedProds.length})</span>
+        <span id="supp-tab-count-link">Tautkan Produk Toko (${unlinkedProds.length})</span>
       </button>
     </div>
   `;
@@ -1872,20 +1895,16 @@ window.renderSupplierProductsModalContent = (searchQuery = null) => {
   let contentHtml = '';
 
   if (activeTab === 'list') {
-    const filtered = !q ? allSuppProds : allSuppProds.filter(p => {
-      return (p.name || '').toLowerCase().includes(q) || (p.sku || '').toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q);
-    });
-
     contentHtml = `
       <!-- Top Stats Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 shrink-0">
         <div class="p-3 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-base shrink-0">
             <i class="fa-solid fa-boxes-stacked"></i>
           </div>
           <div>
             <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Total Produk Asal</span>
-            <h4 class="text-sm sm:text-base font-black text-slate-800 dark:text-white leading-none mt-0.5">${totalItems} Produk</h4>
+            <h4 class="text-sm sm:text-base font-black text-slate-800 dark:text-white leading-none mt-0.5" id="supp-stat-total-items">${totalItems} Produk</h4>
           </div>
         </div>
 
@@ -1910,30 +1929,33 @@ window.renderSupplierProductsModalContent = (searchQuery = null) => {
         </div>
       </div>
 
-      <!-- Search Input -->
-      <div class="relative w-full">
+      <!-- Persistent Search Bar -->
+      <div class="relative w-full shrink-0">
         <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-        <input type="text" value="${esc(window._suppProdSearchQuery)}" placeholder="Cari nama produk, SKU, kategori dari supplier ini..." oninput="renderSupplierProductsModalContent(this.value)" class="admin-input !py-2.5 !pl-9 w-full text-xs font-bold" />
+        <input type="text" id="supp-prod-search-input" value="${esc(window._suppProdSearchQuery || '')}" placeholder="Cari nama produk, SKU, kategori dari supplier ini..." oninput="filterSupplierProductsModalLive(this.value)" class="admin-input !py-2.5 !pl-9 w-full text-xs font-bold" />
       </div>
 
-      <!-- Product Cards List -->
-      <div class="space-y-2.5 max-h-[50vh] overflow-y-auto pr-1">
-        ${!filtered.length ? `
-          <div class="p-10 text-center bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
-            <i class="fa-solid fa-box-open text-3xl text-slate-300 dark:text-slate-600 mb-2 block"></i>
-            <p class="text-xs font-bold text-slate-500 dark:text-slate-400">${q ? `Tidak ada produk yang cocok dengan "${q}"` : 'Belum ada produk toko yang ditautkan ke supplier ini.'}</p>
-            <button type="button" onclick="setSupplierProductsSubTab('link')" class="mt-3 px-4 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 font-bold text-xs border border-emerald-200 dark:border-emerald-800/80 hover:bg-emerald-600 hover:text-white transition-all">
-              + Tautkan Produk Sekarang
-            </button>
-          </div>
-        ` : filtered.map(p => {
+      <!-- Empty State Indicator -->
+      <div id="supp-prod-empty-state" class="p-10 text-center bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 ${!allSuppProds.length ? '' : 'hidden'}">
+        <i class="fa-solid fa-box-open text-3xl text-slate-300 dark:text-slate-600 mb-2 block"></i>
+        <p class="text-xs font-bold text-slate-500 dark:text-slate-400">Tidak ada produk yang cocok dengan pencarian.</p>
+        <button type="button" onclick="setSupplierProductsSubTab('link')" class="mt-3 px-4 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 font-bold text-xs border border-emerald-200 dark:border-emerald-800/80 hover:bg-emerald-600 hover:text-white transition-all">
+          + Tautkan Produk Sekarang
+        </button>
+      </div>
+
+      <!-- Product Cards List Container -->
+      <div id="supp-prod-items-container" class="space-y-2.5 max-h-[50vh] overflow-y-auto pr-1">
+        ${allSuppProds.map(p => {
           const hasVars = p.variants && p.variants.length > 0;
           const curStock = hasVars ? p.variants.reduce((sum, v) => sum + Number(v.stock || 0), 0) : Number(p.stock ?? 0);
           const lastBuyDateStr = p.lastPurchaseDate ? _fDate(p.lastPurchaseDate) : 'Belum Ada';
           const lastBuyPriceStr = p.lastPurchasePrice ? fCur(p.lastPurchasePrice) : (p.costPrice ? fCur(p.costPrice) : '-');
+          const searchData = (p.name + ' ' + (p.sku || '') + ' ' + (p.category || '')).toLowerCase();
+          const isMatch = !q || searchData.includes(q);
 
           return `
-            <div class="p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-xs hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div id="supp-prod-row-${p.id}" data-search="${esc(searchData)}" class="supp-prod-item-row p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-xs hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3" style="${isMatch ? '' : 'display:none;'}">
               <div class="flex items-center gap-3 min-w-0 flex-1">
                 <img src="${esc(p.img || 'https://placehold.co/100?text=Img')}" onerror="this.src='https://placehold.co/100?text=Img'" class="w-12 h-12 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0" />
                 <div class="min-w-0 flex-1">
@@ -1973,12 +1995,8 @@ window.renderSupplierProductsModalContent = (searchQuery = null) => {
     `;
   } else {
     // TAB LINK
-    const filteredUnlinked = !q ? unlinkedProds : unlinkedProds.filter(p => {
-      return (p.name || '').toLowerCase().includes(q) || (p.sku || '').toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q);
-    });
-
     contentHtml = `
-      <div class="p-3 bg-indigo-50/60 dark:bg-indigo-950/30 rounded-2xl border border-indigo-200 dark:border-indigo-800/60 text-xs space-y-1">
+      <div class="p-3 bg-indigo-50/60 dark:bg-indigo-950/30 rounded-2xl border border-indigo-200 dark:border-indigo-800/60 text-xs space-y-1 shrink-0">
         <h5 class="font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5">
           <i class="fa-solid fa-link"></i> Hubungkan Produk Toko ke Supplier "${esc(s.name)}"
         </h5>
@@ -1987,30 +2005,37 @@ window.renderSupplierProductsModalContent = (searchQuery = null) => {
         </p>
       </div>
 
-      <!-- Search Input -->
-      <div class="relative w-full">
+      <!-- Persistent Search Bar -->
+      <div class="relative w-full shrink-0">
         <i class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-        <input type="text" value="${esc(window._suppProdSearchQuery)}" placeholder="Cari nama produk yang ingin ditautkan..." oninput="renderSupplierProductsModalContent(this.value)" class="admin-input !py-2.5 !pl-9 w-full text-xs font-bold" />
+        <input type="text" id="supp-prod-search-input" value="${esc(window._suppProdSearchQuery || '')}" placeholder="Cari nama produk yang ingin ditautkan..." oninput="filterSupplierProductsModalLive(this.value)" class="admin-input !py-2.5 !pl-9 w-full text-xs font-bold" />
       </div>
 
-      <div class="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
-        ${!filteredUnlinked.length ? `
-          <div class="p-8 text-center bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs text-slate-400 font-medium">
-            Tidak ada produk lain yang tersedia untuk ditautkan.
-          </div>
-        ` : filteredUnlinked.map(p => {
+      <!-- Empty State Indicator -->
+      <div id="supp-prod-empty-state" class="p-8 text-center bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 text-xs text-slate-400 font-medium ${!unlinkedProds.length ? '' : 'hidden'}">
+        Tidak ada produk lain yang cocok untuk ditautkan.
+      </div>
+
+      <!-- Product Cards List Container -->
+      <div id="supp-prod-items-container" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+        ${unlinkedProds.map(p => {
+          const searchData = (p.name + ' ' + (p.sku || '') + ' ' + (p.category || '')).toLowerCase();
+          const isMatch = !q || searchData.includes(q);
+
           return `
-            <div class="p-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-xs hover:border-indigo-400 flex items-center justify-between gap-3 transition-all">
+            <div id="supp-prod-row-${p.id}" data-search="${esc(searchData)}" class="supp-prod-item-row p-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-xs hover:border-indigo-400 flex items-center justify-between gap-3 transition-all" style="${isMatch ? '' : 'display:none;'}">
               <div class="flex items-center gap-3 min-w-0 flex-1">
                 <img src="${esc(p.img || 'https://placehold.co/100?text=Img')}" onerror="this.src='https://placehold.co/100?text=Img'" class="w-10 h-10 rounded-lg object-cover border border-slate-200 dark:border-slate-700 shrink-0" />
                 <div class="min-w-0 flex-1">
                   <h4 class="font-bold text-xs text-slate-800 dark:text-white truncate">${esc(p.name)}</h4>
-                  <p class="text-[10px] text-slate-400">${p.sku ? `SKU: ${esc(p.sku)} • ` : ''}${p.supplierName ? `<span class="text-amber-600 font-semibold">Saat ini: ${esc(p.supplierName)}</span>` : '<span class="text-slate-400">Belum Ada Supplier</span>'}</p>
+                  <p class="text-[10px] text-slate-400" id="supp-prod-label-${p.id}">${p.sku ? `SKU: ${esc(p.sku)} • ` : ''}${p.supplierName ? `<span class="text-amber-600 font-semibold">Saat ini: ${esc(p.supplierName)}</span>` : '<span class="text-slate-400">Belum Ada Supplier</span>'}</p>
                 </div>
               </div>
-              <button type="button" onclick="linkProductToSupplier('${p.id}', '${s.id}')" class="px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white border border-indigo-200 dark:border-indigo-800 font-bold text-xs flex items-center gap-1 shadow-xs transition-all shrink-0">
-                <i class="fa-solid fa-link text-[10px]"></i> Tautkan
-              </button>
+              <div id="supp-prod-action-${p.id}">
+                <button type="button" onclick="linkProductToSupplier('${p.id}', '${s.id}')" class="px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white border border-indigo-200 dark:border-indigo-800 font-bold text-xs flex items-center gap-1 shadow-xs transition-all shrink-0 active:scale-95">
+                  <i class="fa-solid fa-link text-[10px]"></i> Tautkan
+                </button>
+              </div>
             </div>
           `;
         }).join('')}
@@ -2019,6 +2044,12 @@ window.renderSupplierProductsModalContent = (searchQuery = null) => {
   }
 
   setH('supp-prod-modal-body', subTabNav + contentHtml);
+
+  // Restore scroll position cleanly
+  const newListEl = el('supp-prod-items-container');
+  if (newListEl && prevScrollTop > 0) {
+    newListEl.scrollTop = prevScrollTop;
+  }
 
   // Footer Action
   setH('supp-prod-modal-footer-actions', `
@@ -2038,39 +2069,102 @@ window.linkProductToSupplier = async (productId, supplierId) => {
   const p = (appData.products || []).find(x => String(x.id) === String(productId));
   if (!s || !p) return;
 
+  // Optimistic UI Update (Zero Scroll Reset)
   p.supplierId = s.id;
   p.supplierName = s.name;
 
-  sLoad('Menautkan Produk...');
+  const actionBox = el(`supp-prod-action-${p.id}`);
+  const labelBox = el(`supp-prod-label-${p.id}`);
+  const rowBox = el(`supp-prod-row-${p.id}`);
+
+  if (actionBox) {
+    actionBox.innerHTML = `
+      <span class="px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 font-bold text-xs flex items-center gap-1 shadow-xs animate-pulse">
+        <i class="fa-solid fa-circle-check text-xs"></i> Tertaut
+      </span>
+    `;
+  }
+  if (labelBox) {
+    labelBox.innerHTML = `${p.sku ? `SKU: ${esc(p.sku)} • ` : ''}<span class="text-emerald-600 font-bold">Disuplai: ${esc(s.name)}</span>`;
+  }
+  if (rowBox) {
+    rowBox.classList.add('bg-emerald-50/40', 'dark:bg-emerald-950/20', 'border-emerald-300');
+  }
+
+  // Update counts in header/tab in-place without re-rendering list
+  const allSuppProds = (appData.products || []).filter(item => String(item.supplierId) === String(s.id));
+  const unlinkedProds = (appData.products || []).filter(item => String(item.supplierId) !== String(s.id));
+
+  const tabList = el('supp-tab-count-list');
+  const tabLink = el('supp-tab-count-link');
+  if (tabList) tabList.innerText = `Produk Asal Supplier (${allSuppProds.length})`;
+  if (tabLink) tabLink.innerText = `Tautkan Produk Toko (${unlinkedProds.length})`;
+
+  showToast(`"${p.name}" berhasil ditautkan ke ${s.name}!`);
+
+  // Asynchronous Background Save (Non-blocking)
   try {
-    await db.collection("freshmart").doc("cms_data").collection("products").doc(p.id.toString()).update({ supplierId: s.id, supplierName: s.name });
+    if (typeof db !== 'undefined' && db) {
+      await db.collection("freshmart").doc("cms_data").collection("products").doc(p.id.toString()).update({ supplierId: s.id, supplierName: s.name });
+    }
     await saveApp();
-    showToast(`Produk "${p.name}" berhasil ditautkan ke ${s.name}!`);
-    renderSupplierProductsModalContent();
     rAdmPurchases();
   } catch(e) {
-    showToast('Gagal menautkan produk!');
+    console.warn('Background sync error:', e);
   }
-  hLoad();
 };
 
 window.unlinkProductFromSupplier = async (productId) => {
   const p = (appData.products || []).find(x => String(x.id) === String(productId));
   if (!p) return;
+  const suppId = window._currentViewingSupplierId;
+  const s = (appData.suppliers || []).find(x => String(x.id) === String(suppId));
+
   showConfirm("Lepas Tautan Supplier", `Lepas tautan barang "${p.name}" dari supplier ini?`, async () => {
     p.supplierId = '';
     p.supplierName = '';
-    sLoad('Memperbarui...');
+
+    // Smooth In-Place Removal with Scroll Preservation
+    const rowBox = el(`supp-prod-row-${p.id}`);
+    const listEl = el('supp-prod-items-container');
+    const scrollPos = listEl ? listEl.scrollTop : 0;
+
+    if (rowBox) {
+      rowBox.style.transition = 'all 0.25s ease';
+      rowBox.style.opacity = '0';
+      rowBox.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        rowBox.remove();
+        if (listEl) listEl.scrollTop = scrollPos;
+        
+        // Update tab count
+        const allSuppProds = (appData.products || []).filter(item => s && String(item.supplierId) === String(s.id));
+        const unlinkedProds = (appData.products || []).filter(item => !s || String(item.supplierId) !== String(s.id));
+        const tabList = el('supp-tab-count-list');
+        const tabLink = el('supp-tab-count-link');
+        const statTotal = el('supp-stat-total-items');
+        if (tabList) tabList.innerText = `Produk Asal Supplier (${allSuppProds.length})`;
+        if (tabLink) tabLink.innerText = `Tautkan Produk Toko (${unlinkedProds.length})`;
+        if (statTotal) statTotal.innerText = `${allSuppProds.length} Produk`;
+
+        const emptyEl = el('supp-prod-empty-state');
+        if (emptyEl && allSuppProds.length === 0) {
+          emptyEl.style.display = 'block';
+        }
+      }, 250);
+    }
+
+    showToast('Tautan supplier berhasil dilepas!');
+
     try {
-      await db.collection("freshmart").doc("cms_data").collection("products").doc(p.id.toString()).update({ supplierId: '', supplierName: '' });
+      if (typeof db !== 'undefined' && db) {
+        await db.collection("freshmart").doc("cms_data").collection("products").doc(p.id.toString()).update({ supplierId: '', supplierName: '' });
+      }
       await saveApp();
-      showToast('Tautan supplier berhasil dilepas!');
-      renderSupplierProductsModalContent();
       rAdmPurchases();
     } catch(e) {
-      showToast('Gagal melepas tautan!');
+      console.warn('Background unlink sync error:', e);
     }
-    hLoad();
   }, "Ya, Lepas", true);
 };
 
