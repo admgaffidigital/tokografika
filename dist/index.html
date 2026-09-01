@@ -13587,7 +13587,7 @@ window.printPurchaseInvoice = () => {
         <div class="summary-row"><span>Sudah Terbayar:</span> <b>${fCur(p.paidAmount)}</b></div>
         <div class="summary-row summary-total"><span>Sisa Hutang:</span> <b>${fCur(p.remainingDebt || 0)}</b></div>
       </div>
-      <script>window.onload = function() { window.print(); };</script>
+      <script>window.onload = function() { window.print(); };<\/script>
     </body>
     </html>
   `);

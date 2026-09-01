@@ -6,7 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node scripts/audit-bugs.js"
+    "test": "node scripts/audit-bugs.js && node scripts/test-syntax.js"
   },
   "keywords": [
     "pwa",
