@@ -2,56 +2,56 @@
 <!-- MODAL: CLOUD & BACKUP CENTER (PUSAT CADANGAN & SINKRONISASI DATA)        -->
 <!-- ========================================================================= -->
 <div id="backup-sync-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[90] flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 pointer-events-none transition-all duration-300" onclick="if(event.target===this) closeBackupSyncModal()">
-  <div id="backup-sync-modal-box" class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-2xl w-full flex flex-col shadow-2xl border border-slate-200/80 dark:border-slate-800 transition-all duration-300 translate-y-6 sm:translate-y-0 sm:scale-95 overflow-hidden" style="max-height: min(92dvh, 92vh); max-height: calc(92dvh - env(safe-area-inset-bottom, 0px));">
+  <div id="backup-sync-modal-box" class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-2xl w-full flex flex-col shadow-2xl border border-slate-200/80 dark:border-slate-800 transition-all duration-300 translate-y-6 sm:translate-y-0 sm:scale-95 overflow-hidden" style="max-height: 95dvh; max-height: calc(95dvh - env(safe-area-inset-bottom, 0px));">
     
-    <!-- Modal Header (Synchronized Theme Gradient) -->
-    <div class="sticky top-0 z-30 px-5 py-3.5 sm:px-6 sm:py-4 flex items-center justify-between shrink-0" style="background:linear-gradient(135deg,var(--clr-p,#059669),var(--clr-ps,#047857));">
-      <div class="flex items-center gap-3 min-w-0">
-        <div class="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-lg text-white shrink-0 shadow-sm border border-white/30 backdrop-blur-sm">
+    <!-- Modal Header (Synchronized Theme Gradient) - Compact di mobile -->
+    <div class="sticky top-0 z-30 px-4 py-2.5 sm:px-6 sm:py-4 flex items-center justify-between shrink-0" style="background:linear-gradient(135deg,var(--clr-p,#059669),var(--clr-ps,#047857));">
+      <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white/20 flex items-center justify-center text-base sm:text-lg text-white shrink-0 shadow-sm border border-white/30">
           <i class="fa-solid fa-cloud-arrow-up text-white"></i>
         </div>
         <div class="min-w-0">
-          <h3 class="font-black text-sm sm:text-base text-white leading-tight truncate">
+          <h3 class="font-black text-xs sm:text-base text-white leading-tight truncate">
             Pusat Cadangan &amp; Sinkronisasi Cloud
           </h3>
-          <p class="text-[10px] sm:text-[11px] text-white/80 font-medium mt-0.5 truncate">
+          <p class="hidden sm:block text-[10px] sm:text-[11px] text-white/80 font-medium mt-0.5 truncate">
             Amankan data toko, buat restore point, dan sinkronkan ke cloud
           </p>
         </div>
       </div>
       <div class="flex items-center gap-1.5 shrink-0">
-        <button type="button" onclick="openCmsGuide('backup_restore')" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-xs transition-all border border-white/20 shadow-sm active:scale-95" title="Buku Panduan Backup & Keamanan">
+        <button type="button" onclick="openCmsGuide('backup_restore')" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-xs transition-all border border-white/20 shadow-sm active:scale-95" title="Panduan">
           <i class="fa-solid fa-circle-question text-amber-300"></i>
         </button>
-        <button type="button" onclick="closeBackupSyncModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-rose-500 text-white flex items-center justify-center text-sm transition-all border border-white/20 shadow-sm active:scale-95" title="Tutup">
+        <button type="button" onclick="closeBackupSyncModal()" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 hover:bg-rose-500 text-white flex items-center justify-center text-sm transition-all border border-white/20 shadow-sm active:scale-95" title="Tutup">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
     </div>
 
-    <!-- Navigation Tabs (Theme Sync) -->
-    <div class="bg-white dark:bg-slate-900 px-4 sm:px-6 py-2.5 border-b border-slate-200 dark:border-slate-800 shrink-0">
-      <div class="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl overflow-x-auto no-scrollbar">
-        <button type="button" id="tab-btn-bs-main" onclick="switchBackupTab('main')" class="flex-1 sm:flex-none px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 shrink-0 bg-white dark:bg-slate-700 shadow-xs border-2" style="color:var(--clr-p,#059669);border-color:var(--clr-p,#059669);">
-          <i class="fa-solid fa-hard-drive text-[11px]"></i>
-          <span>1. Cadangan &amp; Pulihkan</span>
+    <!-- Navigation Tabs - Compact di mobile -->
+    <div class="bg-white dark:bg-slate-900 px-3 sm:px-6 py-1.5 sm:py-2.5 border-b border-slate-200 dark:border-slate-800 shrink-0">
+      <div class="flex items-center gap-1 sm:gap-1.5 p-0.5 sm:p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl sm:rounded-2xl overflow-x-auto no-scrollbar">
+        <button type="button" id="tab-btn-bs-main" onclick="switchBackupTab('main')" class="flex-1 sm:flex-none px-2 sm:px-3.5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-black transition-all flex items-center justify-center gap-1 sm:gap-1.5 shrink-0 bg-white dark:bg-slate-700 shadow-xs border-2" style="color:var(--clr-p,#059669);border-color:var(--clr-p,#059669);">
+          <i class="fa-solid fa-hard-drive text-[10px]"></i>
+          <span>Cadangan</span>
         </button>
 
-        <button type="button" id="tab-btn-bs-snapshots" onclick="switchBackupTab('snapshots')" class="flex-1 sm:flex-none px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shrink-0 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white border-2 border-transparent">
-          <i class="fa-solid fa-clock-rotate-left text-[11px]"></i>
-          <span>2. Restore Points</span>
-          <span id="bs-snapshots-badge-count" class="px-1.5 py-0.2 rounded-full text-[9px] font-black" style="background:rgba(var(--clr-p-rgb,5,150,105),0.15);color:var(--clr-p,#059669);">0</span>
+        <button type="button" id="tab-btn-bs-snapshots" onclick="switchBackupTab('snapshots')" class="flex-1 sm:flex-none px-2 sm:px-3.5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 sm:gap-1.5 shrink-0 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white border-2 border-transparent">
+          <i class="fa-solid fa-clock-rotate-left text-[10px]"></i>
+          <span>Restore</span>
+          <span id="bs-snapshots-badge-count" class="px-1 rounded-full text-[8px] font-black" style="background:rgba(var(--clr-p-rgb,5,150,105),0.15);color:var(--clr-p,#059669);">0</span>
         </button>
 
-        <button type="button" id="tab-btn-bs-cloud" onclick="switchBackupTab('cloud')" class="flex-1 sm:flex-none px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shrink-0 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white border-2 border-transparent">
-          <i class="fa-solid fa-cloud text-[11px]"></i>
-          <span>3. Koneksi Cloud</span>
+        <button type="button" id="tab-btn-bs-cloud" onclick="switchBackupTab('cloud')" class="flex-1 sm:flex-none px-2 sm:px-3.5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 sm:gap-1.5 shrink-0 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white border-2 border-transparent">
+          <i class="fa-solid fa-cloud text-[10px]"></i>
+          <span>Cloud</span>
         </button>
       </div>
     </div>
 
     <!-- Modal Body (Scrollable) -->
-    <div class="p-4 sm:p-6 overflow-y-auto flex-1 min-h-0 space-y-4 text-xs bg-slate-50/50 dark:bg-slate-900/50" style="-webkit-overflow-scrolling: touch;">
+    <div class="p-3 sm:p-6 overflow-y-auto flex-1 min-h-0 space-y-3 sm:space-y-4 text-xs bg-slate-50/50 dark:bg-slate-900/50" style="-webkit-overflow-scrolling: touch; overscroll-behavior: contain;">
       
       <!-- ======================================================== -->
       <!-- TAB 1: CADANGAN & PULIHKAN (MAIN)                        -->
@@ -218,12 +218,15 @@
 
     </div>
 
-    <!-- Modal Footer -->
-    <div class="px-5 sm:px-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-white dark:bg-slate-900" style="padding-top: 0.875rem; padding-bottom: calc(0.875rem + env(safe-area-inset-bottom, 0px));">
-      <span class="text-[10px] text-slate-400 font-medium">
+    <!-- Modal Footer - teks sembunyi di mobile kecil, tombol tutup tetap tampil -->
+    <div class="px-4 sm:px-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-white dark:bg-slate-900" style="padding-top: 0.625rem; padding-bottom: calc(0.625rem + env(safe-area-inset-bottom, 0px));">
+      <span class="hidden sm:block text-[10px] text-slate-400 font-medium">
         Toko Grafika Cloud &amp; Storage Security
       </span>
-      <button type="button" onclick="closeBackupSyncModal()" class="px-5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition-all active:scale-95">
+      <span class="sm:hidden text-[9px] text-slate-400 font-medium truncate mr-2">
+        Cloud &amp; Backup Security
+      </span>
+      <button type="button" onclick="closeBackupSyncModal()" class="px-4 sm:px-5 py-1.5 sm:py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs transition-all active:scale-95 shrink-0">
         Tutup
       </button>
     </div>
