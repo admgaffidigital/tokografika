@@ -63,7 +63,7 @@
       <!-- 3. Informasi Produk & Stok Sistem -->
       <div id='so-product-info-card' class='hidden bg-slate-50 dark:bg-slate-900/60 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2'>
         <div class='flex items-center gap-3'>
-          <img id='so-info-img' src='' class='w-12 h-12 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0 bg-white' alt='Produk'/>
+          <img id='so-info-img' src='' class='w-12 h-12 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0 bg-white' alt='Produk' onerror="if(window.imgErrRetry) window.imgErrRetry(this,'No Image',100);"/>
           <div class='min-w-0 flex-1'>
             <h4 id='so-info-title' class='font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate'>-</h4>
             <p id='so-info-category' class='text-[10px] text-slate-400 font-semibold'>-</p>

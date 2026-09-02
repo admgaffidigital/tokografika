@@ -304,7 +304,7 @@
     </div>
     <div class='p-4 space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar'>
       <div class='flex items-center gap-3 p-2.5 bg-slate-50 dark:bg-[#0b1329] rounded-xl border border-slate-200/80 dark:border-slate-800'>
-        <img src='' id='pos-variant-prod-img' class='w-12 h-12 object-cover rounded-lg shrink-0 border border-slate-200 dark:border-slate-700'/>
+        <img src='' id='pos-variant-prod-img' class='w-12 h-12 object-cover rounded-lg shrink-0 border border-slate-200 dark:border-slate-700' onerror="if(window.imgErrRetry) window.imgErrRetry(this,'No Image',100);"/>
         <div class='min-w-0'>
           <h4 class='text-xs font-bold text-slate-900 dark:text-white truncate' id='pos-variant-prod-name'>Nama Produk</h4>
           <p class='text-[10px] text-slate-500 font-semibold' id='pos-variant-prod-sku'>SKU: -</p>

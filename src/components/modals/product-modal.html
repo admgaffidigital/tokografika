@@ -23,7 +23,7 @@
 
     <!-- Product Image Container -->
     <div class='w-full aspect-square bg-slate-100 dark:bg-slate-900 relative overflow-hidden shrink-0 border-b border-slate-200 dark:border-slate-700'>
-      <img class='w-full h-full object-cover transition-opacity duration-300' id='product-modal-img' src='' alt='Foto Produk'/>
+      <img class='w-full h-full object-cover transition-opacity duration-300' id='product-modal-img' src='' alt='Foto Produk' onerror="if(window.imgErrRetry) window.imgErrRetry(this,'No Image',600); else this.src='https://placehold.co/400?text=No+Image';"/>
     </div>
     <div class='p-5 sm:p-6 bg-white dark:bg-slate-800 flex-1 flex flex-col'>
       <div class='mb-2 flex flex-wrap gap-1.5' id='product-modal-badges'></div>

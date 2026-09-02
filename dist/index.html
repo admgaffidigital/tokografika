@@ -1664,7 +1664,7 @@ html.dark .badge-counter {
 
     <!-- Product Image Container -->
     <div class='w-full aspect-square bg-slate-100 dark:bg-slate-900 relative overflow-hidden shrink-0 border-b border-slate-200 dark:border-slate-700'>
-      <img class='w-full h-full object-cover transition-opacity duration-300' id='product-modal-img' src='' alt='Foto Produk'/>
+      <img class='w-full h-full object-cover transition-opacity duration-300' id='product-modal-img' src='' alt='Foto Produk' onerror="if(window.imgErrRetry) window.imgErrRetry(this,'No Image',600); else this.src='https://placehold.co/400?text=No+Image';"/>
     </div>
     <div class='p-5 sm:p-6 bg-white dark:bg-slate-800 flex-1 flex flex-col'>
       <div class='mb-2 flex flex-wrap gap-1.5' id='product-modal-badges'></div>
@@ -2282,7 +2282,7 @@ html.dark .badge-counter {
       <!-- 3. Informasi Produk & Stok Sistem -->
       <div id='so-product-info-card' class='hidden bg-slate-50 dark:bg-slate-900/60 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2'>
         <div class='flex items-center gap-3'>
-          <img id='so-info-img' src='' class='w-12 h-12 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0 bg-white' alt='Produk'/>
+          <img id='so-info-img' src='' class='w-12 h-12 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0 bg-white' alt='Produk' onerror="if(window.imgErrRetry) window.imgErrRetry(this,'No Image',100);"/>
           <div class='min-w-0 flex-1'>
             <h4 id='so-info-title' class='font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate'>-</h4>
             <p id='so-info-category' class='text-[10px] text-slate-400 font-semibold'>-</p>
@@ -4953,7 +4953,7 @@ html.dark .badge-counter {
     </div>
     <div class='p-4 space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar'>
       <div class='flex items-center gap-3 p-2.5 bg-slate-50 dark:bg-[#0b1329] rounded-xl border border-slate-200/80 dark:border-slate-800'>
-        <img src='' id='pos-variant-prod-img' class='w-12 h-12 object-cover rounded-lg shrink-0 border border-slate-200 dark:border-slate-700'/>
+        <img src='' id='pos-variant-prod-img' class='w-12 h-12 object-cover rounded-lg shrink-0 border border-slate-200 dark:border-slate-700' onerror="if(window.imgErrRetry) window.imgErrRetry(this,'No Image',100);"/>
         <div class='min-w-0'>
           <h4 class='text-xs font-bold text-slate-900 dark:text-white truncate' id='pos-variant-prod-name'>Nama Produk</h4>
           <p class='text-[10px] text-slate-500 font-semibold' id='pos-variant-prod-sku'>SKU: -</p>
