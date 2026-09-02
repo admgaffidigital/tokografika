@@ -965,6 +965,402 @@ html.dark .badge-counter {
 }
 
 /* ==========================================================================
+   GRAFIKA PWA STORE - RESPONSIVE LAYOUT FIXES
+   Memperbaiki tampilan di HP, Tablet, dan PC
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. SAFE AREA & MOBILE VIEWPORT FIX
+   Mengatasi masalah konten terpotong di HP dengan notch / gesture bar
+   -------------------------------------------------------------------------- */
+
+#app-container {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0 !important;
+    max-height: 100dvh;
+}
+
+/* --------------------------------------------------------------------------
+   2. VIEW SECTION - FULL HEIGHT FIX
+   -------------------------------------------------------------------------- */
+
+.view-section {
+    height: 100%;
+    max-height: 100dvh;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* --------------------------------------------------------------------------
+   3. CART VIEW - BOTTOM BAR FIX
+   Mengatasi keranjang yang terpotong di layar HP
+   -------------------------------------------------------------------------- */
+
+#view-cart {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#view-cart .scroll-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom, 16px));
+}
+
+/* Cart bottom bar - sticky di bawah flex container, bukan absolute */
+#cart-bottom-bar {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px)) !important;
+    flex-shrink: 0;
+}
+
+/* --------------------------------------------------------------------------
+   4. CHECKOUT VIEW FIX
+   -------------------------------------------------------------------------- */
+
+#view-checkout {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#view-checkout .scroll-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: calc(8rem + env(safe-area-inset-bottom, 16px));
+}
+
+/* --------------------------------------------------------------------------
+   5. ADMIN VIEW - FULL SCROLL FIX
+   Mengatasi menu admin yang terpotong di layar kecil
+   -------------------------------------------------------------------------- */
+
+#view-admin {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: unset !important;
+}
+
+#view-admin .scroll-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom, 16px));
+}
+
+/* --------------------------------------------------------------------------
+   6. CATALOG VIEW FIX
+   -------------------------------------------------------------------------- */
+
+#view-catalog {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#catalog-scroll {
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 16px)) !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. BACKUP & CLOUD MODAL - MOBILE FIX
+   -------------------------------------------------------------------------- */
+
+#backup-sync-modal {
+    padding-bottom: 0 !important;
+}
+
+#backup-sync-modal-box {
+    max-height: calc(92dvh - env(safe-area-inset-bottom, 0px)) !important;
+}
+
+@media (max-width: 639px) {
+    #backup-sync-modal {
+        align-items: flex-end !important;
+        padding: 0 !important;
+    }
+
+    #backup-sync-modal-box {
+        border-radius: 1.5rem 1.5rem 0 0 !important;
+        max-height: 90dvh !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    /* Footer modal safe area */
+    #backup-sync-modal-box > div:last-child {
+        padding-bottom: calc(0.875rem + env(safe-area-inset-bottom, 0px)) !important;
+    }
+}
+
+@media (min-width: 640px) {
+    #backup-sync-modal {
+        align-items: center !important;
+        padding: 1rem !important;
+    }
+
+    #backup-sync-modal-box {
+        border-radius: 1.5rem !important;
+        max-height: min(90vh, 90dvh) !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   8. POS VIEW FIX
+   -------------------------------------------------------------------------- */
+
+#view-pos {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100dvh;
+    max-height: 100dvh;
+}
+
+#pos-products-scroll {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom, 16px)) !important;
+}
+
+@media (max-width: 639px) {
+    .pos-mobile-nav {
+        padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   9. GLASS NAV (BOTTOM NAVIGATION) - SAFE AREA FIX
+   -------------------------------------------------------------------------- */
+
+.glass-nav {
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+/* --------------------------------------------------------------------------
+   10. PAYMENT & WISHLIST VIEW FIX
+   -------------------------------------------------------------------------- */
+
+#view-payment {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#view-payment .scroll-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: calc(7rem + env(safe-area-inset-bottom, 16px));
+}
+
+#view-wishlist {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#view-wishlist .scroll-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom, 16px));
+}
+
+/* --------------------------------------------------------------------------
+   11. FLOATING CART BUTTON - POSITION FIX
+   -------------------------------------------------------------------------- */
+
+.floating-cart-btn {
+    bottom: calc(5rem + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+@media (max-width: 639px) {
+    .floating-cart-btn {
+        bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px)) !important;
+        right: 1rem !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    .floating-cart-btn {
+        bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)) !important;
+        right: 1.5rem !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   12. MODAL SAFE AREA - GLOBAL
+   -------------------------------------------------------------------------- */
+
+#restore-preview-modal {
+    padding: 1rem;
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* Modal max-height menggunakan dvh */
+@media (max-width: 639px) {
+    [class*="max-h-"][class*="vh"] {
+        max-height: calc(90dvh - env(safe-area-inset-bottom, 0px)) !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   13. SCROLL CONTENT GLOBAL FIX
+   -------------------------------------------------------------------------- */
+
+.scroll-content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+}
+
+/* --------------------------------------------------------------------------
+   14. HEADER SAFE AREA FIXES
+   -------------------------------------------------------------------------- */
+
+.glass-header {
+    padding-top: calc(0.65rem + env(safe-area-inset-top, 0px)) !important;
+    padding-left: calc(0.85rem + env(safe-area-inset-left, 0px)) !important;
+    padding-right: calc(0.85rem + env(safe-area-inset-right, 0px)) !important;
+}
+
+#pos-master-header {
+    padding-top: calc(0.5rem + env(safe-area-inset-top, 0px)) !important;
+    padding-left: calc(0.75rem + env(safe-area-inset-left, 0px)) !important;
+    padding-right: calc(0.75rem + env(safe-area-inset-right, 0px)) !important;
+}
+
+/* --------------------------------------------------------------------------
+   15. ADMIN MENU GRID - RESPONSIVE COLUMNS
+   -------------------------------------------------------------------------- */
+
+/* Mobile: 2 kolom */
+@media (max-width: 479px) {
+    #view-admin .grid.grid-cols-2.sm\\:grid-cols-3.md\\:grid-cols-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.625rem !important;
+    }
+
+    /* Tombol menu admin lebih compact di HP kecil */
+    #view-admin .grid button {
+        padding: 0.875rem 0.5rem !important;
+    }
+
+    #view-admin .grid button .w-12 {
+        width: 2.5rem !important;
+        height: 2.5rem !important;
+    }
+}
+
+/* Tablet: 3 kolom */
+@media (min-width: 480px) and (max-width: 767px) {
+    #view-admin .grid.grid-cols-2.sm\\:grid-cols-3.md\\:grid-cols-4 {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   16. TABLET LAYOUT (768px - 1023px)
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    #backup-sync-modal-box {
+        max-width: 560px !important;
+    }
+
+    #view-cart .max-w-3xl {
+        max-width: 560px;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   17. PREVENT IOS ZOOM ON INPUT FOCUS
+   -------------------------------------------------------------------------- */
+
+@supports (-webkit-touch-callout: none) {
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="search"],
+    input[type="password"],
+    select,
+    textarea {
+        font-size: max(16px, 0.875rem) !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   18. TOUCH TARGETS - MINIMUM 44PX
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 639px) {
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+        min-height: 44px;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   19. PRICETAG & FULL-SCREEN MODALS - MOBILE FIX
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 639px) {
+    /* Any modal using bottom sheet pattern */
+    .rounded-t-3xl {
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   20. POS DESKTOP SIDEBAR HEIGHT FIX
+   -------------------------------------------------------------------------- */
+
+@media (min-width: 1024px) {
+    #pos-desktop-cart-sidebar {
+        height: 100%;
+        max-height: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* ==========================================================================
    GRAFIKA PWA STORE - PRINT STYLESHEET (A4 INVOICE, REPORT, PRICETAG & THERMAL)
    ========================================================================== */
 
@@ -2732,7 +3128,7 @@ html.dark .badge-counter {
 <!-- MODAL: CLOUD & BACKUP CENTER (PUSAT CADANGAN & SINKRONISASI DATA)        -->
 <!-- ========================================================================= -->
 <div id="backup-sync-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[90] flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 pointer-events-none transition-all duration-300" onclick="if(event.target===this) closeBackupSyncModal()">
-  <div id="backup-sync-modal-box" class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-2xl w-full max-h-[94vh] sm:max-h-[90vh] flex flex-col shadow-2xl border border-slate-200/80 dark:border-slate-800 transition-all duration-300 translate-y-6 sm:translate-y-0 sm:scale-95 overflow-hidden">
+  <div id="backup-sync-modal-box" class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-2xl w-full flex flex-col shadow-2xl border border-slate-200/80 dark:border-slate-800 transition-all duration-300 translate-y-6 sm:translate-y-0 sm:scale-95 overflow-hidden" style="max-height: min(92dvh, 92vh); max-height: calc(92dvh - env(safe-area-inset-bottom, 0px));">
     
     <!-- Modal Header (Synchronized Theme Gradient) -->
     <div class="sticky top-0 z-30 px-5 py-3.5 sm:px-6 sm:py-4 flex items-center justify-between shrink-0" style="background:linear-gradient(135deg,var(--clr-p,#059669),var(--clr-ps,#047857));">
@@ -2781,7 +3177,7 @@ html.dark .badge-counter {
     </div>
 
     <!-- Modal Body (Scrollable) -->
-    <div class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs bg-slate-50/50 dark:bg-slate-900/50">
+    <div class="p-4 sm:p-6 overflow-y-auto flex-1 min-h-0 space-y-4 text-xs bg-slate-50/50 dark:bg-slate-900/50" style="-webkit-overflow-scrolling: touch;">
       
       <!-- ======================================================== -->
       <!-- TAB 1: CADANGAN & PULIHKAN (MAIN)                        -->
@@ -2949,7 +3345,7 @@ html.dark .badge-counter {
     </div>
 
     <!-- Modal Footer -->
-    <div class="px-5 py-3.5 sm:px-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-white dark:bg-slate-900">
+    <div class="px-5 sm:px-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-white dark:bg-slate-900" style="padding-top: 0.875rem; padding-bottom: calc(0.875rem + env(safe-area-inset-bottom, 0px));">
       <span class="text-[10px] text-slate-400 font-medium">
         Toko Grafika Cloud &amp; Storage Security
       </span>
@@ -3649,7 +4045,8 @@ html.dark .badge-counter {
     </div>
   </div>
   
-  <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-[calc(7rem+env(safe-area-inset-bottom))]'>
+  <!-- Scrollable content - flex-1 agar mengisi sisa ruang -->
+  <div class='scroll-content flex-1 min-h-0 overflow-y-auto z-10 pt-4' id='cart-scroll-area'>
     <div class='flex flex-col items-center justify-center h-[50vh] hidden px-5 text-center max-w-xs mx-auto' id='cart-empty-state'>
       <div class='w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 text-slate-300 dark:text-slate-600 border border-slate-200 dark:border-slate-700'>
         <i class='fa-solid fa-cart-arrow-down text-4xl'></i>
@@ -3674,10 +4071,12 @@ html.dark .badge-counter {
       </div>
     </div>
 
-    <div class='px-4 space-y-3 max-w-3xl lg:max-w-4xl mx-auto w-full' id='cart-items-container'></div>
+    <div class='px-4 space-y-3 max-w-3xl lg:max-w-4xl mx-auto w-full pb-4' id='cart-items-container'></div>
   </div>
   
-  <div class='absolute bottom-0 left-0 w-full glass-nav p-4 shadow-[0_-5px_20px_rgba(0,0,0,0.03)] z-30' id='cart-bottom-bar'>
+  <!-- Bottom bar: shrink-0 agar selalu tampil, tidak terpotong layar -->
+  <div class='shrink-0 glass-nav px-4 pt-4 shadow-[0_-5px_20px_rgba(0,0,0,0.03)] z-30' id='cart-bottom-bar'
+       style='padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));'>
     <div class='max-w-3xl lg:max-w-4xl mx-auto flex items-center justify-between gap-4'>
       <div>
         <p class='text-slate-500 dark:text-slate-400 text-[9px] font-bold uppercase tracking-widest mb-0.5'>Subtotal</p>
@@ -3689,6 +4088,7 @@ html.dark .badge-counter {
     </div>
   </div>
 </div>
+
 
   <!-- ========================================================================= -->
 <!-- VIEW: CHECKOUT & SHIPPING                                                 -->
@@ -3704,8 +4104,8 @@ html.dark .badge-counter {
     </div>
   </div>
   
-  <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-[calc(7rem+env(safe-area-inset-bottom))]'>
-    <div class='px-4 space-y-4 max-w-3xl lg:max-w-4xl mx-auto w-full'>
+  <div class='scroll-content flex-1 min-h-0 overflow-y-auto z-10 pt-4' id='checkout-scroll-area'>
+    <div class='px-4 space-y-4 max-w-3xl lg:max-w-4xl mx-auto w-full pb-4'>
       
       <!-- Checkout Quick Helper Banner -->
       <div class='bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/70 dark:border-emerald-800/40 rounded-2xl p-3 flex items-center justify-between gap-2.5 text-xs'>
@@ -3797,7 +4197,7 @@ html.dark .badge-counter {
     </div>
   </div>
   
-  <div class='absolute bottom-0 left-0 w-full glass-nav p-4 z-30'>
+  <div class='shrink-0 glass-nav px-4 pt-4 z-30' style='padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));'>
     <div class='max-w-3xl lg:max-w-4xl mx-auto flex justify-end'>
       <button class='btn-primary w-full py-3.5 text-sm' id='btn-checkout-next' onclick='validateAndGoToPayment()'>
         Lanjut Pembayaran
@@ -3820,8 +4220,8 @@ html.dark .badge-counter {
     </div>
   </div>
   
-  <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-[calc(11rem+env(safe-area-inset-bottom))]'>
-    <div class='px-4 space-y-4 max-w-4xl lg:max-w-6xl mx-auto w-full'>
+  <div class='scroll-content flex-1 min-h-0 overflow-y-auto z-10 pt-4' id='payment-scroll-area'>
+    <div class='px-4 space-y-4 max-w-4xl lg:max-w-6xl mx-auto w-full pb-4'>
       <!-- Cara Bayar -->
       <div class='card-modern p-5'>
         <h3 class='font-bold text-slate-900 dark:text-white mb-3 text-sm flex items-center gap-2'>
@@ -3946,7 +4346,7 @@ html.dark .badge-counter {
     </div>
   </div>
   
-  <div class='absolute bottom-0 left-0 w-full glass-nav p-4 z-30'>
+  <div class='shrink-0 glass-nav px-4 pt-4 z-30' style='padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));'>
     <div class='max-w-4xl mx-auto flex flex-col gap-3'>
       <label class='flex items-center gap-3 cursor-pointer bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700'>
         <input class='peer sr-only' id='tnc-checkbox' onchange='toggleOrderButton()' type='checkbox'/>
@@ -4070,7 +4470,7 @@ html.dark .badge-counter {
   <!-- ========================================================================= -->
 <!-- VIEW: ADMIN DASHBOARD & POS                                               -->
 <!-- ========================================================================= -->
-<div class='view-section flex flex-col fade-in bg-transparent z-10 hidden min-h-screen' id='view-admin'>
+<div class='view-section flex flex-col fade-in bg-transparent z-10 hidden' id='view-admin'>
   <div class='glass-header shrink-0 px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-center z-30 sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-7xl gap-2'>
       <div class='flex items-center gap-2 sm:gap-3 min-w-0 flex-1'>
@@ -4102,8 +4502,8 @@ html.dark .badge-counter {
     </div>
   </div>
   
-  <div class='scroll-content flex-1 overflow-y-auto w-full pb-16 relative'>
-    <div class='max-w-7xl mx-auto pt-6 px-4 sm:px-6 lg:px-8 w-full'>
+  <div class='scroll-content flex-1 min-h-0 overflow-y-auto w-full relative' style='padding-bottom: calc(2rem + env(safe-area-inset-bottom, 16px));'>
+    <div class='max-w-7xl mx-auto pt-4 sm:pt-6 px-3 sm:px-6 lg:px-8 w-full'>
       <div class='fade-in-scale block' id='admin-dashboard-view'>
         <div class='flex items-center justify-between mb-5 px-1'>
           <h3 class='font-bold text-slate-800 dark:text-white text-lg'>Menu Utama</h3>

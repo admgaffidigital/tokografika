@@ -12,8 +12,8 @@
     </div>
   </div>
   
-  <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-[calc(7rem+env(safe-area-inset-bottom))]'>
-    <div class='px-4 space-y-4 max-w-3xl lg:max-w-4xl mx-auto w-full'>
+  <div class='scroll-content flex-1 min-h-0 overflow-y-auto z-10 pt-4' id='checkout-scroll-area'>
+    <div class='px-4 space-y-4 max-w-3xl lg:max-w-4xl mx-auto w-full pb-4'>
       
       <!-- Checkout Quick Helper Banner -->
       <div class='bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/70 dark:border-emerald-800/40 rounded-2xl p-3 flex items-center justify-between gap-2.5 text-xs'>
@@ -105,7 +105,7 @@
     </div>
   </div>
   
-  <div class='absolute bottom-0 left-0 w-full glass-nav p-4 z-30'>
+  <div class='shrink-0 glass-nav px-4 pt-4 z-30' style='padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));'>
     <div class='max-w-3xl lg:max-w-4xl mx-auto flex justify-end'>
       <button class='btn-primary w-full py-3.5 text-sm' id='btn-checkout-next' onclick='validateAndGoToPayment()'>
         Lanjut Pembayaran

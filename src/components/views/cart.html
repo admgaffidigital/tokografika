@@ -15,7 +15,8 @@
     </div>
   </div>
   
-  <div class='scroll-content flex-1 overflow-y-auto z-10 pt-4 pb-[calc(7rem+env(safe-area-inset-bottom))]'>
+  <!-- Scrollable content - flex-1 agar mengisi sisa ruang -->
+  <div class='scroll-content flex-1 min-h-0 overflow-y-auto z-10 pt-4' id='cart-scroll-area'>
     <div class='flex flex-col items-center justify-center h-[50vh] hidden px-5 text-center max-w-xs mx-auto' id='cart-empty-state'>
       <div class='w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4 text-slate-300 dark:text-slate-600 border border-slate-200 dark:border-slate-700'>
         <i class='fa-solid fa-cart-arrow-down text-4xl'></i>
@@ -40,10 +41,12 @@
       </div>
     </div>
 
-    <div class='px-4 space-y-3 max-w-3xl lg:max-w-4xl mx-auto w-full' id='cart-items-container'></div>
+    <div class='px-4 space-y-3 max-w-3xl lg:max-w-4xl mx-auto w-full pb-4' id='cart-items-container'></div>
   </div>
   
-  <div class='absolute bottom-0 left-0 w-full glass-nav p-4 shadow-[0_-5px_20px_rgba(0,0,0,0.03)] z-30' id='cart-bottom-bar'>
+  <!-- Bottom bar: shrink-0 agar selalu tampil, tidak terpotong layar -->
+  <div class='shrink-0 glass-nav px-4 pt-4 shadow-[0_-5px_20px_rgba(0,0,0,0.03)] z-30' id='cart-bottom-bar'
+       style='padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));'>
     <div class='max-w-3xl lg:max-w-4xl mx-auto flex items-center justify-between gap-4'>
       <div>
         <p class='text-slate-500 dark:text-slate-400 text-[9px] font-bold uppercase tracking-widest mb-0.5'>Subtotal</p>
@@ -55,3 +58,4 @@
     </div>
   </div>
 </div>
+

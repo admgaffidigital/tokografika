@@ -2,7 +2,7 @@
 <!-- MODAL: CLOUD & BACKUP CENTER (PUSAT CADANGAN & SINKRONISASI DATA)        -->
 <!-- ========================================================================= -->
 <div id="backup-sync-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[90] flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 pointer-events-none transition-all duration-300" onclick="if(event.target===this) closeBackupSyncModal()">
-  <div id="backup-sync-modal-box" class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-2xl w-full max-h-[94vh] sm:max-h-[90vh] flex flex-col shadow-2xl border border-slate-200/80 dark:border-slate-800 transition-all duration-300 translate-y-6 sm:translate-y-0 sm:scale-95 overflow-hidden">
+  <div id="backup-sync-modal-box" class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-2xl w-full flex flex-col shadow-2xl border border-slate-200/80 dark:border-slate-800 transition-all duration-300 translate-y-6 sm:translate-y-0 sm:scale-95 overflow-hidden" style="max-height: min(92dvh, 92vh); max-height: calc(92dvh - env(safe-area-inset-bottom, 0px));">
     
     <!-- Modal Header (Synchronized Theme Gradient) -->
     <div class="sticky top-0 z-30 px-5 py-3.5 sm:px-6 sm:py-4 flex items-center justify-between shrink-0" style="background:linear-gradient(135deg,var(--clr-p,#059669),var(--clr-ps,#047857));">
@@ -51,7 +51,7 @@
     </div>
 
     <!-- Modal Body (Scrollable) -->
-    <div class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs bg-slate-50/50 dark:bg-slate-900/50">
+    <div class="p-4 sm:p-6 overflow-y-auto flex-1 min-h-0 space-y-4 text-xs bg-slate-50/50 dark:bg-slate-900/50" style="-webkit-overflow-scrolling: touch;">
       
       <!-- ======================================================== -->
       <!-- TAB 1: CADANGAN & PULIHKAN (MAIN)                        -->
@@ -219,7 +219,7 @@
     </div>
 
     <!-- Modal Footer -->
-    <div class="px-5 py-3.5 sm:px-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-white dark:bg-slate-900">
+    <div class="px-5 sm:px-6 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-white dark:bg-slate-900" style="padding-top: 0.875rem; padding-bottom: calc(0.875rem + env(safe-area-inset-bottom, 0px));">
       <span class="text-[10px] text-slate-400 font-medium">
         Toko Grafika Cloud &amp; Storage Security
       </span>
