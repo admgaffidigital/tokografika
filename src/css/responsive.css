@@ -123,41 +123,54 @@
    -------------------------------------------------------------------------- */
 
 #backup-sync-modal {
-    padding-bottom: 0 !important;
+    padding: 0.75rem !important;
+    padding-top: calc(1rem + env(safe-area-inset-top, 10px)) !important;
+    padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 20px)) !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 #backup-sync-modal-box {
-    max-height: calc(92dvh - env(safe-area-inset-bottom, 0px)) !important;
+    max-height: calc(78dvh - env(safe-area-inset-bottom, 0px)) !important;
+    border-radius: 1.25rem !important;
+    width: 100% !important;
+    max-width: 42rem !important;
 }
 
 @media (max-width: 639px) {
     #backup-sync-modal {
-        align-items: flex-end !important;
-        padding: 0 !important;
+        align-items: center !important;
+        padding: 0.625rem !important;
+        padding-top: calc(0.75rem + env(safe-area-inset-top, 10px)) !important;
+        padding-bottom: calc(2.75rem + env(safe-area-inset-bottom, 24px)) !important;
     }
 
     #backup-sync-modal-box {
-        border-radius: 1.5rem 1.5rem 0 0 !important;
-        max-height: 90dvh !important;
+        border-radius: 1.25rem !important;
+        max-height: calc(76dvh - env(safe-area-inset-bottom, 0px)) !important;
         width: 100% !important;
         max-width: 100% !important;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5) !important;
+        margin-top: auto !important;
+        margin-bottom: auto !important;
     }
 
-    /* Footer modal safe area */
+    /* Footer modal clean padding */
     #backup-sync-modal-box > div:last-child {
-        padding-bottom: calc(0.875rem + env(safe-area-inset-bottom, 0px)) !important;
+        padding-top: 0.625rem !important;
+        padding-bottom: 0.625rem !important;
     }
 }
 
 @media (min-width: 640px) {
     #backup-sync-modal {
         align-items: center !important;
-        padding: 1rem !important;
+        padding: 1.5rem !important;
     }
 
     #backup-sync-modal-box {
         border-radius: 1.5rem !important;
-        max-height: min(90vh, 90dvh) !important;
+        max-height: min(84vh, 84dvh) !important;
     }
 }
 
