@@ -21,9 +21,18 @@ try {
 } catch (e) {}
 
 // Aktifkan offline persistence multi-tab untuk menghemat pembacaan dokumen
+// Dinonaktifkan secara elegan jika browser memblokir storage (Edge Tracking Prevention / Safari ITP)
 try {
-  db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
-} catch (e) {}
+  db.enablePersistence({ synchronizeTabs: true }).catch(err => {
+    // err.code === 'failed-precondition': multi-tab, tidak bisa persistence
+    // err.code === 'unimplemented': browser tidak support IndexedDB persistence
+    if (err.code !== 'failed-precondition' && err.code !== 'unimplemented') {
+      console.warn('[FreshMart] Firestore persistence unavailable (Tracking Prevention aktif). App tetap berjalan normal.');
+    }
+  });
+} catch (e) {
+  // Fallback: abaikan jika storage tidak bisa diakses sama sekali
+}
 
 // Helper timeout untuk Firestore agar tidak hang jika offline / koneksi lambat
 const withTimeout = (promise, timeoutMs = 3500) => {

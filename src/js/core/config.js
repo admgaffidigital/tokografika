@@ -121,14 +121,29 @@ const ssL = (k, v) => {
   } 
 };
 
-// Global Error Shield (Shield against 3rd-party toolbar/extension DOM Range errors)
+// Global Error Shield: menangkal error 3rd-party (browser toolbar, ekstensi, Tracking Prevention)
 if (typeof window !== 'undefined') {
   window.addEventListener('error', (event) => {
-    if (event && event.message && event.message.includes('selectNode')) {
-      event.preventDefault();
-      return true;
+    if (event && event.message) {
+      // DOM Range error dari toolbar/ekstensi
+      if (event.message.includes('selectNode')) {
+        event.preventDefault();
+        return true;
+      }
     }
   }, true);
+
+  // Suppress Tracking Prevention unhandled rejection noise (IndexedDB / IDB blocked)
+  window.addEventListener('unhandledrejection', (event) => {
+    if (event.reason && (
+      String(event.reason).includes('IDBDatabase') ||
+      String(event.reason).includes('IndexedDB') ||
+      String(event.reason).includes('storage access') ||
+      String(event.reason).includes('tracking')
+    )) {
+      event.preventDefault(); // Jangan tampil di console sebagai error merah
+    }
+  });
 }
 
 try { cart = JSON.parse(sL('freshmart_cart')) || []; } catch (e) { console.warn('[FreshMart] Cart parse error, reset:', e); }
