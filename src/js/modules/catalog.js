@@ -1128,6 +1128,59 @@ const buyerGuideTopicsData = {
       </div>
     `
   },
+  free_shipping: {
+    title: 'Program & Syarat Promo Bebas Ongkir (Gratis Ongkir)',
+    icon: 'fa-truck-fast',
+    content: `
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl border bg-emerald-50/60 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/60">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
+            <i class="fa-solid fa-truck-fast"></i> Belanja Lebih Hemat dengan Promo Bebas Ongkir Otomatis!
+          </h4>
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Toko kami menyediakan promo <b>Gratis Ongkir Otomatis</b> bagi pelanggan setia. Tanpa perlu repot memasukkan kode kupon atau klaim voucher, sistem akan otomatis memotong ongkos kirim saat nilai belanja Anda mencapai batas minimum!
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-1.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-black shadow-xs">1</div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Capai Min. Belanja</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+              Cukup masukkan barang favorit Anda ke keranjang hingga melewati batas minimum belanja yang ditentukan toko.
+            </p>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-1.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-black shadow-xs">2</div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Pantau Progress Bar</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+              Buka menu Keranjang untuk melihat bar indikator hijau yang menunjukkan sisa nominal belanja menuju Gratis Ongkir.
+            </p>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-1.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-black shadow-xs">3</div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Otomatis Terpotong</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+              Saat checkout, baris <b>"Promo Bebas Ongkir"</b> otomatis memotong biaya kirim di rincian ringkasan pembayaran Anda.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+          <h5 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-emerald-500"></i> Ketentuan Tambahan (Jarak & Subsidi):
+          </h5>
+          <ul class="list-disc list-inside text-xs text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
+            <li><b>Batas Radius Pengiriman:</b> Jika toko memberlakukan batas jarak kurir (misal maks. 10 KM), pengiriman di luar radius tersebut tetap mendapatkan subsidi gratis untuk 10 KM pertama, dan pelanggan hanya membayar selisih jarak kelebihannya.</li>
+            <li><b>Plafon Subsidi Maksimal:</b> Apabila toko menetapkan batas maksimal subsidi ongkir, nilai potongan akan disesuaikan secara transparan di nota pembayaran.</li>
+            <li><b>Bisa Dikombinasikan dengan Diskon Produk:</b> Anda tetap dapat menggunakan voucher diskon produk secara bersamaan dengan promo bebas ongkir!</li>
+          </ul>
+        </div>
+      </div>
+    `
+  },
   payment: {
     title: 'Panduan Pembayaran (QRIS, Transfer Bank & COD)',
     icon: 'fa-wallet',

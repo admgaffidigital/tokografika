@@ -63,6 +63,35 @@ window.getShippingCost = (distance, method) => {
   return 0;
 };
 
+window.getAutoShippingDiscount = (subtotal, distance, method) => {
+  if (method === 'pickup') return 0;
+  const store = appData.store || {};
+  if (!store.freeShippingEnabled) return 0;
+  const minSpend = parseFloat(store.freeShippingMin || 0);
+  if (subtotal < minSpend || minSpend <= 0) return 0;
+
+  const tarif = parseFloat(store.costPerKm || 0);
+  const dist = parseFloat(distance) || 0;
+  const totalShipping = Math.ceil(dist * tarif / 500) * 500;
+  if (totalShipping <= 0) return 0;
+
+  const maxKm = parseFloat(store.freeShippingMaxKm || 0);
+  let eligibleShipping = totalShipping;
+  if (maxKm > 0 && dist > maxKm) {
+    // Subsidi gratis ongkir sebatas maxKm, selebihnya ditanggung pembeli
+    eligibleShipping = Math.ceil(maxKm * tarif / 500) * 500;
+  }
+
+  let discount = eligibleShipping;
+  const maxSubsidy = parseFloat(store.freeShippingMaxSubsidy || 0);
+  if (maxSubsidy > 0 && discount > maxSubsidy) {
+    // Dibatasi plafon maksimal subsidi
+    discount = maxSubsidy;
+  }
+
+  return Math.min(discount, totalShipping);
+};
+
 window.toggleDeliveryMethod = () => {
   const m = (document.querySelector('input[name="delivery-method"]:checked') || {}).value;
   toggleCls('address-container', 'hidden', m === 'pickup');
@@ -151,17 +180,24 @@ window.togglePaymentDetails = () => {
 const rPay = () => {
   const sub = cart.reduce((s, i) => s + (parseFloat(getEffP(i)) || 0) * (parseInt(i.qty) || 0), 0);
   let sC = getShippingCost(cust.distance, cust.deliveryMethod);
+  let autoSD = getAutoShippingDiscount(sub, cust.distance, cust.deliveryMethod);
   
   let pD = 0, sD = 0;
   if (vouch) {
     const v = parseFloat(vouch.value) || 0;
-    if (vouch.type === 'product_percent') pD = sub * (v / 100);
-    else if (vouch.type === 'shipping_percent') sD = sC * (v / 100);
-    else if (vouch.type === 'shipping_flat') sD = v;
+    if (vouch.type === 'product_percent') {
+      pD = sub * (v / 100);
+    } else if (vouch.type === 'shipping_percent' || vouch.type === 'shipping_flat') {
+      const remainingShipping = Math.max(0, sC - autoSD);
+      if (remainingShipping > 0) {
+        if (vouch.type === 'shipping_percent') sD = remainingShipping * (v / 100);
+        else if (vouch.type === 'shipping_flat') sD = Math.min(v, remainingShipping);
+      }
+    }
   }
-  sD = Math.min(sD, sC); 
+  sD = Math.min(sD, Math.max(0, sC - autoSD)); 
   pD = Math.min(pD, sub);
-  const t = Math.max(0, sub - pD + sC - sD);
+  const t = Math.max(0, sub - pD + sC - autoSD - sD);
   
   setIn('summary-subtotal', fCur(sub));
   toggleCls('summary-product-discount-row', 'hidden', !pD);
@@ -174,6 +210,9 @@ const rPay = () => {
     setIn('summary-distance', `(${cust.distance.toFixed(1)}km)`);
     setIn('summary-shipping', fCur(sC));
   }
+
+  toggleCls('summary-auto-freeship-row', 'hidden', !autoSD || cust.deliveryMethod === 'pickup');
+  if (autoSD && cust.deliveryMethod !== 'pickup') setIn('summary-auto-freeship', `-${fCur(autoSD)}`);
   
   toggleCls('summary-discount-row', 'hidden', !sD);
   if (sD) setIn('summary-discount', `-${fCur(sD)}`);
@@ -244,17 +283,24 @@ window.processOrder = async () => {
   const sub = cart.reduce((s, i) => s + (parseFloat(getEffP(i)) || 0) * (parseInt(i.qty) || 0), 0);
   
   let sC = getShippingCost(cust.distance, cust.deliveryMethod);
+  let autoSD = getAutoShippingDiscount(sub, cust.distance, cust.deliveryMethod);
   
   let pD = 0, sD = 0;
   if (vouch) {
     const v = parseFloat(vouch.value) || 0;
-    if (vouch.type === 'product_percent') pD = sub * (v / 100);
-    else if (vouch.type === 'shipping_percent') sD = sC * (v / 100);
-    else if (vouch.type === 'shipping_flat') sD = v;
+    if (vouch.type === 'product_percent') {
+      pD = sub * (v / 100);
+    } else if (vouch.type === 'shipping_percent' || vouch.type === 'shipping_flat') {
+      const remainingShipping = Math.max(0, sC - autoSD);
+      if (remainingShipping > 0) {
+        if (vouch.type === 'shipping_percent') sD = remainingShipping * (v / 100);
+        else if (vouch.type === 'shipping_flat') sD = Math.min(v, remainingShipping);
+      }
+    }
   }
-  sD = Math.min(sD, sC); 
+  sD = Math.min(sD, Math.max(0, sC - autoSD)); 
   pD = Math.min(pD, sub);
-  const tot = Math.max(0, sub - pD + sC - sD);
+  const tot = Math.max(0, sub - pD + sC - autoSD - sD);
   const m = (document.querySelector('input[name="payment"]:checked') || {}).value;
   if (!m) { isSaving = !1; return showToast('Pilih metode pembayaran!'); }
   const oI = 'ORD' + Date.now();
@@ -265,7 +311,7 @@ window.processOrder = async () => {
     dateString: new Date().toISOString(),
     customer: cust, 
     items: cart.map(i => ({ ...i, effectivePrice: getEffP(i) })),
-    payment: { method: m, subtotal: sub, shippingCost: sC, productDiscount: pD, shippingDiscount: sD, grandTotal: tot },
+    payment: { method: m, subtotal: sub, shippingCost: sC, autoShippingDiscount: autoSD, productDiscount: pD, shippingDiscount: sD, grandTotal: tot },
     status: 'Baru'
   };
   
@@ -288,7 +334,8 @@ window.processOrder = async () => {
     x += `\nSubtotal: ${fCur(sub)}\n`;
     if (pD) x += `Diskon Produk: -${fCur(pD)}\n`;
     if (cust.deliveryMethod === 'delivery') x += `Ongkir Toko: ${fCur(sC)}\n`;
-    if (sD) x += `Diskon Ongkir: -${fCur(sD)}\n`;
+    if (autoSD && cust.deliveryMethod === 'delivery') x += `🚚 Promo Bebas Ongkir: -${fCur(autoSD)}\n`;
+    if (sD) x += `Diskon Voucher: -${fCur(sD)}\n`;
     x += `*TOTAL: ${fCur(tot)}*\nBayar: ${m.toUpperCase()}\n`;
     if (m === 'cod') x += `_*(Siapkan Uang Pas)*_\n`;
     

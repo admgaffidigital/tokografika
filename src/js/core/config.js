@@ -21,6 +21,7 @@ const defApp = {
   store: { 
     name: "TOKO GRAFIKA", slogan: "RITEL & GROSIR", logo: "fa-store", wa: "", address: "", lat: "", lng: "", costPerKm: 0, 
     isDeliveryEnabled: !0, isPickupEnabled: !0, allProductsIcon: "", categoryStyle: "text", footerText: "Terima kasih telah berbelanja di toko kami.",
+    freeShippingEnabled: false, freeShippingMin: 0, freeShippingMaxKm: 0, freeShippingMaxSubsidy: 0,
     social: { fb: "", ig: "", tt: "", yt: "" }
   },
   auth: { username: "", password: "" },

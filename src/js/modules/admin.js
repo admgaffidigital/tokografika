@@ -2097,6 +2097,52 @@ const rAdmSet = () => {
           </div>
         </div>
 
+        <!-- PENGATURAN GRATIS ONGKIR OTOMATIS -->
+        <div class="bg-gradient-to-br from-emerald-50/70 to-teal-50/40 dark:from-emerald-950/20 dark:to-teal-950/10 p-5 sm:p-6 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800/40 mt-6 relative overflow-hidden">
+          <i class="fa-solid fa-truck-fast absolute -bottom-5 -right-5 text-8xl text-emerald-500/10 rotate-[-12deg] pointer-events-none"></i>
+          <div class="flex items-center justify-between mb-4 border-b border-emerald-100 dark:border-emerald-800/30 pb-3">
+            <div>
+              <h4 class="font-bold text-emerald-800 dark:text-emerald-400 text-xs sm:text-sm flex items-center gap-2">
+                <i class="fa-solid fa-truck-ramp-box text-emerald-600 dark:text-emerald-400"></i> Promo Gratis Ongkir Otomatis
+              </h4>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Potongan ongkos kirim otomatis jika pembeli berbelanja mencapai batas nominal tertentu</p>
+            </div>
+            <div class="relative shrink-0">
+              <select id="set-free-shipping-enabled" class="admin-input cursor-pointer !py-2 !px-3 appearance-none font-bold text-xs bg-white dark:bg-slate-800 border-emerald-300 dark:border-emerald-700">
+                <option value="true" ${appData.store.freeShippingEnabled ? 'selected' : ''}>Aktif</option>
+                <option value="false" ${!appData.store.freeShippingEnabled ? 'selected' : ''}>Nonaktif</option>
+              </select>
+              <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[8px]"></i>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 relative z-10">
+            <div>
+              <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-widest">
+                <i class="fa-solid fa-cart-shopping text-emerald-500 mr-1"></i> Min. Belanja (Rp)
+              </label>
+              <input type="number" id="set-free-shipping-min" value="${appData.store.freeShippingMin || 0}" class="admin-input bg-white dark:bg-slate-800 !py-2.5 w-full font-bold" placeholder="Contoh: 500000" />
+              <p class="text-[10px] text-slate-400 mt-1">Nominal min. belanja produk untuk klaim gratis ongkir.</p>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-widest">
+                <i class="fa-solid fa-route text-emerald-500 mr-1"></i> Batas Jarak (KM)
+              </label>
+              <input type="number" step="0.5" id="set-free-shipping-max-km" value="${appData.store.freeShippingMaxKm || 0}" class="admin-input bg-white dark:bg-slate-800 !py-2.5 w-full font-bold" placeholder="0 = Tanpa Batas" />
+              <p class="text-[10px] text-slate-400 mt-1">Gratis ongkir hanya hingga jarak ini (0 = semua jarak).</p>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-widest">
+                <i class="fa-solid fa-shield-halved text-emerald-500 mr-1"></i> Maks Subsidi (Rp)
+              </label>
+              <input type="number" id="set-free-shipping-max-subsidy" value="${appData.store.freeShippingMaxSubsidy || 0}" class="admin-input bg-white dark:bg-slate-800 !py-2.5 w-full font-bold" placeholder="0 = Gratis Penuh" />
+              <p class="text-[10px] text-slate-400 mt-1">Plafon max diskon ongkir toko (0 = cover 100%).</p>
+            </div>
+          </div>
+        </div>
+
         <div class="bg-amber-50 dark:bg-amber-900/10 p-5 sm:p-6 rounded-2xl border-2 border-amber-200 dark:border-amber-800/30 mt-6 relative overflow-hidden">
           <i class="fa-solid fa-map-pin absolute -bottom-5 -right-5 text-8xl text-amber-500/10 rotate-[20deg] pointer-events-none"></i>
           <h4 class="font-bold text-amber-700 dark:text-amber-500 mb-4 uppercase tracking-widest flex items-center gap-2 text-xs">
@@ -2464,6 +2510,10 @@ window.saveAdminSettings = async () => {
     appData.store.costPerKm = getV('set-cost');
     appData.store.isDeliveryEnabled = getV('set-delivery-enabled') === 'true';
     appData.store.isPickupEnabled = getV('set-pickup-enabled') === 'true';
+    appData.store.freeShippingEnabled = getV('set-free-shipping-enabled') === 'true';
+    appData.store.freeShippingMin = parseFloat(getV('set-free-shipping-min')) || 0;
+    appData.store.freeShippingMaxKm = parseFloat(getV('set-free-shipping-max-km')) || 0;
+    appData.store.freeShippingMaxSubsidy = parseFloat(getV('set-free-shipping-max-subsidy')) || 0;
     appData.store.lat = getV('set-lat');
     appData.store.lng = getV('set-lng');
     

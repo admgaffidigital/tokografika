@@ -2080,6 +2080,9 @@ html.dark .badge-counter {
       <button type='button' onclick='showBuyerGuideTopic("shipping")' id='bguide-btn-shipping' class='bguide-topic-btn px-3.5 py-2 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 border border-slate-200/80 dark:border-slate-700 shadow-xs'>
         <i class='fa-solid fa-motorcycle text-[11px]'></i> <span>Pengiriman & GPS</span>
       </button>
+      <button type='button' onclick='showBuyerGuideTopic("free_shipping")' id='bguide-btn-free_shipping' class='bguide-topic-btn px-3.5 py-2 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 border border-slate-200/80 dark:border-slate-700 shadow-xs'>
+        <i class='fa-solid fa-truck-fast text-[11px] text-emerald-500'></i> <span>Gratis Ongkir</span>
+      </button>
       <button type='button' onclick='showBuyerGuideTopic("payment")' id='bguide-btn-payment' class='bguide-topic-btn px-3.5 py-2 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 border border-slate-200/80 dark:border-slate-700 shadow-xs'>
         <i class='fa-solid fa-wallet text-[11px]'></i> <span>Pembayaran</span>
       </button>
@@ -4118,6 +4121,9 @@ html.dark .badge-counter {
       </div>
     </div>
 
+    <!-- Free Shipping Progress Banner -->
+    <div class='px-4 max-w-3xl lg:max-w-4xl mx-auto w-full mb-3 hidden' id='cart-free-shipping-container'></div>
+
     <div class='px-4 space-y-3 max-w-3xl lg:max-w-4xl mx-auto w-full pb-4' id='cart-items-container'></div>
   </div>
   
@@ -4383,6 +4389,7 @@ html.dark .badge-counter {
           <div class='flex justify-between text-slate-300'><span>Subtotal Produk</span><span class='text-white font-bold' id='summary-subtotal'>Rp 0</span></div>
           <div class='flex justify-between text-emerald-400 hidden' id='summary-product-discount-row'><span>Diskon Brg</span><span class='font-bold' id='summary-product-discount'>- Rp 0</span></div>
           <div class='flex justify-between text-slate-300 hidden' id='summary-shipping-row'><span>Ongkir <span class='text-[10px] text-slate-500' id='summary-distance'></span></span><span class='text-white font-bold' id='summary-shipping'>Rp 0</span></div>
+          <div class='flex justify-between text-emerald-400 hidden' id='summary-auto-freeship-row'><span><i class='fa-solid fa-truck-fast mr-1'></i> Promo Bebas Ongkir</span><span class='font-bold' id='summary-auto-freeship'>- Rp 0</span></div>
           <div class='flex justify-between text-emerald-400 hidden' id='summary-discount-row'><span>Diskon Ongkir</span><span class='font-bold' id='summary-discount'>- Rp 0</span></div>
         </div>
         <div class='pt-4 border-t-2 border-slate-700 mt-4 flex justify-between items-end'>
@@ -5541,6 +5548,7 @@ const defApp = {
   store: { 
     name: "TOKO GRAFIKA", slogan: "RITEL & GROSIR", logo: "fa-store", wa: "", address: "", lat: "", lng: "", costPerKm: 0, 
     isDeliveryEnabled: !0, isPickupEnabled: !0, allProductsIcon: "", categoryStyle: "text", footerText: "Terima kasih telah berbelanja di toko kami.",
+    freeShippingEnabled: false, freeShippingMin: 0, freeShippingMaxKm: 0, freeShippingMaxSubsidy: 0,
     social: { fb: "", ig: "", tt: "", yt: "" }
   },
   auth: { username: "", password: "" },
@@ -7659,6 +7667,59 @@ const buyerGuideTopicsData = {
       </div>
     `
   },
+  free_shipping: {
+    title: 'Program & Syarat Promo Bebas Ongkir (Gratis Ongkir)',
+    icon: 'fa-truck-fast',
+    content: `
+      <div class="space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl border bg-emerald-50/60 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/60">
+          <h4 class="font-bold text-sm mb-1.5 flex items-center gap-2 text-emerald-700 dark:text-emerald-400">
+            <i class="fa-solid fa-truck-fast"></i> Belanja Lebih Hemat dengan Promo Bebas Ongkir Otomatis!
+          </h4>
+          <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
+            Toko kami menyediakan promo <b>Gratis Ongkir Otomatis</b> bagi pelanggan setia. Tanpa perlu repot memasukkan kode kupon atau klaim voucher, sistem akan otomatis memotong ongkos kirim saat nilai belanja Anda mencapai batas minimum!
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-1.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-black shadow-xs">1</div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Capai Min. Belanja</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+              Cukup masukkan barang favorit Anda ke keranjang hingga melewati batas minimum belanja yang ditentukan toko.
+            </p>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-1.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-black shadow-xs">2</div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Pantau Progress Bar</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+              Buka menu Keranjang untuk melihat bar indikator hijau yang menunjukkan sisa nominal belanja menuju Gratis Ongkir.
+            </p>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs space-y-1.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-sm font-black shadow-xs">3</div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Otomatis Terpotong</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+              Saat checkout, baris <b>"Promo Bebas Ongkir"</b> otomatis memotong biaya kirim di rincian ringkasan pembayaran Anda.
+            </p>
+          </div>
+        </div>
+
+        <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
+          <h5 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-emerald-500"></i> Ketentuan Tambahan (Jarak & Subsidi):
+          </h5>
+          <ul class="list-disc list-inside text-xs text-slate-600 dark:text-slate-300 space-y-1.5 leading-relaxed">
+            <li><b>Batas Radius Pengiriman:</b> Jika toko memberlakukan batas jarak kurir (misal maks. 10 KM), pengiriman di luar radius tersebut tetap mendapatkan subsidi gratis untuk 10 KM pertama, dan pelanggan hanya membayar selisih jarak kelebihannya.</li>
+            <li><b>Plafon Subsidi Maksimal:</b> Apabila toko menetapkan batas maksimal subsidi ongkir, nilai potongan akan disesuaikan secara transparan di nota pembayaran.</li>
+            <li><b>Bisa Dikombinasikan dengan Diskon Produk:</b> Anda tetap dapat menggunakan voucher diskon produk secara bersamaan dengan promo bebas ongkir!</li>
+          </ul>
+        </div>
+      </div>
+    `
+  },
   payment: {
     title: 'Panduan Pembayaran (QRIS, Transfer Bank & COD)',
     icon: 'fa-wallet',
@@ -7972,6 +8033,9 @@ const renderCart = () => {
     hide('btn-clear-cart'); 
     show('spacer-cart'); 
     setH('cart-items-container', '');
+    hide('cart-free-shipping-container');
+    const fsc = el('cart-free-shipping-container');
+    if (fsc) fsc.innerHTML = '';
     return;
   }
   hide('cart-empty-state'); 
@@ -8009,6 +8073,76 @@ const renderCart = () => {
     `;
   }).join(''));
   setIn('cart-subtotal', fCur(s));
+
+  // Progress Bar Gratis Ongkir Otomatis
+  const fsContainer = el('cart-free-shipping-container');
+  if (fsContainer) {
+    const store = appData.store || {};
+    const fsEnabled = !!store.freeShippingEnabled;
+    const fsMin = parseFloat(store.freeShippingMin || 0);
+
+    if (fsEnabled && fsMin > 0) {
+      show('cart-free-shipping-container');
+      if (s >= fsMin) {
+        fsContainer.innerHTML = `
+          <div class="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-emerald-950/40 border border-emerald-300 dark:border-emerald-700/60 rounded-2xl p-3 sm:p-3.5 shadow-sm transition-all">
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="w-7 h-7 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-xs shrink-0 shadow-xs">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <div class="min-w-0">
+                  <p class="text-xs font-bold text-emerald-800 dark:text-emerald-300 truncate">
+                    🎉 Selamat! Kamu Dapat Gratis Ongkir!
+                  </p>
+                  <p class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                    Belanja minimum ${fCur(fsMin)} telah tercapai
+                  </p>
+                </div>
+              </div>
+              <button type="button" onclick="openBuyerGuide('free_shipping')" class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 hover:underline shrink-0 flex items-center gap-1">
+                <span>Syarat</span> <i class="fa-solid fa-chevron-right text-[7px]"></i>
+              </button>
+            </div>
+            <div class="w-full bg-emerald-100 dark:bg-emerald-900/50 h-2 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
+            </div>
+          </div>
+        `;
+      } else {
+        const remaining = fsMin - s;
+        const pct = Math.min(99, Math.max(5, Math.round((s / fsMin) * 100)));
+        fsContainer.innerHTML = `
+          <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 sm:p-3.5 shadow-sm transition-all">
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="w-7 h-7 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-xs shrink-0">
+                  <i class="fa-solid fa-truck-fast"></i>
+                </span>
+                <div class="min-w-0">
+                  <p class="text-xs font-bold text-slate-800 dark:text-white truncate">
+                    Tambah <span class="text-emerald-600 dark:text-emerald-400 font-black">${fCur(remaining)}</span> lagi
+                  </p>
+                  <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                    Untuk klaim promo <b>Gratis Ongkir</b> otomatis!
+                  </p>
+                </div>
+              </div>
+              <button type="button" onclick="changeView('view-catalog')" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-all shrink-0">
+                + Belanja
+              </button>
+            </div>
+            <div class="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }
+    } else {
+      hide('cart-free-shipping-container');
+      fsContainer.innerHTML = '';
+    }
+  }
 };
 
 window.updCQty = (i, c) => {
@@ -8100,6 +8234,35 @@ window.getShippingCost = (distance, method) => {
   return 0;
 };
 
+window.getAutoShippingDiscount = (subtotal, distance, method) => {
+  if (method === 'pickup') return 0;
+  const store = appData.store || {};
+  if (!store.freeShippingEnabled) return 0;
+  const minSpend = parseFloat(store.freeShippingMin || 0);
+  if (subtotal < minSpend || minSpend <= 0) return 0;
+
+  const tarif = parseFloat(store.costPerKm || 0);
+  const dist = parseFloat(distance) || 0;
+  const totalShipping = Math.ceil(dist * tarif / 500) * 500;
+  if (totalShipping <= 0) return 0;
+
+  const maxKm = parseFloat(store.freeShippingMaxKm || 0);
+  let eligibleShipping = totalShipping;
+  if (maxKm > 0 && dist > maxKm) {
+    // Subsidi gratis ongkir sebatas maxKm, selebihnya ditanggung pembeli
+    eligibleShipping = Math.ceil(maxKm * tarif / 500) * 500;
+  }
+
+  let discount = eligibleShipping;
+  const maxSubsidy = parseFloat(store.freeShippingMaxSubsidy || 0);
+  if (maxSubsidy > 0 && discount > maxSubsidy) {
+    // Dibatasi plafon maksimal subsidi
+    discount = maxSubsidy;
+  }
+
+  return Math.min(discount, totalShipping);
+};
+
 window.toggleDeliveryMethod = () => {
   const m = (document.querySelector('input[name="delivery-method"]:checked') || {}).value;
   toggleCls('address-container', 'hidden', m === 'pickup');
@@ -8188,17 +8351,24 @@ window.togglePaymentDetails = () => {
 const rPay = () => {
   const sub = cart.reduce((s, i) => s + (parseFloat(getEffP(i)) || 0) * (parseInt(i.qty) || 0), 0);
   let sC = getShippingCost(cust.distance, cust.deliveryMethod);
+  let autoSD = getAutoShippingDiscount(sub, cust.distance, cust.deliveryMethod);
   
   let pD = 0, sD = 0;
   if (vouch) {
     const v = parseFloat(vouch.value) || 0;
-    if (vouch.type === 'product_percent') pD = sub * (v / 100);
-    else if (vouch.type === 'shipping_percent') sD = sC * (v / 100);
-    else if (vouch.type === 'shipping_flat') sD = v;
+    if (vouch.type === 'product_percent') {
+      pD = sub * (v / 100);
+    } else if (vouch.type === 'shipping_percent' || vouch.type === 'shipping_flat') {
+      const remainingShipping = Math.max(0, sC - autoSD);
+      if (remainingShipping > 0) {
+        if (vouch.type === 'shipping_percent') sD = remainingShipping * (v / 100);
+        else if (vouch.type === 'shipping_flat') sD = Math.min(v, remainingShipping);
+      }
+    }
   }
-  sD = Math.min(sD, sC); 
+  sD = Math.min(sD, Math.max(0, sC - autoSD)); 
   pD = Math.min(pD, sub);
-  const t = Math.max(0, sub - pD + sC - sD);
+  const t = Math.max(0, sub - pD + sC - autoSD - sD);
   
   setIn('summary-subtotal', fCur(sub));
   toggleCls('summary-product-discount-row', 'hidden', !pD);
@@ -8211,6 +8381,9 @@ const rPay = () => {
     setIn('summary-distance', `(${cust.distance.toFixed(1)}km)`);
     setIn('summary-shipping', fCur(sC));
   }
+
+  toggleCls('summary-auto-freeship-row', 'hidden', !autoSD || cust.deliveryMethod === 'pickup');
+  if (autoSD && cust.deliveryMethod !== 'pickup') setIn('summary-auto-freeship', `-${fCur(autoSD)}`);
   
   toggleCls('summary-discount-row', 'hidden', !sD);
   if (sD) setIn('summary-discount', `-${fCur(sD)}`);
@@ -8281,17 +8454,24 @@ window.processOrder = async () => {
   const sub = cart.reduce((s, i) => s + (parseFloat(getEffP(i)) || 0) * (parseInt(i.qty) || 0), 0);
   
   let sC = getShippingCost(cust.distance, cust.deliveryMethod);
+  let autoSD = getAutoShippingDiscount(sub, cust.distance, cust.deliveryMethod);
   
   let pD = 0, sD = 0;
   if (vouch) {
     const v = parseFloat(vouch.value) || 0;
-    if (vouch.type === 'product_percent') pD = sub * (v / 100);
-    else if (vouch.type === 'shipping_percent') sD = sC * (v / 100);
-    else if (vouch.type === 'shipping_flat') sD = v;
+    if (vouch.type === 'product_percent') {
+      pD = sub * (v / 100);
+    } else if (vouch.type === 'shipping_percent' || vouch.type === 'shipping_flat') {
+      const remainingShipping = Math.max(0, sC - autoSD);
+      if (remainingShipping > 0) {
+        if (vouch.type === 'shipping_percent') sD = remainingShipping * (v / 100);
+        else if (vouch.type === 'shipping_flat') sD = Math.min(v, remainingShipping);
+      }
+    }
   }
-  sD = Math.min(sD, sC); 
+  sD = Math.min(sD, Math.max(0, sC - autoSD)); 
   pD = Math.min(pD, sub);
-  const tot = Math.max(0, sub - pD + sC - sD);
+  const tot = Math.max(0, sub - pD + sC - autoSD - sD);
   const m = (document.querySelector('input[name="payment"]:checked') || {}).value;
   if (!m) { isSaving = !1; return showToast('Pilih metode pembayaran!'); }
   const oI = 'ORD' + Date.now();
@@ -8302,7 +8482,7 @@ window.processOrder = async () => {
     dateString: new Date().toISOString(),
     customer: cust, 
     items: cart.map(i => ({ ...i, effectivePrice: getEffP(i) })),
-    payment: { method: m, subtotal: sub, shippingCost: sC, productDiscount: pD, shippingDiscount: sD, grandTotal: tot },
+    payment: { method: m, subtotal: sub, shippingCost: sC, autoShippingDiscount: autoSD, productDiscount: pD, shippingDiscount: sD, grandTotal: tot },
     status: 'Baru'
   };
   
@@ -8325,7 +8505,8 @@ window.processOrder = async () => {
     x += `\nSubtotal: ${fCur(sub)}\n`;
     if (pD) x += `Diskon Produk: -${fCur(pD)}\n`;
     if (cust.deliveryMethod === 'delivery') x += `Ongkir Toko: ${fCur(sC)}\n`;
-    if (sD) x += `Diskon Ongkir: -${fCur(sD)}\n`;
+    if (autoSD && cust.deliveryMethod === 'delivery') x += `🚚 Promo Bebas Ongkir: -${fCur(autoSD)}\n`;
+    if (sD) x += `Diskon Voucher: -${fCur(sD)}\n`;
     x += `*TOTAL: ${fCur(tot)}*\nBayar: ${m.toUpperCase()}\n`;
     if (m === 'cod') x += `_*(Siapkan Uang Pas)*_\n`;
     
@@ -10457,6 +10638,52 @@ const rAdmSet = () => {
           </div>
         </div>
 
+        <!-- PENGATURAN GRATIS ONGKIR OTOMATIS -->
+        <div class="bg-gradient-to-br from-emerald-50/70 to-teal-50/40 dark:from-emerald-950/20 dark:to-teal-950/10 p-5 sm:p-6 rounded-2xl border-2 border-emerald-200 dark:border-emerald-800/40 mt-6 relative overflow-hidden">
+          <i class="fa-solid fa-truck-fast absolute -bottom-5 -right-5 text-8xl text-emerald-500/10 rotate-[-12deg] pointer-events-none"></i>
+          <div class="flex items-center justify-between mb-4 border-b border-emerald-100 dark:border-emerald-800/30 pb-3">
+            <div>
+              <h4 class="font-bold text-emerald-800 dark:text-emerald-400 text-xs sm:text-sm flex items-center gap-2">
+                <i class="fa-solid fa-truck-ramp-box text-emerald-600 dark:text-emerald-400"></i> Promo Gratis Ongkir Otomatis
+              </h4>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Potongan ongkos kirim otomatis jika pembeli berbelanja mencapai batas nominal tertentu</p>
+            </div>
+            <div class="relative shrink-0">
+              <select id="set-free-shipping-enabled" class="admin-input cursor-pointer !py-2 !px-3 appearance-none font-bold text-xs bg-white dark:bg-slate-800 border-emerald-300 dark:border-emerald-700">
+                <option value="true" ${appData.store.freeShippingEnabled ? 'selected' : ''}>Aktif</option>
+                <option value="false" ${!appData.store.freeShippingEnabled ? 'selected' : ''}>Nonaktif</option>
+              </select>
+              <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[8px]"></i>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 relative z-10">
+            <div>
+              <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-widest">
+                <i class="fa-solid fa-cart-shopping text-emerald-500 mr-1"></i> Min. Belanja (Rp)
+              </label>
+              <input type="number" id="set-free-shipping-min" value="${appData.store.freeShippingMin || 0}" class="admin-input bg-white dark:bg-slate-800 !py-2.5 w-full font-bold" placeholder="Contoh: 500000" />
+              <p class="text-[10px] text-slate-400 mt-1">Nominal min. belanja produk untuk klaim gratis ongkir.</p>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-widest">
+                <i class="fa-solid fa-route text-emerald-500 mr-1"></i> Batas Jarak (KM)
+              </label>
+              <input type="number" step="0.5" id="set-free-shipping-max-km" value="${appData.store.freeShippingMaxKm || 0}" class="admin-input bg-white dark:bg-slate-800 !py-2.5 w-full font-bold" placeholder="0 = Tanpa Batas" />
+              <p class="text-[10px] text-slate-400 mt-1">Gratis ongkir hanya hingga jarak ini (0 = semua jarak).</p>
+            </div>
+
+            <div>
+              <label class="block text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-widest">
+                <i class="fa-solid fa-shield-halved text-emerald-500 mr-1"></i> Maks Subsidi (Rp)
+              </label>
+              <input type="number" id="set-free-shipping-max-subsidy" value="${appData.store.freeShippingMaxSubsidy || 0}" class="admin-input bg-white dark:bg-slate-800 !py-2.5 w-full font-bold" placeholder="0 = Gratis Penuh" />
+              <p class="text-[10px] text-slate-400 mt-1">Plafon max diskon ongkir toko (0 = cover 100%).</p>
+            </div>
+          </div>
+        </div>
+
         <div class="bg-amber-50 dark:bg-amber-900/10 p-5 sm:p-6 rounded-2xl border-2 border-amber-200 dark:border-amber-800/30 mt-6 relative overflow-hidden">
           <i class="fa-solid fa-map-pin absolute -bottom-5 -right-5 text-8xl text-amber-500/10 rotate-[20deg] pointer-events-none"></i>
           <h4 class="font-bold text-amber-700 dark:text-amber-500 mb-4 uppercase tracking-widest flex items-center gap-2 text-xs">
@@ -10824,6 +11051,10 @@ window.saveAdminSettings = async () => {
     appData.store.costPerKm = getV('set-cost');
     appData.store.isDeliveryEnabled = getV('set-delivery-enabled') === 'true';
     appData.store.isPickupEnabled = getV('set-pickup-enabled') === 'true';
+    appData.store.freeShippingEnabled = getV('set-free-shipping-enabled') === 'true';
+    appData.store.freeShippingMin = parseFloat(getV('set-free-shipping-min')) || 0;
+    appData.store.freeShippingMaxKm = parseFloat(getV('set-free-shipping-max-km')) || 0;
+    appData.store.freeShippingMaxSubsidy = parseFloat(getV('set-free-shipping-max-subsidy')) || 0;
     appData.store.lat = getV('set-lat');
     appData.store.lng = getV('set-lng');
     

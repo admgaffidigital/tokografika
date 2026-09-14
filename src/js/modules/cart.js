@@ -116,6 +116,9 @@ const renderCart = () => {
     hide('btn-clear-cart'); 
     show('spacer-cart'); 
     setH('cart-items-container', '');
+    hide('cart-free-shipping-container');
+    const fsc = el('cart-free-shipping-container');
+    if (fsc) fsc.innerHTML = '';
     return;
   }
   hide('cart-empty-state'); 
@@ -153,6 +156,76 @@ const renderCart = () => {
     `;
   }).join(''));
   setIn('cart-subtotal', fCur(s));
+
+  // Progress Bar Gratis Ongkir Otomatis
+  const fsContainer = el('cart-free-shipping-container');
+  if (fsContainer) {
+    const store = appData.store || {};
+    const fsEnabled = !!store.freeShippingEnabled;
+    const fsMin = parseFloat(store.freeShippingMin || 0);
+
+    if (fsEnabled && fsMin > 0) {
+      show('cart-free-shipping-container');
+      if (s >= fsMin) {
+        fsContainer.innerHTML = `
+          <div class="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-emerald-950/40 border border-emerald-300 dark:border-emerald-700/60 rounded-2xl p-3 sm:p-3.5 shadow-sm transition-all">
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="w-7 h-7 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-xs shrink-0 shadow-xs">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <div class="min-w-0">
+                  <p class="text-xs font-bold text-emerald-800 dark:text-emerald-300 truncate">
+                    🎉 Selamat! Kamu Dapat Gratis Ongkir!
+                  </p>
+                  <p class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                    Belanja minimum ${fCur(fsMin)} telah tercapai
+                  </p>
+                </div>
+              </div>
+              <button type="button" onclick="openBuyerGuide('free_shipping')" class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 hover:underline shrink-0 flex items-center gap-1">
+                <span>Syarat</span> <i class="fa-solid fa-chevron-right text-[7px]"></i>
+              </button>
+            </div>
+            <div class="w-full bg-emerald-100 dark:bg-emerald-900/50 h-2 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500" style="width: 100%"></div>
+            </div>
+          </div>
+        `;
+      } else {
+        const remaining = fsMin - s;
+        const pct = Math.min(99, Math.max(5, Math.round((s / fsMin) * 100)));
+        fsContainer.innerHTML = `
+          <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 sm:p-3.5 shadow-sm transition-all">
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="w-7 h-7 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-xs shrink-0">
+                  <i class="fa-solid fa-truck-fast"></i>
+                </span>
+                <div class="min-w-0">
+                  <p class="text-xs font-bold text-slate-800 dark:text-white truncate">
+                    Tambah <span class="text-emerald-600 dark:text-emerald-400 font-black">${fCur(remaining)}</span> lagi
+                  </p>
+                  <p class="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
+                    Untuk klaim promo <b>Gratis Ongkir</b> otomatis!
+                  </p>
+                </div>
+              </div>
+              <button type="button" onclick="changeView('view-catalog')" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-all shrink-0">
+                + Belanja
+              </button>
+            </div>
+            <div class="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+      }
+    } else {
+      hide('cart-free-shipping-container');
+      fsContainer.innerHTML = '';
+    }
+  }
 };
 
 window.updCQty = (i, c) => {
