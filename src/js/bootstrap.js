@@ -115,7 +115,7 @@ window.changeView = (v, fH = !1) => {
       e.style.opacity = ''; e.style.transform = ''; e.style.transition = '';
     });
     target.classList.remove('hidden'); target.classList.add('flex');
-    const r2 = { 'view-cart': renderCart, 'view-checkout': rChck, 'view-payment': rPay, 'view-wishlist': renderWish };
+    const r2 = { 'view-cart': renderCart, 'view-checkout': rChck, 'view-payment': rPay, 'view-wishlist': renderWish, 'view-catalog': () => { if(typeof rDyn !== 'undefined') rDyn(); } };
     if (r2[v]) r2[v]();
     
     const s2 = target.querySelector('.scroll-content') || target;
@@ -125,7 +125,7 @@ window.changeView = (v, fH = !1) => {
   }
 
   // Jalankan render target terlebih dahulu
-  const r = { 'view-cart': renderCart, 'view-checkout': rChck, 'view-payment': rPay, 'view-wishlist': renderWish };
+  const r = { 'view-cart': renderCart, 'view-checkout': rChck, 'view-payment': rPay, 'view-wishlist': renderWish, 'view-catalog': () => { if(typeof rDyn !== 'undefined') rDyn(); } };
   if (r[v]) r[v]();
 
   if (!current) {
