@@ -14,9 +14,14 @@
           <p class="text-[10px] sm:text-xs text-slate-500 font-medium">Changelog & Fitur Terbaru</p>
         </div>
       </div>
-      <button type="button" onclick="closeChangelogModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 flex items-center justify-center transition-colors">
-        <i class="fa-solid fa-xmark text-sm"></i>
-      </button>
+      <div class="flex items-center gap-1.5">
+        <button type="button" id="btn-refresh-changelog" onclick="fetchChangelogData(true)" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 hover:text-indigo-600 flex items-center justify-center transition-colors" title="Muat Ulang Riwayat">
+          <i class="fa-solid fa-rotate text-xs"></i>
+        </button>
+        <button type="button" onclick="closeChangelogModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 flex items-center justify-center transition-colors" title="Tutup">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
     </div>
 
     <!-- Body -->
