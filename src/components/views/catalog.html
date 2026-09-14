@@ -44,7 +44,7 @@
           <p class='text-white font-bold text-xs leading-tight' id='pwa-banner-title'>Tambahkan ke Layar Utama</p>
           <p class='text-white/90 text-[10px] font-medium mt-0.5 leading-tight' id='pwa-banner-desc'>Akses lebih cepat tanpa buka browser</p>
         </div>
-        <button class='shrink-0 bg-white font-bold text-[11px] px-3.5 py-2 rounded-xl shadow-sm active:scale-95 transition-all uppercase tracking-wide border border-white' id='pwa-install-btn' style='color: var(--clr-p);' onclick='triggerPwaInstall()'>Install</button>
+        <button class='shrink-0 bg-white font-bold text-[11px] px-3.5 py-2 rounded-xl shadow-sm hover:shadow-md active:scale-95 transition-all uppercase tracking-wide border border-white' id='pwa-install-btn' style='color: var(--clr-p);' onclick='triggerPwaInstall()'>Install</button>
         <button class='shrink-0 w-7 h-7 flex items-center justify-center text-white/80 hover:text-white transition-colors' onclick='dismissPwaBanner()' title='Tutup'>
           <i class='fa-solid fa-xmark text-sm'></i>
         </button>
@@ -56,7 +56,7 @@
     
     <!-- Dynamic Categories -->
     <div class='w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5'>
-      <div class='bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 dark:border-slate-700/80'>
+      <div class='bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md border border-slate-200/80 dark:border-slate-700/80'>
         <div class='flex items-center justify-between gap-2 mb-3 sm:mb-3.5'>
           <div class='flex items-center gap-2'>
             <div class='w-6 h-6 rounded-lg flex items-center justify-center text-xs shadow-xs' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
@@ -72,9 +72,9 @@
     
     <!-- Quick Buyer Guide Banner -->
     <div class='w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5'>
-      <div class='bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 relative overflow-hidden group hover:border-slate-300 dark:hover:border-slate-600 transition-all'>
+      <div class='bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 relative overflow-hidden group hover:border-slate-300 dark:hover:border-slate-600 transition-all'>
         <div class='flex items-center gap-3.5 relative z-10 min-w-0'>
-          <div class='w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 shadow-sm transition-transform duration-200 group-hover:scale-105' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
+          <div class='w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 shadow-sm hover:shadow-md transition-transform duration-200 group-hover:scale-105' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
             <i class='fa-solid fa-book-open-reader'></i>
           </div>
           <div class='min-w-0'>
@@ -87,7 +87,7 @@
             </p>
           </div>
         </div>
-        <button type='button' onclick='openBuyerGuide()' class='w-full sm:w-auto px-4 py-2.5 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 active:scale-95 shrink-0 relative z-10' style='background-color:var(--clr-p)'>
+        <button type='button' onclick='openBuyerGuide()' class='w-full sm:w-auto px-4 py-2.5 text-white rounded-xl text-xs font-bold transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 active:scale-95 shrink-0 relative z-10' style='background-color:var(--clr-p)'>
           <i class='fa-solid fa-circle-question text-amber-300'></i>
           <span>Buka Panduan</span>
         </button>
@@ -105,7 +105,7 @@
     
     <!-- Search, Sort & View Controls -->
     <div class='px-4 sm:px-6 lg:px-8 pt-5 w-full max-w-7xl mx-auto'>
-      <div class='flex flex-col sm:flex-row gap-3 mb-5 items-center justify-between bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm'>
+      <div class='flex flex-col sm:flex-row gap-3 mb-5 items-center justify-between bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md'>
         <div class='relative w-full sm:w-80 md:w-96 flex items-center'>
           <i class='fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs'></i>
           <input class='w-full pl-10 pr-[5rem] py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:border-emerald-500 transition-all text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500' id='search-input' name='search_catalog_query' type='search' autocomplete='off' readonly='readonly' onfocus='this.removeAttribute(&quot;readonly&quot;)' autocorrect='off' autocapitalize='off' spellcheck='false' oninput='handleSearch(this.value)' placeholder='Cari nama atau scan...'/>
@@ -127,7 +127,7 @@
             <i class='fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none text-[10px]'></i>
           </div>
           <div class='flex bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shrink-0 p-0.5'>
-            <button class='w-8 h-8 rounded-lg flex items-center justify-center text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-800 shadow-sm transition-all' id='btn-view-grid' onclick='toggleView(&quot;grid&quot;)'>
+            <button class='w-8 h-8 rounded-lg flex items-center justify-center text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-all' id='btn-view-grid' onclick='toggleView(&quot;grid&quot;)'>
               <i class='fa-solid fa-border-all text-[11px]'></i>
             </button>
             <button class='w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-all' id='btn-view-list' onclick='toggleView(&quot;list&quot;)'>
@@ -142,7 +142,7 @@
       
       <!-- Load More Button -->
       <div class='mt-8 mb-4 text-center hidden' id='load-more-container'>
-        <button class='bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs px-6 py-2.5 rounded-full shadow-sm hover:border-emerald-400 dark:hover:border-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-400 transition-all' onclick='loadMoreProducts()'>
+        <button class='bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs px-6 py-2.5 rounded-full shadow-sm hover:shadow-md hover:border-emerald-400 dark:hover:border-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-400 transition-all' onclick='loadMoreProducts()'>
           Muat Lebih Banyak <i class='fa-solid fa-chevron-down ml-1 text-[9px]'></i>
         </button>
       </div>
@@ -289,7 +289,7 @@
             <!-- Interactive Map Embed Frame -->
             <div class='w-full h-32 sm:h-40 rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200/90 dark:border-slate-700/80 shadow-2xs relative group bg-slate-100 dark:bg-slate-900'>
               <iframe id='footer-map-frame' class='w-full h-full border-0' loading='lazy' allowfullscreen referrerpolicy='no-referrer-when-downgrade' src=''></iframe>
-              <a id='footer-map-overlay-btn' href='#' target='_blank' class='absolute bottom-2 right-2 px-2 py-1 rounded-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-xs text-[9px] sm:text-[10px] font-black text-emerald-700 dark:text-emerald-400 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-1 hover:scale-105 transition-transform' title='Buka Rute di Google Maps'>
+              <a id='footer-map-overlay-btn' href='#' target='_blank' class='absolute bottom-2 right-2 px-2 py-1 rounded-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-xs text-[9px] sm:text-[10px] font-black text-emerald-700 dark:text-emerald-400 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md flex items-center gap-1 hover:scale-105 transition-transform' title='Buka Rute di Google Maps'>
                 <i class='fa-solid fa-diamond-turn-right text-[10px] sm:text-xs'></i> Petunjuk Arah
               </a>
             </div>
@@ -297,7 +297,7 @@
             <!-- Quick Action Row on Mobile (2 Compact Cards side by side) -->
             <div class='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-2'>
               <!-- Lokasi Toko Details -->
-              <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 p-2.5 sm:p-3 rounded-xl flex items-center gap-2.5 hover:border-emerald-500 hover:shadow-sm transition-all cursor-pointer group shadow-2xs' id='footer-address-link' target='_blank'>
+              <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 p-2.5 sm:p-3 rounded-xl flex items-center gap-2.5 hover:border-emerald-500 hover:shadow-sm hover:shadow-md transition-all cursor-pointer group shadow-2xs' id='footer-address-link' target='_blank'>
                 <div class='w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 border border-emerald-500/20'>
                   <i class='fa-solid fa-location-dot text-xs'></i>
                 </div>
@@ -309,14 +309,14 @@
               </a>
               
               <!-- WhatsApp CS -->
-              <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 p-2.5 sm:p-3 rounded-xl flex items-center gap-2.5 hover:border-emerald-500 hover:shadow-sm transition-all cursor-pointer group shadow-2xs' id='footer-wa-link' target='_blank'>
+              <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 p-2.5 sm:p-3 rounded-xl flex items-center gap-2.5 hover:border-emerald-500 hover:shadow-sm hover:shadow-md transition-all cursor-pointer group shadow-2xs' id='footer-wa-link' target='_blank'>
                 <div class='w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 shadow-xs'>
                   <i class='fa-brands fa-whatsapp text-sm'></i>
                 </div>
                 <div class='min-w-0 flex-1'>
                   <div class='flex items-center justify-between gap-1 mb-0.5'>
                     <p class='text-[8px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest group-hover:text-emerald-600 transition-colors'>WHATSAPP CS</p>
-                    <span class='text-[8px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.2 rounded-md flex items-center gap-1'><i class='fa-brands fa-whatsapp text-[9px]'></i> Chat</span>
+                    <span class='text-[8px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.2 rounded-full flex items-center gap-1'><i class='fa-brands fa-whatsapp text-[9px]'></i> Chat</span>
                   </div>
                   <p class='text-[11px] sm:text-xs text-slate-800 dark:text-slate-200 font-black tracking-wide' id='footer-wa'>08123456789</p>
                 </div>

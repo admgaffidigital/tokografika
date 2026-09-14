@@ -1653,10 +1653,10 @@ html.dark .badge-counter {
         <span class='text-xs sm:text-sm font-bold text-white tracking-tight truncate'>Detail Produk</span>
       </div>
       <div class='flex items-center gap-2 shrink-0'>
-        <button class='w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-all border border-white/30 shadow-sm backdrop-blur-sm active:scale-95' onclick='shareProduct()' title='Bagikan Produk'>
+        <button class='w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-all border border-white/30 shadow-sm hover:shadow-md backdrop-blur-sm active:scale-95' onclick='shareProduct()' title='Bagikan Produk'>
           <i class='fa-solid fa-share-nodes text-xs sm:text-sm text-white'></i>
         </button>
-        <button class='w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-600/90 text-white transition-all border border-white/30 shadow-sm backdrop-blur-sm active:scale-95' onclick='closeProductModal()' title='Tutup'>
+        <button class='w-8 h-8 sm:w-8.5 sm:h-8.5 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-600/90 text-white transition-all border border-white/30 shadow-sm hover:shadow-md backdrop-blur-sm active:scale-95' onclick='closeProductModal()' title='Tutup'>
           <i class='fa-solid fa-xmark text-xs sm:text-sm text-white'></i>
         </button>
       </div>
@@ -1710,10 +1710,10 @@ html.dark .badge-counter {
             <span class='text-lg font-bold' style='color:var(--clr-p)' id='btn-modal-price-preview'>Rp 0</span>
           </div>
           <div class='flex gap-2.5 h-12'>
-            <button class='w-12 shrink-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded-xl flex items-center justify-center hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-500 dark:hover:text-rose-400 transition-all shadow-sm' onclick='confirmAddToWishlist()' title='Wishlist'>
+            <button class='w-12 shrink-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded-xl flex items-center justify-center hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-500 dark:hover:text-rose-400 transition-all shadow-sm hover:shadow-md' onclick='confirmAddToWishlist()' title='Wishlist'>
               <i class='fa-regular fa-heart text-lg'></i>
             </button>
-            <button class='w-12 shrink-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded-xl flex items-center justify-center hover:bg-emerald-50 dark:hover:bg-emerald-900/30 hover:text-emerald-500 dark:hover:text-emerald-400 transition-all shadow-sm' onclick='shareProduct()' title='Bagikan Produk'>
+            <button class='w-12 shrink-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 rounded-xl flex items-center justify-center hover:bg-emerald-50 dark:hover:bg-emerald-900/30 hover:text-emerald-500 dark:hover:text-emerald-400 transition-all shadow-sm hover:shadow-md' onclick='shareProduct()' title='Bagikan Produk'>
               <i class='fa-solid fa-share-nodes text-lg'></i>
             </button>
             <button class='btn-primary flex-1 !rounded-xl text-sm' onclick='confirmAddProductToCart()'>
@@ -1746,7 +1746,7 @@ html.dark .badge-counter {
           <span class='text-[10px] text-white/80 font-medium block'>Kirim detail produk & link pembelian</span>
         </div>
       </div>
-      <button class='w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-600/90 text-white transition-all border border-white/30 shadow-sm backdrop-blur-sm active:scale-95' onclick='closeShareModal()' title='Tutup'>
+      <button class='w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-600/90 text-white transition-all border border-white/30 shadow-sm hover:shadow-md backdrop-blur-sm active:scale-95' onclick='closeShareModal()' title='Tutup'>
         <i class='fa-solid fa-xmark text-sm text-white'></i>
       </button>
     </div>
@@ -1779,7 +1779,7 @@ html.dark .badge-counter {
         </button>
 
         <!-- Native Share / App Share (Android / iOS) -->
-        <button type='button' id='btn-native-share' onclick='shareViaNative()' class='w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 active:scale-[0.99] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-sm transition-all border border-slate-700'>
+        <button type='button' id='btn-native-share' onclick='shareViaNative()' class='w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-900 active:scale-[0.99] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2.5 shadow-sm hover:shadow-md transition-all border border-slate-700'>
           <i class='fa-solid fa-paper-plane text-xs text-white'></i>
           <span>Bagikan via Menu HP / Aplikasi Lain</span>
         </button>
@@ -1850,13 +1850,13 @@ html.dark .badge-counter {
     <div class='p-5 space-y-4 flex-1 bg-slate-50 dark:bg-slate-900' id='admin-order-modal-content'></div>
     
     <div class='p-3.5 sm:p-4 sticky bottom-0 bg-white dark:bg-slate-800 border-t-2 border-slate-200 dark:border-slate-700 z-20 rounded-b-2xl flex items-center gap-2'>
-      <button type='button' class='flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95' onclick='openReceiptPreview()'>
+      <button type='button' class='flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md active:scale-95' onclick='openReceiptPreview()'>
         <i class='fa-solid fa-receipt text-xs'></i> <span>Struk Kasir</span>
       </button>
-      <button type='button' class='flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95' onclick='generateA4Document("invoice")'>
+      <button type='button' class='flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md active:scale-95' onclick='generateA4Document("invoice")'>
         <i class='fa-solid fa-file-invoice text-xs'></i> <span>Invoice</span>
       </button>
-      <button type='button' class='flex-1 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95' onclick='generateA4Document("surat-jalan")'>
+      <button type='button' class='flex-1 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md active:scale-95' onclick='generateA4Document("surat-jalan")'>
         <i class='fa-solid fa-truck text-xs'></i> <span>Surat Jalan</span>
       </button>
       <button type='button' class='w-10 h-10 bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 font-bold rounded-xl text-xs transition-all flex items-center justify-center shrink-0 border border-rose-200 dark:border-rose-800 active:scale-95' onclick='deleteOrder(cVOrd)' title='Hapus Pesanan'>
@@ -1886,8 +1886,8 @@ html.dark .badge-counter {
         <i class='fa-solid fa-print text-emerald-500'></i> Ukuran Printer:
       </span>
       <div class='flex bg-slate-200 dark:bg-slate-800 p-0.5 rounded-lg text-xs font-bold'>
-        <button type='button' id='btn-paper-58' class='px-3 py-1 rounded-md transition-all text-xs font-bold' onclick='setReceiptPaperSize("58")'>58mm</button>
-        <button type='button' id='btn-paper-80' class='px-3 py-1 rounded-md transition-all text-xs font-bold' onclick='setReceiptPaperSize("80")'>80mm</button>
+        <button type='button' id='btn-paper-58' class='px-3 py-1 rounded-xl transition-all text-xs font-bold' onclick='setReceiptPaperSize("58")'>58mm</button>
+        <button type='button' id='btn-paper-80' class='px-3 py-1 rounded-xl transition-all text-xs font-bold' onclick='setReceiptPaperSize("80")'>80mm</button>
       </div>
     </div>
 
@@ -1898,14 +1898,14 @@ html.dark .badge-counter {
     </div>
     
     <div class='p-4 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 z-20 flex flex-col gap-2 shrink-0'>
-      <button class='w-full py-2.5 text-white font-bold rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow-sm' id='btn-print-thermal-action' style='background-color: var(--clr-p);' onclick='executePrintReceipt()'>
+      <button class='w-full py-2.5 text-white font-bold rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md' id='btn-print-thermal-action' style='background-color: var(--clr-p);' onclick='executePrintReceipt()'>
         <i class='fa-solid fa-print'></i> Print Thermal (58mm)
       </button>
       <div class='flex gap-2 w-full'>
-        <button class='flex-1 py-2 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm' style='background-color: var(--clr-p);' onclick='downloadReceiptImage()'>
+        <button class='flex-1 py-2 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md' style='background-color: var(--clr-p);' onclick='downloadReceiptImage()'>
           <i class='fa-solid fa-image'></i> Gambar
         </button>
-        <button class='flex-1 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm' onclick='downloadReceiptPDF()'>
+        <button class='flex-1 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md' onclick='downloadReceiptPDF()'>
           <i class='fa-solid fa-file-pdf'></i> PDF
         </button>
       </div>
@@ -1928,7 +1928,7 @@ html.dark .badge-counter {
     </div>
     <div class='p-4 sm:p-6 overflow-y-auto flex-1 bg-slate-200 dark:bg-slate-950 flex justify-center items-start custom-scrollbar'>
       <div class='w-full max-w-[680px] mx-auto py-2 space-y-6' id='preview-pages-container'>
-        <img class='w-full h-auto shadow-[0_15px_35px_rgba(0,0,0,0.25)] rounded-sm border border-slate-300 dark:border-slate-700 bg-white block mx-auto' id='preview-img-result' src='' alt='Preview A4'/>
+        <img class='w-full h-auto shadow-[0_15px_35px_rgba(0,0,0,0.25)] rounded-lg border border-slate-300 dark:border-slate-700 bg-white block mx-auto' id='preview-img-result' src='' alt='Preview A4'/>
       </div>
     </div>
     <div class='p-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-wrap justify-end gap-2 sm:gap-3 shrink-0'>
@@ -1956,7 +1956,7 @@ html.dark .badge-counter {
     <!-- Modal Header (Synchronized Theme Header) -->
     <div class='glass-header sticky top-0 px-4 sm:px-6 py-3.5 flex justify-between items-center z-20 shrink-0 shadow-md' style='background-color:var(--clr-p)!important;'>
       <div class='flex items-center gap-3 min-w-0'>
-        <div class='w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 shadow-sm bg-white/20 text-white border border-white/30 backdrop-blur-sm'>
+        <div class='w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 shadow-sm hover:shadow-md bg-white/20 text-white border border-white/30 backdrop-blur-sm'>
           <i class='fa-solid fa-book-open-reader text-white'></i>
         </div>
         <div class='min-w-0'>
@@ -1964,7 +1964,7 @@ html.dark .badge-counter {
           <p class='text-[10px] sm:text-xs font-medium text-white/85 truncate'>Panduan lengkap kelola produk, varian, HPP, kasir & laporan laba</p>
         </div>
       </div>
-      <button class='w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-600/90 text-white transition-all border border-white/30 shadow-sm backdrop-blur-sm shrink-0 ml-2 active:scale-95' onclick='closeCmsGuide()' title='Tutup'>
+      <button class='w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-600/90 text-white transition-all border border-white/30 shadow-sm hover:shadow-md backdrop-blur-sm shrink-0 ml-2 active:scale-95' onclick='closeCmsGuide()' title='Tutup'>
         <i class='fa-solid fa-xmark text-sm text-white'></i>
       </button>
     </div>
@@ -2025,7 +2025,7 @@ html.dark .badge-counter {
       <span class='text-[10px] sm:text-xs text-slate-400 font-medium flex items-center gap-1.5 truncate'>
         <i class='fa-solid fa-lightbulb text-amber-400'></i> Tips: Buka panduan ini kapan saja dari tombol Bantuan.
       </span>
-      <button type='button' onclick='closeCmsGuide()' class='px-4 py-2 text-white rounded-xl text-xs font-bold transition-all shadow-sm shrink-0 active:scale-95' style='background-color:var(--clr-p)'>
+      <button type='button' onclick='closeCmsGuide()' class='px-4 py-2 text-white rounded-xl text-xs font-bold transition-all shadow-sm hover:shadow-md shrink-0 active:scale-95' style='background-color:var(--clr-p)'>
         Tutup Panduan
       </button>
     </div>
@@ -2048,7 +2048,7 @@ html.dark .badge-counter {
     <!-- Modal Header (Synchronized Theme Header) -->
     <div class='glass-header sticky top-0 px-4 sm:px-6 py-3.5 flex justify-between items-center z-20 shrink-0 shadow-md' style='background-color:var(--clr-p)!important;'>
       <div class='flex items-center gap-3 min-w-0'>
-        <div class='w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 shadow-sm bg-white/20 text-white border border-white/30 backdrop-blur-sm'>
+        <div class='w-10 h-10 rounded-xl flex items-center justify-center text-lg shrink-0 shadow-sm hover:shadow-md bg-white/20 text-white border border-white/30 backdrop-blur-sm'>
           <i class='fa-solid fa-book-open text-white'></i>
         </div>
         <div class='min-w-0'>
@@ -2056,7 +2056,7 @@ html.dark .badge-counter {
           <p class='text-[10px] sm:text-xs font-medium text-white/85 truncate'>Bantuan cara memesan, multi-varian, grosir & pembayaran</p>
         </div>
       </div>
-      <button class='w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-600/90 text-white transition-all border border-white/30 shadow-sm backdrop-blur-sm shrink-0 ml-2 active:scale-95' onclick='closeBuyerGuide()' title='Tutup'>
+      <button class='w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-600/90 text-white transition-all border border-white/30 shadow-sm hover:shadow-md backdrop-blur-sm shrink-0 ml-2 active:scale-95' onclick='closeBuyerGuide()' title='Tutup'>
         <i class='fa-solid fa-xmark text-sm text-white'></i>
       </button>
     </div>
@@ -2105,7 +2105,7 @@ html.dark .badge-counter {
       <span class='text-[10px] sm:text-xs text-slate-400 font-medium flex items-center gap-1.5 truncate'>
         <i class='fa-solid fa-circle-check text-emerald-500'></i> Transaksi mudah & aman langsung ke toko.
       </span>
-      <button type='button' onclick='closeBuyerGuide()' class='px-4 py-2 text-white rounded-xl text-xs font-bold transition-all shadow-sm shrink-0 active:scale-95' style='background-color:var(--clr-p)'>
+      <button type='button' onclick='closeBuyerGuide()' class='px-4 py-2 text-white rounded-xl text-xs font-bold transition-all shadow-sm hover:shadow-md shrink-0 active:scale-95' style='background-color:var(--clr-p)'>
         Tutup Panduan
       </button>
     </div>
@@ -2128,7 +2128,7 @@ html.dark .badge-counter {
     <!-- Modal Header -->
     <div class='sticky top-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm px-4 sm:px-6 py-3.5 border-b border-slate-100 dark:border-slate-700/80 flex justify-between items-center z-20 shrink-0'>
       <div class='flex items-center gap-3 min-w-0'>
-        <div class='w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-500 flex items-center justify-center text-lg shrink-0 shadow-sm border border-amber-200/60 dark:border-amber-800/50'>
+        <div class='w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-500 flex items-center justify-center text-lg shrink-0 shadow-sm hover:shadow-md border border-amber-200/60 dark:border-amber-800/50'>
           <i class='fa-solid fa-bolt'></i>
         </div>
         <div class='min-w-0'>
@@ -2193,7 +2193,7 @@ html.dark .badge-counter {
         <i class='fa-solid fa-user-tag absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs'></i>
         <input type='text' id='pos-pending-note-input' placeholder='Catatan / Nama Pelanggan (cth: Antrian Bpk Budi)' class='w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-amber-500 transition-colors' />
       </div>
-      <button type='button' onclick='holdCurrentPosCartFromInput()' class='px-3.5 py-2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-900 font-black text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-sm shrink-0'>
+      <button type='button' onclick='holdCurrentPosCartFromInput()' class='px-3.5 py-2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-slate-900 font-black text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-sm hover:shadow-md shrink-0'>
         <i class='fa-solid fa-pause'></i>
         <span>Tahan Keranjang</span>
       </button>
@@ -2231,7 +2231,7 @@ html.dark .badge-counter {
     <!-- Modal Header -->
     <div class='sticky top-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm px-4 sm:px-6 py-3.5 border-b border-slate-100 dark:border-slate-700/80 flex justify-between items-center z-20 shrink-0'>
       <div class='flex items-center gap-3 min-w-0'>
-        <div class='w-10 h-10 rounded-xl bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-lg shrink-0 shadow-sm border border-cyan-200/60 dark:border-cyan-800/50'>
+        <div class='w-10 h-10 rounded-xl bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 flex items-center justify-center text-lg shrink-0 shadow-sm hover:shadow-md border border-cyan-200/60 dark:border-cyan-800/50'>
           <i class='fa-solid fa-clipboard-check'></i>
         </div>
         <div class='min-w-0'>
@@ -2588,7 +2588,7 @@ html.dark .badge-counter {
         </div>
 
         <div class="flex justify-end pt-1">
-          <button type="button" class="btn-solid no-glass w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all" onclick="addPurchaseItemRow()">
+          <button type="button" class="btn-solid no-glass w-full sm:w-auto justify-center px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm hover:shadow-md active:scale-95 transition-all" onclick="addPurchaseItemRow()">
             <i class="fa-solid fa-plus text-xs"></i> Tambahkan Barang
           </button>
         </div>
@@ -2897,7 +2897,7 @@ html.dark .badge-counter {
         </div>
       </div>
       <div class='flex items-center gap-2 shrink-0'>
-        <button type='button' class='w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-600/90 text-white transition-all border border-white/30 shadow-sm backdrop-blur-sm active:scale-95' onclick='closeSupplierProductsModal()' title='Tutup'>
+        <button type='button' class='w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-600/90 text-white transition-all border border-white/30 shadow-sm hover:shadow-md backdrop-blur-sm active:scale-95' onclick='closeSupplierProductsModal()' title='Tutup'>
           <i class='fa-solid fa-xmark text-xs sm:text-sm text-white'></i>
         </button>
       </div>
@@ -2930,7 +2930,7 @@ html.dark .badge-counter {
     <!-- HEADER -->
     <div class='sticky top-0 z-30 px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between shrink-0 sm:rounded-t-3xl' style='background:linear-gradient(135deg,var(--clr-p,#059669),var(--clr-ps,#047857));'>
       <div class='flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1'>
-        <div class='w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white/20 flex items-center justify-center shrink-0 border border-white/30 shadow-sm'>
+        <div class='w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white/20 flex items-center justify-center shrink-0 border border-white/30 shadow-sm hover:shadow-md'>
           <i class='fa-solid fa-tags text-sm sm:text-base text-white'></i>
         </div>
         <div class='min-w-0'>
@@ -2942,13 +2942,13 @@ html.dark .badge-counter {
         </div>
       </div>
       <div class='flex items-center gap-2 shrink-0'>
-        <button type='button' onclick='openCmsGuide("pricetag")' class='w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-all border border-white/20 shadow-sm active:scale-95' title='Buku Panduan Pricetag'>
+        <button type='button' onclick='openCmsGuide("pricetag")' class='w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-all border border-white/20 shadow-sm hover:shadow-md active:scale-95' title='Buku Panduan Pricetag'>
           <i class='fa-solid fa-circle-question text-amber-300 text-sm'></i>
         </button>
         <button type='button' onclick='printPricetags()' class='hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-white/95 hover:bg-white font-extrabold text-xs shadow-lg transition-all active:scale-95' style='color:var(--clr-p,#059669);'>
           <i class='fa-solid fa-print'></i> Cetak Sekarang
         </button>
-        <button type='button' class='w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-500 text-white transition-all border border-white/20 shadow-sm active:scale-95' onclick='closePricetagModal()' title='Tutup'>
+        <button type='button' class='w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-500 text-white transition-all border border-white/20 shadow-sm hover:shadow-md active:scale-95' onclick='closePricetagModal()' title='Tutup'>
           <i class='fa-solid fa-xmark text-sm'></i>
         </button>
       </div>
@@ -2958,7 +2958,7 @@ html.dark .badge-counter {
     <div class='bg-white dark:bg-slate-900 px-3 sm:px-5 py-2 sm:py-2.5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2 sm:gap-3 shrink-0'>
       <div class='flex items-center gap-1 sm:gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl flex-1 sm:flex-none'>
         <button type='button' id='pt-tab-btn-products' onclick='switchPricetagTab("products")'
-          class='flex-1 sm:flex-none px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl font-black text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-all bg-white dark:bg-slate-700 shadow-sm border-2'
+          class='flex-1 sm:flex-none px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl font-black text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-all bg-white dark:bg-slate-700 shadow-sm hover:shadow-md border-2'
           style='color:var(--clr-p,#059669);border-color:var(--clr-p,#059669);'>
           <i class='fa-solid fa-boxes-stacked text-[10px]'></i>
           <span>1. Pilih Produk</span>
@@ -2995,7 +2995,7 @@ html.dark .badge-counter {
               <p class='text-xs text-slate-400 dark:text-slate-500 mt-0.5'>Atur produk &amp; jumlah salinan label untuk rak toko</p>
             </div>
             <div class='flex items-center gap-2 shrink-0'>
-              <button type='button' onclick='openPricetagProductPicker()' class='px-4 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all' style='background:var(--clr-p,#059669);'>
+              <button type='button' onclick='openPricetagProductPicker()' class='px-4 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 shadow-sm hover:shadow-md active:scale-95 transition-all' style='background:var(--clr-p,#059669);'>
                 <i class='fa-solid fa-plus text-xs'></i> Tambah Produk
               </button>
               <button type='button' onclick='clearPricetagItems()' class='p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all text-xs' title='Kosongkan Semua'>
@@ -3146,7 +3146,7 @@ html.dark .badge-counter {
     <!-- Modal Header (Synchronized Theme Gradient) - Compact di mobile -->
     <div class="sticky top-0 z-30 px-4 py-2.5 sm:px-6 sm:py-4 flex items-center justify-between shrink-0" style="background:linear-gradient(135deg,var(--clr-p,#059669),var(--clr-ps,#047857));">
       <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
-        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white/20 flex items-center justify-center text-base sm:text-lg text-white shrink-0 shadow-sm border border-white/30">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white/20 flex items-center justify-center text-base sm:text-lg text-white shrink-0 shadow-sm hover:shadow-md border border-white/30">
           <i class="fa-solid fa-cloud-arrow-up text-white"></i>
         </div>
         <div class="min-w-0">
@@ -3159,10 +3159,10 @@ html.dark .badge-counter {
         </div>
       </div>
       <div class="flex items-center gap-1.5 shrink-0">
-        <button type="button" onclick="openCmsGuide('backup_restore')" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-xs transition-all border border-white/20 shadow-sm active:scale-95" title="Panduan">
+        <button type="button" onclick="openCmsGuide('backup_restore')" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-xs transition-all border border-white/20 shadow-sm hover:shadow-md active:scale-95" title="Panduan">
           <i class="fa-solid fa-circle-question text-amber-300"></i>
         </button>
-        <button type="button" onclick="closeBackupSyncModal()" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 hover:bg-rose-500 text-white flex items-center justify-center text-sm transition-all border border-white/20 shadow-sm active:scale-95" title="Tutup">
+        <button type="button" onclick="closeBackupSyncModal()" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 hover:bg-rose-500 text-white flex items-center justify-center text-sm transition-all border border-white/20 shadow-sm hover:shadow-md active:scale-95" title="Tutup">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -3198,7 +3198,7 @@ html.dark .badge-counter {
       <div id="bs-tab-content-main" class="space-y-3.5">
         
         <!-- Card 1: Unduh Backup Pintar -->
-        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-3">
+        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-md space-y-3">
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-start gap-3">
               <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg shrink-0 mt-0.5" style="background:var(--clr-p-bg);color:var(--clr-p);">
@@ -3226,7 +3226,7 @@ html.dark .badge-counter {
         </div>
 
         <!-- Card 2: Pulihkan dari File -->
-        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-3">
+        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-md space-y-3">
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-start gap-3">
               <div class="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg shrink-0 mt-0.5">
@@ -3255,7 +3255,7 @@ html.dark .badge-counter {
         </div>
 
         <!-- Card 3: Ekspor Spreadsheet (Excel / CSV) -->
-        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-3">
+        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-md space-y-3">
           <div class="flex items-start gap-3">
             <div class="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg shrink-0 mt-0.5">
               <i class="fa-solid fa-file-csv"></i>
@@ -3294,7 +3294,7 @@ html.dark .badge-counter {
               Salinan cadangan instan tersimpan di browser untuk pemulihan 1-klik
             </p>
           </div>
-          <button type="button" onclick="createLocalSnapshot()" class="px-4 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all shrink-0" style="background:var(--clr-p,#059669);">
+          <button type="button" onclick="createLocalSnapshot()" class="px-4 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 shadow-sm hover:shadow-md active:scale-95 transition-all shrink-0" style="background:var(--clr-p,#059669);">
             <i class="fa-solid fa-camera text-[11px]"></i>
             <span>Buat Snapshot Baru</span>
           </button>
@@ -3309,7 +3309,7 @@ html.dark .badge-counter {
       <!-- TAB 3: KONEKSI CLOUD                                     -->
       <!-- ======================================================== -->
       <div id="bs-tab-content-cloud" class="space-y-4 hidden">
-        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-4">
+        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-md space-y-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg shrink-0" style="background:var(--clr-p-bg);color:var(--clr-p);">
@@ -3398,6 +3398,39 @@ html.dark .badge-counter {
       <button type="button" onclick="executeRestoreData()" class="flex-1 py-3 rounded-xl text-white font-black text-xs shadow-md active:scale-95 transition-all" style="background:var(--clr-p,#059669);">
         Ya, Terapkan Sekarang
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGELOG MODAL -->
+<div id="changelog-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-3 sm:p-4 opacity-0 transition-opacity duration-300">
+  <div class="absolute inset-0 bg-slate-900/40 dark:bg-slate-900/60 backdrop-blur-sm" onclick="closeChangelogModal()"></div>
+  <div id="changelog-modal-box" class="relative w-full max-w-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] scale-95 transition-transform duration-300">
+    
+    <!-- Header -->
+    <div class="px-4 sm:px-6 py-4 flex items-center justify-between border-b border-slate-200/50 dark:border-slate-700/50">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+          <i class="fa-solid fa-clock-rotate-left text-lg"></i>
+        </div>
+        <div>
+          <h3 class="font-black text-slate-800 dark:text-white text-base sm:text-lg">Riwayat Pembaruan</h3>
+          <p class="text-[10px] sm:text-xs text-slate-500 font-medium">Changelog & Fitur Terbaru</p>
+        </div>
+      </div>
+      <button type="button" onclick="closeChangelogModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 flex items-center justify-center transition-colors">
+        <i class="fa-solid fa-xmark text-sm"></i>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="flex-1 overflow-y-auto p-4 sm:p-6 custom-scrollbar" id="changelog-content">
+      <div class="flex items-center justify-center py-10 flex-col gap-3">
+        <div class="animate-spin text-indigo-500 text-2xl">
+          <i class="fa-solid fa-circle-notch"></i>
+        </div>
+        <p class="text-xs text-slate-500 font-bold animate-pulse">Memuat riwayat pembaruan...</p>
+      </div>
     </div>
   </div>
 </div>
@@ -3678,6 +3711,9 @@ html.dark .badge-counter {
         <button class='w-9 h-9 sm:w-10 sm:h-10 bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl flex items-center justify-center transition-all shadow-xs active:scale-95' onclick='checkAdminAccess()' title='Akun / Admin'>
           <i class='fa-solid fa-user text-xs sm:text-sm text-white'></i>
         </button>
+        <button class='w-9 h-9 sm:w-10 sm:h-10 bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl flex items-center justify-center transition-all shadow-xs active:scale-95' onclick='openChangelogModal()' title='Riwayat Pembaruan'>
+          <i class='fa-solid fa-clock-rotate-left text-xs sm:text-sm text-white'></i>
+        </button>
         <button class='w-9 h-9 sm:w-10 sm:h-10 bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl flex items-center justify-center transition-all shadow-xs active:scale-95' id='btn-theme-toggle' onclick='toggleTheme()' title='Ganti Tema'>
           <i class='fa-solid fa-moon text-xs sm:text-sm text-white' id='icon-theme'></i>
         </button>
@@ -3700,7 +3736,7 @@ html.dark .badge-counter {
           <p class='text-white font-bold text-xs leading-tight' id='pwa-banner-title'>Tambahkan ke Layar Utama</p>
           <p class='text-white/90 text-[10px] font-medium mt-0.5 leading-tight' id='pwa-banner-desc'>Akses lebih cepat tanpa buka browser</p>
         </div>
-        <button class='shrink-0 bg-white font-bold text-[11px] px-3.5 py-2 rounded-xl shadow-sm active:scale-95 transition-all uppercase tracking-wide border border-white' id='pwa-install-btn' style='color: var(--clr-p);' onclick='triggerPwaInstall()'>Install</button>
+        <button class='shrink-0 bg-white font-bold text-[11px] px-3.5 py-2 rounded-xl shadow-sm hover:shadow-md active:scale-95 transition-all uppercase tracking-wide border border-white' id='pwa-install-btn' style='color: var(--clr-p);' onclick='triggerPwaInstall()'>Install</button>
         <button class='shrink-0 w-7 h-7 flex items-center justify-center text-white/80 hover:text-white transition-colors' onclick='dismissPwaBanner()' title='Tutup'>
           <i class='fa-solid fa-xmark text-sm'></i>
         </button>
@@ -3712,7 +3748,7 @@ html.dark .badge-counter {
     
     <!-- Dynamic Categories -->
     <div class='w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5'>
-      <div class='bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200/80 dark:border-slate-700/80'>
+      <div class='bg-white/95 dark:bg-slate-800/95 backdrop-blur-md rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md border border-slate-200/80 dark:border-slate-700/80'>
         <div class='flex items-center justify-between gap-2 mb-3 sm:mb-3.5'>
           <div class='flex items-center gap-2'>
             <div class='w-6 h-6 rounded-lg flex items-center justify-center text-xs shadow-xs' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
@@ -3728,9 +3764,9 @@ html.dark .badge-counter {
     
     <!-- Quick Buyer Guide Banner -->
     <div class='w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5'>
-      <div class='bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 relative overflow-hidden group hover:border-slate-300 dark:hover:border-slate-600 transition-all'>
+      <div class='bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3.5 relative overflow-hidden group hover:border-slate-300 dark:hover:border-slate-600 transition-all'>
         <div class='flex items-center gap-3.5 relative z-10 min-w-0'>
-          <div class='w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 shadow-sm transition-transform duration-200 group-hover:scale-105' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
+          <div class='w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 shadow-sm hover:shadow-md transition-transform duration-200 group-hover:scale-105' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
             <i class='fa-solid fa-book-open-reader'></i>
           </div>
           <div class='min-w-0'>
@@ -3743,7 +3779,7 @@ html.dark .badge-counter {
             </p>
           </div>
         </div>
-        <button type='button' onclick='openBuyerGuide()' class='w-full sm:w-auto px-4 py-2.5 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2 active:scale-95 shrink-0 relative z-10' style='background-color:var(--clr-p)'>
+        <button type='button' onclick='openBuyerGuide()' class='w-full sm:w-auto px-4 py-2.5 text-white rounded-xl text-xs font-bold transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 active:scale-95 shrink-0 relative z-10' style='background-color:var(--clr-p)'>
           <i class='fa-solid fa-circle-question text-amber-300'></i>
           <span>Buka Panduan</span>
         </button>
@@ -3761,7 +3797,7 @@ html.dark .badge-counter {
     
     <!-- Search, Sort & View Controls -->
     <div class='px-4 sm:px-6 lg:px-8 pt-5 w-full max-w-7xl mx-auto'>
-      <div class='flex flex-col sm:flex-row gap-3 mb-5 items-center justify-between bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm'>
+      <div class='flex flex-col sm:flex-row gap-3 mb-5 items-center justify-between bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md'>
         <div class='relative w-full sm:w-80 md:w-96 flex items-center'>
           <i class='fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-xs'></i>
           <input class='w-full pl-10 pr-[5rem] py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold focus:outline-none focus:border-emerald-500 transition-all text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500' id='search-input' name='search_catalog_query' type='search' autocomplete='off' readonly='readonly' onfocus='this.removeAttribute(&quot;readonly&quot;)' autocorrect='off' autocapitalize='off' spellcheck='false' oninput='handleSearch(this.value)' placeholder='Cari nama atau scan...'/>
@@ -3783,7 +3819,7 @@ html.dark .badge-counter {
             <i class='fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none text-[10px]'></i>
           </div>
           <div class='flex bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shrink-0 p-0.5'>
-            <button class='w-8 h-8 rounded-lg flex items-center justify-center text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-800 shadow-sm transition-all' id='btn-view-grid' onclick='toggleView(&quot;grid&quot;)'>
+            <button class='w-8 h-8 rounded-lg flex items-center justify-center text-emerald-600 dark:text-emerald-400 bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-all' id='btn-view-grid' onclick='toggleView(&quot;grid&quot;)'>
               <i class='fa-solid fa-border-all text-[11px]'></i>
             </button>
             <button class='w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-all' id='btn-view-list' onclick='toggleView(&quot;list&quot;)'>
@@ -3798,7 +3834,7 @@ html.dark .badge-counter {
       
       <!-- Load More Button -->
       <div class='mt-8 mb-4 text-center hidden' id='load-more-container'>
-        <button class='bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs px-6 py-2.5 rounded-full shadow-sm hover:border-emerald-400 dark:hover:border-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-400 transition-all' onclick='loadMoreProducts()'>
+        <button class='bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs px-6 py-2.5 rounded-full shadow-sm hover:shadow-md hover:border-emerald-400 dark:hover:border-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-400 transition-all' onclick='loadMoreProducts()'>
           Muat Lebih Banyak <i class='fa-solid fa-chevron-down ml-1 text-[9px]'></i>
         </button>
       </div>
@@ -3945,7 +3981,7 @@ html.dark .badge-counter {
             <!-- Interactive Map Embed Frame -->
             <div class='w-full h-32 sm:h-40 rounded-xl sm:rounded-2xl overflow-hidden border border-slate-200/90 dark:border-slate-700/80 shadow-2xs relative group bg-slate-100 dark:bg-slate-900'>
               <iframe id='footer-map-frame' class='w-full h-full border-0' loading='lazy' allowfullscreen referrerpolicy='no-referrer-when-downgrade' src=''></iframe>
-              <a id='footer-map-overlay-btn' href='#' target='_blank' class='absolute bottom-2 right-2 px-2 py-1 rounded-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-xs text-[9px] sm:text-[10px] font-black text-emerald-700 dark:text-emerald-400 border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-1 hover:scale-105 transition-transform' title='Buka Rute di Google Maps'>
+              <a id='footer-map-overlay-btn' href='#' target='_blank' class='absolute bottom-2 right-2 px-2 py-1 rounded-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-xs text-[9px] sm:text-[10px] font-black text-emerald-700 dark:text-emerald-400 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md flex items-center gap-1 hover:scale-105 transition-transform' title='Buka Rute di Google Maps'>
                 <i class='fa-solid fa-diamond-turn-right text-[10px] sm:text-xs'></i> Petunjuk Arah
               </a>
             </div>
@@ -3953,7 +3989,7 @@ html.dark .badge-counter {
             <!-- Quick Action Row on Mobile (2 Compact Cards side by side) -->
             <div class='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-2'>
               <!-- Lokasi Toko Details -->
-              <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 p-2.5 sm:p-3 rounded-xl flex items-center gap-2.5 hover:border-emerald-500 hover:shadow-sm transition-all cursor-pointer group shadow-2xs' id='footer-address-link' target='_blank'>
+              <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 p-2.5 sm:p-3 rounded-xl flex items-center gap-2.5 hover:border-emerald-500 hover:shadow-sm hover:shadow-md transition-all cursor-pointer group shadow-2xs' id='footer-address-link' target='_blank'>
                 <div class='w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 border border-emerald-500/20'>
                   <i class='fa-solid fa-location-dot text-xs'></i>
                 </div>
@@ -3965,14 +4001,14 @@ html.dark .badge-counter {
               </a>
               
               <!-- WhatsApp CS -->
-              <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 p-2.5 sm:p-3 rounded-xl flex items-center gap-2.5 hover:border-emerald-500 hover:shadow-sm transition-all cursor-pointer group shadow-2xs' id='footer-wa-link' target='_blank'>
+              <a class='w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200/90 dark:border-slate-700/80 p-2.5 sm:p-3 rounded-xl flex items-center gap-2.5 hover:border-emerald-500 hover:shadow-sm hover:shadow-md transition-all cursor-pointer group shadow-2xs' id='footer-wa-link' target='_blank'>
                 <div class='w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 shadow-xs'>
                   <i class='fa-brands fa-whatsapp text-sm'></i>
                 </div>
                 <div class='min-w-0 flex-1'>
                   <div class='flex items-center justify-between gap-1 mb-0.5'>
                     <p class='text-[8px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest group-hover:text-emerald-600 transition-colors'>WHATSAPP CS</p>
-                    <span class='text-[8px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.2 rounded-md flex items-center gap-1'><i class='fa-brands fa-whatsapp text-[9px]'></i> Chat</span>
+                    <span class='text-[8px] font-black bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.2 rounded-full flex items-center gap-1'><i class='fa-brands fa-whatsapp text-[9px]'></i> Chat</span>
                   </div>
                   <p class='text-[11px] sm:text-xs text-slate-800 dark:text-slate-200 font-black tracking-wide' id='footer-wa'>08123456789</p>
                 </div>
@@ -4049,11 +4085,11 @@ html.dark .badge-counter {
 <div class='view-section flex flex-col fade-in bg-transparent z-10 hidden' id='view-cart'>
   <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm active:scale-95' onclick='changeView(&apos;view-catalog&apos;)' title='Kembali ke Katalog'>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm hover:shadow-md active:scale-95' onclick='changeView(&apos;view-catalog&apos;)' title='Kembali ke Katalog'>
         <i class='fa-solid fa-arrow-left text-sm text-white'></i>
       </button>
       <h1 class='text-sm sm:text-base font-bold text-white tracking-tight'>Keranjang Belanja</h1>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-500 hover:bg-rose-600 border border-rose-400 text-white transition-all shadow-sm hidden active:scale-95' id='btn-clear-cart' onclick='clearCart()' title='Kosongkan Keranjang'>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-500 hover:bg-rose-600 border border-rose-400 text-white transition-all shadow-sm hover:shadow-md hidden active:scale-95' id='btn-clear-cart' onclick='clearCart()' title='Kosongkan Keranjang'>
         <i class='fa-solid fa-trash-can text-xs text-white'></i>
       </button>
       <div class='w-9 hidden' id='spacer-cart'></div>
@@ -4111,7 +4147,7 @@ html.dark .badge-counter {
 <div class='view-section flex flex-col fade-in bg-transparent z-10 hidden' id='view-checkout'>
   <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm active:scale-95' onclick='changeView(&apos;view-cart&apos;)' title='Kembali ke Keranjang'>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm hover:shadow-md active:scale-95' onclick='changeView(&apos;view-cart&apos;)' title='Kembali ke Keranjang'>
         <i class='fa-solid fa-arrow-left text-sm text-white'></i>
       </button>
       <h1 class='text-sm sm:text-base font-bold text-white tracking-tight'>Pengiriman & Lokasi</h1>
@@ -4181,7 +4217,7 @@ html.dark .badge-counter {
             <button class='bg-slate-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 active:scale-95 transition-all border-2 border-slate-900' id='btn-location' onclick='getLocation()'>
               <i class='fa-solid fa-location-crosshairs text-emerald-400'></i> GPS
             </button>
-            <p class='text-[10px] font-bold text-emerald-700 hidden items-center gap-1 bg-emerald-100 py-2.5 px-3 rounded-xl border-2 border-emerald-200' id='location-status'>
+            <p class='text-[10px] font-bold text-emerald-700 hidden items-center gap-1 bg-emerald-100 py-2.5 px-3 rounded-full border-2 border-emerald-200' id='location-status'>
               <i class='fa-solid fa-check'></i> Diamankan
             </p>
           </div>
@@ -4204,7 +4240,7 @@ html.dark .badge-counter {
             <input class='admin-input uppercase tracking-widest text-sm font-semibold bg-slate-50 dark:bg-slate-900' id='voucher-input' placeholder='Kode Voucher' type='text'/>
             <button class='bg-slate-800 text-white px-5 rounded-xl text-xs font-bold active:scale-95 transition-all border-2 border-slate-900' onclick='applyVoucher()'>Klaim</button>
           </div>
-          <div class='hidden bg-emerald-50 border-2 border-emerald-200 p-3 rounded-xl mt-3 text-center shadow-sm' id='voucher-msg-container'>
+          <div class='hidden bg-emerald-50 border-2 border-emerald-200 p-3 rounded-xl mt-3 text-center shadow-sm hover:shadow-md' id='voucher-msg-container'>
             <p class='text-xs font-bold text-emerald-700' id='voucher-msg'></p>
           </div>
         </div>
@@ -4227,7 +4263,7 @@ html.dark .badge-counter {
 <div class='view-section flex flex-col fade-in bg-transparent z-10 hidden' id='view-payment'>
   <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-4xl lg:max-w-6xl'>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm active:scale-95' onclick='changeView(&apos;view-checkout&apos;)' title='Kembali ke Pengiriman'>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm hover:shadow-md active:scale-95' onclick='changeView(&apos;view-checkout&apos;)' title='Kembali ke Pengiriman'>
         <i class='fa-solid fa-arrow-left text-sm text-white'></i>
       </button>
       <h1 class='text-sm sm:text-base font-bold text-white tracking-tight'>Pembayaran</h1>
@@ -4276,7 +4312,7 @@ html.dark .badge-counter {
                 </div>
               </div>
               <div class='pt-3 border-t-2 border-slate-200 dark:border-slate-700 hidden' id='detail-qris'>
-                <div class='bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 flex flex-col items-center shadow-sm'>
+                <div class='bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 flex flex-col items-center shadow-sm hover:shadow-md'>
                   <p class='text-[10px] text-slate-500 dark:text-slate-400 mb-3 text-center font-bold uppercase tracking-widest'>Scan QR Code:</p>
                   <div class='p-3 border-2 border-dashed border-emerald-400 rounded-xl bg-emerald-50 dark:bg-emerald-900/20'>
                     <img alt='QRIS' class='w-40 h-40 object-contain' id='dyn-qris-img' src=''/>
@@ -4321,7 +4357,7 @@ html.dark .badge-counter {
       </div>
       
       <!-- Data Pemesan Ringkasan -->
-      <div class='bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200/80 dark:border-slate-700/80'>
+      <div class='bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm hover:shadow-md border border-slate-200/80 dark:border-slate-700/80'>
         <h3 class='font-bold text-slate-900 dark:text-white mb-3 text-sm border-b border-slate-100 dark:border-slate-700 pb-2'>
           <i class='fa-solid fa-clipboard-list text-emerald-500 mr-1.5'></i> Data Pemesan
         </h3>
@@ -4383,11 +4419,11 @@ html.dark .badge-counter {
 <div class='view-section flex flex-col fade-in bg-transparent z-10 hidden' id='view-wishlist'>
   <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm active:scale-95' onclick='changeView(&apos;view-catalog&apos;)' title='Kembali ke Katalog'>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm hover:shadow-md active:scale-95' onclick='changeView(&apos;view-catalog&apos;)' title='Kembali ke Katalog'>
         <i class='fa-solid fa-arrow-left text-sm text-white'></i>
       </button>
       <h1 class='text-sm sm:text-base font-bold text-white tracking-tight'>Favorit Saya</h1>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-500 hover:bg-rose-600 border border-rose-400 text-white transition-all shadow-sm hidden active:scale-95' id='btn-clear-wishlist' onclick='clearWishlist()' title='Hapus Semua'>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-rose-500 hover:bg-rose-600 border border-rose-400 text-white transition-all shadow-sm hover:shadow-md hidden active:scale-95' id='btn-clear-wishlist' onclick='clearWishlist()' title='Hapus Semua'>
         <i class='fa-solid fa-trash-can text-xs text-white'></i>
       </button>
       <div class='w-9 hidden' id='spacer-wishlist'></div>
@@ -4418,7 +4454,7 @@ html.dark .badge-counter {
     <div class='card-modern bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-2xl relative flex flex-col items-center text-center overflow-hidden'>
       
       <!-- Close Button -->
-      <button class='absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all shadow-sm' onclick='changeView(&quot;view-catalog&quot;)' title='Kembali ke Toko'>
+      <button class='absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all shadow-sm hover:shadow-md' onclick='changeView(&quot;view-catalog&quot;)' title='Kembali ke Toko'>
         <i class='fa-solid fa-xmark text-sm'></i>
       </button>
 
@@ -4432,7 +4468,7 @@ html.dark .badge-counter {
 
       <!-- Segmented Tab Switcher (Admin vs Kasir) -->
       <div class='w-full bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-2xl flex items-center mb-5 border border-slate-200/80 dark:border-slate-700/80 shadow-inner' id='login-tab-container'>
-        <button type='button' class='flex-1 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700' id='tab-login-admin' onclick='switchLoginTab(&quot;admin&quot;)'>
+        <button type='button' class='flex-1 py-2.5 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center gap-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700' id='tab-login-admin' onclick='switchLoginTab(&quot;admin&quot;)'>
           <i class='fa-solid fa-shield-halved text-xs' style='color:var(--clr-p)'></i>
           <span>Admin</span>
         </button>
@@ -4489,7 +4525,7 @@ html.dark .badge-counter {
   <div class='glass-header shrink-0 px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-center z-30 sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-7xl gap-2'>
       <div class='flex items-center gap-2 sm:gap-3 min-w-0 flex-1'>
-        <button class='hidden w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm shrink-0' id='btn-admin-back' onclick='history.back()'>
+        <button class='hidden w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm hover:shadow-md shrink-0' id='btn-admin-back' onclick='history.back()'>
           <i class='fa-solid fa-arrow-left text-xs sm:text-sm text-white'></i>
         </button>
         <div class='w-9 h-9 sm:w-11 sm:h-11 rounded-2xl bg-white/20 text-white flex items-center justify-center shadow-xs border border-white/30 transition-all shrink-0' id='admin-logo-box'>
@@ -4504,13 +4540,13 @@ html.dark .badge-counter {
         </div>
       </div>
       <div class='flex items-center gap-1.5 sm:gap-2 shrink-0'>
-        <button type='button' class='px-2.5 sm:px-3 py-1.5 sm:py-2 bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl text-[10px] font-bold transition-all shadow-sm flex items-center gap-1 backdrop-blur-sm active:scale-95' onclick='openCmsGuide()' title='Buku Panduan & Bantuan'>
+        <button type='button' class='px-2.5 sm:px-3 py-1.5 sm:py-2 bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl text-[10px] font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-1 backdrop-blur-sm active:scale-95' onclick='openCmsGuide()' title='Buku Panduan & Bantuan'>
           <i class='fa-solid fa-circle-question text-amber-300'></i> <span class='hidden sm:inline'>Panduan</span>
         </button>
-        <button class='px-2.5 sm:px-3 py-1.5 sm:py-2 bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl text-[10px] font-bold transition-all shadow-sm flex items-center gap-1 backdrop-blur-sm active:scale-95' onclick='changeView(&apos;view-catalog&apos;)'>
+        <button class='px-2.5 sm:px-3 py-1.5 sm:py-2 bg-white/20 hover:bg-white/30 border border-white/30 text-white rounded-xl text-[10px] font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-1 backdrop-blur-sm active:scale-95' onclick='changeView(&apos;view-catalog&apos;)'>
           <i class='fa-solid fa-eye'></i> <span class='hidden sm:inline'>Lihat Toko</span>
         </button>
-        <button class='px-2.5 sm:px-3 py-1.5 sm:py-2 bg-rose-500/90 hover:bg-rose-600 border border-rose-400/40 text-white rounded-xl text-[10px] font-bold transition-all shadow-sm flex items-center gap-1 backdrop-blur-sm active:scale-95' onclick='logoutAdmin()'>
+        <button class='px-2.5 sm:px-3 py-1.5 sm:py-2 bg-rose-500/90 hover:bg-rose-600 border border-rose-400/40 text-white rounded-xl text-[10px] font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-1 backdrop-blur-sm active:scale-95' onclick='logoutAdmin()'>
           <i class='fa-solid fa-power-off'></i> <span class='hidden sm:inline'>Keluar</span>
         </button>
       </div>
@@ -4522,7 +4558,7 @@ html.dark .badge-counter {
       <div class='fade-in-scale block' id='admin-dashboard-view'>
         <div class='flex items-center justify-between mb-5 px-1'>
           <h3 class='font-bold text-slate-800 dark:text-white text-lg'>Menu Utama</h3>
-          <button type='button' onclick='openCmsGuide()' class='text-xs font-bold text-slate-500 hover:text-emerald-600 dark:text-slate-400 flex items-center gap-1.5 py-1 px-2.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shadow-sm transition-all'>
+          <button type='button' onclick='openCmsGuide()' class='text-xs font-bold text-slate-500 hover:text-emerald-600 dark:text-slate-400 flex items-center gap-1.5 py-1 px-2.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md transition-all'>
             <i class='fa-solid fa-book-bookmark text-amber-500'></i>
             <span>Buku Panduan CMS</span>
           </button>
@@ -4530,7 +4566,7 @@ html.dark .badge-counter {
         
         <div class='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 sm:gap-4 pb-8'>
           <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-emerald-300/80 dark:border-emerald-700/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group relative overflow-hidden active:scale-95' onclick='initPosView()'>
-            <div class='absolute top-2 right-2 bg-emerald-500 text-white text-[8px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider shadow-sm'>
+            <div class='absolute top-2 right-2 bg-emerald-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm hover:shadow-md'>
               POS
             </div>
             <div class='w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-all duration-200 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400'>
@@ -4680,7 +4716,7 @@ html.dark .badge-counter {
       <div class='flex items-center gap-1.5 shrink-0'>
         <!-- Segmented Grid/List View Switcher (Ditempatkan di Header agar Kategori Rapi & Lebar Penuh) -->
         <div class='flex bg-black/20 border border-white/20 rounded-xl p-0.5 shrink-0 shadow-xs' id='pos-view-mode-toggle'>
-          <button type='button' class='btn-solid no-glass w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-slate-900 !bg-white shadow-sm' id='btn-pos-view-grid' onclick='setPosViewMode("grid")' title='Tampilan Grid'>
+          <button type='button' class='btn-solid no-glass w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-slate-900 !bg-white shadow-sm hover:shadow-md' id='btn-pos-view-grid' onclick='setPosViewMode("grid")' title='Tampilan Grid'>
             <i class='fa-solid fa-border-all text-xs !text-slate-900'></i>
           </button>
           <button type='button' class='btn-solid no-glass w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-white hover:!bg-white/20' id='btn-pos-view-list' onclick='setPosViewMode("list")' title='Tampilan List'>
@@ -4698,14 +4734,14 @@ html.dark .badge-counter {
         <button type='button' class='btn-solid no-glass pos-desktop-tab items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
           <i class='fa-solid fa-cart-shopping text-xs'></i>
           <span>Keranjang</span>
-          <span id='pos-cart-header-badge' class='hidden bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
+          <span id='pos-cart-header-badge' class='hidden bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm hover:shadow-md ml-0.5 leading-none'>0</span>
         </button>
 
         <!-- Pending Tab -->
         <button type='button' class='btn-solid no-glass pos-desktop-tab relative items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosPendingModal()' title='Transaksi Ditahan'>
           <i class='fa-solid fa-pause text-amber-200 text-xs'></i>
           <span>Pending</span>
-          <span id='pos-pending-header-badge' class='hidden bg-amber-400 text-slate-900 text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
+          <span id='pos-pending-header-badge' class='hidden bg-amber-400 text-slate-900 text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm hover:shadow-md ml-0.5 leading-none'>0</span>
         </button>
 
         <!-- Guide Tab -->
@@ -4738,7 +4774,7 @@ html.dark .badge-counter {
           <i class='fa-solid fa-xmark text-xs'></i>
         </button>
         
-        <button type='button' class='btn-solid no-glass absolute right-1.5 top-1/2 -translate-y-1/2 px-3.5 py-1.5 rounded-xl text-white flex items-center gap-1.5 text-xs font-black shadow-sm active:scale-95 transition-all !bg-emerald-600 hover:!bg-emerald-700 !text-white' onclick='openCameraScanner("pos-search-input")' title='Buka Scanner Barcode Kamera'>
+        <button type='button' class='btn-solid no-glass absolute right-1.5 top-1/2 -translate-y-1/2 px-3.5 py-1.5 rounded-xl text-white flex items-center gap-1.5 text-xs font-black shadow-sm hover:shadow-md active:scale-95 transition-all !bg-emerald-600 hover:!bg-emerald-700 !text-white' onclick='openCameraScanner("pos-search-input")' title='Buka Scanner Barcode Kamera'>
           <i class='fa-solid fa-qrcode text-xs !text-white'></i>
           <span class='text-[10px] font-black uppercase tracking-wider !text-white'>Scan</span>
         </button>
@@ -4834,7 +4870,7 @@ html.dark .badge-counter {
       <button type='button' class='flex-1 flex flex-col items-center py-1 hover:text-emerald-600 relative transition-colors' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
         <div class='relative'>
           <i class='fa-solid fa-cart-shopping text-base mb-0.5'></i>
-          <span id='pos-nav-cart-badge' class='hidden absolute -top-1.5 -right-3 bg-rose-500 text-white text-[8px] font-black px-1.5 py-0.2 rounded-full shadow-sm leading-none'>0</span>
+          <span id='pos-nav-cart-badge' class='hidden absolute -top-1.5 -right-3 bg-rose-500 text-white text-[8px] font-black px-1.5 py-0.2 rounded-full shadow-sm hover:shadow-md leading-none'>0</span>
         </div>
         <span>Keranjang</span>
       </button>
@@ -4843,7 +4879,7 @@ html.dark .badge-counter {
       <button type='button' class='flex-1 flex flex-col items-center py-1 hover:text-amber-500 relative transition-colors' onclick='openPosPendingModal()' title='Daftar Transaksi Ditahan'>
         <div class='relative'>
           <i class='fa-solid fa-pause text-base mb-0.5 text-amber-500'></i>
-          <span id='pos-nav-pending-badge' class='hidden absolute -top-1.5 -right-3 bg-amber-400 text-slate-900 text-[8px] font-black px-1.5 py-0.2 rounded-full shadow-sm leading-none'>0</span>
+          <span id='pos-nav-pending-badge' class='hidden absolute -top-1.5 -right-3 bg-amber-400 text-slate-900 text-[8px] font-black px-1.5 py-0.2 rounded-full shadow-sm hover:shadow-md leading-none'>0</span>
         </div>
         <span>Pending</span>
       </button>
@@ -5087,7 +5123,7 @@ html.dark .badge-counter {
             <!-- Ambil di Toko -->
             <button type='button' id='pos-delivery-pickup-btn'
               onclick='setPosDeliveryMethod(&quot;pickup&quot;)'
-              class='p-4 rounded-2xl border-2 font-bold text-xs flex flex-col items-center gap-2 transition-all border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 shadow-sm'>
+              class='p-4 rounded-2xl border-2 font-bold text-xs flex flex-col items-center gap-2 transition-all border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 shadow-sm hover:shadow-md'>
               <div class='w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center'>
                 <i class='fa-solid fa-store text-emerald-600 dark:text-emerald-400 text-base'></i>
               </div>
@@ -5397,7 +5433,7 @@ html.dark .badge-counter {
       <div class='w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl mx-auto mb-3 shadow-md border border-white/30'>
         <i class='fa-solid fa-crown text-amber-200'></i>
       </div>
-      <div class='inline-block px-3 py-1 rounded-full bg-white/25 border border-white/30 text-[10px] font-black uppercase tracking-widest mb-1.5 shadow-sm'>
+      <div class='inline-block px-3 py-1 rounded-full bg-white/25 border border-white/30 text-[10px] font-black uppercase tracking-widest mb-1.5 shadow-sm hover:shadow-md'>
         <i class='fa-solid fa-sparkles text-amber-300 mr-1'></i> TOKO GRAFIKA POS PREMIUM
       </div>
       <h2 class='text-lg sm:text-xl font-black tracking-tight leading-snug'>Buka Fitur POS Kasir & HPP</h2>
@@ -5410,8 +5446,8 @@ html.dark .badge-counter {
       <!-- Plan Selector Cards -->
       <div class='grid grid-cols-1 sm:grid-cols-2 gap-3'>
         <!-- Monthly Promo Plan (Recommended) -->
-        <div class='relative p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 flex flex-col justify-between shadow-sm'>
-          <div class='absolute -top-2.5 right-3 bg-rose-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm'>
+        <div class='relative p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 flex flex-col justify-between shadow-sm hover:shadow-md'>
+          <div class='absolute -top-2.5 right-3 bg-rose-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm hover:shadow-md'>
             PROMO HEMAT
           </div>
           <div>
@@ -5429,7 +5465,7 @@ html.dark .badge-counter {
 
         <!-- Yearly Super Saver Plan -->
         <div class='relative p-4 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/80 flex flex-col justify-between hover:border-amber-400 transition-all'>
-          <div class='absolute -top-2.5 right-3 bg-amber-500 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm'>
+          <div class='absolute -top-2.5 right-3 bg-amber-500 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm hover:shadow-md'>
             SUPER HEMAT
           </div>
           <div>
@@ -5440,7 +5476,7 @@ html.dark .badge-counter {
             </div>
             <p class='text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5'>Hemat Rp 70.000 + Free Setup</p>
           </div>
-          <button type='button' onclick='orderSubscriptionWa("Tahunan Super Hemat (Rp 350.000/thn)")' class='mt-3.5 w-full py-2 bg-slate-900 dark:bg-slate-700 hover:bg-black text-white text-xs font-black rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5'>
+          <button type='button' onclick='orderSubscriptionWa("Tahunan Super Hemat (Rp 350.000/thn)")' class='mt-3.5 w-full py-2 bg-slate-900 dark:bg-slate-700 hover:bg-black text-white text-xs font-black rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 flex items-center justify-center gap-1.5'>
             <i class='fa-brands fa-whatsapp text-sm'></i> Pilih Tahunan
           </button>
         </div>
@@ -5465,7 +5501,7 @@ html.dark .badge-counter {
         <p class='text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-2'>Sudah berlangganan / punya kode lisensi?</p>
         <div class='flex gap-2'>
           <input type='text' id='pos-sub-token-input' placeholder='MASUKKAN KODE LISENSI...' class='admin-input !py-2.5 uppercase font-mono text-xs text-center font-bold tracking-widest flex-1 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700'/>
-          <button type='button' onclick='activateSubscriptionToken()' class='px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl shadow-sm transition-all active:scale-95 shrink-0 flex items-center gap-1.5'>
+          <button type='button' onclick='activateSubscriptionToken()' class='px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl shadow-sm hover:shadow-md transition-all active:scale-95 shrink-0 flex items-center gap-1.5'>
             <i class='fa-solid fa-key'></i> Aktivasi
           </button>
         </div>
@@ -19881,6 +19917,110 @@ window.stopPriceWatcher = () => {
   clearTimeout(_priceDebounceTimer);
 };
 
+// Changelog Fetching & Rendering Logic
+window.openChangelogModal = async () => {
+  const m = document.getElementById('changelog-modal');
+  const b = document.getElementById('changelog-modal-box');
+  const c = document.getElementById('changelog-content');
+  if (!m || !b || !c) return;
+
+  m.classList.remove('hidden');
+  m.classList.add('flex');
+  setTimeout(() => {
+    m.classList.remove('opacity-0');
+    b.classList.remove('scale-95');
+  }, 10);
+
+  // Use cached changelog if available
+  const cached = sessionStorage.getItem('tokografika_changelog');
+  if (cached) {
+    c.innerHTML = cached;
+    return;
+  }
+
+  c.innerHTML = `
+    <div class="flex items-center justify-center py-10 flex-col gap-3">
+      <div class="animate-spin text-indigo-500 text-2xl">
+        <i class="fa-solid fa-circle-notch"></i>
+      </div>
+      <p class="text-xs text-slate-500 font-bold animate-pulse">Mengambil data terbaru...</p>
+    </div>
+  `;
+
+  try {
+    const res = await fetch('https://api.github.com/repos/admgaffidigital/tokografika/commits?per_page=15');
+    if (!res.ok) throw new Error('Network response was not ok');
+    const data = await res.json();
+    
+    let html = '<div class="space-y-4 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 dark:before:via-slate-700 before:to-transparent">';
+    
+    data.forEach((commit, i) => {
+      const date = new Date(commit.commit.author.date).toLocaleDateString('id-ID', {
+        day: 'numeric', month: 'short', year: 'numeric'
+      });
+      const msg = commit.commit.message.split('\n')[0];
+      
+      // Determine badge color based on conventional commits
+      let badgeType = 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400';
+      let icon = 'fa-code-commit';
+      
+      if (msg.toLowerCase().startsWith('feat')) {
+        badgeType = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400';
+        icon = 'fa-wand-magic-sparkles';
+      } else if (msg.toLowerCase().startsWith('fix')) {
+        badgeType = 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400';
+        icon = 'fa-bug-slash';
+      } else if (msg.toLowerCase().startsWith('style') || msg.toLowerCase().startsWith('ui')) {
+        badgeType = 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400';
+        icon = 'fa-palette';
+      }
+
+      html += `
+        <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+          <div class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white dark:border-slate-900 ${badgeType} shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm relative z-10">
+            <i class="fa-solid ${icon} text-xs"></i>
+          </div>
+          <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm shadow-xs hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500">${date}</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium leading-relaxed">${msg}</p>
+          </div>
+        </div>
+      `;
+    });
+    html += '</div>';
+    
+    c.innerHTML = html;
+    sessionStorage.setItem('tokografika_changelog', html);
+
+  } catch (error) {
+    c.innerHTML = `
+      <div class="flex items-center justify-center py-10 flex-col gap-3 text-center">
+        <div class="w-12 h-12 rounded-full bg-red-50 dark:bg-red-900/20 text-red-500 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div>
+          <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Gagal Memuat Riwayat</p>
+          <p class="text-xs text-slate-500 mt-1">Silakan coba beberapa saat lagi.</p>
+        </div>
+      </div>
+    `;
+  }
+};
+
+window.closeChangelogModal = () => {
+  const m = document.getElementById('changelog-modal');
+  const b = document.getElementById('changelog-modal-box');
+  if (!m || !b) return;
+  m.classList.add('opacity-0');
+  b.classList.add('scale-95');
+  setTimeout(() => {
+    m.classList.add('hidden');
+    m.classList.remove('flex');
+  }, 300);
+};
+
 
 // 13. Routing, History, & App Bootstrap
 // =============================================================================
@@ -20000,7 +20140,7 @@ window.changeView = (v, fH = !1) => {
       e.style.opacity = ''; e.style.transform = ''; e.style.transition = '';
     });
     target.classList.remove('hidden'); target.classList.add('flex');
-    const r2 = { 'view-cart': renderCart, 'view-checkout': rChck, 'view-payment': rPay, 'view-wishlist': renderWish };
+    const r2 = { 'view-cart': renderCart, 'view-checkout': rChck, 'view-payment': rPay, 'view-wishlist': renderWish, 'view-catalog': () => { if(typeof rDyn !== 'undefined') rDyn(); } };
     if (r2[v]) r2[v]();
     
     const s2 = target.querySelector('.scroll-content') || target;
@@ -20010,7 +20150,7 @@ window.changeView = (v, fH = !1) => {
   }
 
   // Jalankan render target terlebih dahulu
-  const r = { 'view-cart': renderCart, 'view-checkout': rChck, 'view-payment': rPay, 'view-wishlist': renderWish };
+  const r = { 'view-cart': renderCart, 'view-checkout': rChck, 'view-payment': rPay, 'view-wishlist': renderWish, 'view-catalog': () => { if(typeof rDyn !== 'undefined') rDyn(); } };
   if (r[v]) r[v]();
 
   if (!current) {

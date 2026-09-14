@@ -7,7 +7,7 @@
     <!-- Modal Header (Synchronized Theme Gradient) - Compact di mobile -->
     <div class="sticky top-0 z-30 px-4 py-2.5 sm:px-6 sm:py-4 flex items-center justify-between shrink-0" style="background:linear-gradient(135deg,var(--clr-p,#059669),var(--clr-ps,#047857));">
       <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
-        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white/20 flex items-center justify-center text-base sm:text-lg text-white shrink-0 shadow-sm border border-white/30">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white/20 flex items-center justify-center text-base sm:text-lg text-white shrink-0 shadow-sm hover:shadow-md border border-white/30">
           <i class="fa-solid fa-cloud-arrow-up text-white"></i>
         </div>
         <div class="min-w-0">
@@ -20,10 +20,10 @@
         </div>
       </div>
       <div class="flex items-center gap-1.5 shrink-0">
-        <button type="button" onclick="openCmsGuide('backup_restore')" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-xs transition-all border border-white/20 shadow-sm active:scale-95" title="Panduan">
+        <button type="button" onclick="openCmsGuide('backup_restore')" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center text-xs transition-all border border-white/20 shadow-sm hover:shadow-md active:scale-95" title="Panduan">
           <i class="fa-solid fa-circle-question text-amber-300"></i>
         </button>
-        <button type="button" onclick="closeBackupSyncModal()" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 hover:bg-rose-500 text-white flex items-center justify-center text-sm transition-all border border-white/20 shadow-sm active:scale-95" title="Tutup">
+        <button type="button" onclick="closeBackupSyncModal()" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 hover:bg-rose-500 text-white flex items-center justify-center text-sm transition-all border border-white/20 shadow-sm hover:shadow-md active:scale-95" title="Tutup">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -59,7 +59,7 @@
       <div id="bs-tab-content-main" class="space-y-3.5">
         
         <!-- Card 1: Unduh Backup Pintar -->
-        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-3">
+        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-md space-y-3">
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-start gap-3">
               <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg shrink-0 mt-0.5" style="background:var(--clr-p-bg);color:var(--clr-p);">
@@ -87,7 +87,7 @@
         </div>
 
         <!-- Card 2: Pulihkan dari File -->
-        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-3">
+        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-md space-y-3">
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-start gap-3">
               <div class="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-lg shrink-0 mt-0.5">
@@ -116,7 +116,7 @@
         </div>
 
         <!-- Card 3: Ekspor Spreadsheet (Excel / CSV) -->
-        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-3">
+        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-md space-y-3">
           <div class="flex items-start gap-3">
             <div class="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg shrink-0 mt-0.5">
               <i class="fa-solid fa-file-csv"></i>
@@ -155,7 +155,7 @@
               Salinan cadangan instan tersimpan di browser untuk pemulihan 1-klik
             </p>
           </div>
-          <button type="button" onclick="createLocalSnapshot()" class="px-4 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all shrink-0" style="background:var(--clr-p,#059669);">
+          <button type="button" onclick="createLocalSnapshot()" class="px-4 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 shadow-sm hover:shadow-md active:scale-95 transition-all shrink-0" style="background:var(--clr-p,#059669);">
             <i class="fa-solid fa-camera text-[11px]"></i>
             <span>Buat Snapshot Baru</span>
           </button>
@@ -170,7 +170,7 @@
       <!-- TAB 3: KONEKSI CLOUD                                     -->
       <!-- ======================================================== -->
       <div id="bs-tab-content-cloud" class="space-y-4 hidden">
-        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-4">
+        <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-md space-y-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg shrink-0" style="background:var(--clr-p-bg);color:var(--clr-p);">

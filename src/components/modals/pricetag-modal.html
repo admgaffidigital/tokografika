@@ -7,7 +7,7 @@
     <!-- HEADER -->
     <div class='sticky top-0 z-30 px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between shrink-0 sm:rounded-t-3xl' style='background:linear-gradient(135deg,var(--clr-p,#059669),var(--clr-ps,#047857));'>
       <div class='flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1'>
-        <div class='w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white/20 flex items-center justify-center shrink-0 border border-white/30 shadow-sm'>
+        <div class='w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-white/20 flex items-center justify-center shrink-0 border border-white/30 shadow-sm hover:shadow-md'>
           <i class='fa-solid fa-tags text-sm sm:text-base text-white'></i>
         </div>
         <div class='min-w-0'>
@@ -19,13 +19,13 @@
         </div>
       </div>
       <div class='flex items-center gap-2 shrink-0'>
-        <button type='button' onclick='openCmsGuide("pricetag")' class='w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-all border border-white/20 shadow-sm active:scale-95' title='Buku Panduan Pricetag'>
+        <button type='button' onclick='openCmsGuide("pricetag")' class='w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-all border border-white/20 shadow-sm hover:shadow-md active:scale-95' title='Buku Panduan Pricetag'>
           <i class='fa-solid fa-circle-question text-amber-300 text-sm'></i>
         </button>
         <button type='button' onclick='printPricetags()' class='hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-white/95 hover:bg-white font-extrabold text-xs shadow-lg transition-all active:scale-95' style='color:var(--clr-p,#059669);'>
           <i class='fa-solid fa-print'></i> Cetak Sekarang
         </button>
-        <button type='button' class='w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-500 text-white transition-all border border-white/20 shadow-sm active:scale-95' onclick='closePricetagModal()' title='Tutup'>
+        <button type='button' class='w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-rose-500 text-white transition-all border border-white/20 shadow-sm hover:shadow-md active:scale-95' onclick='closePricetagModal()' title='Tutup'>
           <i class='fa-solid fa-xmark text-sm'></i>
         </button>
       </div>
@@ -35,7 +35,7 @@
     <div class='bg-white dark:bg-slate-900 px-3 sm:px-5 py-2 sm:py-2.5 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2 sm:gap-3 shrink-0'>
       <div class='flex items-center gap-1 sm:gap-1.5 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl flex-1 sm:flex-none'>
         <button type='button' id='pt-tab-btn-products' onclick='switchPricetagTab("products")'
-          class='flex-1 sm:flex-none px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl font-black text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-all bg-white dark:bg-slate-700 shadow-sm border-2'
+          class='flex-1 sm:flex-none px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl font-black text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-all bg-white dark:bg-slate-700 shadow-sm hover:shadow-md border-2'
           style='color:var(--clr-p,#059669);border-color:var(--clr-p,#059669);'>
           <i class='fa-solid fa-boxes-stacked text-[10px]'></i>
           <span>1. Pilih Produk</span>
@@ -72,7 +72,7 @@
               <p class='text-xs text-slate-400 dark:text-slate-500 mt-0.5'>Atur produk &amp; jumlah salinan label untuk rak toko</p>
             </div>
             <div class='flex items-center gap-2 shrink-0'>
-              <button type='button' onclick='openPricetagProductPicker()' class='px-4 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all' style='background:var(--clr-p,#059669);'>
+              <button type='button' onclick='openPricetagProductPicker()' class='px-4 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-1.5 shadow-sm hover:shadow-md active:scale-95 transition-all' style='background:var(--clr-p,#059669);'>
                 <i class='fa-solid fa-plus text-xs'></i> Tambah Produk
               </button>
               <button type='button' onclick='clearPricetagItems()' class='p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all text-xs' title='Kosongkan Semua'>

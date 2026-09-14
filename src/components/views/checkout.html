@@ -4,7 +4,7 @@
 <div class='view-section flex flex-col fade-in bg-transparent z-10 hidden' id='view-checkout'>
   <div class='glass-header shrink-0 px-4 py-3 flex justify-center z-30 sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-3xl lg:max-w-4xl'>
-      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm active:scale-95' onclick='changeView(&apos;view-cart&apos;)' title='Kembali ke Keranjang'>
+      <button class='w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all shadow-sm hover:shadow-md active:scale-95' onclick='changeView(&apos;view-cart&apos;)' title='Kembali ke Keranjang'>
         <i class='fa-solid fa-arrow-left text-sm text-white'></i>
       </button>
       <h1 class='text-sm sm:text-base font-bold text-white tracking-tight'>Pengiriman & Lokasi</h1>
@@ -74,7 +74,7 @@
             <button class='bg-slate-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 active:scale-95 transition-all border-2 border-slate-900' id='btn-location' onclick='getLocation()'>
               <i class='fa-solid fa-location-crosshairs text-emerald-400'></i> GPS
             </button>
-            <p class='text-[10px] font-bold text-emerald-700 hidden items-center gap-1 bg-emerald-100 py-2.5 px-3 rounded-xl border-2 border-emerald-200' id='location-status'>
+            <p class='text-[10px] font-bold text-emerald-700 hidden items-center gap-1 bg-emerald-100 py-2.5 px-3 rounded-full border-2 border-emerald-200' id='location-status'>
               <i class='fa-solid fa-check'></i> Diamankan
             </p>
           </div>
@@ -97,7 +97,7 @@
             <input class='admin-input uppercase tracking-widest text-sm font-semibold bg-slate-50 dark:bg-slate-900' id='voucher-input' placeholder='Kode Voucher' type='text'/>
             <button class='bg-slate-800 text-white px-5 rounded-xl text-xs font-bold active:scale-95 transition-all border-2 border-slate-900' onclick='applyVoucher()'>Klaim</button>
           </div>
-          <div class='hidden bg-emerald-50 border-2 border-emerald-200 p-3 rounded-xl mt-3 text-center shadow-sm' id='voucher-msg-container'>
+          <div class='hidden bg-emerald-50 border-2 border-emerald-200 p-3 rounded-xl mt-3 text-center shadow-sm hover:shadow-md' id='voucher-msg-container'>
             <p class='text-xs font-bold text-emerald-700' id='voucher-msg'></p>
           </div>
         </div>

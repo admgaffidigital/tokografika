@@ -31,7 +31,7 @@
       <div class='flex items-center gap-1.5 shrink-0'>
         <!-- Segmented Grid/List View Switcher (Ditempatkan di Header agar Kategori Rapi & Lebar Penuh) -->
         <div class='flex bg-black/20 border border-white/20 rounded-xl p-0.5 shrink-0 shadow-xs' id='pos-view-mode-toggle'>
-          <button type='button' class='btn-solid no-glass w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-slate-900 !bg-white shadow-sm' id='btn-pos-view-grid' onclick='setPosViewMode("grid")' title='Tampilan Grid'>
+          <button type='button' class='btn-solid no-glass w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-slate-900 !bg-white shadow-sm hover:shadow-md' id='btn-pos-view-grid' onclick='setPosViewMode("grid")' title='Tampilan Grid'>
             <i class='fa-solid fa-border-all text-xs !text-slate-900'></i>
           </button>
           <button type='button' class='btn-solid no-glass w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-white hover:!bg-white/20' id='btn-pos-view-list' onclick='setPosViewMode("list")' title='Tampilan List'>
@@ -49,14 +49,14 @@
         <button type='button' class='btn-solid no-glass pos-desktop-tab items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
           <i class='fa-solid fa-cart-shopping text-xs'></i>
           <span>Keranjang</span>
-          <span id='pos-cart-header-badge' class='hidden bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
+          <span id='pos-cart-header-badge' class='hidden bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm hover:shadow-md ml-0.5 leading-none'>0</span>
         </button>
 
         <!-- Pending Tab -->
         <button type='button' class='btn-solid no-glass pos-desktop-tab relative items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 border border-white/30 text-white text-xs font-bold transition-all shadow-xs active:scale-95' onclick='openPosPendingModal()' title='Transaksi Ditahan'>
           <i class='fa-solid fa-pause text-amber-200 text-xs'></i>
           <span>Pending</span>
-          <span id='pos-pending-header-badge' class='hidden bg-amber-400 text-slate-900 text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm ml-0.5 leading-none'>0</span>
+          <span id='pos-pending-header-badge' class='hidden bg-amber-400 text-slate-900 text-[9px] font-black px-1.5 py-0.2 rounded-full shadow-sm hover:shadow-md ml-0.5 leading-none'>0</span>
         </button>
 
         <!-- Guide Tab -->
@@ -89,7 +89,7 @@
           <i class='fa-solid fa-xmark text-xs'></i>
         </button>
         
-        <button type='button' class='btn-solid no-glass absolute right-1.5 top-1/2 -translate-y-1/2 px-3.5 py-1.5 rounded-xl text-white flex items-center gap-1.5 text-xs font-black shadow-sm active:scale-95 transition-all !bg-emerald-600 hover:!bg-emerald-700 !text-white' onclick='openCameraScanner("pos-search-input")' title='Buka Scanner Barcode Kamera'>
+        <button type='button' class='btn-solid no-glass absolute right-1.5 top-1/2 -translate-y-1/2 px-3.5 py-1.5 rounded-xl text-white flex items-center gap-1.5 text-xs font-black shadow-sm hover:shadow-md active:scale-95 transition-all !bg-emerald-600 hover:!bg-emerald-700 !text-white' onclick='openCameraScanner("pos-search-input")' title='Buka Scanner Barcode Kamera'>
           <i class='fa-solid fa-qrcode text-xs !text-white'></i>
           <span class='text-[10px] font-black uppercase tracking-wider !text-white'>Scan</span>
         </button>
@@ -185,7 +185,7 @@
       <button type='button' class='flex-1 flex flex-col items-center py-1 hover:text-emerald-600 relative transition-colors' onclick='openPosCartDrawer()' title='Buka Keranjang Kasir'>
         <div class='relative'>
           <i class='fa-solid fa-cart-shopping text-base mb-0.5'></i>
-          <span id='pos-nav-cart-badge' class='hidden absolute -top-1.5 -right-3 bg-rose-500 text-white text-[8px] font-black px-1.5 py-0.2 rounded-full shadow-sm leading-none'>0</span>
+          <span id='pos-nav-cart-badge' class='hidden absolute -top-1.5 -right-3 bg-rose-500 text-white text-[8px] font-black px-1.5 py-0.2 rounded-full shadow-sm hover:shadow-md leading-none'>0</span>
         </div>
         <span>Keranjang</span>
       </button>
@@ -194,7 +194,7 @@
       <button type='button' class='flex-1 flex flex-col items-center py-1 hover:text-amber-500 relative transition-colors' onclick='openPosPendingModal()' title='Daftar Transaksi Ditahan'>
         <div class='relative'>
           <i class='fa-solid fa-pause text-base mb-0.5 text-amber-500'></i>
-          <span id='pos-nav-pending-badge' class='hidden absolute -top-1.5 -right-3 bg-amber-400 text-slate-900 text-[8px] font-black px-1.5 py-0.2 rounded-full shadow-sm leading-none'>0</span>
+          <span id='pos-nav-pending-badge' class='hidden absolute -top-1.5 -right-3 bg-amber-400 text-slate-900 text-[8px] font-black px-1.5 py-0.2 rounded-full shadow-sm hover:shadow-md leading-none'>0</span>
         </div>
         <span>Pending</span>
       </button>
@@ -438,7 +438,7 @@
             <!-- Ambil di Toko -->
             <button type='button' id='pos-delivery-pickup-btn'
               onclick='setPosDeliveryMethod(&quot;pickup&quot;)'
-              class='p-4 rounded-2xl border-2 font-bold text-xs flex flex-col items-center gap-2 transition-all border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 shadow-sm'>
+              class='p-4 rounded-2xl border-2 font-bold text-xs flex flex-col items-center gap-2 transition-all border-emerald-500 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 shadow-sm hover:shadow-md'>
               <div class='w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center'>
                 <i class='fa-solid fa-store text-emerald-600 dark:text-emerald-400 text-base'></i>
               </div>
@@ -748,7 +748,7 @@
       <div class='w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl mx-auto mb-3 shadow-md border border-white/30'>
         <i class='fa-solid fa-crown text-amber-200'></i>
       </div>
-      <div class='inline-block px-3 py-1 rounded-full bg-white/25 border border-white/30 text-[10px] font-black uppercase tracking-widest mb-1.5 shadow-sm'>
+      <div class='inline-block px-3 py-1 rounded-full bg-white/25 border border-white/30 text-[10px] font-black uppercase tracking-widest mb-1.5 shadow-sm hover:shadow-md'>
         <i class='fa-solid fa-sparkles text-amber-300 mr-1'></i> TOKO GRAFIKA POS PREMIUM
       </div>
       <h2 class='text-lg sm:text-xl font-black tracking-tight leading-snug'>Buka Fitur POS Kasir & HPP</h2>
@@ -761,8 +761,8 @@
       <!-- Plan Selector Cards -->
       <div class='grid grid-cols-1 sm:grid-cols-2 gap-3'>
         <!-- Monthly Promo Plan (Recommended) -->
-        <div class='relative p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 flex flex-col justify-between shadow-sm'>
-          <div class='absolute -top-2.5 right-3 bg-rose-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm'>
+        <div class='relative p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30 flex flex-col justify-between shadow-sm hover:shadow-md'>
+          <div class='absolute -top-2.5 right-3 bg-rose-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm hover:shadow-md'>
             PROMO HEMAT
           </div>
           <div>
@@ -780,7 +780,7 @@
 
         <!-- Yearly Super Saver Plan -->
         <div class='relative p-4 rounded-2xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/80 flex flex-col justify-between hover:border-amber-400 transition-all'>
-          <div class='absolute -top-2.5 right-3 bg-amber-500 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm'>
+          <div class='absolute -top-2.5 right-3 bg-amber-500 text-slate-950 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm hover:shadow-md'>
             SUPER HEMAT
           </div>
           <div>
@@ -791,7 +791,7 @@
             </div>
             <p class='text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5'>Hemat Rp 70.000 + Free Setup</p>
           </div>
-          <button type='button' onclick='orderSubscriptionWa("Tahunan Super Hemat (Rp 350.000/thn)")' class='mt-3.5 w-full py-2 bg-slate-900 dark:bg-slate-700 hover:bg-black text-white text-xs font-black rounded-xl transition-all shadow-sm active:scale-95 flex items-center justify-center gap-1.5'>
+          <button type='button' onclick='orderSubscriptionWa("Tahunan Super Hemat (Rp 350.000/thn)")' class='mt-3.5 w-full py-2 bg-slate-900 dark:bg-slate-700 hover:bg-black text-white text-xs font-black rounded-xl transition-all shadow-sm hover:shadow-md active:scale-95 flex items-center justify-center gap-1.5'>
             <i class='fa-brands fa-whatsapp text-sm'></i> Pilih Tahunan
           </button>
         </div>
@@ -816,7 +816,7 @@
         <p class='text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-2'>Sudah berlangganan / punya kode lisensi?</p>
         <div class='flex gap-2'>
           <input type='text' id='pos-sub-token-input' placeholder='MASUKKAN KODE LISENSI...' class='admin-input !py-2.5 uppercase font-mono text-xs text-center font-bold tracking-widest flex-1 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700'/>
-          <button type='button' onclick='activateSubscriptionToken()' class='px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl shadow-sm transition-all active:scale-95 shrink-0 flex items-center gap-1.5'>
+          <button type='button' onclick='activateSubscriptionToken()' class='px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl shadow-sm hover:shadow-md transition-all active:scale-95 shrink-0 flex items-center gap-1.5'>
             <i class='fa-solid fa-key'></i> Aktivasi
           </button>
         </div>

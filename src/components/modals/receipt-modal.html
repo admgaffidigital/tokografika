@@ -18,8 +18,8 @@
         <i class='fa-solid fa-print text-emerald-500'></i> Ukuran Printer:
       </span>
       <div class='flex bg-slate-200 dark:bg-slate-800 p-0.5 rounded-lg text-xs font-bold'>
-        <button type='button' id='btn-paper-58' class='px-3 py-1 rounded-md transition-all text-xs font-bold' onclick='setReceiptPaperSize("58")'>58mm</button>
-        <button type='button' id='btn-paper-80' class='px-3 py-1 rounded-md transition-all text-xs font-bold' onclick='setReceiptPaperSize("80")'>80mm</button>
+        <button type='button' id='btn-paper-58' class='px-3 py-1 rounded-xl transition-all text-xs font-bold' onclick='setReceiptPaperSize("58")'>58mm</button>
+        <button type='button' id='btn-paper-80' class='px-3 py-1 rounded-xl transition-all text-xs font-bold' onclick='setReceiptPaperSize("80")'>80mm</button>
       </div>
     </div>
 
@@ -30,14 +30,14 @@
     </div>
     
     <div class='p-4 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 z-20 flex flex-col gap-2 shrink-0'>
-      <button class='w-full py-2.5 text-white font-bold rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow-sm' id='btn-print-thermal-action' style='background-color: var(--clr-p);' onclick='executePrintReceipt()'>
+      <button class='w-full py-2.5 text-white font-bold rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md' id='btn-print-thermal-action' style='background-color: var(--clr-p);' onclick='executePrintReceipt()'>
         <i class='fa-solid fa-print'></i> Print Thermal (58mm)
       </button>
       <div class='flex gap-2 w-full'>
-        <button class='flex-1 py-2 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm' style='background-color: var(--clr-p);' onclick='downloadReceiptImage()'>
+        <button class='flex-1 py-2 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md' style='background-color: var(--clr-p);' onclick='downloadReceiptImage()'>
           <i class='fa-solid fa-image'></i> Gambar
         </button>
-        <button class='flex-1 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm' onclick='downloadReceiptPDF()'>
+        <button class='flex-1 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md' onclick='downloadReceiptPDF()'>
           <i class='fa-solid fa-file-pdf'></i> PDF
         </button>
       </div>
