@@ -280,13 +280,14 @@ const saveApp = async (forceImmediate = false) => {
     return await _executeSync();
   }
 
-  // 3. Debounce 250ms untuk mencegah write spamming ke Firestore
+  // 3. Debounce 1500ms — cukup responsif tapi hemat kuota Firestore
+  //    (Sebelumnya 250ms — terlalu agresif saat admin melakukan banyak perubahan cepat)
   return new Promise(resolve => {
     clearTimeout(_saveAppDebounceTimer);
     _saveAppDebounceTimer = setTimeout(async () => {
       await _executeSync();
       resolve();
-    }, 250);
+    }, 1500);
   });
 };
 

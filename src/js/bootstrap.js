@@ -37,6 +37,7 @@ const ALL_MODAL_HANDLERS = [
   { id: 'product-modal', close: () => typeof closeProductModal === 'function' && closeProductModal(true) },
   { id: 'admin-modal', close: () => typeof closeAdminModal === 'function' && closeAdminModal() },
   { id: 'confirm-modal', close: () => typeof closeConfirmModal === 'function' && closeConfirmModal() },
+  { id: 'changelog-modal', close: () => typeof closeChangelogModal === 'function' && closeChangelogModal() },
 ];
 
 function isElementVisible(elem) {
@@ -64,6 +65,7 @@ window.closeTopOpenModal = function() {
 };
 
 // Auto-track modal terbuka agar tombol Back HP otomatis menutup modal
+// Hanya amati perubahan class pada modal-level elements, bukan seluruh subtree
 let _modalObserverTimeout = null;
 const modalObserver = new MutationObserver(() => {
   if (_modalObserverTimeout) return;
@@ -80,15 +82,25 @@ const modalObserver = new MutationObserver(() => {
     if (anyOpen && !history.state?.modal) {
       history.pushState({ modal: true }, '', '');
     }
-  }, 40);
+  }, 80); // Naik dari 40ms ke 80ms agar tidak terlalu agresif
 });
 
-if (document.body) {
-  modalObserver.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class', 'style'] });
-} else {
-  document.addEventListener('DOMContentLoaded', () => {
-    modalObserver.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class', 'style'] });
+// Observe hanya elemen modal langsung (bukan seluruh subtree)
+const _startModalObserver = () => {
+  const modalIds = ALL_MODAL_HANDLERS.map(m => m.id);
+  modalIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) modalObserver.observe(el, { attributes: true, attributeFilter: ['class', 'style'] });
   });
+  // Fallback: jika modal belum ada di DOM, amati body children saja (bukan subtree)
+  modalObserver.observe(document.body, { childList: true });
+};
+
+if (document.body) {
+  _startModalObserver();
+} else {
+  document.addEventListener('DOMContentLoaded', _startModalObserver);
+
 }
 
 

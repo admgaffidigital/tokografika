@@ -12,7 +12,7 @@ window.getEffP = i => {
   return i.price;
 };
 
-const rDyn = () => {
+window.rDyn = () => {
   setIn('dyn-store-name', appData.store.name || 'TOKO GRAFIKA');
   setIn('dyn-store-slogan', appData.store.slogan || 'RITEL & GROSIR');
   setIn('footer-name', appData.store.name || 'TOKO GRAFIKA');

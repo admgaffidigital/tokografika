@@ -224,12 +224,13 @@ html {
 
 body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: #f8fafc;
+    background-color: #f1f5f9;
     margin: 0;
     padding: 0;
     color: #0f172a;
     font-size: 0.875rem;
     line-height: 1.5;
+    min-height: 100vh;
     text-rendering: optimizeLegibility;
     transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
@@ -409,20 +410,15 @@ code, kbd, samp, pre, .font-mono {
 /* --------------------------------------------------------------------------
    4. Background Shapes & Wallpapers (CRISP, CLEAR & MODERN - NO BLUR)
    -------------------------------------------------------------------------- */
-body {
-    background-color: #f1f5f9;
-    color: #0f172a;
-    min-height: 100vh;
-}
 
+/* Dark mode body override */
 html.dark body {
     background-color: #0b1120;
     color: #f8fafc;
 }
 
+/* app-container is transparent so body background / wallpaper shows through */
 #app-container {
-    min-height: 100vh;
-    position: relative;
     background-color: transparent !important;
 }
 
@@ -6422,13 +6418,14 @@ const saveApp = async (forceImmediate = false) => {
     return await _executeSync();
   }
 
-  // 3. Debounce 250ms untuk mencegah write spamming ke Firestore
+  // 3. Debounce 1500ms — cukup responsif tapi hemat kuota Firestore
+  //    (Sebelumnya 250ms — terlalu agresif saat admin melakukan banyak perubahan cepat)
   return new Promise(resolve => {
     clearTimeout(_saveAppDebounceTimer);
     _saveAppDebounceTimer = setTimeout(async () => {
       await _executeSync();
       resolve();
-    }, 250);
+    }, 1500);
   });
 };
 
@@ -6522,7 +6519,7 @@ window.getEffP = i => {
   return i.price;
 };
 
-const rDyn = () => {
+window.rDyn = () => {
   setIn('dyn-store-name', appData.store.name || 'TOKO GRAFIKA');
   setIn('dyn-store-slogan', appData.store.slogan || 'RITEL & GROSIR');
   setIn('footer-name', appData.store.name || 'TOKO GRAFIKA');
@@ -20062,6 +20059,7 @@ const ALL_MODAL_HANDLERS = [
   { id: 'product-modal', close: () => typeof closeProductModal === 'function' && closeProductModal(true) },
   { id: 'admin-modal', close: () => typeof closeAdminModal === 'function' && closeAdminModal() },
   { id: 'confirm-modal', close: () => typeof closeConfirmModal === 'function' && closeConfirmModal() },
+  { id: 'changelog-modal', close: () => typeof closeChangelogModal === 'function' && closeChangelogModal() },
 ];
 
 function isElementVisible(elem) {
@@ -20089,6 +20087,7 @@ window.closeTopOpenModal = function() {
 };
 
 // Auto-track modal terbuka agar tombol Back HP otomatis menutup modal
+// Hanya amati perubahan class pada modal-level elements, bukan seluruh subtree
 let _modalObserverTimeout = null;
 const modalObserver = new MutationObserver(() => {
   if (_modalObserverTimeout) return;
@@ -20105,15 +20104,25 @@ const modalObserver = new MutationObserver(() => {
     if (anyOpen && !history.state?.modal) {
       history.pushState({ modal: true }, '', '');
     }
-  }, 40);
+  }, 80); // Naik dari 40ms ke 80ms agar tidak terlalu agresif
 });
 
-if (document.body) {
-  modalObserver.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class', 'style'] });
-} else {
-  document.addEventListener('DOMContentLoaded', () => {
-    modalObserver.observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class', 'style'] });
+// Observe hanya elemen modal langsung (bukan seluruh subtree)
+const _startModalObserver = () => {
+  const modalIds = ALL_MODAL_HANDLERS.map(m => m.id);
+  modalIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) modalObserver.observe(el, { attributes: true, attributeFilter: ['class', 'style'] });
   });
+  // Fallback: jika modal belum ada di DOM, amati body children saja (bukan subtree)
+  modalObserver.observe(document.body, { childList: true });
+};
+
+if (document.body) {
+  _startModalObserver();
+} else {
+  document.addEventListener('DOMContentLoaded', _startModalObserver);
+
 }
 
 
