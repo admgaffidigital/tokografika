@@ -48,6 +48,7 @@
 
 // 12. Realtime Price & Inventory Synchronization
 // @include modules/sync.js
+// @include modules/changelog.js
 
 // 13. Routing, History, & App Bootstrap
 // @include bootstrap.js
