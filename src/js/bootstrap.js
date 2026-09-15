@@ -10,7 +10,7 @@ let _lastBackPressTime = 0;
 const ALL_MODAL_HANDLERS = [
   { id: 'restore-preview-modal', close: () => typeof closeRestorePreviewModal === 'function' && closeRestorePreviewModal() },
   { id: 'pricetag-picker-modal', close: () => typeof closePricetagPickerModal === 'function' && closePricetagPickerModal() },
-  { id: 'pdf-preview-modal', close: () => typeof closePdfPreviewModal === 'function' && closePdfPreviewModal() },
+  { id: 'pdf-preview-modal', close: () => typeof closePreviewModal === 'function' && closePreviewModal() },
   { id: 'receipt-preview-modal', close: () => typeof closeReceiptPreview === 'function' && closeReceiptPreview() },
   { id: 'pos-qty-modal', close: () => typeof closePosQtyModal === 'function' && closePosQtyModal() },
   { id: 'pos-variant-modal', close: () => typeof closePosVariantModal === 'function' && closePosVariantModal() },

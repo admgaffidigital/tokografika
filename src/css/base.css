@@ -206,12 +206,6 @@ code, kbd, samp, pre, .font-mono {
    4. Background Shapes & Wallpapers (CRISP, CLEAR & MODERN - NO BLUR)
    -------------------------------------------------------------------------- */
 
-/* Dark mode body override */
-html.dark body {
-    background-color: #0b1120;
-    color: #f8fafc;
-}
-
 /* app-container is transparent so body background / wallpaper shows through */
 #app-container {
     background-color: transparent !important;

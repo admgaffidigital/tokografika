@@ -282,12 +282,9 @@
    13. SCROLL CONTENT GLOBAL FIX
    -------------------------------------------------------------------------- */
 
+/* Ensure flex children can shrink below natural height */
 .scroll-content {
-    flex: 1;
     min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
 }
 
 /* --------------------------------------------------------------------------

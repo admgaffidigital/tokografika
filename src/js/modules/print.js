@@ -397,7 +397,7 @@ window.downloadReceiptImage = async () => {
     
     showToast("Gambar berhasil disimpan!");
   } catch (error) {
-    console.error(error);
+    console.error('[Print] Gagal menyimpan gambar struk:', error);
     showToast("Gagal menyimpan gambar!");
   }
   isSaving = false;
@@ -447,7 +447,7 @@ window.downloadReceiptPDF = async () => {
     
     showToast("PDF berhasil disimpan!");
   } catch (error) {
-    console.error(error);
+    console.error('[Print] Gagal menyimpan PDF struk:', error);
     showToast("Gagal menyimpan PDF!");
   }
   isSaving = false;
@@ -456,9 +456,12 @@ window.downloadReceiptPDF = async () => {
 
 
 window.closePreviewModal = () => {
-  document.getElementById('pdf-preview-modal').classList.add('hidden');
-  tempPdfData = null; 
+  window.closeModalSmooth('pdf-preview-modal', null, 'centered', () => {
+    tempPdfData = null;
+  });
 };
+// Alias untuk kompatibilitas back-button handler
+window.closePdfPreviewModal = window.closePreviewModal;
 
 window.executeDownloadPdf = () => {
   if (!tempPdfData) return;
@@ -1068,17 +1071,13 @@ window.generateA4Document = async (type, directOrder = null) => {
       if (prevImg) prevImg.src = firstImgData;
     }
 
-    const previewModal = document.getElementById('pdf-preview-modal');
-    if (previewModal) {
-      previewModal.classList.remove('hidden');
-      previewModal.classList.add('flex');
-    }
+    window.openModalSmooth('pdf-preview-modal', null, 'centered');
     
     const btnPdf = el('btn-download-pdf-a4');
     if (btnPdf) btnPdf.style.backgroundColor = themeClr;
     
   } catch (error) {
-    console.error(error);
+    console.error('[Print] Gagal memproses dokumen A4:', error);
     showToast('Gagal memproses dokumen A4!');
   } finally {
     isSaving = false;

@@ -411,12 +411,6 @@ code, kbd, samp, pre, .font-mono {
    4. Background Shapes & Wallpapers (CRISP, CLEAR & MODERN - NO BLUR)
    -------------------------------------------------------------------------- */
 
-/* Dark mode body override */
-html.dark body {
-    background-color: #0b1120;
-    color: #f8fafc;
-}
-
 /* app-container is transparent so body background / wallpaper shows through */
 #app-container {
     background-color: transparent !important;
@@ -1007,8 +1001,6 @@ html.dark .badge-counter {
     overscroll-behavior: contain;
 }
 
-
-
 /* ==========================================================================
    GRAFIKA PWA STORE - RESPONSIVE LAYOUT FIXES
    Memperbaiki tampilan di HP, Tablet, dan PC
@@ -1293,12 +1285,9 @@ html.dark .badge-counter {
    13. SCROLL CONTENT GLOBAL FIX
    -------------------------------------------------------------------------- */
 
+/* Ensure flex children can shrink below natural height */
 .scroll-content {
-    flex: 1;
     min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
 }
 
 /* --------------------------------------------------------------------------
@@ -1961,7 +1950,7 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: PDF & DOCUMENT PREVIEW                                             -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[99999] bg-slate-900/90 hidden flex items-center justify-center p-2 sm:p-4 transition-opacity fade-in' id='pdf-preview-modal' onclick='if(event.target===this) closePreviewModal()'>
+<div class='fixed inset-0 z-[99999] bg-slate-900/90 hidden opacity-0 pointer-events-none flex items-center justify-center p-2 sm:p-4 modal-backdrop-smooth' id='pdf-preview-modal' onclick='if(event.target===this) closePreviewModal()'>
   <div class='bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl flex flex-col max-h-[92vh] mx-auto my-auto'>
     <div class='px-4 py-3.5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800 z-10 shrink-0'>
       <h3 class='font-bold text-slate-800 dark:text-white text-base flex items-center gap-2'>
@@ -17915,7 +17904,7 @@ window.downloadReceiptImage = async () => {
     
     showToast("Gambar berhasil disimpan!");
   } catch (error) {
-    console.error(error);
+    console.error('[Print] Gagal menyimpan gambar struk:', error);
     showToast("Gagal menyimpan gambar!");
   }
   isSaving = false;
@@ -17965,7 +17954,7 @@ window.downloadReceiptPDF = async () => {
     
     showToast("PDF berhasil disimpan!");
   } catch (error) {
-    console.error(error);
+    console.error('[Print] Gagal menyimpan PDF struk:', error);
     showToast("Gagal menyimpan PDF!");
   }
   isSaving = false;
@@ -17974,9 +17963,12 @@ window.downloadReceiptPDF = async () => {
 
 
 window.closePreviewModal = () => {
-  document.getElementById('pdf-preview-modal').classList.add('hidden');
-  tempPdfData = null; 
+  window.closeModalSmooth('pdf-preview-modal', null, 'centered', () => {
+    tempPdfData = null;
+  });
 };
+// Alias untuk kompatibilitas back-button handler
+window.closePdfPreviewModal = window.closePreviewModal;
 
 window.executeDownloadPdf = () => {
   if (!tempPdfData) return;
@@ -18586,17 +18578,13 @@ window.generateA4Document = async (type, directOrder = null) => {
       if (prevImg) prevImg.src = firstImgData;
     }
 
-    const previewModal = document.getElementById('pdf-preview-modal');
-    if (previewModal) {
-      previewModal.classList.remove('hidden');
-      previewModal.classList.add('flex');
-    }
+    window.openModalSmooth('pdf-preview-modal', null, 'centered');
     
     const btnPdf = el('btn-download-pdf-a4');
     if (btnPdf) btnPdf.style.backgroundColor = themeClr;
     
   } catch (error) {
-    console.error(error);
+    console.error('[Print] Gagal memproses dokumen A4:', error);
     showToast('Gagal memproses dokumen A4!');
   } finally {
     isSaving = false;
@@ -20337,7 +20325,7 @@ let _lastBackPressTime = 0;
 const ALL_MODAL_HANDLERS = [
   { id: 'restore-preview-modal', close: () => typeof closeRestorePreviewModal === 'function' && closeRestorePreviewModal() },
   { id: 'pricetag-picker-modal', close: () => typeof closePricetagPickerModal === 'function' && closePricetagPickerModal() },
-  { id: 'pdf-preview-modal', close: () => typeof closePdfPreviewModal === 'function' && closePdfPreviewModal() },
+  { id: 'pdf-preview-modal', close: () => typeof closePreviewModal === 'function' && closePreviewModal() },
   { id: 'receipt-preview-modal', close: () => typeof closeReceiptPreview === 'function' && closeReceiptPreview() },
   { id: 'pos-qty-modal', close: () => typeof closePosQtyModal === 'function' && closePosQtyModal() },
   { id: 'pos-variant-modal', close: () => typeof closePosVariantModal === 'function' && closePosVariantModal() },
