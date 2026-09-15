@@ -43,7 +43,7 @@ const builtIns = new Set([
   'console', 'location', 'history', 'localStorage', 'sessionStorage', 'navigator', 'window', 'document',
   'event', 'this', 'Boolean', 'Array', 'Object', 'JSON', 'Set', 'Map', 'Promise', 'setTimeout', 'clearTimeout',
   'setInterval', 'clearInterval', 'requestAnimationFrame', 'cancelAnimationFrame', 'URL', 'Blob', 'FileReader',
-  'stopPropagation', 'preventDefault', 'close', 'print', 'focus', 'blur', 'click', 'select', 'submit', 'reset',
+  'stopPropagation', 'preventDefault', 'open', 'close', 'print', 'focus', 'blur', 'click', 'select', 'submit', 'reset',
   'removeAttribute', 'setAttribute', 'getAttribute', 'hasAttribute', 'classList', 'add', 'remove', 'toggle', 'contains',
   'back', 'forward', 'reload', 'toLowerCase', 'toUpperCase', 'trim', 'setWebViewString', 'function', 'getElementById',
   'querySelector', 'querySelectorAll', 'map', 'filter', 'reduce', 'forEach', 'join', 'slice', 'splice', 'push', 'pop',
