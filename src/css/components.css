@@ -366,3 +366,20 @@ html.dark .badge-counter {
         display: flex !important;
     }
 }
+
+/* --------------------------------------------------------------------------
+   8. Banner Slider (16:9 Aspect Ratio & Sleek Layout)
+   -------------------------------------------------------------------------- */
+.banner-item {
+    aspect-ratio: 16 / 9 !important;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.banner-item img {
+    aspect-ratio: 16 / 9 !important;
+    object-fit: cover !important;
+    object-position: center !important;
+}
+

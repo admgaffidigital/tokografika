@@ -3163,9 +3163,16 @@ window.rAdmItms = t => {
       }
     }
 
-    let img = x.img 
-      ? `<div class="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0"><img loading="lazy" src="${esc(x.img)}" onerror="this.onerror=null;this.src='https://placehold.co/100?text=Img'" class="w-full h-full rounded-xl object-cover border-2 border-slate-100 dark:border-slate-700 ${isOff?'grayscale opacity-50':(isOutOfStock?'grayscale opacity-75':'')} shadow-sm"/></div>` 
-      : `<div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-slate-50 dark:bg-slate-700 border-2 border-slate-100 dark:border-slate-600 flex items-center justify-center text-slate-300 dark:text-slate-400 shrink-0 shadow-sm"><i class="fa-solid fa-image text-xl"></i></div>`;
+    let img = '';
+    if (t === 'banners') {
+      img = x.img 
+        ? `<div class="relative w-28 sm:w-36 aspect-video shrink-0 rounded-xl overflow-hidden border-2 border-slate-100 dark:border-slate-700 shadow-sm" style="aspect-ratio:16/9"><img loading="lazy" src="${esc(x.img)}" onerror="this.onerror=null;this.src='https://placehold.co/160x90?text=Banner'" class="w-full h-full object-cover"/></div>` 
+        : `<div class="relative w-28 sm:w-36 aspect-video rounded-xl bg-slate-50 dark:bg-slate-700 border-2 border-slate-100 dark:border-slate-600 flex items-center justify-center text-slate-300 dark:text-slate-400 shrink-0 shadow-sm" style="aspect-ratio:16/9"><i class="fa-solid fa-image text-xl"></i></div>`;
+    } else {
+      img = x.img 
+        ? `<div class="relative w-14 h-14 sm:w-16 sm:h-16 shrink-0"><img loading="lazy" src="${esc(x.img)}" onerror="this.onerror=null;this.src='https://placehold.co/100?text=Img'" class="w-full h-full rounded-xl object-cover border-2 border-slate-100 dark:border-slate-700 ${isOff?'grayscale opacity-50':(isOutOfStock?'grayscale opacity-75':'')} shadow-sm"/></div>` 
+        : `<div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-slate-50 dark:bg-slate-700 border-2 border-slate-100 dark:border-slate-600 flex items-center justify-center text-slate-300 dark:text-slate-400 shrink-0 shadow-sm"><i class="fa-solid fa-image text-xl"></i></div>`;
+    }
     
     let skuBadge = isP && x.sku ? `<span class="badge badge-xs badge-slate badge-normal-case"><i class="fa-solid fa-barcode"></i> ${esc(x.sku)}</span>` : '';
     let suppBadge = (isP && (x.supplierName || x.supplierId)) ? `<span class="badge badge-xs bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/80 font-bold" title="Rekanan Asal Supplier"><i class="fa-solid fa-truck-field text-[8px]"></i> ${esc(x.supplierName || 'Supplier Tertaut')}</span>` : '';
@@ -3179,9 +3186,10 @@ window.rAdmItms = t => {
         ${img}
         <div class="min-w-0 flex flex-col justify-center">
           <div class="flex items-center gap-2 mb-1 flex-wrap">
-            <p class="text-sm sm:text-base font-bold ${tC} truncate">${esc(x.name||x.title||x.bankName||x.code||'Item')}</p>
+            <p class="text-sm sm:text-base font-bold ${tC} truncate">${esc(x.name || x.title || x.bankName || x.code || (t === 'banners' ? 'Banner Promo' : 'Item'))}</p>
             ${statusBadge}
           </div>
+          ${t === 'banners' ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">${esc(x.subtitle || 'Banner Rasio 16:9')}</p>` : ''}
           ${isP ? `
           <div class="flex flex-wrap items-center gap-2 mb-1.5">
             <span class="font-bold text-emerald-600 dark:text-emerald-400 text-sm drop-shadow-sm">${fCur(x.price)}</span>

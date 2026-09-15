@@ -12,6 +12,69 @@ window.getEffP = i => {
   return i.price;
 };
 
+window.slideBanner = (dir) => {
+  const track = el('dynamic-banners-track');
+  if (!track) return;
+  const card = track.querySelector('.banner-item') || track.firstElementChild;
+  const scrollAmount = card ? (card.offsetWidth + 16) : 340;
+  track.scrollBy({ left: dir * scrollAmount, behavior: 'smooth' });
+};
+
+window.goToBanner = (idx) => {
+  const track = el('dynamic-banners-track');
+  if (!track) return;
+  const cards = track.querySelectorAll('.banner-item');
+  if (cards[idx]) {
+    const card = cards[idx];
+    track.scrollTo({ left: card.offsetLeft - track.offsetLeft, behavior: 'smooth' });
+  }
+};
+
+window.updateBannerDots = () => {
+  const track = el('dynamic-banners-track');
+  const dotsContainer = el('dynamic-banners-dots');
+  if (!track || !dotsContainer) return;
+  const dots = dotsContainer.querySelectorAll('.banner-dot');
+  if (!dots.length) return;
+  const cards = track.querySelectorAll('.banner-item');
+  if (!cards.length) return;
+  const cardWidth = cards[0].offsetWidth + 16;
+  const activeIndex = Math.min(dots.length - 1, Math.max(0, Math.round(track.scrollLeft / cardWidth)));
+  dots.forEach((dot, idx) => {
+    if (idx === activeIndex) {
+      dot.className = 'banner-dot h-1.5 w-6 rounded-full transition-all duration-300';
+      dot.style.backgroundColor = 'var(--clr-p)';
+    } else {
+      dot.className = 'banner-dot h-1.5 w-1.5 rounded-full transition-all duration-300 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400';
+      dot.style.backgroundColor = '';
+    }
+  });
+};
+
+window.initBannerCarousel = () => {
+  if (window._bannerInterval) {
+    clearInterval(window._bannerInterval);
+    window._bannerInterval = null;
+  }
+  const track = el('dynamic-banners-track');
+  if (!track) return;
+
+  const isScrollable = track.scrollWidth > track.clientWidth + 20;
+  if (!isScrollable) return;
+
+  window._bannerInterval = setInterval(() => {
+    if (window._bannerHovered) return;
+    const currentTrack = el('dynamic-banners-track');
+    if (!currentTrack) return;
+    const maxScroll = currentTrack.scrollWidth - currentTrack.clientWidth;
+    if (currentTrack.scrollLeft >= maxScroll - 15) {
+      currentTrack.scrollTo({ left: 0, behavior: 'smooth' });
+    } else {
+      window.slideBanner(1);
+    }
+  }, 5000);
+};
+
 window.rDyn = () => {
   setIn('dyn-store-name', appData.store.name || 'TOKO GRAFIKA');
   setIn('dyn-store-slogan', appData.store.slogan || 'RITEL & GROSIR');
@@ -137,39 +200,94 @@ window.rDyn = () => {
   const _isUrl = _logoVal.includes('http') || _logoVal.includes('data:');
   _showLogo(_logoImg, _logoIcon, _fLogoImg, _fLogoIcon, _isUrl, _logoVal);
 
-  // Render Banner Promo
-  setH('dynamic-banners-container', `
-    <div class="flex overflow-x-auto gap-4 pb-2 snap-x hide-scrollbar">
-    ${(appData.banners || []).map((b, i) => {
+  // Render Banner Promo (Disesuaikan untuk Rasio 16:9 Rapi & Tidak Terpotong)
+  const bCont = el('dynamic-banners-container');
+  const rawBanners = (appData.banners || []).filter(b => b && (b.img || b.title || b.subtitle));
+  
+  if (!rawBanners.length) {
+    if (bCont) {
+      bCont.innerHTML = '';
+      bCont.classList.add('hidden');
+    }
+    if (window._bannerInterval) {
+      clearInterval(window._bannerInterval);
+      window._bannerInterval = null;
+    }
+  } else {
+    if (bCont) bCont.classList.remove('hidden');
+    const bannerCount = rawBanners.length;
+    
+    const bannersHtml = rawBanners.map((b, i) => {
       const rawImg = (b.img || '').trim();
       const fixedImg = rawImg ? fixD(rawImg) : '';
       const hasImg = fixedImg.length > 0;
       const hasTitle = b.title && b.title.trim().length > 0;
       const bgTheme = i % 2 === 0 ? 'var(--clr-p)' : 'var(--clr-p-dark)';
       
+      let widthCls = '';
+      if (bannerCount === 1) {
+        widthCls = 'w-full max-w-4xl mx-auto';
+      } else if (bannerCount === 2) {
+        widthCls = 'w-[88%] sm:w-[480px] md:w-[540px] lg:w-[calc(50%-0.5rem)] lg:flex-1 shrink-0 snap-center';
+      } else {
+        widthCls = 'w-[88%] sm:w-[480px] md:w-[540px] lg:w-[calc(50%-0.5rem)] shrink-0 snap-center';
+      }
+
+      const bannerClick = b.link ? `onclick="window.open('${esc(b.link)}', '_blank')"` : '';
+
       if (hasImg) {
         return `
-        <div class="w-[88%] sm:w-[460px] md:w-[560px] lg:w-[640px] aspect-[16/7] sm:aspect-[21/9] snap-center shrink-0 rounded-2xl overflow-hidden shadow-md relative border border-slate-200 dark:border-slate-700 group cursor-pointer" style="background:${bgTheme}">
-          <img src="${esc(fixedImg)}" loading="eager" onerror="this.style.display='none'" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"/>
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4 sm:p-5 text-white pointer-events-none ${hasTitle ? '' : 'opacity-0'}">
+        <div class="banner-item ${widthCls} aspect-video snap-center rounded-2xl overflow-hidden shadow-sm hover:shadow-lg relative border border-slate-200/80 dark:border-slate-700/80 group transition-all duration-300 cursor-pointer" style="aspect-ratio: 16/9; background:${bgTheme}" ${bannerClick}>
+          <img src="${esc(fixedImg)}" alt="${esc(b.title || 'Banner Promo')}" loading="eager" onerror="this.style.display='none'" class="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-500 block"/>
+          ${hasTitle ? `
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-4 sm:p-5 text-white pointer-events-none">
             <span class="badge badge-xs w-fit mb-1.5" style="background:var(--clr-p);color:#fff;border-color:transparent">Promo</span>
-            <h2 class="font-bold text-base sm:text-lg leading-tight drop-shadow-md text-white">${esc(b.title || '')}</h2>
+            <h2 class="font-bold text-base sm:text-lg leading-tight drop-shadow-md text-white">${esc(b.title)}</h2>
             ${b.subtitle ? `<p class="text-xs text-white/90 font-medium drop-shadow-sm mt-0.5">${esc(b.subtitle)}</p>` : ''}
-          </div>
+          </div>` : ''}
         </div>`;
       }
 
       return `
-      <div class="w-[85%] sm:w-[320px] snap-center shrink-0 rounded-2xl p-5 text-white shadow-md relative overflow-hidden flex items-center justify-between border-2 border-transparent" style="background: ${bgTheme}">
+      <div class="banner-item ${widthCls} aspect-video snap-center rounded-2xl p-5 text-white shadow-sm hover:shadow-md relative overflow-hidden flex items-center justify-between border-2 border-transparent transition-all duration-300 ${bannerClick ? 'cursor-pointer' : ''}" style="aspect-ratio: 16/9; background: ${bgTheme}" ${bannerClick}>
         <div class="flex-1 pr-2 relative z-10">
           <span class="badge badge-xs" style="background:rgba(255,255,255,.25);color:#fff;border-color:rgba(255,255,255,.35)">Promo</span>
           <h2 class="font-bold text-base sm:text-lg mt-2 mb-0.5 leading-tight text-white">${esc(b.title || 'Promo Menarik')}</h2>
-          <p class="text-[10px] text-white/90 font-medium">${esc(b.subtitle || '')}</p>
+          <p class="text-xs text-white/90 font-medium">${esc(b.subtitle || '')}</p>
         </div>
       </div>`;
-    }).join('')}
-    </div>
-  `);
+    }).join('');
+
+    const showNav = bannerCount > 1;
+    const hideOnDesktopClass = bannerCount === 2 ? 'lg:hidden' : '';
+
+    setH('dynamic-banners-container', `
+      <div class="relative group/banners" onmouseenter="window._bannerHovered=true" onmouseleave="window._bannerHovered=false" ontouchstart="window._bannerHovered=true" ontouchend="setTimeout(()=>{window._bannerHovered=false;},3000)">
+        ${showNav ? `
+        <button type="button" onclick="slideBanner(-1)" class="hidden sm:flex ${hideOnDesktopClass} absolute -left-3 lg:-left-4 top-1/2 -translate-y-1/2 w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-white/95 dark:bg-slate-800/95 shadow-md hover:shadow-lg border border-slate-200/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 items-center justify-center hover:scale-110 active:scale-95 transition-all z-20 opacity-0 group-hover/banners:opacity-100 focus:opacity-100" title="Banner Sebelumnya" aria-label="Banner Sebelumnya">
+          <i class="fa-solid fa-chevron-left text-xs sm:text-sm"></i>
+        </button>
+        <button type="button" onclick="slideBanner(1)" class="hidden sm:flex ${hideOnDesktopClass} absolute -right-3 lg:-right-4 top-1/2 -translate-y-1/2 w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-white/95 dark:bg-slate-800/95 shadow-md hover:shadow-lg border border-slate-200/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 items-center justify-center hover:scale-110 active:scale-95 transition-all z-20 opacity-0 group-hover/banners:opacity-100 focus:opacity-100" title="Banner Berikutnya" aria-label="Banner Berikutnya">
+          <i class="fa-solid fa-chevron-right text-xs sm:text-sm"></i>
+        </button>
+        ` : ''}
+
+        <div id="dynamic-banners-track" class="flex overflow-x-auto gap-4 pb-1 snap-x snap-mandatory hide-scrollbar scroll-smooth" onscroll="updateBannerDots()">
+          ${bannersHtml}
+        </div>
+
+        ${showNav ? `
+        <div class="flex items-center justify-center gap-1.5 mt-2.5 ${hideOnDesktopClass}" id="dynamic-banners-dots">
+          ${rawBanners.map((_, idx) => `
+            <button type="button" onclick="goToBanner(${idx})" class="banner-dot h-1.5 rounded-full transition-all duration-300 ${idx === 0 ? 'w-6' : 'w-1.5 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400'}" style="${idx === 0 ? 'background-color:var(--clr-p)' : ''}" aria-label="Slide ${idx + 1}"></button>
+          `).join('')}
+        </div>
+        ` : ''}
+      </div>
+    `);
+
+    setTimeout(window.initBannerCarousel, 200);
+  }
 
   // Render Kartu Voucher Dinamis
   const vCont = el('dynamic-vouchers-container');
