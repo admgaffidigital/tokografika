@@ -4,6 +4,24 @@ Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan 
 
 ---
 
+## [2026-09-15] - Maintenance & Audit Menyeluruh Website
+### Bug Fixes & Code Quality:
+- **Bug Fix Kritis (Back Button HP tidak menutup PDF Preview):**
+  - `bootstrap.js`: Diperbaiki typo nama fungsi `closePdfPreviewModal` → `closePreviewModal` yang menyebabkan tombol Back hardware di HP tidak dapat menutup modal preview dokumen A4.
+- **Upgrade PDF Preview Modal ke Zero-Flicker Engine:**
+  - `pdf-preview-modal.html` & `print.js`: Modal preview dokumen A4 kini menggunakan `openModalSmooth`/`closeModalSmooth` sepenuhnya, konsisten dengan seluruh modal lain di aplikasi.
+  - Menghapus kelas `fade-in` yang bertabrakan dengan engine transisi halus baru.
+- **Deduplication CSS (Penghapusan Kode Ganda):**
+  - `base.css`: Menghapus blok `html.dark body` duplikat yang menimpa warna dark mode yang benar.
+  - `responsive.css`: Menyederhanakan blok `.scroll-content` terduplikasi, hanya simpan `min-height: 0`.
+- **Kualitas Kode (Code Hygiene):**
+  - `print.js`: Ditambahkan label deskriptif pada 3 pemanggilan `console.error(error)` yang sebelumnya kosong tanpa konteks.
+  - `components.css`: Menghapus baris kosong berlebih di akhir file.
+- **PWA Cache Update:** `sw.js` versi cache `v5` → `v6` agar semua klien PWA mendapatkan kode terbaru.
+- **Audit 100% Bersih:** 305 event handler, 250 DOM ID referensi, dan 21 modal terverifikasi bersih.
+
+---
+
 ## [2026-09-15] - Perbaikan Total Bottom Sheet & Modal Engine (Hardware-Accelerated Zero Flicker)
 ### Perbaikan & Peningkatan:
 - **Penyelesaian Bug Layar Berkedip (*Anti-Flicker Architecture*):**
