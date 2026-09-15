@@ -1,8 +1,8 @@
 <!-- ========================================================================= -->
 <!-- MODAL: CLOUD & BACKUP CENTER (PUSAT CADANGAN & SINKRONISASI DATA)        -->
 <!-- ========================================================================= -->
-<div id="backup-sync-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[90] flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-all duration-300" onclick="if(event.target===this) closeBackupSyncModal()" style="padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 20px)); padding-top: calc(1rem + env(safe-area-inset-top, 10px));">
-  <div id="backup-sync-modal-box" class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl max-w-2xl w-full flex flex-col shadow-2xl border border-slate-200/80 dark:border-slate-800 transition-all duration-300 scale-95 overflow-hidden my-auto" style="max-height: min(78dvh, 78vh);">
+<div id="backup-sync-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[90] flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none modal-backdrop-smooth" onclick="if(event.target===this) closeBackupSyncModal()" style="padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 20px)); padding-top: calc(1rem + env(safe-area-inset-top, 10px));">
+  <div id="backup-sync-modal-box" class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl max-w-2xl w-full flex flex-col shadow-2xl border border-slate-200/80 dark:border-slate-800 scale-95 modal-box-smooth overflow-hidden my-auto" style="max-height: min(78dvh, 78vh);">
     
     <!-- Modal Header (Synchronized Theme Gradient) - Compact di mobile -->
     <div class="sticky top-0 z-30 px-4 py-2.5 sm:px-6 sm:py-4 flex items-center justify-between shrink-0" style="background:linear-gradient(135deg,var(--clr-p,#059669),var(--clr-ps,#047857));">
@@ -236,8 +236,8 @@
 <!-- ========================================================================= -->
 <!-- MODAL: RESTORE PREVIEW CONFIRMATION (PRATINJAU SEBELUM RESTORE)           -->
 <!-- ========================================================================= -->
-<div id="restore-preview-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[95] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300" onclick="if(event.target===this) closeRestorePreviewModal()">
-  <div id="restore-preview-modal-box" class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 transition-all duration-300 scale-95 space-y-4">
+<div id="restore-preview-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[95] flex items-center justify-center p-4 opacity-0 pointer-events-none modal-backdrop-smooth" onclick="if(event.target===this) closeRestorePreviewModal()">
+  <div id="restore-preview-modal-box" class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 scale-95 modal-box-smooth space-y-4">
     <div class="text-center">
       <div class="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-500 flex items-center justify-center text-2xl mx-auto mb-3 border border-amber-200 dark:border-amber-800">
         <i class="fa-solid fa-triangle-exclamation"></i>

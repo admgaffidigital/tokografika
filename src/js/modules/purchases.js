@@ -50,26 +50,12 @@ window.openSupplierModal = (id = null, fromPurchase = false) => {
     setV('supp-notes', '');
   }
 
-  const modal = el('supplier-modal');
-  const box = el('supplier-modal-box');
-  if (modal && box) {
-    show('supplier-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-5');
-    }, 10);
-  }
+  window.openModalSmooth('supplier-modal', 'supplier-modal-box', 'centered');
 };
 
 window.closeSupplierModal = () => {
   isSupplierFromPurchase = false;
-  const modal = el('supplier-modal');
-  const box = el('supplier-modal-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-5');
-    setTimeout(() => hide('supplier-modal'), 250);
-  }
+  window.closeModalSmooth('supplier-modal', 'supplier-modal-box', 'centered');
 };
 
 window.saveSupplier = async () => {
@@ -311,25 +297,11 @@ window.openPurchaseModal = () => {
   setV('purch-notes', '');
   calculatePurchaseTotals();
 
-  const modal = el('purchase-modal');
-  const box = el('purchase-modal-box');
-  if (modal && box) {
-    show('purchase-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-5');
-    }, 10);
-  }
+  window.openModalSmooth('purchase-modal', 'purchase-modal-box', 'centered');
 };
 
 window.closePurchaseModal = () => {
-  const modal = el('purchase-modal');
-  const box = el('purchase-modal-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-5');
-    setTimeout(() => hide('purchase-modal'), 250);
-  }
+  window.closeModalSmooth('purchase-modal', 'purchase-modal-box', 'centered');
 };
 
 window.onPurchaseProductSelect = () => {
@@ -704,25 +676,11 @@ window.openPurchasePaymentModal = (purchaseId) => {
     }
   }
 
-  const modal = el('purchase-payment-modal');
-  const box = el('purchase-payment-box');
-  if (modal && box) {
-    show('purchase-payment-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-5');
-    }, 10);
-  }
+  window.openModalSmooth('purchase-payment-modal', 'purchase-payment-box', 'centered');
 };
 
 window.closePurchasePaymentModal = () => {
-  const modal = el('purchase-payment-modal');
-  const box = el('purchase-payment-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-5');
-    setTimeout(() => hide('purchase-payment-modal'), 250);
-  }
+  window.closeModalSmooth('purchase-payment-modal', 'purchase-payment-box', 'centered');
 };
 
 window.fillPayFullAmount = () => {
@@ -887,25 +845,11 @@ window.openPurchaseDetailModal = (purchaseId) => {
     `;
   }
 
-  const modal = el('purchase-detail-modal');
-  const box = el('purchase-detail-box');
-  if (modal && box) {
-    show('purchase-detail-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-5');
-    }, 10);
-  }
+  window.openModalSmooth('purchase-detail-modal', 'purchase-detail-box', 'centered');
 };
 
 window.closePurchaseDetailModal = () => {
-  const modal = el('purchase-detail-modal');
-  const box = el('purchase-detail-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-5');
-    setTimeout(() => hide('purchase-detail-modal'), 250);
-  }
+  window.closeModalSmooth('purchase-detail-modal', 'purchase-detail-box', 'centered');
 };
 
 window.printPurchaseInvoice = () => {
@@ -1803,26 +1747,13 @@ window.openSupplierProductsModal = (supplierId) => {
 
   renderSupplierProductsModalContent();
 
-  const modal = el('supplier-products-modal');
-  const box = el('supplier-products-modal-box');
-  if (modal && box) {
-    show('supplier-products-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-5');
-    }, 10);
-  }
+  window.openModalSmooth('supplier-products-modal', 'supplier-products-modal-box', 'bottom-sheet');
 };
 
 window.closeSupplierProductsModal = () => {
-  const modal = el('supplier-products-modal');
-  const box = el('supplier-products-modal-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-5');
-    setTimeout(() => hide('supplier-products-modal'), 250);
-  }
-  window._currentViewingSupplierId = null;
+  window.closeModalSmooth('supplier-products-modal', 'supplier-products-modal-box', 'bottom-sheet', () => {
+    window._currentViewingSupplierId = null;
+  });
 };
 
 window.setSupplierProductsSubTab = (tab) => {

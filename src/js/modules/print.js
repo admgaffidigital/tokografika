@@ -253,17 +253,11 @@ window.openReceiptPreview = (directOrder = null) => {
   updatePaperSizeButtons();
   renderReceiptContent(cVOrd);
 
-  show('receipt-preview-modal');
-  setTimeout(() => {
-    el('receipt-preview-modal').classList.remove('opacity-0');
-    el('receipt-preview-modal-box').classList.remove('scale-95');
-  }, 10);
+  window.openModalSmooth('receipt-preview-modal', 'receipt-preview-modal-box', 'centered');
 };
 
 window.closeReceiptPreviewModal = () => {
-  el('receipt-preview-modal').classList.add('opacity-0');
-  el('receipt-preview-modal-box').classList.add('scale-95');
-  setTimeout(() => hide('receipt-preview-modal'), 300);
+  window.closeModalSmooth('receipt-preview-modal', 'receipt-preview-modal-box', 'centered');
 };
 
 window.executePrintReceipt = () => {

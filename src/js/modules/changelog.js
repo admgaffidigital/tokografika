@@ -132,29 +132,11 @@ window.fetchChangelogData = async (force = false) => {
 };
 
 window.openChangelogModal = () => {
-  const m = document.getElementById('changelog-modal');
-  const b = document.getElementById('changelog-modal-box');
-  if (!m || !b) return;
-
-  m.classList.remove('hidden');
-  m.classList.add('flex');
-  setTimeout(() => {
-    m.classList.remove('opacity-0');
-    b.classList.remove('scale-95');
-  }, 10);
-
+  window.openModalSmooth('changelog-modal', 'changelog-modal-box', 'centered');
   // Always revalidate when opened so it stays continuously up-to-date
   fetchChangelogData(false);
 };
 
 window.closeChangelogModal = () => {
-  const m = document.getElementById('changelog-modal');
-  const b = document.getElementById('changelog-modal-box');
-  if (!m || !b) return;
-  m.classList.add('opacity-0');
-  b.classList.add('scale-95');
-  setTimeout(() => {
-    m.classList.add('hidden');
-    m.classList.remove('flex');
-  }, 300);
+  window.closeModalSmooth('changelog-modal', 'changelog-modal-box', 'centered');
 };

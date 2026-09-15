@@ -233,8 +233,8 @@
 <!-- ========================================================================= -->
 <!-- UNIVERSAL FLOATING CART DRAWER (HP: Bottom Sheet / Tablet & PC: Right Side)-->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[75] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-stretch sm:justify-end' id='pos-cart-drawer-modal' onclick='if(event.target===this) closePosCartDrawer()'>
-  <div class='w-full sm:w-[430px] sm:max-w-full max-h-[90dvh] sm:max-h-full h-auto sm:h-full bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-none shadow-2xl flex flex-col transform translate-y-full sm:translate-y-0 sm:translate-x-full transition-transform duration-300 overflow-hidden border-l border-slate-200 dark:border-slate-800' id='pos-cart-drawer-box'>
+<div class='fixed inset-0 z-[75] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 modal-backdrop-smooth flex items-end sm:items-stretch sm:justify-end' id='pos-cart-drawer-modal' onclick='if(event.target===this) closePosCartDrawer()'>
+  <div class='w-full sm:w-[430px] sm:max-w-full max-h-[90dvh] sm:max-h-full h-auto sm:h-full bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-none shadow-2xl flex flex-col transform translate-y-full sm:translate-y-0 sm:translate-x-full bottom-sheet-smooth overflow-hidden border-l border-slate-200 dark:border-slate-800' id='pos-cart-drawer-box'>
     
     <!-- Drawer Header -->
     <div class='px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50 dark:bg-[#0b1329]'>
@@ -291,8 +291,8 @@
 <!-- ========================================================================= -->
 <!-- MODAL: QUICK VARIANT SELECTOR (PILIH VARIAN PRODUK POS)                   -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[78] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4' id='pos-variant-modal' onclick='if(event.target===this) closePosVariantModal()'>
-  <div class='w-full max-w-md bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-95 transition-transform duration-300' id='pos-variant-box'>
+<div class='fixed inset-0 z-[78] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 modal-backdrop-smooth flex items-center justify-center p-4' id='pos-variant-modal' onclick='if(event.target===this) closePosVariantModal()'>
+  <div class='w-full max-w-md bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-95 modal-box-smooth' id='pos-variant-box'>
     <div class='px-5 py-3.5 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between'>
       <div class='flex items-center gap-2'>
         <i class='fa-solid fa-layer-group text-emerald-600 dark:text-emerald-400 text-sm'></i>
@@ -318,8 +318,8 @@
 <!-- ========================================================================= -->
 <!-- MODAL: EDIT DECIMAL QUANTITY (SATUAN DESIMAL / BERAT)                     -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[79] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4' id='pos-qty-modal' onclick='if(event.target===this) closePosQtyModal()'>
-  <div class='w-full max-w-sm bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-95 transition-transform duration-300' id='pos-qty-box'>
+<div class='fixed inset-0 z-[79] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 modal-backdrop-smooth flex items-center justify-center p-4' id='pos-qty-modal' onclick='if(event.target===this) closePosQtyModal()'>
+  <div class='w-full max-w-sm bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-95 modal-box-smooth' id='pos-qty-box'>
     <div class='px-5 py-3.5 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between'>
       <h3 class='font-black text-xs sm:text-sm text-slate-900 dark:text-white' id='pos-qty-modal-title'>Ubah Jumlah Beli</h3>
       <button type='button' class='w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-rose-500 flex items-center justify-center text-xs' onclick='closePosQtyModal()'>
@@ -350,8 +350,8 @@
 <!-- ========================================================================= -->
 <!-- MODAL: POS CHECKOUT WIZARD (3-STEP: REVIEW → PENGIRIMAN → PEMBAYARAN)     -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[80] bg-slate-900/75 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center sm:p-4' id='pos-payment-modal' onclick='if(event.target===this) closePosPaymentModal()'>
-  <div class='w-full sm:max-w-lg bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 transition-transform duration-300 max-h-[95dvh] sm:max-h-[90vh] overflow-hidden' id='pos-payment-box'>
+<div class='fixed inset-0 z-[80] bg-slate-900/75 backdrop-blur-sm hidden opacity-0 modal-backdrop-smooth flex items-end sm:items-center justify-center sm:p-4' id='pos-payment-modal' onclick='if(event.target===this) closePosPaymentModal()'>
+  <div class='w-full sm:max-w-lg bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 bottom-sheet-smooth max-h-[95dvh] sm:max-h-[90vh] overflow-hidden' id='pos-payment-box'>
     
     <!-- Wizard Header: Progress Steps -->
     <div class='px-5 pt-5 pb-3 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 shrink-0'>
@@ -632,8 +632,8 @@
 <!-- ========================================================================= -->
 <!-- MODAL: SUKSES TRANSAKSI POS + PILIH CETAK DOKUMEN                        -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[85] bg-slate-900/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4' id='pos-success-modal'>
-  <div class='w-full max-w-sm bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-75 transition-transform duration-300' id='pos-success-box'>
+<div class='fixed inset-0 z-[85] bg-slate-900/80 backdrop-blur-md hidden opacity-0 modal-backdrop-smooth flex items-center justify-center p-4' id='pos-success-modal'>
+  <div class='w-full max-w-sm bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-75 modal-box-smooth' id='pos-success-box'>
     
     <!-- Success Header -->
     <div class='px-6 pt-8 pb-5 text-center bg-gradient-to-b from-emerald-50 dark:from-emerald-950/30 to-transparent'>
@@ -697,8 +697,8 @@
 <!-- ========================================================================= -->
 <!-- MODAL: PILIH KATEGORI POS (MODERN SHEET / DRAWER MENU)                    -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[82] bg-slate-900/75 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center sm:p-4' id='pos-category-modal' onclick='if(event.target===this) closePosCategoryModal()'>
-  <div class='w-full sm:max-w-md bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 transition-transform duration-300 max-h-[85dvh] overflow-hidden' id='pos-category-box'>
+<div class='fixed inset-0 z-[82] bg-slate-900/75 backdrop-blur-sm hidden opacity-0 modal-backdrop-smooth flex items-end sm:items-center justify-center sm:p-4' id='pos-category-modal' onclick='if(event.target===this) closePosCategoryModal()'>
+  <div class='w-full sm:max-w-md bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 bottom-sheet-smooth max-h-[85dvh] overflow-hidden' id='pos-category-box'>
     <!-- Header -->
     <div class='px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-[#0b1329] shrink-0'>
       <div class='flex items-center gap-2.5'>
@@ -731,8 +731,8 @@
 <!-- ========================================================================= -->
 <!-- MODAL: SAAS SUBSCRIPTION PAYWALL (POS KASIR & HPP FULL PREMIUM)           -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[90] bg-slate-950/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-3 sm:p-5' id='pos-subscription-modal' onclick='if(event.target===this) closeSubscriptionModal()'>
-  <div class='w-full max-w-lg bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform scale-95 transition-transform duration-300 max-h-[92dvh] overflow-hidden' id='pos-subscription-box'>
+<div class='fixed inset-0 z-[90] bg-slate-950/80 backdrop-blur-md hidden opacity-0 modal-backdrop-smooth flex items-center justify-center p-3 sm:p-5' id='pos-subscription-modal' onclick='if(event.target===this) closeSubscriptionModal()'>
+  <div class='w-full max-w-lg bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform scale-95 modal-box-smooth max-h-[92dvh] overflow-hidden' id='pos-subscription-box'>
     
     <!-- Top Header Banner with Gradient -->
     <div class='relative px-6 pt-6 pb-5 text-center bg-gradient-to-br from-amber-500 via-amber-600 to-emerald-600 text-white shrink-0 overflow-hidden'>

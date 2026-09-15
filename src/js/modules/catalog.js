@@ -631,12 +631,8 @@ window.openProductModal = i => {
       history.pushState({ modal: 'product', pid: p.id }, '', '');
       oMods.push('product');
     }
-    show('product-modal'); 
     c.scrollTo(0, 0);
-    setTimeout(() => {
-      m.classList.remove('opacity-0');
-      c.classList.remove('translate-y-full', 'sm:translate-y-5');
-    }, 10);
+    window.openModalSmooth('product-modal', 'product-modal-content', 'bottom-sheet');
   }
 };
 
@@ -649,10 +645,9 @@ window.closeProductModal = (fH = !1) => {
     } else if (fH) {
       oMods.pop();
     }
-    m.classList.add('opacity-0');
-    c.classList.add('translate-y-full', 'sm:translate-y-5');
-    setTimeout(() => hide('product-modal'), 300);
-    if (window.updateStoreSeo) updateStoreSeo();
+    window.closeModalSmooth('product-modal', 'product-modal-content', 'bottom-sheet', () => {
+      if (window.updateStoreSeo) updateStoreSeo();
+    });
   }
   // Bersihkan parameter ?p dari URL secara halus tanpa reload
   try {
@@ -724,11 +719,7 @@ window.shareProduct = (productOrId) => {
       history.pushState({ modal: 'share' }, '', '');
       oMods.push('share');
     }
-    show('share-product-modal');
-    setTimeout(() => {
-      m.classList.remove('opacity-0');
-      c.classList.remove('translate-y-full', 'sm:translate-y-5');
-    }, 10);
+    window.openModalSmooth('share-product-modal', 'share-product-content', 'bottom-sheet');
   }
 };
 
@@ -741,9 +732,7 @@ window.closeShareModal = (fH = !1) => {
     } else if (fH && oMods[oMods.length - 1] === 'share') {
       oMods.pop();
     }
-    m.classList.add('opacity-0');
-    c.classList.add('translate-y-full', 'sm:translate-y-5');
-    setTimeout(() => hide('share-product-modal'), 300);
+    window.closeModalSmooth('share-product-modal', 'share-product-content', 'bottom-sheet');
   }
 };
 
@@ -1426,26 +1415,16 @@ window.openBuyerGuide = (topic = 'order_flow') => {
   const m = el('buyer-guide-modal');
   const box = el('buyer-guide-modal-box');
   if (!m || !box) return;
-  m.classList.remove('hidden');
-  setTimeout(() => {
-    m.classList.remove('opacity-0');
-    box.classList.remove('translate-y-full');
-    box.classList.remove('sm:scale-95');
-  }, 10);
-  window.showBuyerGuideTopic(topic);
+  // Render content FIRST while hidden so height and DOM are static before sliding up
+  window.showBuyerGuideTopic(topic, false);
+  window.openModalSmooth('buyer-guide-modal', 'buyer-guide-modal-box', 'bottom-sheet');
 };
 
 window.closeBuyerGuide = () => {
-  const m = el('buyer-guide-modal');
-  const box = el('buyer-guide-modal-box');
-  if (!m || !box) return;
-  m.classList.add('opacity-0');
-  box.classList.add('translate-y-full');
-  box.classList.add('sm:scale-95');
-  setTimeout(() => m.classList.add('hidden'), 300);
+  window.closeModalSmooth('buyer-guide-modal', 'buyer-guide-modal-box', 'bottom-sheet');
 };
 
-window.showBuyerGuideTopic = (topic) => {
+window.showBuyerGuideTopic = (topic, shouldScroll = true) => {
   let target = topic;
   if (!buyerGuideTopicsData[target]) {
     target = 'order_flow';
@@ -1465,16 +1444,22 @@ window.showBuyerGuideTopic = (topic) => {
     activeBtn.classList.add('shadow-sm', 'text-white');
     activeBtn.style.backgroundColor = 'var(--clr-p)';
     activeBtn.style.color = '#ffffff';
-    try {
-      activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-    } catch(e) {}
+    if (shouldScroll) {
+      try {
+        const navCont = activeBtn.parentElement;
+        if (navCont) {
+          const leftPos = activeBtn.offsetLeft - (navCont.clientWidth / 2) + (activeBtn.clientWidth / 2);
+          navCont.scrollTo({ left: Math.max(0, leftPos), behavior: 'smooth' });
+        }
+      } catch(e) {}
+    }
   }
 
   const data = buyerGuideTopicsData[target];
   const container = el('buyer-guide-content');
   if (container && data) {
     container.innerHTML = `
-      <div class="space-y-4 fade-in">
+      <div class="space-y-4">
         <div class="flex items-center gap-3.5 pb-3.5 border-b border-slate-100 dark:border-slate-700/60">
           <div class="w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 shadow-sm" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
             <i class="fa-solid ${data.icon}"></i>

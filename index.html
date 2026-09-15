@@ -976,6 +976,38 @@ html.dark .badge-counter {
     object-position: center !important;
 }
 
+/* --------------------------------------------------------------------------
+   9. Ultra-Smooth Bottom Sheet & Modal Engine (Hardware-Accelerated Zero Flicker)
+   -------------------------------------------------------------------------- */
+.modal-backdrop-smooth {
+    transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    will-change: opacity;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-sheet-smooth {
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-font-smoothing: subpixel-antialiased;
+    overscroll-behavior: contain;
+}
+
+.modal-box-smooth {
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    will-change: transform, opacity;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-font-smoothing: subpixel-antialiased;
+    overscroll-behavior: contain;
+}
+
+
 
 /* ==========================================================================
    GRAFIKA PWA STORE - RESPONSIVE LAYOUT FIXES
@@ -1615,8 +1647,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: CONFIRM DIALOG (ADAPTIVE - SUPPORTS HTML-RICH PICKER CONTENT)     -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[120] bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300' id='custom-confirm-modal' onclick='if(event.target===this) closeConfirm()'>
-  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-[340px] sm:max-w-lg p-5 sm:p-6 shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform scale-95 transition-transform duration-300 flex flex-col max-h-[90dvh] overflow-hidden' id='custom-confirm-box'>
+<div class='fixed inset-0 z-[120] bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4 opacity-0 modal-backdrop-smooth' id='custom-confirm-modal' onclick='if(event.target===this) closeConfirm()'>
+  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-[340px] sm:max-w-lg p-5 sm:p-6 shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform scale-95 modal-box-smooth flex flex-col max-h-[90dvh] overflow-hidden' id='custom-confirm-box'>
     <div class='w-12 h-12 bg-rose-50 dark:bg-rose-900/30 text-rose-500 dark:text-rose-400 rounded-xl flex items-center justify-center text-xl mx-auto mb-3 border border-rose-100 dark:border-rose-800 shrink-0' id='confirm-icon-box'>
       <i class='fa-solid fa-triangle-exclamation' id='confirm-icon'></i>
     </div>
@@ -1633,8 +1665,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: BARCODE / QR SCANNER                                               -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4' id='scanner-modal' onclick='if(event.target===this) closeCameraScanner()'>
-  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative flex flex-col'>
+<div class='fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4 opacity-0 modal-backdrop-smooth' id='scanner-modal' onclick='if(event.target===this) closeCameraScanner()'>
+  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative flex flex-col transform scale-95 modal-box-smooth' id='scanner-modal-box'>
     <div class='p-4 border-b-2 border-slate-200 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800'>
       <h3 class='font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2'>
         <i class='fa-solid fa-qrcode text-emerald-600 dark:text-emerald-400'></i> Scan Barcode
@@ -1655,8 +1687,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: PRODUCT DETAIL & ADD TO CART                                       -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[70] bg-slate-900/70 hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-5' id='product-modal' onclick='if(event.target===this) closeProductModal()'>
-  <div class='w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl max-h-[90dvh] sm:max-h-[88dvh] overflow-y-auto transform translate-y-full sm:translate-y-0 transition-transform duration-300 hide-scrollbar shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col relative' id='product-modal-content'>
+<div class='fixed inset-0 z-[70] bg-slate-900/70 hidden opacity-0 modal-backdrop-smooth flex items-end sm:items-center justify-center p-0 sm:p-5' id='product-modal' onclick='if(event.target===this) closeProductModal()'>
+  <div class='w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl max-h-[90dvh] sm:max-h-[88dvh] overflow-y-auto transform translate-y-full sm:translate-y-0 bottom-sheet-smooth hide-scrollbar shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col relative' id='product-modal-content'>
     <!-- Synchronized Glass Theme Header -->
     <div class='glass-header sticky top-0 right-0 left-0 z-30 px-3.5 sm:px-5 py-2.5 sm:py-3 flex items-center justify-between shadow-md shrink-0 sm:rounded-t-2xl' style='background-color:var(--clr-p)!important;'>
       <div class='flex items-center gap-2 min-w-0 flex-1 text-white'>
@@ -1745,8 +1777,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: PRODUCT SHARE DIALOG                                              -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[80] bg-slate-900/70 hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4' id='share-product-modal' onclick='if(event.target===this) closeShareModal()'>
-  <div class='w-full max-w-md bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl max-h-[90dvh] overflow-y-auto transform translate-y-full sm:translate-y-0 transition-transform duration-300 hide-scrollbar shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col relative' id='share-product-content'>
+<div class='fixed inset-0 z-[80] bg-slate-900/70 hidden opacity-0 modal-backdrop-smooth flex items-end sm:items-center justify-center p-0 sm:p-4' id='share-product-modal' onclick='if(event.target===this) closeShareModal()'>
+  <div class='w-full max-w-md bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl max-h-[90dvh] overflow-y-auto transform translate-y-full sm:translate-y-0 bottom-sheet-smooth hide-scrollbar shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col relative' id='share-product-content'>
     
     <!-- Glass Header -->
     <div class='glass-header sticky top-0 right-0 left-0 z-20 px-4 sm:px-5 py-3 flex items-center justify-between shadow-md shrink-0 sm:rounded-t-2xl' style='background-color:var(--clr-p)!important;'>
@@ -1829,8 +1861,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: ADMIN FORM MODAL                                                   -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[80] bg-slate-900/70 hidden flex items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300' id='admin-modal' onclick='if(event.target===this) closeAdminModal()'>
-  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl max-h-[92dvh] flex flex-col hide-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform scale-95 transition-transform duration-300' id='admin-modal-box'>
+<div class='fixed inset-0 z-[80] bg-slate-900/70 hidden flex items-center justify-center p-3 sm:p-6 opacity-0 modal-backdrop-smooth' id='admin-modal' onclick='if(event.target===this) closeAdminModal()'>
+  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl max-h-[92dvh] flex flex-col hide-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform scale-95 modal-box-smooth' id='admin-modal-box'>
     <div class='sticky top-0 bg-white dark:bg-slate-800 px-5 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center z-20 rounded-t-2xl'>
       <h3 class='font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2' id='admin-modal-title'>Form Data</h3>
       <button class='w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-500 dark:hover:text-rose-400 transition-all border border-slate-200 dark:border-slate-600' onclick='closeAdminModal()'>
@@ -1849,8 +1881,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: ADMIN ORDER DETAIL & PRINT OPTIONS                                 -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[100] bg-slate-900/70 hidden flex items-center justify-center p-3 sm:p-6 opacity-0 transition-opacity duration-300' id='admin-order-modal' onclick='if(event.target===this) closeOrderDetailModal()'>
-  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-3xl xl:max-w-4xl max-h-[92dvh] overflow-y-auto hide-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform scale-95 transition-transform duration-300 flex flex-col' id='admin-order-modal-box'>
+<div class='fixed inset-0 z-[100] bg-slate-900/70 hidden flex items-center justify-center p-3 sm:p-6 opacity-0 modal-backdrop-smooth' id='admin-order-modal' onclick='if(event.target===this) closeOrderDetailModal()'>
+  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-3xl xl:max-w-4xl max-h-[92dvh] overflow-y-auto hide-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform scale-95 modal-box-smooth flex flex-col' id='admin-order-modal-box'>
     <div class='sticky top-0 bg-white dark:bg-slate-800 px-5 py-4 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center z-20 rounded-t-2xl'>
       <h3 class='font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2'>
         <i class='fa-solid fa-file-invoice text-emerald-600 dark:text-emerald-400'></i> Detail Pesanan
@@ -1882,8 +1914,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: RECEIPT PREVIEW (58MM & 80MM THERMAL)                             -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[110] bg-slate-900/80 hidden flex items-center justify-center p-3 opacity-0 transition-opacity duration-300' id='receipt-preview-modal' onclick='if(event.target===this) closeReceiptPreviewModal()'>
-  <div class='bg-slate-100 dark:bg-slate-800 rounded-2xl w-full max-w-[340px] max-h-[92dvh] overflow-hidden shadow-2xl border border-slate-300/80 dark:border-slate-700/80 relative transform scale-95 transition-all duration-300 flex flex-col' id='receipt-preview-modal-box'>
+<div class='fixed inset-0 z-[110] bg-slate-900/80 hidden flex items-center justify-center p-3 opacity-0 modal-backdrop-smooth' id='receipt-preview-modal' onclick='if(event.target===this) closeReceiptPreviewModal()'>
+  <div class='bg-slate-100 dark:bg-slate-800 rounded-2xl w-full max-w-[340px] max-h-[92dvh] overflow-hidden shadow-2xl border border-slate-300/80 dark:border-slate-700/80 relative transform scale-95 modal-box-smooth flex flex-col' id='receipt-preview-modal-box'>
     <div class='sticky top-0 bg-white dark:bg-slate-800 px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center z-20'>
       <h3 class='font-bold text-slate-900 dark:text-white text-sm flex items-center gap-1.5'>
         <i class='fa-solid fa-receipt text-emerald-500'></i> Preview Struk Kasir
@@ -1958,8 +1990,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: BUKU PANDUAN & TUTORIAL CEPAT CMS & POS KASIR                      -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[105] bg-slate-900/70 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 opacity-0 transition-opacity duration-300' id='cms-guide-modal' onclick='if(event.target===this) closeCmsGuide()'>
-  <div class='bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[92dvh] sm:max-h-[88dvh] flex flex-col hide-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 overflow-hidden' id='cms-guide-modal-box'>
+<div class='fixed inset-0 z-[105] bg-slate-900/70 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 opacity-0 modal-backdrop-smooth' id='cms-guide-modal' onclick='if(event.target===this) closeCmsGuide()'>
+  <div class='bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[92dvh] sm:max-h-[88dvh] flex flex-col hide-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform translate-y-full sm:translate-y-0 sm:scale-95 bottom-sheet-smooth overflow-hidden' id='cms-guide-modal-box'>
     
     <!-- Mobile Grab Bar Handle -->
     <div class='w-full pt-2.5 pb-1 flex justify-center sm:hidden shrink-0 bg-white dark:bg-slate-800'>
@@ -2050,8 +2082,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: BUKU PANDUAN BELANJA & CARA PESAN ONLINE (STOREFRONT)             -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[105] bg-slate-900/70 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 opacity-0 transition-opacity duration-300' id='buyer-guide-modal' onclick='if(event.target===this) closeBuyerGuide()'>
-  <div class='bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[92dvh] sm:max-h-[88dvh] flex flex-col hide-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 overflow-hidden' id='buyer-guide-modal-box'>
+<div class='fixed inset-0 z-[105] bg-slate-900/70 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 md:p-6 opacity-0 modal-backdrop-smooth' id='buyer-guide-modal' onclick='if(event.target===this) closeBuyerGuide()'>
+  <div class='bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[92dvh] sm:max-h-[88dvh] flex flex-col hide-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform translate-y-full sm:translate-y-0 sm:scale-95 bottom-sheet-smooth overflow-hidden' id='buyer-guide-modal-box'>
     
     <!-- Mobile Grab Bar Handle -->
     <div class='w-full pt-2.5 pb-1 flex justify-center sm:hidden shrink-0 bg-white dark:bg-slate-800'>
@@ -2133,8 +2165,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: QUICK EDIT PRODUK (STOK, HPP, HARGA, STATUS TOKO)                 -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[110] bg-slate-900/70 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 transition-opacity duration-300' id='quick-edit-modal' onclick='if(event.target===this) closeQuickEditModal()'>
-  <div class='bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-full sm:max-w-lg md:max-w-xl max-h-[92dvh] sm:max-h-[88dvh] flex flex-col hide-scrollbar no-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 overflow-hidden' id='quick-edit-modal-box'>
+<div class='fixed inset-0 z-[110] bg-slate-900/70 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 modal-backdrop-smooth' id='quick-edit-modal' onclick='if(event.target===this) closeQuickEditModal()'>
+  <div class='bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-full sm:max-w-lg md:max-w-xl max-h-[92dvh] sm:max-h-[88dvh] flex flex-col hide-scrollbar no-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform translate-y-full sm:translate-y-0 sm:scale-95 bottom-sheet-smooth overflow-hidden' id='quick-edit-modal-box'>
     
     <!-- Mobile Grab Bar Handle -->
     <div class='w-full pt-2.5 pb-1 flex justify-center sm:hidden shrink-0 bg-white dark:bg-slate-800'>
@@ -2179,8 +2211,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: DAFTAR TRANSAKSI PENDING / DITAHAN (POS KASIR)                     -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[80] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4' id='pos-pending-modal' onclick='if(event.target===this) closePosPendingModal()'>
-  <div class='w-full sm:max-w-xl md:max-w-2xl lg:max-w-3xl max-h-[92dvh] sm:max-h-[85dvh] bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 overflow-hidden' id='pos-pending-modal-box'>
+<div class='fixed inset-0 z-[80] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 modal-backdrop-smooth flex items-end sm:items-center justify-center p-0 sm:p-4' id='pos-pending-modal' onclick='if(event.target===this) closePosPendingModal()'>
+  <div class='w-full sm:max-w-xl md:max-w-2xl lg:max-w-3xl max-h-[92dvh] sm:max-h-[85dvh] bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 bottom-sheet-smooth overflow-hidden' id='pos-pending-modal-box'>
     
     <!-- Grab Bar for Mobile -->
     <div class='w-full pt-2.5 pb-1 flex justify-center sm:hidden shrink-0 bg-slate-50 dark:bg-slate-900'>
@@ -2236,8 +2268,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: INPUT STOK OPNAME (PENYESUAIAN STOK FISIK & AUDIT SELISIH)         -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[110] bg-slate-900/70 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 transition-opacity duration-300' id='stock-opname-modal' onclick='if(event.target===this) closeStockOpnameModal()'>
-  <div class='bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl max-h-[92dvh] sm:max-h-[88dvh] flex flex-col hide-scrollbar no-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform translate-y-full sm:translate-y-0 sm:scale-95 transition-all duration-300 overflow-hidden' id='stock-opname-modal-box'>
+<div class='fixed inset-0 z-[110] bg-slate-900/70 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 modal-backdrop-smooth' id='stock-opname-modal' onclick='if(event.target===this) closeStockOpnameModal()'>
+  <div class='bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl w-full max-w-full sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl max-h-[92dvh] sm:max-h-[88dvh] flex flex-col hide-scrollbar no-scrollbar shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative transform translate-y-full sm:translate-y-0 sm:scale-95 bottom-sheet-smooth overflow-hidden' id='stock-opname-modal-box'>
     
     <!-- Mobile Grab Bar Handle -->
     <div class='w-full pt-2.5 pb-1 flex justify-center sm:hidden shrink-0 bg-white dark:bg-slate-800'>
@@ -2379,8 +2411,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: FORM DATA SUPPLIER (TAMBAH / EDIT)                                -->
 <!-- ========================================================================= -->
-<div class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-3 z-[70] transition-opacity duration-300 opacity-0 hidden" id="supplier-modal">
-  <div class="bg-white dark:bg-slate-900 w-full max-w-lg md:max-w-xl lg:max-w-2xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[90vh] transition-all transform translate-y-5" id="supplier-modal-box">
+<div class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-3 z-[70] opacity-0 modal-backdrop-smooth hidden" id="supplier-modal">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-lg md:max-w-xl lg:max-w-2xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[90vh] transform scale-95 modal-box-smooth" id="supplier-modal-box">
     
     <!-- Modal Header -->
     <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50">
@@ -2484,8 +2516,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: FORM INPUT TRANSAKSI PEMBELIAN SUPPLIER                             -->
 <!-- ========================================================================= -->
-<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 transition-opacity duration-300 opacity-0 hidden" id="purchase-modal">
-  <div class="bg-white dark:bg-slate-900 w-full max-w-3xl md:max-w-4xl lg:max-w-5xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[92vh] transition-all transform translate-y-5" id="purchase-modal-box">
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 opacity-0 modal-backdrop-smooth hidden" id="purchase-modal">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-3xl md:max-w-4xl lg:max-w-5xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[92vh] transform scale-95 modal-box-smooth" id="purchase-modal-box">
     
     <!-- Header -->
     <div class="px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50 shrink-0">
@@ -2739,8 +2771,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: CATAT PEMBAYARAN / TITIPAN CICILAN HUTANG SUPPLIER                 -->
 <!-- ========================================================================= -->
-<div class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-3 z-[60] transition-opacity duration-300 opacity-0 hidden" id="purchase-payment-modal">
-  <div class="bg-white dark:bg-slate-900 w-full max-w-lg md:max-w-xl lg:max-w-2xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[90vh] transition-all transform translate-y-5" id="purchase-payment-box">
+<div class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-3 z-[60] opacity-0 modal-backdrop-smooth hidden" id="purchase-payment-modal">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-lg md:max-w-xl lg:max-w-2xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[90vh] transform scale-95 modal-box-smooth" id="purchase-payment-box">
     
     <!-- Modal Header -->
     <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50">
@@ -2856,8 +2888,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: DETAIL FAKTUR PEMBELIAN & CETAK NOTA                               -->
 <!-- ========================================================================= -->
-<div class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-[60] transition-opacity duration-300 opacity-0 hidden" id="purchase-detail-modal">
-  <div class="bg-white dark:bg-slate-900 w-full max-w-2xl md:max-w-3xl lg:max-w-4xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[92vh] transition-all transform translate-y-5" id="purchase-detail-box">
+<div class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-[60] opacity-0 modal-backdrop-smooth hidden" id="purchase-detail-modal">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-2xl md:max-w-3xl lg:max-w-4xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[92vh] transform scale-95 modal-box-smooth" id="purchase-detail-box">
     
     <!-- Modal Header -->
     <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50">
@@ -2898,8 +2930,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: DAFTAR PRODUK DARI SUPPLIER & PENGELOMPOKAN BARANG                -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[75] bg-slate-900/70 hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4' id='supplier-products-modal' onclick='if(event.target===this) closeSupplierProductsModal()'>
-  <div class='w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl max-h-[92dvh] flex flex-col transform translate-y-5 sm:translate-y-0 transition-transform duration-300 shadow-2xl border border-slate-200 dark:border-slate-700 relative overflow-hidden' id='supplier-products-modal-box'>
+<div class='fixed inset-0 z-[75] bg-slate-900/70 hidden opacity-0 modal-backdrop-smooth flex items-end sm:items-center justify-center p-0 sm:p-4' id='supplier-products-modal' onclick='if(event.target===this) closeSupplierProductsModal()'>
+  <div class='w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl max-h-[92dvh] flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 bottom-sheet-smooth shadow-2xl border border-slate-200 dark:border-slate-700 relative overflow-hidden' id='supplier-products-modal-box'>
     
     <!-- Synchronized Glass Theme Header -->
     <div class='glass-header sticky top-0 z-20 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between shadow-md shrink-0 sm:rounded-t-2xl' style='background-color:var(--clr-p)!important;'>
@@ -2940,8 +2972,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: PRICETAG & LABEL BARCODE STUDIO (RESPONSIVE • THEME-SYNC • A4)   -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[85] bg-slate-950/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4' id='pricetag-modal' onclick='if(event.target===this) closePricetagModal()'>
-  <div class='w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[96dvh] h-[96dvh] sm:h-auto sm:max-h-[92dvh] flex flex-col transform translate-y-4 sm:translate-y-0 sm:scale-95 transition-all duration-300 shadow-2xl border border-slate-200/60 dark:border-slate-800 relative overflow-hidden' id='pricetag-modal-box'>
+<div class='fixed inset-0 z-[85] bg-slate-950/80 backdrop-blur-sm hidden opacity-0 modal-backdrop-smooth flex items-end sm:items-center justify-center p-0 sm:p-4' id='pricetag-modal' onclick='if(event.target===this) closePricetagModal()'>
+  <div class='w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-h-[96dvh] h-[96dvh] sm:h-auto sm:max-h-[92dvh] flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 bottom-sheet-smooth shadow-2xl border border-slate-200/60 dark:border-slate-800 relative overflow-hidden' id='pricetag-modal-box'>
 
     <!-- HEADER -->
     <div class='sticky top-0 z-30 px-4 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between shrink-0 sm:rounded-t-3xl' style='background:linear-gradient(135deg,var(--clr-p,#059669),var(--clr-ps,#047857));'>
@@ -3156,8 +3188,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: CLOUD & BACKUP CENTER (PUSAT CADANGAN & SINKRONISASI DATA)        -->
 <!-- ========================================================================= -->
-<div id="backup-sync-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[90] flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-all duration-300" onclick="if(event.target===this) closeBackupSyncModal()" style="padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 20px)); padding-top: calc(1rem + env(safe-area-inset-top, 10px));">
-  <div id="backup-sync-modal-box" class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl max-w-2xl w-full flex flex-col shadow-2xl border border-slate-200/80 dark:border-slate-800 transition-all duration-300 scale-95 overflow-hidden my-auto" style="max-height: min(78dvh, 78vh);">
+<div id="backup-sync-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[90] flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none modal-backdrop-smooth" onclick="if(event.target===this) closeBackupSyncModal()" style="padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 20px)); padding-top: calc(1rem + env(safe-area-inset-top, 10px));">
+  <div id="backup-sync-modal-box" class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl max-w-2xl w-full flex flex-col shadow-2xl border border-slate-200/80 dark:border-slate-800 scale-95 modal-box-smooth overflow-hidden my-auto" style="max-height: min(78dvh, 78vh);">
     
     <!-- Modal Header (Synchronized Theme Gradient) - Compact di mobile -->
     <div class="sticky top-0 z-30 px-4 py-2.5 sm:px-6 sm:py-4 flex items-center justify-between shrink-0" style="background:linear-gradient(135deg,var(--clr-p,#059669),var(--clr-ps,#047857));">
@@ -3391,8 +3423,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: RESTORE PREVIEW CONFIRMATION (PRATINJAU SEBELUM RESTORE)           -->
 <!-- ========================================================================= -->
-<div id="restore-preview-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[95] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300" onclick="if(event.target===this) closeRestorePreviewModal()">
-  <div id="restore-preview-modal-box" class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 transition-all duration-300 scale-95 space-y-4">
+<div id="restore-preview-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[95] flex items-center justify-center p-4 opacity-0 pointer-events-none modal-backdrop-smooth" onclick="if(event.target===this) closeRestorePreviewModal()">
+  <div id="restore-preview-modal-box" class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 scale-95 modal-box-smooth space-y-4">
     <div class="text-center">
       <div class="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-500 flex items-center justify-center text-2xl mx-auto mb-3 border border-amber-200 dark:border-amber-800">
         <i class="fa-solid fa-triangle-exclamation"></i>
@@ -3419,9 +3451,9 @@ html.dark .badge-counter {
 </div>
 
 <!-- CHANGELOG MODAL -->
-<div id="changelog-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-3 sm:p-4 opacity-0 transition-opacity duration-300">
+<div id="changelog-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-3 sm:p-4 opacity-0 modal-backdrop-smooth">
   <div class="absolute inset-0 bg-slate-900/40 dark:bg-slate-900/60 backdrop-blur-sm" onclick="closeChangelogModal()"></div>
-  <div id="changelog-modal-box" class="relative w-full max-w-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] scale-95 transition-transform duration-300">
+  <div id="changelog-modal-box" class="relative w-full max-w-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] scale-95 modal-box-smooth">
     
     <!-- Header -->
     <div class="px-4 sm:px-6 py-4 flex items-center justify-between border-b border-slate-200/50 dark:border-slate-700/50">
@@ -4943,8 +4975,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- UNIVERSAL FLOATING CART DRAWER (HP: Bottom Sheet / Tablet & PC: Right Side)-->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[75] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-stretch sm:justify-end' id='pos-cart-drawer-modal' onclick='if(event.target===this) closePosCartDrawer()'>
-  <div class='w-full sm:w-[430px] sm:max-w-full max-h-[90dvh] sm:max-h-full h-auto sm:h-full bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-none shadow-2xl flex flex-col transform translate-y-full sm:translate-y-0 sm:translate-x-full transition-transform duration-300 overflow-hidden border-l border-slate-200 dark:border-slate-800' id='pos-cart-drawer-box'>
+<div class='fixed inset-0 z-[75] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 modal-backdrop-smooth flex items-end sm:items-stretch sm:justify-end' id='pos-cart-drawer-modal' onclick='if(event.target===this) closePosCartDrawer()'>
+  <div class='w-full sm:w-[430px] sm:max-w-full max-h-[90dvh] sm:max-h-full h-auto sm:h-full bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-none shadow-2xl flex flex-col transform translate-y-full sm:translate-y-0 sm:translate-x-full bottom-sheet-smooth overflow-hidden border-l border-slate-200 dark:border-slate-800' id='pos-cart-drawer-box'>
     
     <!-- Drawer Header -->
     <div class='px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50 dark:bg-[#0b1329]'>
@@ -5001,8 +5033,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: QUICK VARIANT SELECTOR (PILIH VARIAN PRODUK POS)                   -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[78] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4' id='pos-variant-modal' onclick='if(event.target===this) closePosVariantModal()'>
-  <div class='w-full max-w-md bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-95 transition-transform duration-300' id='pos-variant-box'>
+<div class='fixed inset-0 z-[78] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 modal-backdrop-smooth flex items-center justify-center p-4' id='pos-variant-modal' onclick='if(event.target===this) closePosVariantModal()'>
+  <div class='w-full max-w-md bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-95 modal-box-smooth' id='pos-variant-box'>
     <div class='px-5 py-3.5 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between'>
       <div class='flex items-center gap-2'>
         <i class='fa-solid fa-layer-group text-emerald-600 dark:text-emerald-400 text-sm'></i>
@@ -5028,8 +5060,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: EDIT DECIMAL QUANTITY (SATUAN DESIMAL / BERAT)                     -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[79] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4' id='pos-qty-modal' onclick='if(event.target===this) closePosQtyModal()'>
-  <div class='w-full max-w-sm bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-95 transition-transform duration-300' id='pos-qty-box'>
+<div class='fixed inset-0 z-[79] bg-slate-900/70 backdrop-blur-sm hidden opacity-0 modal-backdrop-smooth flex items-center justify-center p-4' id='pos-qty-modal' onclick='if(event.target===this) closePosQtyModal()'>
+  <div class='w-full max-w-sm bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-95 modal-box-smooth' id='pos-qty-box'>
     <div class='px-5 py-3.5 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between'>
       <h3 class='font-black text-xs sm:text-sm text-slate-900 dark:text-white' id='pos-qty-modal-title'>Ubah Jumlah Beli</h3>
       <button type='button' class='w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-rose-500 flex items-center justify-center text-xs' onclick='closePosQtyModal()'>
@@ -5060,8 +5092,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: POS CHECKOUT WIZARD (3-STEP: REVIEW → PENGIRIMAN → PEMBAYARAN)     -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[80] bg-slate-900/75 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center sm:p-4' id='pos-payment-modal' onclick='if(event.target===this) closePosPaymentModal()'>
-  <div class='w-full sm:max-w-lg bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 transition-transform duration-300 max-h-[95dvh] sm:max-h-[90vh] overflow-hidden' id='pos-payment-box'>
+<div class='fixed inset-0 z-[80] bg-slate-900/75 backdrop-blur-sm hidden opacity-0 modal-backdrop-smooth flex items-end sm:items-center justify-center sm:p-4' id='pos-payment-modal' onclick='if(event.target===this) closePosPaymentModal()'>
+  <div class='w-full sm:max-w-lg bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 bottom-sheet-smooth max-h-[95dvh] sm:max-h-[90vh] overflow-hidden' id='pos-payment-box'>
     
     <!-- Wizard Header: Progress Steps -->
     <div class='px-5 pt-5 pb-3 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 shrink-0'>
@@ -5342,8 +5374,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: SUKSES TRANSAKSI POS + PILIH CETAK DOKUMEN                        -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[85] bg-slate-900/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4' id='pos-success-modal'>
-  <div class='w-full max-w-sm bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-75 transition-transform duration-300' id='pos-success-box'>
+<div class='fixed inset-0 z-[85] bg-slate-900/80 backdrop-blur-md hidden opacity-0 modal-backdrop-smooth flex items-center justify-center p-4' id='pos-success-modal'>
+  <div class='w-full max-w-sm bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col transform scale-75 modal-box-smooth' id='pos-success-box'>
     
     <!-- Success Header -->
     <div class='px-6 pt-8 pb-5 text-center bg-gradient-to-b from-emerald-50 dark:from-emerald-950/30 to-transparent'>
@@ -5407,8 +5439,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: PILIH KATEGORI POS (MODERN SHEET / DRAWER MENU)                    -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[82] bg-slate-900/75 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center sm:p-4' id='pos-category-modal' onclick='if(event.target===this) closePosCategoryModal()'>
-  <div class='w-full sm:max-w-md bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 transition-transform duration-300 max-h-[85dvh] overflow-hidden' id='pos-category-box'>
+<div class='fixed inset-0 z-[82] bg-slate-900/75 backdrop-blur-sm hidden opacity-0 modal-backdrop-smooth flex items-end sm:items-center justify-center sm:p-4' id='pos-category-modal' onclick='if(event.target===this) closePosCategoryModal()'>
+  <div class='w-full sm:max-w-md bg-white dark:bg-slate-900 rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 bottom-sheet-smooth max-h-[85dvh] overflow-hidden' id='pos-category-box'>
     <!-- Header -->
     <div class='px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-[#0b1329] shrink-0'>
       <div class='flex items-center gap-2.5'>
@@ -5441,8 +5473,8 @@ html.dark .badge-counter {
 <!-- ========================================================================= -->
 <!-- MODAL: SAAS SUBSCRIPTION PAYWALL (POS KASIR & HPP FULL PREMIUM)           -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[90] bg-slate-950/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-3 sm:p-5' id='pos-subscription-modal' onclick='if(event.target===this) closeSubscriptionModal()'>
-  <div class='w-full max-w-lg bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform scale-95 transition-transform duration-300 max-h-[92dvh] overflow-hidden' id='pos-subscription-box'>
+<div class='fixed inset-0 z-[90] bg-slate-950/80 backdrop-blur-md hidden opacity-0 modal-backdrop-smooth flex items-center justify-center p-3 sm:p-5' id='pos-subscription-modal' onclick='if(event.target===this) closeSubscriptionModal()'>
+  <div class='w-full max-w-lg bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col transform scale-95 modal-box-smooth max-h-[92dvh] overflow-hidden' id='pos-subscription-box'>
     
     <!-- Top Header Banner with Gradient -->
     <div class='relative px-6 pt-6 pb-5 text-center bg-gradient-to-br from-amber-500 via-amber-600 to-emerald-600 text-white shrink-0 overflow-hidden'>
@@ -6114,24 +6146,76 @@ window.showConfirm = (t, m, cb, btnText = "Ya, Hapus", isDanger = true) => {
     }
   }
   confirmCb = typeof cb === 'function' ? cb : null; 
-  show('custom-confirm-modal'); 
-  setTimeout(() => {
-    const modal = el('custom-confirm-modal');
-    if (modal) modal.classList.remove('opacity-0');
-    const box = el('custom-confirm-box');
-    if (box) box.classList.remove('scale-95');
-  }, 10);
+  window.openModalSmooth('custom-confirm-modal', 'custom-confirm-box', 'centered');
 };
 
 window.closeConfirm = () => {
-  el('custom-confirm-modal').classList.add('opacity-0');
-  el('custom-confirm-box').classList.add('scale-95');
-  setTimeout(() => hide('custom-confirm-modal'), 300);
+  window.closeModalSmooth('custom-confirm-modal', 'custom-confirm-box', 'centered');
 };
 
 window.executeConfirm = () => {
   if (confirmCb) confirmCb();
   closeConfirm();
+};
+
+// =============================================================================
+// HARDWARE-ACCELERATED ZERO-FLICKER MODAL & BOTTOM SHEET ENGINE
+// =============================================================================
+window.openModalSmooth = (modalId, boxId, type = 'bottom-sheet') => {
+  const m = el(modalId);
+  const b = boxId ? el(boxId) : null;
+  if (!m) return;
+
+  // 1. Tampilkan modal di layout (hapus hidden & inline display: none)
+  m.classList.remove('hidden');
+  m.style.display = '';
+
+  // 2. Paksa reflow layout DOM sinkron agar GPU mendaftarkan posisi awal sebelum animasi transisi dimulai
+  void m.offsetHeight;
+
+  // 3. Terapkan kelas transisi pada frame render monitor berikutnya
+  requestAnimationFrame(() => {
+    m.classList.remove('opacity-0', 'pointer-events-none');
+    if (b) {
+      b.classList.remove('opacity-0', 'pointer-events-none');
+      if (type === 'bottom-sheet') {
+        b.classList.remove('translate-y-full', 'translate-y-5', 'translate-y-4', 'sm:scale-95');
+        b.classList.add('translate-y-0', 'sm:scale-100');
+      } else if (type === 'drawer-right') {
+        b.classList.remove('translate-y-full', 'sm:translate-x-full');
+        b.classList.add('translate-y-0', 'sm:translate-x-0');
+      } else {
+        // Centered modal dialog
+        b.classList.remove('scale-95', 'scale-75', 'translate-y-5', 'translate-y-4');
+        b.classList.add('scale-100', 'translate-y-0');
+      }
+    }
+  });
+};
+
+window.closeModalSmooth = (modalId, boxId, type = 'bottom-sheet', callback = null) => {
+  const m = el(modalId);
+  const b = boxId ? el(boxId) : null;
+  if (!m) return;
+
+  m.classList.add('opacity-0');
+  if (b) {
+    if (type === 'bottom-sheet') {
+      b.classList.add('translate-y-full', 'sm:scale-95');
+      b.classList.remove('translate-y-0', 'sm:scale-100');
+    } else if (type === 'drawer-right') {
+      b.classList.add('translate-y-full', 'sm:translate-x-full');
+      b.classList.remove('translate-y-0', 'sm:translate-x-0');
+    } else {
+      b.classList.add('scale-95');
+      b.classList.remove('scale-100');
+    }
+  }
+
+  setTimeout(() => {
+    hide(modalId);
+    if (typeof callback === 'function') callback();
+  }, 280);
 };
 
 // Inisialisasi CSS variables awal sebelum data async dimuat
@@ -7192,12 +7276,8 @@ window.openProductModal = i => {
       history.pushState({ modal: 'product', pid: p.id }, '', '');
       oMods.push('product');
     }
-    show('product-modal'); 
     c.scrollTo(0, 0);
-    setTimeout(() => {
-      m.classList.remove('opacity-0');
-      c.classList.remove('translate-y-full', 'sm:translate-y-5');
-    }, 10);
+    window.openModalSmooth('product-modal', 'product-modal-content', 'bottom-sheet');
   }
 };
 
@@ -7210,10 +7290,9 @@ window.closeProductModal = (fH = !1) => {
     } else if (fH) {
       oMods.pop();
     }
-    m.classList.add('opacity-0');
-    c.classList.add('translate-y-full', 'sm:translate-y-5');
-    setTimeout(() => hide('product-modal'), 300);
-    if (window.updateStoreSeo) updateStoreSeo();
+    window.closeModalSmooth('product-modal', 'product-modal-content', 'bottom-sheet', () => {
+      if (window.updateStoreSeo) updateStoreSeo();
+    });
   }
   // Bersihkan parameter ?p dari URL secara halus tanpa reload
   try {
@@ -7285,11 +7364,7 @@ window.shareProduct = (productOrId) => {
       history.pushState({ modal: 'share' }, '', '');
       oMods.push('share');
     }
-    show('share-product-modal');
-    setTimeout(() => {
-      m.classList.remove('opacity-0');
-      c.classList.remove('translate-y-full', 'sm:translate-y-5');
-    }, 10);
+    window.openModalSmooth('share-product-modal', 'share-product-content', 'bottom-sheet');
   }
 };
 
@@ -7302,9 +7377,7 @@ window.closeShareModal = (fH = !1) => {
     } else if (fH && oMods[oMods.length - 1] === 'share') {
       oMods.pop();
     }
-    m.classList.add('opacity-0');
-    c.classList.add('translate-y-full', 'sm:translate-y-5');
-    setTimeout(() => hide('share-product-modal'), 300);
+    window.closeModalSmooth('share-product-modal', 'share-product-content', 'bottom-sheet');
   }
 };
 
@@ -7987,26 +8060,16 @@ window.openBuyerGuide = (topic = 'order_flow') => {
   const m = el('buyer-guide-modal');
   const box = el('buyer-guide-modal-box');
   if (!m || !box) return;
-  m.classList.remove('hidden');
-  setTimeout(() => {
-    m.classList.remove('opacity-0');
-    box.classList.remove('translate-y-full');
-    box.classList.remove('sm:scale-95');
-  }, 10);
-  window.showBuyerGuideTopic(topic);
+  // Render content FIRST while hidden so height and DOM are static before sliding up
+  window.showBuyerGuideTopic(topic, false);
+  window.openModalSmooth('buyer-guide-modal', 'buyer-guide-modal-box', 'bottom-sheet');
 };
 
 window.closeBuyerGuide = () => {
-  const m = el('buyer-guide-modal');
-  const box = el('buyer-guide-modal-box');
-  if (!m || !box) return;
-  m.classList.add('opacity-0');
-  box.classList.add('translate-y-full');
-  box.classList.add('sm:scale-95');
-  setTimeout(() => m.classList.add('hidden'), 300);
+  window.closeModalSmooth('buyer-guide-modal', 'buyer-guide-modal-box', 'bottom-sheet');
 };
 
-window.showBuyerGuideTopic = (topic) => {
+window.showBuyerGuideTopic = (topic, shouldScroll = true) => {
   let target = topic;
   if (!buyerGuideTopicsData[target]) {
     target = 'order_flow';
@@ -8026,16 +8089,22 @@ window.showBuyerGuideTopic = (topic) => {
     activeBtn.classList.add('shadow-sm', 'text-white');
     activeBtn.style.backgroundColor = 'var(--clr-p)';
     activeBtn.style.color = '#ffffff';
-    try {
-      activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-    } catch(e) {}
+    if (shouldScroll) {
+      try {
+        const navCont = activeBtn.parentElement;
+        if (navCont) {
+          const leftPos = activeBtn.offsetLeft - (navCont.clientWidth / 2) + (activeBtn.clientWidth / 2);
+          navCont.scrollTo({ left: Math.max(0, leftPos), behavior: 'smooth' });
+        }
+      } catch(e) {}
+    }
   }
 
   const data = buyerGuideTopicsData[target];
   const container = el('buyer-guide-content');
   if (container && data) {
     container.innerHTML = `
-      <div class="space-y-4 fade-in">
+      <div class="space-y-4">
         <div class="flex items-center gap-3.5 pb-3.5 border-b border-slate-100 dark:border-slate-700/60">
           <div class="w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 shadow-sm" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
             <i class="fa-solid ${data.icon}"></i>
@@ -9957,23 +10026,11 @@ window.openStockOpnameModal = (productId = null, variantId = null) => {
     handleSoProductChange(productId, variantId);
   }
 
-  show('stock-opname-modal');
-  setTimeout(() => {
-    modal.classList.remove('opacity-0');
-    box.classList.remove('translate-y-full', 'sm:scale-95');
-    box.classList.add('translate-y-0', 'sm:scale-100');
-  }, 10);
+  window.openModalSmooth('stock-opname-modal', 'stock-opname-modal-box', 'bottom-sheet');
 };
 
 window.closeStockOpnameModal = () => {
-  const modal = el('stock-opname-modal');
-  const box = el('stock-opname-modal-box');
-  if (!modal || !box) return;
-
-  modal.classList.add('opacity-0');
-  box.classList.add('translate-y-full', 'sm:scale-95');
-  box.classList.remove('translate-y-0', 'sm:scale-100');
-  setTimeout(() => hide('stock-opname-modal'), 300);
+  window.closeModalSmooth('stock-opname-modal', 'stock-opname-modal-box', 'bottom-sheet');
 };
 
 window.handleSoProductChange = (prodId, targetVarId = null) => {
@@ -10652,20 +10709,11 @@ window.openOrderDetail = i => {
   </div>
   `);
   
-  show('admin-order-modal');
-  setTimeout(() => {
-    el('admin-order-modal').classList.remove('opacity-0');
-    el('admin-order-modal-box').classList.remove('scale-95');
-  }, 10);
+  window.openModalSmooth('admin-order-modal', 'admin-order-modal-box', 'centered');
 };
 
 window.closeOrderDetailModal = () => { 
-  const modal = el('admin-order-modal'); 
-  const box = el('admin-order-modal-box'); 
-  if (!modal || !box) return; 
-  modal.classList.add('opacity-0'); 
-  box.classList.add('scale-95'); 
-  setTimeout(() => hide('admin-order-modal'), 300);
+  window.closeModalSmooth('admin-order-modal', 'admin-order-modal-box', 'centered');
 };
 
 window.updateOrderStatus = async (i, s) => {
@@ -11277,8 +11325,13 @@ window.openBackupSyncModal = () => {
   const modal = el('backup-sync-modal');
   const box = el('backup-sync-modal-box');
   if (modal && box) {
-    modal.classList.remove('opacity-0', 'pointer-events-none');
-    box.classList.remove('translate-y-5');
+    modal.classList.remove('pointer-events-none');
+    void modal.offsetHeight;
+    requestAnimationFrame(() => {
+      modal.classList.remove('opacity-0');
+      box.classList.remove('scale-95');
+      box.classList.add('scale-100');
+    });
   }
 };
 
@@ -11287,7 +11340,8 @@ window.closeBackupSyncModal = () => {
   const box = el('backup-sync-modal-box');
   if (modal && box) {
     modal.classList.add('opacity-0', 'pointer-events-none');
-    box.classList.add('translate-y-5');
+    box.classList.add('scale-95');
+    box.classList.remove('scale-100');
   }
 };
 
@@ -11421,8 +11475,13 @@ window.previewRestoreFile = (inputEl) => {
       const pModal = el('restore-preview-modal');
       const pBox = el('restore-preview-modal-box');
       if (pModal && pBox) {
-        pModal.classList.remove('opacity-0', 'pointer-events-none');
-        pBox.classList.remove('scale-95');
+        pModal.classList.remove('pointer-events-none');
+        void pModal.offsetHeight;
+        requestAnimationFrame(() => {
+          pModal.classList.remove('opacity-0');
+          pBox.classList.remove('scale-95');
+          pBox.classList.add('scale-100');
+        });
       }
 
       inputEl.value = '';
@@ -11444,6 +11503,7 @@ window.closeRestorePreviewModal = () => {
   if (pModal && pBox) {
     pModal.classList.add('opacity-0', 'pointer-events-none');
     pBox.classList.add('scale-95');
+    pBox.classList.remove('scale-100');
   }
   window._pendingRestorePayload = null;
 };
@@ -12075,11 +12135,7 @@ window.oAEd = (t, id) => {
     rWholB(); 
     if (window.canViewCostPrice()) setTimeout(updateProductMarginPreview, 50);
   }
-  show('admin-modal');
-  setTimeout(() => { 
-    el('admin-modal').classList.remove('opacity-0'); 
-    el('admin-modal-box').classList.remove('scale-95'); 
-  }, 10);
+  window.openModalSmooth('admin-modal', 'admin-modal-box', 'centered');
 };
 
 window.generateAutoSku = (targetId = 'af-sku') => {
@@ -12373,11 +12429,10 @@ window.duplicateProduct = async (id) => {
 };
 
 window.closeAdminModal = () => {
-  el('admin-modal').classList.add('opacity-0');
-  el('admin-modal-box').classList.add('scale-95');
-  setTimeout(() => hide('admin-modal'), 300);
-  window.cModalTab = null;
-  eId = null;
+  window.closeModalSmooth('admin-modal', 'admin-modal-box', 'centered', () => {
+    window.cModalTab = null;
+    eId = null;
+  });
 };
 
 window.openQuickEditProduct = (id) => {
@@ -12495,21 +12550,13 @@ window.openQuickEditProduct = (id) => {
 
   cont.innerHTML = html;
 
-  show('quick-edit-modal');
-  setTimeout(() => {
-    m.classList.remove('opacity-0');
-    box.classList.remove('translate-y-full', 'sm:scale-95');
-  }, 10);
+  window.openModalSmooth('quick-edit-modal', 'quick-edit-modal-box', 'bottom-sheet');
 };
 
 window.closeQuickEditModal = () => {
-  const m = el('quick-edit-modal');
-  const box = el('quick-edit-modal-box');
-  if (!m || !box) return;
-  m.classList.add('opacity-0');
-  box.classList.add('translate-y-full', 'sm:scale-95');
-  setTimeout(() => hide('quick-edit-modal'), 300);
-  window._currentQuickEditProdId = null;
+  window.closeModalSmooth('quick-edit-modal', 'quick-edit-modal-box', 'bottom-sheet', () => {
+    window._currentQuickEditProdId = null;
+  });
 };
 
 window.openQuickEditModal = window.openQuickEditProduct;
@@ -13526,26 +13573,16 @@ window.openCmsGuide = (topic = 'products') => {
   const m = el('cms-guide-modal');
   const box = el('cms-guide-modal-box');
   if (!m || !box) return;
-  m.classList.remove('hidden');
-  setTimeout(() => {
-    m.classList.remove('opacity-0');
-    box.classList.remove('translate-y-full');
-    box.classList.remove('sm:scale-95');
-  }, 10);
-  window.showGuideTopic(topic);
+  // Render content FIRST while hidden so layout height and DOM are static before sliding up
+  window.showGuideTopic(topic, false);
+  window.openModalSmooth('cms-guide-modal', 'cms-guide-modal-box', 'bottom-sheet');
 };
 
 window.closeCmsGuide = () => {
-  const m = el('cms-guide-modal');
-  const box = el('cms-guide-modal-box');
-  if (!m || !box) return;
-  m.classList.add('opacity-0');
-  box.classList.add('translate-y-full');
-  box.classList.add('sm:scale-95');
-  setTimeout(() => m.classList.add('hidden'), 300);
+  window.closeModalSmooth('cms-guide-modal', 'cms-guide-modal-box', 'bottom-sheet');
 };
 
-window.showGuideTopic = (topic) => {
+window.showGuideTopic = (topic, shouldScroll = true) => {
   let target = topic;
   if (!guideTopicsData[target]) {
     if (target === 'categories' || target === 'vouchers' || target === 'banks' || target === 'banners' || target === 'accounts') {
@@ -13569,13 +13606,22 @@ window.showGuideTopic = (topic) => {
     activeBtn.classList.add('shadow-sm', 'text-white');
     activeBtn.style.backgroundColor = 'var(--clr-p)';
     activeBtn.style.color = '#ffffff';
+    if (shouldScroll) {
+      try {
+        const navCont = activeBtn.parentElement;
+        if (navCont) {
+          const leftPos = activeBtn.offsetLeft - (navCont.clientWidth / 2) + (activeBtn.clientWidth / 2);
+          navCont.scrollTo({ left: Math.max(0, leftPos), behavior: 'smooth' });
+        }
+      } catch(e) {}
+    }
   }
 
   const data = guideTopicsData[target];
   const container = el('cms-guide-content');
   if (container && data) {
     container.innerHTML = `
-      <div class="space-y-4 fade-in">
+      <div class="space-y-4">
         <div class="flex items-center gap-3.5 pb-3.5 border-b border-slate-100 dark:border-slate-700/60">
           <div class="w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 shadow-sm" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
             <i class="fa-solid ${data.icon}"></i>
@@ -13681,20 +13727,11 @@ window.openSubscriptionModal = (msg) => {
   const msgEl = el('pos-sub-modal-msg');
   if (msg && msgEl) msgEl.innerText = msg;
   if (!modal || !box) return;
-  modal.classList.remove('hidden');
-  setTimeout(() => {
-    modal.classList.remove('opacity-0');
-    box.classList.remove('scale-95');
-  }, 10);
+  window.openModalSmooth('pos-subscription-modal', 'pos-subscription-box', 'centered');
 };
 
 window.closeSubscriptionModal = () => {
-  const modal = el('pos-subscription-modal');
-  const box = el('pos-subscription-box');
-  if (!modal || !box) return;
-  modal.classList.add('opacity-0');
-  box.classList.add('scale-95');
-  setTimeout(() => modal.classList.add('hidden'), 300);
+  window.closeModalSmooth('pos-subscription-modal', 'pos-subscription-box', 'centered');
 };
 
 window.orderSubscriptionWa = (planName) => {
@@ -13802,29 +13839,12 @@ window.openPosCategoryModal = () => {
   if (filterInput) filterInput.value = '';
   renderPosCategories();
 
-  const modal = el('pos-category-modal');
-  const box = el('pos-category-box');
-  if (modal && box) {
-    show('pos-category-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-full', 'sm:scale-95');
-      box.classList.add('sm:scale-100');
-      filterInput?.focus();
-    }, 10);
-  }
+  window.openModalSmooth('pos-category-modal', 'pos-category-box', 'bottom-sheet');
+  setTimeout(() => filterInput?.focus(), 50);
 };
 
 window.closePosCategoryModal = () => {
-  const modal = el('pos-category-modal');
-  const box = el('pos-category-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-full');
-    box.classList.remove('sm:scale-100');
-    box.classList.add('sm:scale-95');
-    setTimeout(() => hide('pos-category-modal'), 300);
-  }
+  window.closeModalSmooth('pos-category-modal', 'pos-category-box', 'bottom-sheet');
 };
 
 window.filterCategoryModalList = (q) => {
@@ -14353,17 +14373,11 @@ window.openPosVariantModal = (productId) => {
     }).join('');
   }
 
-  show('pos-variant-modal');
-  setTimeout(() => {
-    el('pos-variant-modal').classList.remove('opacity-0');
-    el('pos-variant-box').classList.remove('scale-95');
-  }, 10);
+  window.openModalSmooth('pos-variant-modal', 'pos-variant-box', 'centered');
 };
 
 window.closePosVariantModal = () => {
-  el('pos-variant-modal').classList.add('opacity-0');
-  el('pos-variant-box').classList.add('scale-95');
-  setTimeout(() => hide('pos-variant-modal'), 300);
+  window.closeModalSmooth('pos-variant-modal', 'pos-variant-box', 'centered');
 };
 
 // -----------------------------------------------------------------------------
@@ -14378,19 +14392,15 @@ window.openPosQtyModal = (index) => {
   setIn('pos-qty-modal-unit', item.unit || 'PCS');
   if (el('pos-qty-modal-input')) el('pos-qty-modal-input').value = item.qty;
 
-  show('pos-qty-modal');
+  window.openModalSmooth('pos-qty-modal', 'pos-qty-box', 'centered');
   setTimeout(() => {
-    el('pos-qty-modal').classList.remove('opacity-0');
-    el('pos-qty-box').classList.remove('scale-95');
     el('pos-qty-modal-input')?.focus();
     el('pos-qty-modal-input')?.select();
-  }, 10);
+  }, 50);
 };
 
 window.closePosQtyModal = () => {
-  el('pos-qty-modal').classList.add('opacity-0');
-  el('pos-qty-box').classList.add('scale-95');
-  setTimeout(() => hide('pos-qty-modal'), 300);
+  window.closeModalSmooth('pos-qty-modal', 'pos-qty-box', 'centered');
 };
 
 window.setPosQtyPreset = (val) => {
@@ -14522,25 +14532,11 @@ const renderPosCart = () => {
 // -----------------------------------------------------------------------------
 // 8. CART DRAWER
 window.openPosCartDrawer = () => {
-  const modal = el('pos-cart-drawer-modal');
-  const box = el('pos-cart-drawer-box');
-  if (modal && box) {
-    show('pos-cart-drawer-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-full', 'sm:translate-x-full');
-    }, 10);
-  }
+  window.openModalSmooth('pos-cart-drawer-modal', 'pos-cart-drawer-box', 'drawer-right');
 };
 
 window.closePosCartDrawer = () => {
-  const modal = el('pos-cart-drawer-modal');
-  const box = el('pos-cart-drawer-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-full', 'sm:translate-x-full');
-    setTimeout(() => hide('pos-cart-drawer-modal'), 300);
-  }
+  window.closeModalSmooth('pos-cart-drawer-modal', 'pos-cart-drawer-box', 'drawer-right');
 };
 
 // -----------------------------------------------------------------------------
@@ -14616,25 +14612,11 @@ window.holdCurrentPosCartFromInput = () => {
 
 window.openPosPendingModal = () => {
   renderPosPendingList();
-  const modal = el('pos-pending-modal');
-  const box = el('pos-pending-modal-box');
-  if (modal && box) {
-    show('pos-pending-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-full', 'sm:scale-95');
-    }, 10);
-  }
+  window.openModalSmooth('pos-pending-modal', 'pos-pending-modal-box', 'bottom-sheet');
 };
 
 window.closePosPendingModal = () => {
-  const modal = el('pos-pending-modal');
-  const box = el('pos-pending-modal-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-full', 'sm:scale-95');
-    setTimeout(() => hide('pos-pending-modal'), 300);
-  }
+  window.closeModalSmooth('pos-pending-modal', 'pos-pending-modal-box', 'bottom-sheet');
 };
 
 window.renderPosPendingList = () => {
@@ -14831,26 +14813,11 @@ window.openPosPaymentModal = () => {
   _renderPosStep1();
   goPosStep(1);
 
-  const modal = el('pos-payment-modal');
-  const box = el('pos-payment-box');
-  show('pos-payment-modal');
-  setTimeout(() => {
-    modal.classList.remove('opacity-0');
-    box.classList.remove('translate-y-full', 'sm:scale-95');
-    box.classList.add('sm:scale-100');
-  }, 10);
+  window.openModalSmooth('pos-payment-modal', 'pos-payment-box', 'bottom-sheet');
 };
 
 window.closePosPaymentModal = () => {
-  const modal = el('pos-payment-modal');
-  const box = el('pos-payment-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-full');
-    box.classList.remove('sm:scale-100');
-    box.classList.add('sm:scale-95');
-    setTimeout(() => hide('pos-payment-modal'), 300);
-  }
+  window.closeModalSmooth('pos-payment-modal', 'pos-payment-box', 'bottom-sheet');
 };
 
 // Make posCurrentStep accessible from window
@@ -15256,25 +15223,11 @@ const _openPosSuccessModal = (order) => {
     }
   }
 
-  const modal = el('pos-success-modal');
-  const box = el('pos-success-box');
-  show('pos-success-modal');
-  setTimeout(() => {
-    modal.classList.remove('opacity-0');
-    box.classList.remove('scale-75');
-    box.classList.add('scale-100');
-  }, 10);
+  window.openModalSmooth('pos-success-modal', 'pos-success-box', 'centered');
 };
 
 window.closePosSuccessModal = () => {
-  const modal = el('pos-success-modal');
-  const box = el('pos-success-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.remove('scale-100');
-    box.classList.add('scale-75');
-    setTimeout(() => hide('pos-success-modal'), 300);
-  }
+  window.closeModalSmooth('pos-success-modal', 'pos-success-box', 'centered');
 };
 
 // -----------------------------------------------------------------------------
@@ -15361,26 +15314,12 @@ window.openSupplierModal = (id = null, fromPurchase = false) => {
     setV('supp-notes', '');
   }
 
-  const modal = el('supplier-modal');
-  const box = el('supplier-modal-box');
-  if (modal && box) {
-    show('supplier-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-5');
-    }, 10);
-  }
+  window.openModalSmooth('supplier-modal', 'supplier-modal-box', 'centered');
 };
 
 window.closeSupplierModal = () => {
   isSupplierFromPurchase = false;
-  const modal = el('supplier-modal');
-  const box = el('supplier-modal-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-5');
-    setTimeout(() => hide('supplier-modal'), 250);
-  }
+  window.closeModalSmooth('supplier-modal', 'supplier-modal-box', 'centered');
 };
 
 window.saveSupplier = async () => {
@@ -15622,25 +15561,11 @@ window.openPurchaseModal = () => {
   setV('purch-notes', '');
   calculatePurchaseTotals();
 
-  const modal = el('purchase-modal');
-  const box = el('purchase-modal-box');
-  if (modal && box) {
-    show('purchase-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-5');
-    }, 10);
-  }
+  window.openModalSmooth('purchase-modal', 'purchase-modal-box', 'centered');
 };
 
 window.closePurchaseModal = () => {
-  const modal = el('purchase-modal');
-  const box = el('purchase-modal-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-5');
-    setTimeout(() => hide('purchase-modal'), 250);
-  }
+  window.closeModalSmooth('purchase-modal', 'purchase-modal-box', 'centered');
 };
 
 window.onPurchaseProductSelect = () => {
@@ -16015,25 +15940,11 @@ window.openPurchasePaymentModal = (purchaseId) => {
     }
   }
 
-  const modal = el('purchase-payment-modal');
-  const box = el('purchase-payment-box');
-  if (modal && box) {
-    show('purchase-payment-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-5');
-    }, 10);
-  }
+  window.openModalSmooth('purchase-payment-modal', 'purchase-payment-box', 'centered');
 };
 
 window.closePurchasePaymentModal = () => {
-  const modal = el('purchase-payment-modal');
-  const box = el('purchase-payment-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-5');
-    setTimeout(() => hide('purchase-payment-modal'), 250);
-  }
+  window.closeModalSmooth('purchase-payment-modal', 'purchase-payment-box', 'centered');
 };
 
 window.fillPayFullAmount = () => {
@@ -16198,25 +16109,11 @@ window.openPurchaseDetailModal = (purchaseId) => {
     `;
   }
 
-  const modal = el('purchase-detail-modal');
-  const box = el('purchase-detail-box');
-  if (modal && box) {
-    show('purchase-detail-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-5');
-    }, 10);
-  }
+  window.openModalSmooth('purchase-detail-modal', 'purchase-detail-box', 'centered');
 };
 
 window.closePurchaseDetailModal = () => {
-  const modal = el('purchase-detail-modal');
-  const box = el('purchase-detail-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-5');
-    setTimeout(() => hide('purchase-detail-modal'), 250);
-  }
+  window.closeModalSmooth('purchase-detail-modal', 'purchase-detail-box', 'centered');
 };
 
 window.printPurchaseInvoice = () => {
@@ -17114,26 +17011,13 @@ window.openSupplierProductsModal = (supplierId) => {
 
   renderSupplierProductsModalContent();
 
-  const modal = el('supplier-products-modal');
-  const box = el('supplier-products-modal-box');
-  if (modal && box) {
-    show('supplier-products-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-5');
-    }, 10);
-  }
+  window.openModalSmooth('supplier-products-modal', 'supplier-products-modal-box', 'bottom-sheet');
 };
 
 window.closeSupplierProductsModal = () => {
-  const modal = el('supplier-products-modal');
-  const box = el('supplier-products-modal-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-5');
-    setTimeout(() => hide('supplier-products-modal'), 250);
-  }
-  window._currentViewingSupplierId = null;
+  window.closeModalSmooth('supplier-products-modal', 'supplier-products-modal-box', 'bottom-sheet', () => {
+    window._currentViewingSupplierId = null;
+  });
 };
 
 window.setSupplierProductsSubTab = (tab) => {
@@ -17529,8 +17413,7 @@ window.openCameraScanner = (targetId = 'search-input') => {
   if (window.AppInventor) {
     window.AppInventor.setWebViewString("SCAN_BARCODE|||" + targetId);
   } else {
-    show('scanner-modal');
-    setTimeout(() => { el('scanner-modal').classList.remove('opacity-0'); }, 10);
+    window.openModalSmooth('scanner-modal', 'scanner-modal-box', 'centered');
     if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
     const config = { fps: 15, qrbox: { width: 250, height: 250 } };
     let lastScanTime = 0;
@@ -17578,7 +17461,6 @@ window.openCameraScanner = (targetId = 'search-input') => {
 };
 
 window.closeCameraScanner = () => {
-  el('scanner-modal').classList.add('opacity-0');
   if (html5QrCode) {
     try {
       if (html5QrCode.getState() === 2) {
@@ -17596,9 +17478,7 @@ window.closeCameraScanner = () => {
       html5QrCode = null;
     }
   }
-  setTimeout(() => {
-    hide('scanner-modal');
-  }, 300);
+  window.closeModalSmooth('scanner-modal', 'scanner-modal-box', 'centered');
 };
 
 window.terimaBarcodeDariKodular = (targetId, hasilScan) => {
@@ -17891,17 +17771,11 @@ window.openReceiptPreview = (directOrder = null) => {
   updatePaperSizeButtons();
   renderReceiptContent(cVOrd);
 
-  show('receipt-preview-modal');
-  setTimeout(() => {
-    el('receipt-preview-modal').classList.remove('opacity-0');
-    el('receipt-preview-modal-box').classList.remove('scale-95');
-  }, 10);
+  window.openModalSmooth('receipt-preview-modal', 'receipt-preview-modal-box', 'centered');
 };
 
 window.closeReceiptPreviewModal = () => {
-  el('receipt-preview-modal').classList.add('opacity-0');
-  el('receipt-preview-modal-box').classList.add('scale-95');
-  setTimeout(() => hide('receipt-preview-modal'), 300);
+  window.closeModalSmooth('receipt-preview-modal', 'receipt-preview-modal-box', 'centered');
 };
 
 window.executePrintReceipt = () => {
@@ -18873,22 +18747,11 @@ window.openPricetagModal = (presetProductIds = null) => {
   renderPricetagItemList();
   renderPricetagPreview();
 
-  show('pricetag-modal');
-  requestAnimationFrame(() => {
-    modal.classList.remove('opacity-0');
-    box.classList.remove('translate-y-4');
-    box.classList.remove('sm:scale-95');
-  });
+  window.openModalSmooth('pricetag-modal', 'pricetag-modal-box', 'bottom-sheet');
 };
 
 window.closePricetagModal = () => {
-  const modal = el('pricetag-modal');
-  const box = el('pricetag-modal-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-4');
-    setTimeout(() => hide('pricetag-modal'), 280);
-  }
+  window.closeModalSmooth('pricetag-modal', 'pricetag-modal-box', 'bottom-sheet');
 };
 
 const _addPricetagItemFromProduct = (p, variant = null, qty = 1) => {
@@ -20451,31 +20314,13 @@ window.fetchChangelogData = async (force = false) => {
 };
 
 window.openChangelogModal = () => {
-  const m = document.getElementById('changelog-modal');
-  const b = document.getElementById('changelog-modal-box');
-  if (!m || !b) return;
-
-  m.classList.remove('hidden');
-  m.classList.add('flex');
-  setTimeout(() => {
-    m.classList.remove('opacity-0');
-    b.classList.remove('scale-95');
-  }, 10);
-
+  window.openModalSmooth('changelog-modal', 'changelog-modal-box', 'centered');
   // Always revalidate when opened so it stays continuously up-to-date
   fetchChangelogData(false);
 };
 
 window.closeChangelogModal = () => {
-  const m = document.getElementById('changelog-modal');
-  const b = document.getElementById('changelog-modal-box');
-  if (!m || !b) return;
-  m.classList.add('opacity-0');
-  b.classList.add('scale-95');
-  setTimeout(() => {
-    m.classList.add('hidden');
-    m.classList.remove('flex');
-  }, 300);
+  window.closeModalSmooth('changelog-modal', 'changelog-modal-box', 'centered');
 };
 
 

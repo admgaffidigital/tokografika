@@ -84,20 +84,11 @@ window.openSubscriptionModal = (msg) => {
   const msgEl = el('pos-sub-modal-msg');
   if (msg && msgEl) msgEl.innerText = msg;
   if (!modal || !box) return;
-  modal.classList.remove('hidden');
-  setTimeout(() => {
-    modal.classList.remove('opacity-0');
-    box.classList.remove('scale-95');
-  }, 10);
+  window.openModalSmooth('pos-subscription-modal', 'pos-subscription-box', 'centered');
 };
 
 window.closeSubscriptionModal = () => {
-  const modal = el('pos-subscription-modal');
-  const box = el('pos-subscription-box');
-  if (!modal || !box) return;
-  modal.classList.add('opacity-0');
-  box.classList.add('scale-95');
-  setTimeout(() => modal.classList.add('hidden'), 300);
+  window.closeModalSmooth('pos-subscription-modal', 'pos-subscription-box', 'centered');
 };
 
 window.orderSubscriptionWa = (planName) => {
@@ -205,29 +196,12 @@ window.openPosCategoryModal = () => {
   if (filterInput) filterInput.value = '';
   renderPosCategories();
 
-  const modal = el('pos-category-modal');
-  const box = el('pos-category-box');
-  if (modal && box) {
-    show('pos-category-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-full', 'sm:scale-95');
-      box.classList.add('sm:scale-100');
-      filterInput?.focus();
-    }, 10);
-  }
+  window.openModalSmooth('pos-category-modal', 'pos-category-box', 'bottom-sheet');
+  setTimeout(() => filterInput?.focus(), 50);
 };
 
 window.closePosCategoryModal = () => {
-  const modal = el('pos-category-modal');
-  const box = el('pos-category-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-full');
-    box.classList.remove('sm:scale-100');
-    box.classList.add('sm:scale-95');
-    setTimeout(() => hide('pos-category-modal'), 300);
-  }
+  window.closeModalSmooth('pos-category-modal', 'pos-category-box', 'bottom-sheet');
 };
 
 window.filterCategoryModalList = (q) => {
@@ -756,17 +730,11 @@ window.openPosVariantModal = (productId) => {
     }).join('');
   }
 
-  show('pos-variant-modal');
-  setTimeout(() => {
-    el('pos-variant-modal').classList.remove('opacity-0');
-    el('pos-variant-box').classList.remove('scale-95');
-  }, 10);
+  window.openModalSmooth('pos-variant-modal', 'pos-variant-box', 'centered');
 };
 
 window.closePosVariantModal = () => {
-  el('pos-variant-modal').classList.add('opacity-0');
-  el('pos-variant-box').classList.add('scale-95');
-  setTimeout(() => hide('pos-variant-modal'), 300);
+  window.closeModalSmooth('pos-variant-modal', 'pos-variant-box', 'centered');
 };
 
 // -----------------------------------------------------------------------------
@@ -781,19 +749,15 @@ window.openPosQtyModal = (index) => {
   setIn('pos-qty-modal-unit', item.unit || 'PCS');
   if (el('pos-qty-modal-input')) el('pos-qty-modal-input').value = item.qty;
 
-  show('pos-qty-modal');
+  window.openModalSmooth('pos-qty-modal', 'pos-qty-box', 'centered');
   setTimeout(() => {
-    el('pos-qty-modal').classList.remove('opacity-0');
-    el('pos-qty-box').classList.remove('scale-95');
     el('pos-qty-modal-input')?.focus();
     el('pos-qty-modal-input')?.select();
-  }, 10);
+  }, 50);
 };
 
 window.closePosQtyModal = () => {
-  el('pos-qty-modal').classList.add('opacity-0');
-  el('pos-qty-box').classList.add('scale-95');
-  setTimeout(() => hide('pos-qty-modal'), 300);
+  window.closeModalSmooth('pos-qty-modal', 'pos-qty-box', 'centered');
 };
 
 window.setPosQtyPreset = (val) => {
@@ -925,25 +889,11 @@ const renderPosCart = () => {
 // -----------------------------------------------------------------------------
 // 8. CART DRAWER
 window.openPosCartDrawer = () => {
-  const modal = el('pos-cart-drawer-modal');
-  const box = el('pos-cart-drawer-box');
-  if (modal && box) {
-    show('pos-cart-drawer-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-full', 'sm:translate-x-full');
-    }, 10);
-  }
+  window.openModalSmooth('pos-cart-drawer-modal', 'pos-cart-drawer-box', 'drawer-right');
 };
 
 window.closePosCartDrawer = () => {
-  const modal = el('pos-cart-drawer-modal');
-  const box = el('pos-cart-drawer-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-full', 'sm:translate-x-full');
-    setTimeout(() => hide('pos-cart-drawer-modal'), 300);
-  }
+  window.closeModalSmooth('pos-cart-drawer-modal', 'pos-cart-drawer-box', 'drawer-right');
 };
 
 // -----------------------------------------------------------------------------
@@ -1019,25 +969,11 @@ window.holdCurrentPosCartFromInput = () => {
 
 window.openPosPendingModal = () => {
   renderPosPendingList();
-  const modal = el('pos-pending-modal');
-  const box = el('pos-pending-modal-box');
-  if (modal && box) {
-    show('pos-pending-modal');
-    setTimeout(() => {
-      modal.classList.remove('opacity-0');
-      box.classList.remove('translate-y-full', 'sm:scale-95');
-    }, 10);
-  }
+  window.openModalSmooth('pos-pending-modal', 'pos-pending-modal-box', 'bottom-sheet');
 };
 
 window.closePosPendingModal = () => {
-  const modal = el('pos-pending-modal');
-  const box = el('pos-pending-modal-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-full', 'sm:scale-95');
-    setTimeout(() => hide('pos-pending-modal'), 300);
-  }
+  window.closeModalSmooth('pos-pending-modal', 'pos-pending-modal-box', 'bottom-sheet');
 };
 
 window.renderPosPendingList = () => {
@@ -1234,26 +1170,11 @@ window.openPosPaymentModal = () => {
   _renderPosStep1();
   goPosStep(1);
 
-  const modal = el('pos-payment-modal');
-  const box = el('pos-payment-box');
-  show('pos-payment-modal');
-  setTimeout(() => {
-    modal.classList.remove('opacity-0');
-    box.classList.remove('translate-y-full', 'sm:scale-95');
-    box.classList.add('sm:scale-100');
-  }, 10);
+  window.openModalSmooth('pos-payment-modal', 'pos-payment-box', 'bottom-sheet');
 };
 
 window.closePosPaymentModal = () => {
-  const modal = el('pos-payment-modal');
-  const box = el('pos-payment-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.add('translate-y-full');
-    box.classList.remove('sm:scale-100');
-    box.classList.add('sm:scale-95');
-    setTimeout(() => hide('pos-payment-modal'), 300);
-  }
+  window.closeModalSmooth('pos-payment-modal', 'pos-payment-box', 'bottom-sheet');
 };
 
 // Make posCurrentStep accessible from window
@@ -1659,25 +1580,11 @@ const _openPosSuccessModal = (order) => {
     }
   }
 
-  const modal = el('pos-success-modal');
-  const box = el('pos-success-box');
-  show('pos-success-modal');
-  setTimeout(() => {
-    modal.classList.remove('opacity-0');
-    box.classList.remove('scale-75');
-    box.classList.add('scale-100');
-  }, 10);
+  window.openModalSmooth('pos-success-modal', 'pos-success-box', 'centered');
 };
 
 window.closePosSuccessModal = () => {
-  const modal = el('pos-success-modal');
-  const box = el('pos-success-box');
-  if (modal && box) {
-    modal.classList.add('opacity-0');
-    box.classList.remove('scale-100');
-    box.classList.add('scale-75');
-    setTimeout(() => hide('pos-success-modal'), 300);
-  }
+  window.closeModalSmooth('pos-success-modal', 'pos-success-box', 'centered');
 };
 
 // -----------------------------------------------------------------------------

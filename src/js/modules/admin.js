@@ -1276,23 +1276,11 @@ window.openStockOpnameModal = (productId = null, variantId = null) => {
     handleSoProductChange(productId, variantId);
   }
 
-  show('stock-opname-modal');
-  setTimeout(() => {
-    modal.classList.remove('opacity-0');
-    box.classList.remove('translate-y-full', 'sm:scale-95');
-    box.classList.add('translate-y-0', 'sm:scale-100');
-  }, 10);
+  window.openModalSmooth('stock-opname-modal', 'stock-opname-modal-box', 'bottom-sheet');
 };
 
 window.closeStockOpnameModal = () => {
-  const modal = el('stock-opname-modal');
-  const box = el('stock-opname-modal-box');
-  if (!modal || !box) return;
-
-  modal.classList.add('opacity-0');
-  box.classList.add('translate-y-full', 'sm:scale-95');
-  box.classList.remove('translate-y-0', 'sm:scale-100');
-  setTimeout(() => hide('stock-opname-modal'), 300);
+  window.closeModalSmooth('stock-opname-modal', 'stock-opname-modal-box', 'bottom-sheet');
 };
 
 window.handleSoProductChange = (prodId, targetVarId = null) => {
@@ -1971,20 +1959,11 @@ window.openOrderDetail = i => {
   </div>
   `);
   
-  show('admin-order-modal');
-  setTimeout(() => {
-    el('admin-order-modal').classList.remove('opacity-0');
-    el('admin-order-modal-box').classList.remove('scale-95');
-  }, 10);
+  window.openModalSmooth('admin-order-modal', 'admin-order-modal-box', 'centered');
 };
 
 window.closeOrderDetailModal = () => { 
-  const modal = el('admin-order-modal'); 
-  const box = el('admin-order-modal-box'); 
-  if (!modal || !box) return; 
-  modal.classList.add('opacity-0'); 
-  box.classList.add('scale-95'); 
-  setTimeout(() => hide('admin-order-modal'), 300);
+  window.closeModalSmooth('admin-order-modal', 'admin-order-modal-box', 'centered');
 };
 
 window.updateOrderStatus = async (i, s) => {
@@ -2596,8 +2575,13 @@ window.openBackupSyncModal = () => {
   const modal = el('backup-sync-modal');
   const box = el('backup-sync-modal-box');
   if (modal && box) {
-    modal.classList.remove('opacity-0', 'pointer-events-none');
-    box.classList.remove('translate-y-5');
+    modal.classList.remove('pointer-events-none');
+    void modal.offsetHeight;
+    requestAnimationFrame(() => {
+      modal.classList.remove('opacity-0');
+      box.classList.remove('scale-95');
+      box.classList.add('scale-100');
+    });
   }
 };
 
@@ -2606,7 +2590,8 @@ window.closeBackupSyncModal = () => {
   const box = el('backup-sync-modal-box');
   if (modal && box) {
     modal.classList.add('opacity-0', 'pointer-events-none');
-    box.classList.add('translate-y-5');
+    box.classList.add('scale-95');
+    box.classList.remove('scale-100');
   }
 };
 
@@ -2740,8 +2725,13 @@ window.previewRestoreFile = (inputEl) => {
       const pModal = el('restore-preview-modal');
       const pBox = el('restore-preview-modal-box');
       if (pModal && pBox) {
-        pModal.classList.remove('opacity-0', 'pointer-events-none');
-        pBox.classList.remove('scale-95');
+        pModal.classList.remove('pointer-events-none');
+        void pModal.offsetHeight;
+        requestAnimationFrame(() => {
+          pModal.classList.remove('opacity-0');
+          pBox.classList.remove('scale-95');
+          pBox.classList.add('scale-100');
+        });
       }
 
       inputEl.value = '';
@@ -2763,6 +2753,7 @@ window.closeRestorePreviewModal = () => {
   if (pModal && pBox) {
     pModal.classList.add('opacity-0', 'pointer-events-none');
     pBox.classList.add('scale-95');
+    pBox.classList.remove('scale-100');
   }
   window._pendingRestorePayload = null;
 };
@@ -3394,11 +3385,7 @@ window.oAEd = (t, id) => {
     rWholB(); 
     if (window.canViewCostPrice()) setTimeout(updateProductMarginPreview, 50);
   }
-  show('admin-modal');
-  setTimeout(() => { 
-    el('admin-modal').classList.remove('opacity-0'); 
-    el('admin-modal-box').classList.remove('scale-95'); 
-  }, 10);
+  window.openModalSmooth('admin-modal', 'admin-modal-box', 'centered');
 };
 
 window.generateAutoSku = (targetId = 'af-sku') => {
@@ -3692,11 +3679,10 @@ window.duplicateProduct = async (id) => {
 };
 
 window.closeAdminModal = () => {
-  el('admin-modal').classList.add('opacity-0');
-  el('admin-modal-box').classList.add('scale-95');
-  setTimeout(() => hide('admin-modal'), 300);
-  window.cModalTab = null;
-  eId = null;
+  window.closeModalSmooth('admin-modal', 'admin-modal-box', 'centered', () => {
+    window.cModalTab = null;
+    eId = null;
+  });
 };
 
 window.openQuickEditProduct = (id) => {
@@ -3814,21 +3800,13 @@ window.openQuickEditProduct = (id) => {
 
   cont.innerHTML = html;
 
-  show('quick-edit-modal');
-  setTimeout(() => {
-    m.classList.remove('opacity-0');
-    box.classList.remove('translate-y-full', 'sm:scale-95');
-  }, 10);
+  window.openModalSmooth('quick-edit-modal', 'quick-edit-modal-box', 'bottom-sheet');
 };
 
 window.closeQuickEditModal = () => {
-  const m = el('quick-edit-modal');
-  const box = el('quick-edit-modal-box');
-  if (!m || !box) return;
-  m.classList.add('opacity-0');
-  box.classList.add('translate-y-full', 'sm:scale-95');
-  setTimeout(() => hide('quick-edit-modal'), 300);
-  window._currentQuickEditProdId = null;
+  window.closeModalSmooth('quick-edit-modal', 'quick-edit-modal-box', 'bottom-sheet', () => {
+    window._currentQuickEditProdId = null;
+  });
 };
 
 window.openQuickEditModal = window.openQuickEditProduct;
@@ -4845,26 +4823,16 @@ window.openCmsGuide = (topic = 'products') => {
   const m = el('cms-guide-modal');
   const box = el('cms-guide-modal-box');
   if (!m || !box) return;
-  m.classList.remove('hidden');
-  setTimeout(() => {
-    m.classList.remove('opacity-0');
-    box.classList.remove('translate-y-full');
-    box.classList.remove('sm:scale-95');
-  }, 10);
-  window.showGuideTopic(topic);
+  // Render content FIRST while hidden so layout height and DOM are static before sliding up
+  window.showGuideTopic(topic, false);
+  window.openModalSmooth('cms-guide-modal', 'cms-guide-modal-box', 'bottom-sheet');
 };
 
 window.closeCmsGuide = () => {
-  const m = el('cms-guide-modal');
-  const box = el('cms-guide-modal-box');
-  if (!m || !box) return;
-  m.classList.add('opacity-0');
-  box.classList.add('translate-y-full');
-  box.classList.add('sm:scale-95');
-  setTimeout(() => m.classList.add('hidden'), 300);
+  window.closeModalSmooth('cms-guide-modal', 'cms-guide-modal-box', 'bottom-sheet');
 };
 
-window.showGuideTopic = (topic) => {
+window.showGuideTopic = (topic, shouldScroll = true) => {
   let target = topic;
   if (!guideTopicsData[target]) {
     if (target === 'categories' || target === 'vouchers' || target === 'banks' || target === 'banners' || target === 'accounts') {
@@ -4888,13 +4856,22 @@ window.showGuideTopic = (topic) => {
     activeBtn.classList.add('shadow-sm', 'text-white');
     activeBtn.style.backgroundColor = 'var(--clr-p)';
     activeBtn.style.color = '#ffffff';
+    if (shouldScroll) {
+      try {
+        const navCont = activeBtn.parentElement;
+        if (navCont) {
+          const leftPos = activeBtn.offsetLeft - (navCont.clientWidth / 2) + (activeBtn.clientWidth / 2);
+          navCont.scrollTo({ left: Math.max(0, leftPos), behavior: 'smooth' });
+        }
+      } catch(e) {}
+    }
   }
 
   const data = guideTopicsData[target];
   const container = el('cms-guide-content');
   if (container && data) {
     container.innerHTML = `
-      <div class="space-y-4 fade-in">
+      <div class="space-y-4">
         <div class="flex items-center gap-3.5 pb-3.5 border-b border-slate-100 dark:border-slate-700/60">
           <div class="w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 shadow-sm" style="background-color:var(--clr-p-bg);color:var(--clr-p)">
             <i class="fa-solid ${data.icon}"></i>

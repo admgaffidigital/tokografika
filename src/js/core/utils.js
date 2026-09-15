@@ -409,24 +409,76 @@ window.showConfirm = (t, m, cb, btnText = "Ya, Hapus", isDanger = true) => {
     }
   }
   confirmCb = typeof cb === 'function' ? cb : null; 
-  show('custom-confirm-modal'); 
-  setTimeout(() => {
-    const modal = el('custom-confirm-modal');
-    if (modal) modal.classList.remove('opacity-0');
-    const box = el('custom-confirm-box');
-    if (box) box.classList.remove('scale-95');
-  }, 10);
+  window.openModalSmooth('custom-confirm-modal', 'custom-confirm-box', 'centered');
 };
 
 window.closeConfirm = () => {
-  el('custom-confirm-modal').classList.add('opacity-0');
-  el('custom-confirm-box').classList.add('scale-95');
-  setTimeout(() => hide('custom-confirm-modal'), 300);
+  window.closeModalSmooth('custom-confirm-modal', 'custom-confirm-box', 'centered');
 };
 
 window.executeConfirm = () => {
   if (confirmCb) confirmCb();
   closeConfirm();
+};
+
+// =============================================================================
+// HARDWARE-ACCELERATED ZERO-FLICKER MODAL & BOTTOM SHEET ENGINE
+// =============================================================================
+window.openModalSmooth = (modalId, boxId, type = 'bottom-sheet') => {
+  const m = el(modalId);
+  const b = boxId ? el(boxId) : null;
+  if (!m) return;
+
+  // 1. Tampilkan modal di layout (hapus hidden & inline display: none)
+  m.classList.remove('hidden');
+  m.style.display = '';
+
+  // 2. Paksa reflow layout DOM sinkron agar GPU mendaftarkan posisi awal sebelum animasi transisi dimulai
+  void m.offsetHeight;
+
+  // 3. Terapkan kelas transisi pada frame render monitor berikutnya
+  requestAnimationFrame(() => {
+    m.classList.remove('opacity-0', 'pointer-events-none');
+    if (b) {
+      b.classList.remove('opacity-0', 'pointer-events-none');
+      if (type === 'bottom-sheet') {
+        b.classList.remove('translate-y-full', 'translate-y-5', 'translate-y-4', 'sm:scale-95');
+        b.classList.add('translate-y-0', 'sm:scale-100');
+      } else if (type === 'drawer-right') {
+        b.classList.remove('translate-y-full', 'sm:translate-x-full');
+        b.classList.add('translate-y-0', 'sm:translate-x-0');
+      } else {
+        // Centered modal dialog
+        b.classList.remove('scale-95', 'scale-75', 'translate-y-5', 'translate-y-4');
+        b.classList.add('scale-100', 'translate-y-0');
+      }
+    }
+  });
+};
+
+window.closeModalSmooth = (modalId, boxId, type = 'bottom-sheet', callback = null) => {
+  const m = el(modalId);
+  const b = boxId ? el(boxId) : null;
+  if (!m) return;
+
+  m.classList.add('opacity-0');
+  if (b) {
+    if (type === 'bottom-sheet') {
+      b.classList.add('translate-y-full', 'sm:scale-95');
+      b.classList.remove('translate-y-0', 'sm:scale-100');
+    } else if (type === 'drawer-right') {
+      b.classList.add('translate-y-full', 'sm:translate-x-full');
+      b.classList.remove('translate-y-0', 'sm:translate-x-0');
+    } else {
+      b.classList.add('scale-95');
+      b.classList.remove('scale-100');
+    }
+  }
+
+  setTimeout(() => {
+    hide(modalId);
+    if (typeof callback === 'function') callback();
+  }, 280);
 };
 
 // Inisialisasi CSS variables awal sebelum data async dimuat

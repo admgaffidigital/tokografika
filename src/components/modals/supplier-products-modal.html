@@ -1,8 +1,8 @@
 <!-- ========================================================================= -->
 <!-- MODAL: DAFTAR PRODUK DARI SUPPLIER & PENGELOMPOKAN BARANG                -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 z-[75] bg-slate-900/70 hidden opacity-0 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-4' id='supplier-products-modal' onclick='if(event.target===this) closeSupplierProductsModal()'>
-  <div class='w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl max-h-[92dvh] flex flex-col transform translate-y-5 sm:translate-y-0 transition-transform duration-300 shadow-2xl border border-slate-200 dark:border-slate-700 relative overflow-hidden' id='supplier-products-modal-box'>
+<div class='fixed inset-0 z-[75] bg-slate-900/70 hidden opacity-0 modal-backdrop-smooth flex items-end sm:items-center justify-center p-0 sm:p-4' id='supplier-products-modal' onclick='if(event.target===this) closeSupplierProductsModal()'>
+  <div class='w-full max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-4xl bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl max-h-[92dvh] flex flex-col transform translate-y-full sm:translate-y-0 sm:scale-95 bottom-sheet-smooth shadow-2xl border border-slate-200 dark:border-slate-700 relative overflow-hidden' id='supplier-products-modal-box'>
     
     <!-- Synchronized Glass Theme Header -->
     <div class='glass-header sticky top-0 z-20 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between shadow-md shrink-0 sm:rounded-t-2xl' style='background-color:var(--clr-p)!important;'>

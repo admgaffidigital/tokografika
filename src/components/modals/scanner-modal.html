@@ -1,8 +1,8 @@
 <!-- ========================================================================= -->
 <!-- MODAL: BARCODE / QR SCANNER                                               -->
 <!-- ========================================================================= -->
-<div class='fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4' id='scanner-modal' onclick='if(event.target===this) closeCameraScanner()'>
-  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative flex flex-col'>
+<div class='fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4 opacity-0 modal-backdrop-smooth' id='scanner-modal' onclick='if(event.target===this) closeCameraScanner()'>
+  <div class='bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl border border-slate-200/80 dark:border-slate-700/80 relative flex flex-col transform scale-95 modal-box-smooth' id='scanner-modal-box'>
     <div class='p-4 border-b-2 border-slate-200 dark:border-slate-700 flex justify-between items-center bg-white dark:bg-slate-800'>
       <h3 class='font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2'>
         <i class='fa-solid fa-qrcode text-emerald-600 dark:text-emerald-400'></i> Scan Barcode

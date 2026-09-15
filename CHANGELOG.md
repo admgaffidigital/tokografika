@@ -4,6 +4,25 @@ Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan 
 
 ---
 
+## [2026-09-15] - Perbaikan Total Bottom Sheet & Modal Engine (Hardware-Accelerated Zero Flicker)
+### Perbaikan & Peningkatan:
+- **Penyelesaian Bug Layar Berkedip (*Anti-Flicker Architecture*):**
+  - Mengeliminasi *race condition* `setTimeout(10ms)` yang sering memicu kedipan/stutter rendering saat modal dibuka di layar HP.
+  - Menerapkan siklus sinkronisasi DOM layout (`void m.offsetHeight`) dan *rendering pipeline* via `requestAnimationFrame`, memastikan posisi awal *off-screen* terkomit sempurna di GPU buffer sebelum transisi luncur dimulai.
+- **Isolasi Transisi CSS Murni (`.bottom-sheet-smooth` & `.modal-box-smooth`):**
+  - Mengganti kelas `transition-all` menjadi transisi properti terisolasi (`transition: transform` dan `transition: opacity`), mencegah browser melakukan kalkulasi ulang dimensi tinggi dinamis di tengah animasi.
+  - Menghilangkan kelas animasi internal `.fade-in` pada konten topik panduan yang sebelumnya memicu tabrakan gerakan Y-axis ganda.
+  - Mematikan pemanggilan `scrollIntoView()` global saat bottom sheet masih dalam status transisi luncur agar jendela layar HP tidak meloncat (*jump-scrolling*).
+- **Perbaikan Total Menyeluruh (*Storefront, CMS Admin, POS Kasir & Purchases*):**
+  - **Storefront:** Panduan Belanja Pelanggan (`buyer-guide-modal`), Modal Detail Produk (`product-modal`), Modal Bagikan Produk (`share-product-modal`).
+  - **CMS Admin:** Buku Panduan CMS & POS (`cms-guide-modal`), Form Edit Data (`admin-modal`), Detail Pesanan & Cetak (`admin-order-modal`), Edit Cepat Stok/Harga (`quick-edit-modal`), Stock Opname (`stock-opname-modal`), Pusat Cadangan & Cloud Sync (`backup-sync-modal`), Pratinjau Restore (`restore-preview-modal`).
+  - **POS Kasir:** Antrian Transaksi Ditahan/Pending (`pos-pending-modal`), Floating Cart Drawer (`pos-cart-drawer-modal`), Pemilih Kategori (`pos-category-modal`), Pemilih Varian (`pos-variant-modal`), Input Desimal Qty (`pos-qty-modal`), Checkout Wizard (`pos-payment-modal`), Transaksi Berhasil (`pos-success-modal`), Paywall Langganan POS (`pos-subscription-modal`).
+  - **Shared & Keuangan:** Pricetag Studio (`pricetag-modal`), Modal Pembelian Supplier (`purchase-modal`), Detail Faktur Pembelian (`purchase-detail-modal`), Pembayaran Hutang/Tempo (`purchase-payment-modal`), Katalog Produk Supplier (`supplier-products-modal`), Preview Struk Kasir (`receipt-preview-modal`), Dialog Konfirmasi (`custom-confirm-modal`), Riwayat Pembaruan (`changelog-modal`), Scanner Kamera (`scanner-modal`).
+- **Akselerasi GPU Penuh:**
+  - Menambahkan properti `-webkit-backface-visibility: hidden`, `backface-visibility: hidden`, `transform-style: preserve-3d`, dan `overscroll-behavior: contain` untuk *scrolling* super halus tanpa efek pantulan (*rubber-band*) di perangkat sentuh.
+
+---
+
 ## [2026-09-15] - Penyesuaian Rasio Banner Beranda 16:9 & Tata Letak Rapi
 ### Perbaikan & Peningkatan:
 - **Rasio Murni 16:9 (`aspect-video` & `aspect-ratio: 16 / 9`):**

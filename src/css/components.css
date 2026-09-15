@@ -383,3 +383,35 @@ html.dark .badge-counter {
     object-position: center !important;
 }
 
+/* --------------------------------------------------------------------------
+   9. Ultra-Smooth Bottom Sheet & Modal Engine (Hardware-Accelerated Zero Flicker)
+   -------------------------------------------------------------------------- */
+.modal-backdrop-smooth {
+    transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    will-change: opacity;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-sheet-smooth {
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    will-change: transform;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-font-smoothing: subpixel-antialiased;
+    overscroll-behavior: contain;
+}
+
+.modal-box-smooth {
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    will-change: transform, opacity;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-font-smoothing: subpixel-antialiased;
+    overscroll-behavior: contain;
+}
+
+

@@ -6,8 +6,7 @@ window.openCameraScanner = (targetId = 'search-input') => {
   if (window.AppInventor) {
     window.AppInventor.setWebViewString("SCAN_BARCODE|||" + targetId);
   } else {
-    show('scanner-modal');
-    setTimeout(() => { el('scanner-modal').classList.remove('opacity-0'); }, 10);
+    window.openModalSmooth('scanner-modal', 'scanner-modal-box', 'centered');
     if (!html5QrCode) html5QrCode = new Html5Qrcode("reader");
     const config = { fps: 15, qrbox: { width: 250, height: 250 } };
     let lastScanTime = 0;
@@ -55,7 +54,6 @@ window.openCameraScanner = (targetId = 'search-input') => {
 };
 
 window.closeCameraScanner = () => {
-  el('scanner-modal').classList.add('opacity-0');
   if (html5QrCode) {
     try {
       if (html5QrCode.getState() === 2) {
@@ -73,9 +71,7 @@ window.closeCameraScanner = () => {
       html5QrCode = null;
     }
   }
-  setTimeout(() => {
-    hide('scanner-modal');
-  }, 300);
+  window.closeModalSmooth('scanner-modal', 'scanner-modal-box', 'centered');
 };
 
 window.terimaBarcodeDariKodular = (targetId, hasilScan) => {
