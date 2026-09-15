@@ -230,6 +230,7 @@ window.openAdminTab = (t, fH = !1) => {
   setIn('admin-header-title', titles[t] || 'CMS Toko');
   
   if (t !== 'orders' && aOrdLst) { aOrdLst(); aOrdLst = null; }
+  if (t !== 'reports' && aReportLst) { aReportLst(); aReportLst = null; }
   if (t === 'settings') rAdmSet(); 
   else if (t === 'orders') rAdmOrd(); 
   else if (t === 'reports') rAdmReports();
@@ -247,6 +248,68 @@ let reportCustomStart = '';
 let reportCustomEnd = '';
 let cachedReportOrders = [];
 let reportSearchQuery = '';
+let aReportLst = null; // Realtime listener unsubscribe handle untuk laporan
+
+// ---------------------------------------------------------------------------
+// HELPER: Format tanggal ke string YYYY-MM-DD berbasis zona waktu lokal
+// ---------------------------------------------------------------------------
+const _toLocalDateStr = (d) => {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+// ---------------------------------------------------------------------------
+// HELPER: Parse tanggal order secara robust (Firestore Timestamp / ISO string / orderId)
+// ---------------------------------------------------------------------------
+const _parseOrderDate = (order) => {
+  let d = null;
+  if (order.timestamp && typeof order.timestamp.toDate === 'function') {
+    d = order.timestamp.toDate();
+  } else if (order.dateString) {
+    d = new Date(order.dateString);
+  } else if (order.createdAt) {
+    d = new Date(order.createdAt);
+  } else if (order.timestamp && typeof order.timestamp === 'string') {
+    d = new Date(order.timestamp);
+  } else if (order.orderId && /^ORD\d+$/i.test(order.orderId)) {
+    // Fallback ekstra: ekstrak timestamp milidetik dari orderId (contoh: ORD1726372819234)
+    const ts = parseInt(order.orderId.replace(/\D/g, ''), 10);
+    if (ts > 1000000000000) d = new Date(ts);
+  }
+  // Validasi: jika invalid date, fallback ke waktu sekarang
+  if (!d || isNaN(d.getTime())) d = new Date();
+  return d;
+};
+
+// ---------------------------------------------------------------------------
+// HELPER: Filter orders berdasarkan periode yang aktif (dipakai bersama)
+// ---------------------------------------------------------------------------
+const _filterOrdersByPeriod = (orders) => {
+  const now = new Date();
+  const todayStr = _toLocalDateStr(now);
+  const thisMonthStr = todayStr.slice(0, 7); // YYYY-MM
+  const thisYearStr = todayStr.slice(0, 4);  // YYYY
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const sevenDaysAgoStr = _toLocalDateStr(sevenDaysAgo);
+
+  return (orders || []).filter(order => {
+    // Selalu exclude pesanan yang dibatalkan dari laporan
+    const st = String(order.status || '').toLowerCase();
+    if (st === 'dibatalkan' || st === 'cancelled') return false;
+
+    const orderDate = _parseOrderDate(order);
+    const orderDateStr = _toLocalDateStr(orderDate);
+
+    if (reportPeriod === 'today')  return orderDateStr === todayStr;
+    if (reportPeriod === '7days')  return orderDateStr >= sevenDaysAgoStr;
+    if (reportPeriod === 'month')  return orderDateStr.startsWith(thisMonthStr);
+    if (reportPeriod === 'year')   return orderDateStr.startsWith(thisYearStr);
+    if (reportPeriod === 'custom') return orderDateStr >= reportCustomStart && orderDateStr <= reportCustomEnd;
+    return true; // 'all'
+  });
+};
 
 window.rAdmReports = async () => {
   setH('admin-content', `
@@ -316,19 +379,27 @@ window.rAdmReports = async () => {
     </div>
   `);
 
-  try {
-    if (typeof db !== 'undefined' && db.collection) {
-      const snap = await db.collection("freshmart_orders").orderBy("timestamp", "desc").limit(500).get();
-      cachedReportOrders = snap.docs.map(doc => doc.data());
-    } else {
-      cachedReportOrders = [];
-    }
-  } catch (err) {
-    console.warn('[Reports] Fetch error:', err);
-    cachedReportOrders = [];
-  }
+  // Hentikan listener lama jika ada sebelum membuat yang baru
+  if (aReportLst) { aReportLst(); aReportLst = null; }
 
-  renderReportView();
+  if (typeof db !== 'undefined' && db.collection) {
+    // Gunakan onSnapshot (realtime) agar laporan otomatis update saat ada pesanan baru masuk
+    // tanpa perlu admin klik refresh manual — root cause fix utama
+    aReportLst = db.collection('freshmart_orders')
+      .orderBy('timestamp', 'desc')
+      .limit(2000)
+      .onSnapshot(snap => {
+        cachedReportOrders = snap.docs.map(doc => doc.data());
+        renderReportView();
+      }, err => {
+        console.warn('[Reports] Realtime listener error:', err);
+        cachedReportOrders = [];
+        renderReportView();
+      });
+  } else {
+    cachedReportOrders = [];
+    renderReportView();
+  }
 };
 
 window.setReportPeriod = (period) => {
@@ -365,38 +436,10 @@ window.renderReportView = () => {
   if (!container) return;
 
   const now = new Date();
-  const todayStr = now.toISOString().slice(0, 10);
-  const thisMonthStr = now.toISOString().slice(0, 7);
   const thisYearStr = now.getFullYear().toString();
-  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-  // Filter orders
-  const validOrders = (cachedReportOrders || []).filter(order => {
-    if (order.status === 'Dibatalkan') return false;
-    
-    let orderDate = null;
-    if (order.timestamp && order.timestamp.toDate) {
-      orderDate = order.timestamp.toDate();
-    } else if (order.dateString || order.createdAt) {
-      orderDate = new Date(order.dateString || order.createdAt);
-    } else {
-      orderDate = new Date();
-    }
-    const orderDateStr = orderDate.toISOString().slice(0, 10);
-
-    if (reportPeriod === 'today') {
-      return orderDateStr === todayStr;
-    } else if (reportPeriod === '7days') {
-      return orderDate >= sevenDaysAgo;
-    } else if (reportPeriod === 'month') {
-      return orderDateStr.startsWith(thisMonthStr);
-    } else if (reportPeriod === 'year') {
-      return orderDateStr.startsWith(thisYearStr);
-    } else if (reportPeriod === 'custom') {
-      return orderDateStr >= reportCustomStart && orderDateStr <= reportCustomEnd;
-    }
-    return true;
-  });
+  // Filter orders menggunakan helper terpusat (konsisten dengan printFinancialReport)
+  const validOrders = _filterOrdersByPeriod(cachedReportOrders);
 
   // Calculate Metrics
   let totalSales = 0;
@@ -464,8 +507,9 @@ window.renderReportView = () => {
     filteredOrders = validOrders.filter(o => {
       const id = String(o.orderId || o.id || '').toLowerCase();
       const c = String(o.cashier || o.source || '').toLowerCase();
+      const cust = String(o.customer?.name || o.customer?.phone || '').toLowerCase();
       const m = String(o.payment?.method || '').toLowerCase();
-      return id.includes(reportSearchQuery) || c.includes(reportSearchQuery) || m.includes(reportSearchQuery);
+      return id.includes(reportSearchQuery) || c.includes(reportSearchQuery) || cust.includes(reportSearchQuery) || m.includes(reportSearchQuery);
     });
   }
 
@@ -658,7 +702,9 @@ window.renderReportView = () => {
             ordCost += (cpu * q);
           });
           const ordProfit = grand - ordCost;
-          let dtStr = o.dateString ? new Date(o.dateString).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '-';
+          const orderDate = _parseOrderDate(o);
+          const dtStr = orderDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+          const sourceLabel = esc(o.cashier || o.source || (o.customer?.name ? `Online (${o.customer.name})` : 'Kasir / Online'));
 
           return `
             <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all space-y-3">
@@ -669,7 +715,7 @@ window.renderReportView = () => {
                   </div>
                   <div class="min-w-0">
                     <span class="font-mono font-bold text-xs text-slate-900 dark:text-white block truncate">${esc(o.orderId || o.id)}</span>
-                    <span class="text-[10px] text-slate-400 font-semibold block">${dtStr} • ${esc(o.cashier || o.source || 'Kasir')} • ${itemCount} item</span>
+                    <span class="text-[10px] text-slate-400 font-semibold block">${dtStr} • ${sourceLabel} • ${itemCount} item</span>
                   </div>
                 </div>
                 <div class="flex items-center gap-1.5 shrink-0">
@@ -710,31 +756,10 @@ window.printFinancialReport = () => {
   }
 
   const now = new Date();
-  const todayStr = now.toISOString().slice(0, 10);
-  const thisMonthStr = now.toISOString().slice(0, 7);
-  const thisYearStr = now.getFullYear().toString();
-  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
   // 1. Filter Orders
-  const validOrders = (cachedReportOrders || []).filter(order => {
-    if (order.status === 'Dibatalkan') return false;
-    let orderDate = null;
-    if (order.timestamp && order.timestamp.toDate) {
-      orderDate = order.timestamp.toDate();
-    } else if (order.dateString || order.createdAt) {
-      orderDate = new Date(order.dateString || order.createdAt);
-    } else {
-      orderDate = new Date();
-    }
-    const orderDateStr = orderDate.toISOString().slice(0, 10);
-
-    if (reportPeriod === 'today') return orderDateStr === todayStr;
-    if (reportPeriod === '7days') return orderDate >= sevenDaysAgo;
-    if (reportPeriod === 'month') return orderDateStr.startsWith(thisMonthStr);
-    if (reportPeriod === 'year') return orderDateStr.startsWith(thisYearStr);
-    if (reportPeriod === 'custom') return orderDateStr >= reportCustomStart && orderDateStr <= reportCustomEnd;
-    return true;
-  });
+  // Gunakan helper terpusat yang sama dengan renderReportView()
+  const validOrders = _filterOrdersByPeriod(cachedReportOrders);
 
   if (!validOrders.length) {
     return showToast('Tidak ada data transaksi pada periode ini!');

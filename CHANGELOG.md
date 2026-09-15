@@ -2,6 +2,26 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-09-15] - Perbaikan Sinkronisasi Laporan Penjualan & Pesanan Masuk (Realtime Sync)
+### Peningkatan & Perbaikan Sistem:
+- **Sinkronisasi Otomatis Realtime (`onSnapshot`):**
+  - Mengubah pengambilan data laporan penjualan dari sebelumnya satu kali (*one-shot* `.get()`) menjadi *realtime listener* (`onSnapshot`).
+  - Setiap kali ada pesanan baru masuk dari etalase online (checkout pelanggan) maupun transaksi kasir POS, data laporan penjualan (omset, modal/HPP, laba bersih, ringkasan produk, dan riwayat transaksi) langsung terbarui otomatis secara seketika tanpa perlu admin me-refresh atau mengklik ulang tab.
+- **Pembersihan Listener Anti-Memory Leak:**
+  - Menambahkan manajemen listener (`aReportLst`) yang otomatis di-`unsubscribe` saat admin berpindah dari tab Laporan ke tab lain (Produk, Pesanan, Kasir POS, Pengaturan), menjaga efisiensi memori browser.
+- **Peningkatan Batas Kuota Query (Limit 2000):**
+  - Menaikkan kuota query dokumen pesanan dari 500 menjadi 2.000 pesanan terbaru agar toko dengan volume transaksi tinggi tidak mengalami kekosongan data pada periode bulan atau tahun berjalan.
+- **Perbaikan Bug Zona Waktu Lokal (WIB / WITA / WIT):**
+  - Menerapkan fungsi konversi tanggal berbasis zona waktu lokal perangkat (`_toLocalDateStr`), mengatasi ketidaksinkronan konversi `toISOString()` UTC di mana pesanan yang dibuat dini hari (pukul 00:00 - 06:59 WIB) sebelumnya terhitung sebagai transaksi hari kemarin di laporan "Hari Ini" atau pada filter tanggal kustom.
+- **Multi-Fallback Parsing Tanggal Pesanan (`_parseOrderDate`):**
+  - Parsing tanggal mendukung Firestore Timestamp (`toDate()`), ISO Date String (`dateString`), Created At timestamp, string tanggal, hingga ekstraksi milidetik dari nomor order unik (`ORD<timestamp>`).
+- **Konsistensi Logika Cetak Laporan Keuangan:**
+  - Menyatukan filter periode pada tampilan layar (`renderReportView`) dan jendela cetak dokumen (`printFinancialReport`) menggunakan fungsi terpusat `_filterOrdersByPeriod` sehingga nominal omset dan laba yang tercetak 100% identik dengan yang tampil di dashboard.
+- **Pencarian Transaksi Lebih Lengkap & Label Sumber Jelas:**
+  - Fitur pencarian riwayat transaksi kini mendukung pencarian nama pemesan online atau nomor telepon.
+  - Kartu riwayat transaksi kini menampilkan identitas pemesan online secara jelas: `Online (<Nama Pembeli>)` atau nama kasir.
+- **PWA Cache Update:** `sw.js` diperbarui ke cache `v7`.
+
 ---
 
 ## [2026-09-15] - Maintenance & Audit Menyeluruh Website
