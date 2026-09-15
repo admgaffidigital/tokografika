@@ -50,12 +50,12 @@ window.openSupplierModal = (id = null, fromPurchase = false) => {
     setV('supp-notes', '');
   }
 
-  window.openModalSmooth('supplier-modal', 'supplier-modal-box', 'centered');
+  window.openModalSmooth('supplier-modal', 'supplier-modal-box', 'bottom-sheet');
 };
 
 window.closeSupplierModal = () => {
   isSupplierFromPurchase = false;
-  window.closeModalSmooth('supplier-modal', 'supplier-modal-box', 'centered');
+  window.closeModalSmooth('supplier-modal', 'supplier-modal-box', 'bottom-sheet');
 };
 
 window.saveSupplier = async () => {
@@ -297,11 +297,11 @@ window.openPurchaseModal = () => {
   setV('purch-notes', '');
   calculatePurchaseTotals();
 
-  window.openModalSmooth('purchase-modal', 'purchase-modal-box', 'centered');
+  window.openModalSmooth('purchase-modal', 'purchase-modal-box', 'bottom-sheet');
 };
 
 window.closePurchaseModal = () => {
-  window.closeModalSmooth('purchase-modal', 'purchase-modal-box', 'centered');
+  window.closeModalSmooth('purchase-modal', 'purchase-modal-box', 'bottom-sheet');
 };
 
 window.onPurchaseProductSelect = () => {
@@ -676,11 +676,11 @@ window.openPurchasePaymentModal = (purchaseId) => {
     }
   }
 
-  window.openModalSmooth('purchase-payment-modal', 'purchase-payment-box', 'centered');
+  window.openModalSmooth('purchase-payment-modal', 'purchase-payment-box', 'bottom-sheet');
 };
 
 window.closePurchasePaymentModal = () => {
-  window.closeModalSmooth('purchase-payment-modal', 'purchase-payment-box', 'centered');
+  window.closeModalSmooth('purchase-payment-modal', 'purchase-payment-box', 'bottom-sheet');
 };
 
 window.fillPayFullAmount = () => {
@@ -752,76 +752,111 @@ window.openPurchaseDetailModal = (purchaseId) => {
   const container = el('purch-detail-printable-content');
   if (container) {
     const statusBadge = p.status === 'paid' 
-      ? '<span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300">LUNAS</span>'
+      ? '<span class="px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-black bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300">LUNAS</span>'
       : (p.status === 'partial' 
-        ? '<span class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300">SEBAGIAN (DICICIL)</span>'
-        : '<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300">BELUM LUNAS</span>');
+        ? '<span class="px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-black bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300">SEBAGIAN (DICICIL)</span>'
+        : '<span class="px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-black bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300">BELUM LUNAS</span>');
+
+    const totalUnits = (p.items || []).reduce((acc, it) => acc + (parseInt(it.qty) || 0), 0);
 
     container.innerHTML = `
       <!-- Header Nota -->
-      <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-3">
-        <div class="flex justify-between items-start">
-          <div>
-            <h2 class="font-black text-sm text-slate-800 dark:text-white uppercase">${appData.store?.name || 'TOKO GRAFIKA'}</h2>
-            <p class="text-[10px] text-slate-400 font-medium">${appData.store?.address || 'Alamat Toko'}</p>
+      <div class="p-3.5 sm:p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 space-y-2.5">
+        <div class="flex items-start justify-between gap-2">
+          <div class="min-w-0 flex-1">
+            <h2 class="font-black text-xs sm:text-sm text-slate-800 dark:text-white uppercase tracking-wide truncate">${appData.store?.name || 'TOKO GRAFIKA'}</h2>
+            <p class="text-[10px] text-slate-400 font-medium leading-relaxed line-clamp-2">${appData.store?.address || 'Alamat Toko'}</p>
           </div>
-          <div class="text-right">
+          <div class="shrink-0">
             ${statusBadge}
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200 dark:border-slate-700 text-[11px]">
-          <div>
-            <span class="text-slate-400 font-bold block text-[9px] uppercase">Supplier</span>
-            <span class="font-black text-slate-800 dark:text-slate-200">${esc(p.supplierName)}</span>
+        <div class="grid grid-cols-2 gap-2 pt-2.5 border-t border-slate-200 dark:border-slate-700 text-[11px]">
+          <div class="min-w-0">
+            <span class="text-slate-400 font-bold block text-[9px] uppercase tracking-wider">Supplier</span>
+            <span class="font-black text-slate-800 dark:text-slate-200 break-words">${esc(p.supplierName)}</span>
           </div>
-          <div>
-            <span class="text-slate-400 font-bold block text-[9px] uppercase">Metode / Jatuh Tempo</span>
-            <span class="font-black text-slate-800 dark:text-slate-200">${p.paymentType === 'cash' ? 'CASH (Tunai)' : `TEMPO (${_fDate(p.dueDate)})`}</span>
+          <div class="min-w-0">
+            <span class="text-slate-400 font-bold block text-[9px] uppercase tracking-wider">Metode / Jatuh Tempo</span>
+            <span class="font-black text-slate-800 dark:text-slate-200 break-words">${p.paymentType === 'cash' ? 'CASH (Tunai)' : `TEMPO (${_fDate(p.dueDate)})`}</span>
           </div>
         </div>
       </div>
 
-      <!-- Item List Table -->
-      <div class="rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-        <table class="w-full text-left text-xs border-collapse">
-          <thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold uppercase text-[9px]">
-            <tr>
-              <th class="p-2.5">No</th>
-              <th class="p-2.5">Nama Barang</th>
-              <th class="p-2.5 text-center">Qty</th>
-              <th class="p-2.5 text-right">Harga Beli</th>
-              <th class="p-2.5 text-right">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
-            ${(p.items || []).map((it, idx) => `
+      <!-- Item List (Responsive: Mobile Card List & Desktop Table) -->
+      <div>
+        <!-- Mobile Card List View (< sm) - Anti Terpotong di Layar HP -->
+        <div class="sm:hidden space-y-2">
+          <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 px-1 flex justify-between items-center">
+            <span>Rincian Barang (${(p.items || []).length} jenis)</span>
+            <span>Subtotal</span>
+          </div>
+          ${(p.items || []).map((it, idx) => `
+            <div class="p-3 rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-xs flex items-center justify-between gap-3">
+              <div class="flex items-start gap-2.5 min-w-0 flex-1">
+                <div class="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-black text-[10px] shrink-0 mt-0.5 border border-indigo-100 dark:border-indigo-900/50">
+                  ${idx + 1}
+                </div>
+                <div class="min-w-0 flex-1">
+                  <h4 class="font-bold text-xs text-slate-900 dark:text-white leading-tight break-words">
+                    ${esc(it.productName)}
+                  </h4>
+                  ${it.variantName ? `<span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-semibold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 mt-1">[${esc(it.variantName)}]</span>` : ''}
+                  <p class="text-[11px] text-slate-400 font-semibold mt-1">
+                    <span class="font-bold text-slate-700 dark:text-slate-200">${it.qty} ${esc(it.unit || 'pcs')}</span> × <span class="text-slate-500">${fCur(it.buyPrice)}</span>
+                  </p>
+                </div>
+              </div>
+              <div class="text-right shrink-0">
+                <span class="text-[8px] uppercase font-bold text-slate-400 block">Subtotal</span>
+                <span class="font-black text-xs text-emerald-600 dark:text-emerald-400">${fCur(it.subtotal)}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <!-- Desktop Table View (>= sm) -->
+        <div class="hidden sm:block overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold uppercase text-[9px]">
               <tr>
-                <td class="p-2.5 font-bold text-slate-400">${idx + 1}</td>
-                <td class="p-2.5 font-bold text-slate-800 dark:text-slate-200">
-                  ${esc(it.productName)}
-                  ${it.variantName ? `<span class="block text-[10px] text-slate-400 font-medium">[${esc(it.variantName)}]</span>` : ''}
-                </td>
-                <td class="p-2.5 text-center font-bold">${it.qty} ${esc(it.unit)}</td>
-                <td class="p-2.5 text-right font-medium">${fCur(it.buyPrice)}</td>
-                <td class="p-2.5 text-right font-black text-emerald-600 dark:text-emerald-400">${fCur(it.subtotal)}</td>
+                <th class="p-2.5">No</th>
+                <th class="p-2.5">Nama Barang</th>
+                <th class="p-2.5 text-center">Qty</th>
+                <th class="p-2.5 text-right">Harga Beli</th>
+                <th class="p-2.5 text-right">Subtotal</th>
               </tr>
-            `).join('')}
-          </tbody>
-        </table>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
+              ${(p.items || []).map((it, idx) => `
+                <tr>
+                  <td class="p-2.5 font-bold text-slate-400">${idx + 1}</td>
+                  <td class="p-2.5 font-bold text-slate-800 dark:text-slate-200">
+                    ${esc(it.productName)}
+                    ${it.variantName ? `<span class="block text-[10px] text-slate-400 font-medium">[${esc(it.variantName)}]</span>` : ''}
+                  </td>
+                  <td class="p-2.5 text-center font-bold">${it.qty} ${esc(it.unit)}</td>
+                  <td class="p-2.5 text-right font-medium">${fCur(it.buyPrice)}</td>
+                  <td class="p-2.5 text-right font-black text-emerald-600 dark:text-emerald-400">${fCur(it.subtotal)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Ringkasan Keuangan -->
-      <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-1.5 font-bold">
+      <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 space-y-1.5 font-bold">
         <div class="flex justify-between text-slate-600 dark:text-slate-400">
-          <span>Total Pembelian</span>
+          <span>Total Pembelian (${(p.items || []).length} jenis, ${totalUnits} unit)</span>
           <span class="font-black text-slate-900 dark:text-white">${fCur(p.totalAmount)}</span>
         </div>
         <div class="flex justify-between text-emerald-600 dark:text-emerald-400">
           <span>Total Sudah Terbayar</span>
           <span class="font-black">${fCur(p.paidAmount)}</span>
         </div>
-        <div class="pt-1.5 border-t border-slate-200 dark:border-slate-700 flex justify-between text-amber-600 dark:text-amber-400 font-black text-sm">
+        <div class="pt-1.5 border-t border-slate-200 dark:border-slate-700 flex justify-between text-amber-600 dark:text-amber-400 font-black text-xs sm:text-sm">
           <span>Sisa Hutang ke Supplier</span>
           <span>${fCur(p.remainingDebt || 0)}</span>
         </div>
@@ -831,8 +866,12 @@ window.openPurchaseDetailModal = (purchaseId) => {
       <div>
         <h4 class="font-black text-xs text-slate-800 dark:text-white mb-2 uppercase tracking-wider">Riwayat Cicilan / Pembayaran</h4>
         <div class="space-y-2">
-          ${(p.payments || []).map(pay => `
-            <div class="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs">
+          ${(p.payments || []).length === 0 ? `
+            <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-200 dark:border-slate-700 text-center text-[11px] text-slate-400 font-medium">
+              Belum ada riwayat cicilan/pembayaran tercatat
+            </div>
+          ` : (p.payments || []).map(pay => `
+            <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 flex justify-between items-center text-xs">
               <div>
                 <div class="font-bold text-slate-800 dark:text-slate-200">${fCur(pay.amount)}</div>
                 <div class="text-[10px] text-slate-400">${_fDate(pay.date)} • Met: ${pay.method ? pay.method.toUpperCase() : 'CASH'} ${pay.note ? `• ${esc(pay.note)}` : ''}</div>
@@ -845,11 +884,11 @@ window.openPurchaseDetailModal = (purchaseId) => {
     `;
   }
 
-  window.openModalSmooth('purchase-detail-modal', 'purchase-detail-box', 'centered');
+  window.openModalSmooth('purchase-detail-modal', 'purchase-detail-box', 'bottom-sheet');
 };
 
 window.closePurchaseDetailModal = () => {
-  window.closeModalSmooth('purchase-detail-modal', 'purchase-detail-box', 'centered');
+  window.closeModalSmooth('purchase-detail-modal', 'purchase-detail-box', 'bottom-sheet');
 };
 
 window.printPurchaseInvoice = () => {

@@ -1,8 +1,11 @@
 <!-- ========================================================================= -->
 <!-- MODAL: FORM INPUT TRANSAKSI PEMBELIAN SUPPLIER                             -->
 <!-- ========================================================================= -->
-<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 z-50 opacity-0 modal-backdrop-smooth hidden" id="purchase-modal">
-  <div class="bg-white dark:bg-slate-900 w-full max-w-3xl md:max-w-4xl lg:max-w-5xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[92vh] transform scale-95 modal-box-smooth" id="purchase-modal-box">
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 z-50 opacity-0 modal-backdrop-smooth hidden" id="purchase-modal" onclick="if(event.target===this) closePurchaseModal()">
+  <div class="bg-white dark:bg-slate-900 w-full max-w-full sm:max-w-3xl md:max-w-4xl lg:max-w-5xl rounded-t-[2rem] sm:rounded-3xl shadow-2xl border-t sm:border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden max-h-[94dvh] sm:max-h-[90dvh] transform translate-y-full sm:translate-y-0 sm:scale-95 bottom-sheet-smooth" id="purchase-modal-box">
+    
+    <!-- Mobile Drag Handle -->
+    <div class="sm:hidden w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mt-2.5 mb-1 shrink-0"></div>
     
     <!-- Header -->
     <div class="px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/70 dark:bg-slate-800/50 shrink-0">

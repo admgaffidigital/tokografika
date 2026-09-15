@@ -1984,11 +1984,11 @@ window.openOrderDetail = i => {
   </div>
   `);
   
-  window.openModalSmooth('admin-order-modal', 'admin-order-modal-box', 'centered');
+  window.openModalSmooth('admin-order-modal', 'admin-order-modal-box', 'bottom-sheet');
 };
 
 window.closeOrderDetailModal = () => { 
-  window.closeModalSmooth('admin-order-modal', 'admin-order-modal-box', 'centered');
+  window.closeModalSmooth('admin-order-modal', 'admin-order-modal-box', 'bottom-sheet');
 };
 
 window.updateOrderStatus = async (i, s) => {

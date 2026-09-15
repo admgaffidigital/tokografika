@@ -2,6 +2,24 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-09-15] - Perbaikan Tampilan Terpotong & Desain Responsif Mobile-Friendly
+### Peningkatan & Perbaikan Tampilan:
+- **Penyelesaian Bug Kolom Terpotong di Layar HP (*Purchase Invoice Detail*):**
+  - Mengatasi masalah tabel 5 kolom pada Detail Faktur Pembelian (`purchase-detail-modal`) di mana kolom *Subtotal* terpotong di tepi kanan layar ponsel.
+  - Menerapkan arsitektur tampilan responsif ganda:
+    - **Layar HP / Ponsel (`< sm`):** Konten barang otomatis beralih menjadi kartu rincian produk yang elegan (*Mobile Card List View*), menampilkan nomor urut, nama produk, tag varian, perhitungan `Qty × Harga Beli`, serta nominal *Subtotal* yang tebal dan jelas tanpa ada tulisan yang terpotong.
+    - **Layar Desktop (`>= sm`):** Tetap menyajikan format tabel data lengkap (*Desktop Table View*) dengan bungkus kontainer `overflow-x-auto` yang aman dan presisi.
+- **Transformasi Modal Menjadi Native Mobile Bottom Sheet:**
+  - Mengubah modal-modal transaksi yang sebelumnya bertipe *centered dialog* kaku di ponsel menjadi *bottom sheet* fleksibel yang meluncur mulus dari bawah layar HP (`purchase-detail-modal`, `purchase-modal`, `purchase-payment-modal`, `supplier-modal`, dan `admin-order-modal`).
+  - Menambahkan *drag handle pill* di bagian atas modal untuk kenyamanan sentuhan jari di HP.
+  - Penyesuaian `max-h-[92dvh]` dan padding responsif (`p-3.5 sm:p-5`) mencegah konten bertumpukan dengan footer atau terpotong di bagian atas/bawah.
+- **Perbaikan Header Nota & Ringkasan Keuangan:**
+  - Alamat toko dan nama supplier kini mendukung pemotongan teks rapi (*line-clamp* / *break-words*) sehingga tidak memenuhi tinggi layar HP.
+  - Ringkasan total unit dan jenis barang ditampilkan terpadu di dalam ringkasan finansial faktur.
+- **PWA Cache Update:** Versi Service Worker dinaikkan ke `freshmart-pwa-v8`.
+
+---
+
 ## [2026-09-15] - Perbaikan Sinkronisasi Laporan Penjualan & Pesanan Masuk (Realtime Sync)
 ### Peningkatan & Perbaikan Sistem:
 - **Sinkronisasi Otomatis Realtime (`onSnapshot`):**

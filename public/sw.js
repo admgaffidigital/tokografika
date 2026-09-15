@@ -1,4 +1,4 @@
-const CACHE_NAME = 'freshmart-pwa-v7';
+const CACHE_NAME = 'freshmart-pwa-v8';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
