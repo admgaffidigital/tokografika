@@ -2,6 +2,21 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-09-15] - Desain Ulang Riwayat Kas Keluar & Top Pengadaan Barang (Anti Teks Terpotong)
+### Peningkatan & Perbaikan Visual:
+- **Penyelesaian Bug Badge No. Faktur Terpotong (*Text-Wrap Hyphen Bug*):**
+  - Mengatasi masalah teks nomor faktur (misal `FB-20260909-380`) yang sebelumnya terdesak oleh nama supplier panjang hingga terpotong menjadi 3 baris bertumpuk di layar HP.
+  - Memisahkan nama supplier di baris utama dengan pemotongan teks aman (`truncate`), dan memindahkan badge nomor faktur ke baris kedua bersama tanggal dan metode pembayaran dengan atribut `whitespace-nowrap shrink-0` sehingga nomor faktur selalu utuh satu baris.
+- **Header Finansial Premium & Navigasi Cepat:**
+  - Header kartu kini menampilkan ikon transfer kas, jumlah bukti bayar/cicilan, serta total pengeluaran kas tebal di sisi kanan.
+  - Setiap kartu transaksi kas keluar kini bersifat interaktif (`cursor-pointer`)—mengetuk kartu akan langsung membuka modal rincian faktur lengkap (`openPurchaseDetailModal`).
+- **Penyempurnaan Top Komoditas Pengadaan:**
+  - Desain kartu peringkat pengadaan (#1, #2, dst.) diperbarui simetris dengan badge nomor kontras, informasi total kuantitas masuk, rata-rata HPP satuan, serta total nilai belanja yang jelas dan rapi.
+  - Mengganti scrollbar default browser dengan *custom smooth scrollbar* berpadding lega.
+- **PWA Cache Update:** Versi Service Worker dinaikkan ke `freshmart-pwa-v9`.
+
+---
+
 ## [2026-09-15] - Perbaikan Tampilan Terpotong & Desain Responsif Mobile-Friendly
 ### Peningkatan & Perbaikan Tampilan:
 - **Penyelesaian Bug Kolom Terpotong di Layar HP (*Purchase Invoice Detail*):**

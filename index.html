@@ -16181,6 +16181,7 @@ window.openPurchaseDetailModal = (purchaseId) => {
 window.closePurchaseDetailModal = () => {
   window.closeModalSmooth('purchase-detail-modal', 'purchase-detail-box', 'bottom-sheet');
 };
+window.viewPurchaseDetail = window.openPurchaseDetailModal;
 
 window.printPurchaseInvoice = () => {
   if (!currentViewingPurchase) return;
@@ -16862,31 +16863,49 @@ const _renderReportsSubTab = (purchases, suppliers) => {
         
         <!-- Kolom Kiri: Buku Kas Keluar (Semua Pembayaran Tunai & Cicilan) -->
         <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-3">
-          <div class="flex items-center justify-between">
-            <h4 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
-              <i class="fa-solid fa-money-bill-transfer text-emerald-500"></i> Riwayat Kas Keluar (${allPayments.length})
-            </h4>
-            <span class="text-[10px] font-bold text-emerald-600">${fCur(totalBayar)} Total Kas</span>
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700/60">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs shrink-0 border border-emerald-100 dark:border-emerald-900/50">
+                <i class="fa-solid fa-money-bill-transfer"></i>
+              </div>
+              <div>
+                <h4 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white uppercase tracking-wider leading-tight">
+                  Riwayat Kas Keluar
+                </h4>
+                <p class="text-[10px] text-slate-400 font-semibold">${allPayments.length} bukti bayar / cicilan</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="text-[9px] uppercase font-bold text-slate-400 block">Total Pengeluaran</span>
+              <span class="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400">${fCur(totalBayar)}</span>
+            </div>
           </div>
 
-          <div class="space-y-2 max-h-[320px] overflow-y-auto pr-1">
+          <div class="space-y-2 max-h-[360px] overflow-y-auto custom-scrollbar pr-0.5">
             ${!allPayments.length ? `
-              <div class="p-6 text-center text-slate-400 text-xs font-medium bg-slate-50 dark:bg-slate-900/60 rounded-xl">
+              <div class="p-6 text-center text-slate-400 text-xs font-medium bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-800">
                 Belum ada transaksi kas keluar / pembayaran faktur
               </div>
             ` : allPayments.map(pay => {
+              const pTarget = purchases.find(x => x.id === pay.purchaseId || x.invoiceNo === pay.invoiceNo);
               return `
-                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800 flex items-center justify-between gap-2.5 text-xs">
-                  <div class="min-w-0">
-                    <div class="flex items-center gap-2">
-                      <span class="font-bold text-slate-800 dark:text-white">${esc(pay.supplierName || 'Supplier')}</span>
-                      <span class="font-mono text-[10px] text-slate-400 bg-white dark:bg-slate-800 px-1.5 py-0.2 rounded border border-slate-200 dark:border-slate-700">${esc(pay.invoiceNo)}</span>
+                <div class="p-3 sm:p-3.5 rounded-2xl bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 hover:border-emerald-300 dark:hover:border-emerald-700 hover:shadow-xs transition-all flex items-center justify-between gap-3 ${pTarget ? 'cursor-pointer active:scale-[0.99]' : ''}" ${pTarget ? `onclick="openPurchaseDetailModal('${pTarget.id}')" title="Klik untuk lihat detail faktur"` : ''}>
+                  <div class="min-w-0 flex-1 space-y-1">
+                    <h5 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white truncate" title="${esc(pay.supplierName || 'Supplier')}">
+                      ${esc(pay.supplierName || 'Supplier')}
+                    </h5>
+                    <div class="flex items-center gap-1.5 text-[10px] text-slate-400 font-medium flex-wrap">
+                      <span class="font-mono text-[9px] font-bold px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 shrink-0 whitespace-nowrap shadow-2xs">
+                        ${esc(pay.invoiceNo)}
+                      </span>
+                      <span>•</span>
+                      <span class="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400"><i class="fa-regular fa-calendar text-[9px]"></i> ${pay.date || '-'}</span>
+                      <span>•</span>
+                      <span class="capitalize text-slate-600 dark:text-slate-300 font-semibold">${esc(pay.note || pay.method || 'Kas Keluar')}</span>
                     </div>
-                    <p class="text-[10px] text-slate-400 mt-0.5">
-                      ${pay.date || '-'} • <span class="capitalize font-semibold text-slate-600 dark:text-slate-300">${esc(pay.note || pay.method || 'Kas Keluar')}</span>
-                    </p>
                   </div>
-                  <div class="text-right shrink-0">
+                  <div class="text-right shrink-0 pl-1">
+                    <span class="text-[8px] uppercase font-bold text-slate-400 block">Jumlah Kas</span>
                     <span class="font-black text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 block">${fCur(pay.amount)}</span>
                   </div>
                 </div>
@@ -16897,32 +16916,45 @@ const _renderReportsSubTab = (purchases, suppliers) => {
 
         <!-- Kolom Kanan: Top 5 Komoditas Pengadaan Barang Terbanyak -->
         <div class="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-3">
-          <div class="flex items-center justify-between">
-            <h4 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
-              <i class="fa-solid fa-boxes-stacked text-amber-500"></i> Top Pengadaan Barang
-            </h4>
-            <span class="text-[10px] font-bold text-slate-400">Berdasarkan Nilai Belanja</span>
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700/60">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs shrink-0 border border-amber-100 dark:border-amber-900/50">
+                <i class="fa-solid fa-boxes-stacked"></i>
+              </div>
+              <div>
+                <h4 class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white uppercase tracking-wider leading-tight">
+                  Top Pengadaan Barang
+                </h4>
+                <p class="text-[10px] text-slate-400 font-semibold">Berdasarkan Nilai Belanja</p>
+              </div>
+            </div>
+            <span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 shrink-0">
+              Top ${topProducts.length}
+            </span>
           </div>
 
-          <div class="space-y-2 max-h-[320px] overflow-y-auto pr-1">
+          <div class="space-y-2 max-h-[360px] overflow-y-auto custom-scrollbar pr-0.5">
             ${!topProducts.length ? `
-              <div class="p-6 text-center text-slate-400 text-xs font-medium bg-slate-50 dark:bg-slate-900/60 rounded-xl">
+              <div class="p-6 text-center text-slate-400 text-xs font-medium bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-800">
                 Belum ada rincian item barang yang dicatat
               </div>
             ` : topProducts.map((tp, idx) => {
               const avgCost = tp.totalQty > 0 ? Math.round(tp.totalSubtotal / tp.totalQty) : 0;
               return `
-                <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800 flex items-center justify-between gap-2.5 text-xs">
-                  <div class="flex items-center gap-2.5 min-w-0">
-                    <span class="w-6 h-6 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 font-black text-[10px] flex items-center justify-center shrink-0">#${idx + 1}</span>
-                    <div class="min-w-0">
-                      <p class="font-bold text-slate-800 dark:text-white truncate">${esc(tp.name)}${tp.variant ? ` <span class="text-indigo-600 font-semibold text-[10px]">(${esc(tp.variant)})</span>` : ''}</p>
-                      <p class="text-[10px] text-slate-400 mt-0.5">
-                        Total Masuk: <b class="text-slate-700 dark:text-slate-200">${tp.totalQty} unit</b> • Rata-rata HPP: <b>${fCur(avgCost)}</b>
+                <div class="p-3 sm:p-3.5 rounded-2xl bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 hover:border-amber-300 dark:hover:border-amber-700 transition-all flex items-center justify-between gap-2.5 text-xs">
+                  <div class="flex items-start gap-2.5 min-w-0 flex-1">
+                    <span class="w-6 h-6 rounded-lg ${idx === 0 ? 'bg-amber-500 text-white font-black' : idx === 1 ? 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-black' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold'} text-[10px] flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">#${idx + 1}</span>
+                    <div class="min-w-0 flex-1">
+                      <p class="font-extrabold text-xs sm:text-sm text-slate-800 dark:text-white truncate">
+                        ${esc(tp.name)}${tp.variant ? ` <span class="text-indigo-600 dark:text-indigo-400 font-semibold text-[10px]">(${esc(tp.variant)})</span>` : ''}
+                      </p>
+                      <p class="text-[10px] text-slate-400 font-medium mt-0.5">
+                        Total Masuk: <b class="text-slate-700 dark:text-slate-200 font-bold">${tp.totalQty} unit</b> • Rata-rata HPP: <b class="text-slate-600 dark:text-slate-300">${fCur(avgCost)}</b>
                       </p>
                     </div>
                   </div>
-                  <div class="text-right shrink-0">
+                  <div class="text-right shrink-0 pl-1">
+                    <span class="text-[8px] uppercase font-bold text-slate-400 block">Total Nilai</span>
                     <span class="font-black text-xs sm:text-sm text-slate-800 dark:text-white block">${fCur(tp.totalSubtotal)}</span>
                   </div>
                 </div>
