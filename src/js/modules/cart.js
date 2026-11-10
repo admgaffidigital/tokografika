@@ -3,10 +3,15 @@
 // =============================================================================
 
 window.confirmAddProductToCart = () => {
+  if (!cProd) return;
+  if (cProd.isActive === 'false' || cProd.isActive === false) {
+    showToast("Produk ini sedang dinonaktifkan!");
+    return;
+  }
   const v = cProd.variants?.[cVar];
   const vN = v?.name || null;
   const e = cart.find(i => i.id === cProd.id && i.variantName === vN);
-  
+
   if (e) {
     e.qty += cQty;
   } else {
@@ -20,7 +25,7 @@ window.confirmAddProductToCart = () => {
 window.confirmAddToWishlist = () => {
   const v = cProd.variants?.[cVar];
   const vN = v?.name || null;
-  
+
   if (wishlist.find(i => i.id === cProd.id && i.variantName === vN)) {
     return showToast("Sudah di Favorit!");
   }
@@ -47,15 +52,21 @@ const updCart = () => {
   if (b) b.classList.toggle('scale-0', !q);
 };
 
-window.rmWish = i => { 
-  wishlist.splice(i, 1); 
-  ssL('freshmart_wishlist', JSON.stringify(wishlist)); 
-  updWish(); 
-  renderWish(); 
+window.rmWish = i => {
+  wishlist.splice(i, 1);
+  ssL('freshmart_wishlist', JSON.stringify(wishlist));
+  updWish();
+  renderWish();
 };
 
 window.moveWish = i => {
   const it = wishlist[i];
+  if (!it) return;
+  const prod = (appData.products || []).find(p => p.id === it.id || String(p.id) === String(it.id));
+  if (prod && (prod.isActive === 'false' || prod.isActive === false)) {
+    showToast("Produk ini sedang dinonaktifkan!");
+    return;
+  }
   const e = cart.find(c => c.id === it.id && c.variantName === it.variantName);
   if (e) e.qty++; else cart.push({ ...it, qty: 1 });
   updCart();
@@ -66,33 +77,33 @@ window.clearWishlist = () => {
   showConfirm("Hapus Favorit", "Semua produk impianmu akan hilang. Yakin ingin menghapus?", () => {
     wishlist = [];
     ssL('freshmart_wishlist', JSON.stringify(wishlist));
-    updWish(); 
-    renderWish(); 
+    updWish();
+    renderWish();
     showToast("Favorit dibersihkan");
   });
 };
 
 window.clearCart = () => {
   showConfirm("Kosongkan Keranjang", "Semua barang di keranjang belanja akan dihapus. Lanjutkan?", () => {
-    cart = []; 
-    updCart(); 
-    renderCart(); 
+    cart = [];
+    updCart();
+    renderCart();
     showToast("Keranjang dibersihkan");
   });
 };
 
 const renderWish = () => {
   if (!wishlist.length) {
-    show('wishlist-empty-state'); 
-    hide('btn-clear-wishlist'); 
-    show('spacer-wishlist'); 
+    show('wishlist-empty-state');
+    hide('btn-clear-wishlist');
+    show('spacer-wishlist');
     setH('wishlist-items-container', '');
     return;
   }
-  hide('wishlist-empty-state'); 
-  show('btn-clear-wishlist'); 
+  hide('wishlist-empty-state');
+  show('btn-clear-wishlist');
   hide('spacer-wishlist');
-  
+
   setH('wishlist-items-container', wishlist.map((i, x) => `
     <div class="card-modern p-4 flex gap-3 shadow-sm min-w-0 border border-slate-200 dark:border-slate-700">
       <img src="${esc(i.img)}" class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'"/>
@@ -111,21 +122,21 @@ const renderWish = () => {
 
 const renderCart = () => {
   if (!cart.length) {
-    show('cart-empty-state'); 
-    hide('cart-bottom-bar'); 
-    hide('btn-clear-cart'); 
-    show('spacer-cart'); 
+    show('cart-empty-state');
+    hide('cart-bottom-bar');
+    hide('btn-clear-cart');
+    show('spacer-cart');
     setH('cart-items-container', '');
     hide('cart-free-shipping-container');
     const fsc = el('cart-free-shipping-container');
     if (fsc) fsc.innerHTML = '';
     return;
   }
-  hide('cart-empty-state'); 
-  show('cart-bottom-bar'); 
-  show('btn-clear-cart'); 
+  hide('cart-empty-state');
+  show('cart-bottom-bar');
+  show('btn-clear-cart');
   hide('spacer-cart');
-  
+
   let s = 0;
   setH('cart-items-container', cart.map((i, x) => {
     let e = getEffP(i), w = e < i.price;
@@ -233,19 +244,27 @@ window.updCQty = (i, c) => {
   let isDecimal = !Number.isInteger(current) || current < 1;
   let step = (cart[i].unit && ['kg', 'gram', 'ons', 'meter', 'liter', 'm', 'l'].includes(cart[i].unit.toLowerCase()) && isDecimal) ? 0.25 : 1;
   let next = parseFloat((current + (c * step)).toFixed(2));
-  if (next > 0) cart[i].qty = next; 
-  else cart.splice(i, 1); 
-  renderCart(); 
-  updCart(); 
+  if (next > 0) cart[i].qty = next;
+  else cart.splice(i, 1);
+  renderCart();
+  updCart();
 };
 
-window.rmCart = i => { 
-  cart.splice(i, 1); 
-  renderCart(); 
-  updCart(); 
+window.rmCart = i => {
+  cart.splice(i, 1);
+  renderCart();
+  updCart();
 };
 
 window.validateCartToCheckout = () => {
   if (!cart.length) return;
+  const inactiveItem = cart.find(c => {
+    const p = (appData.products || []).find(x => x.id === c.id || String(x.id) === String(c.id));
+    return p && (p.isActive === 'false' || p.isActive === false);
+  });
+  if (inactiveItem) {
+    showToast(`Produk "${inactiveItem.name}" sedang dinonaktifkan. Silakan hapus item tersebut dari keranjang.`);
+    return;
+  }
   changeView('view-checkout');
 };

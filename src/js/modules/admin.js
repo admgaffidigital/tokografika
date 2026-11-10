@@ -20,7 +20,7 @@ const aF = {
     { key: 'category', label: 'Kategori', type: 'dynamic_select_category' }, 
     { key: 'supplierId', label: 'Asal Rekanan Supplier (Vendor)', type: 'dynamic_select_supplier' },
     { key: 'tag', label: 'Label/Tag', type: 'text' },
-    { key: 'isActive', label: 'Status Visibilitas Toko', type: 'select', options: [{ val: 'true', text: 'Aktif (Tampil di Toko)' }, { val: 'false', text: 'Nonaktif (Disembunyikan)' }] },
+    { key: 'isActive', label: 'Status Penjualan Toko', type: 'select', options: [{ val: 'true', text: 'Aktif (Tampil & Bisa Dipesan)' }, { val: 'false', text: 'Nonaktif (Tampil Abu-Abu, Tidak Bisa Dipesan)' }] },
     { key: 'desc', label: 'Deskripsi', type: 'textarea' }, 
     { key: 'wholesale', label: 'Grosir', type: 'wholesale_builder' },
     { key: 'variants', label: 'Varian', type: 'variants_builder' }
@@ -3087,9 +3087,9 @@ window.rAdmItms = t => {
             <div class="min-w-0"><p class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider truncate">Stok Kosong</p><h4 id="adm-count-empty" class="text-base sm:text-lg font-black text-amber-700 dark:text-amber-300 leading-none">${countEmpty}</h4></div>
           </div>
 
-          <!-- Tab 4: Nonaktif (Disembunyikan) -->
+          <!-- Tab 4: Nonaktif (Tampil Abu-Abu) -->
           <div id="adm-pill-inactive" onclick="window.adminProductRenderLimit=30;window.aPrtSort='inactive';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('inactive')}">
-            <div class="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-eye-slash"></i></div>
+            <div class="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-ban"></i></div>
             <div class="min-w-0"><p class="text-[9px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider truncate">Nonaktif</p><h4 id="adm-count-inactive" class="text-base sm:text-lg font-black text-rose-700 dark:text-rose-300 leading-none">${countInactive}</h4></div>
           </div>
         </div>`;
@@ -3169,7 +3169,7 @@ window.rAdmItms = t => {
     let statusBadge = '';
     if (isP) {
       if (isOff) {
-        statusBadge = `<span class="badge badge-xs bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 font-bold"><i class="fa-solid fa-eye-slash text-[8px]"></i> Nonaktif (Sembunyi)</span>`;
+        statusBadge = `<span class="badge badge-xs bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 font-bold"><i class="fa-solid fa-ban text-[8px]"></i> Nonaktif (Tampil Abu-Abu)</span>`;
       } else if (isUnlimited) {
         statusBadge = `<span class="badge badge-xs bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 font-bold"><i class="fa-solid fa-infinity text-[8px]"></i> Stok Bebas</span>`;
       } else if (isOutOfStock) {
@@ -3234,8 +3234,8 @@ window.rAdmItms = t => {
         <button type="button" onclick="openStockOpnameModal(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 hover:text-white transition-all border border-cyan-200 dark:border-cyan-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Stok Opname (Audit Fisik)"><i class="fa-solid fa-clipboard-check"></i></button>
 
         <!-- Tombol Toggle Visibilitas Toko -->
-        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl ${isOff ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-emerald-600' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 hover:bg-emerald-600 hover:text-white'} border border-slate-200 dark:border-slate-600 transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); toggleProductStatus(${x.id}, ${isOff})" title="${isOff ? 'Tampilkan di Toko' : 'Sembunyikan dari Toko'}">
-          <i class="fa-solid ${isOff ? 'fa-eye-slash' : 'fa-eye'}"></i>
+        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl ${isOff ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-emerald-600' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 hover:bg-emerald-600 hover:text-white'} border border-slate-200 dark:border-slate-600 transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); toggleProductStatus(${x.id}, ${isOff})" title="${isOff ? 'Aktifkan Produk (Bisa Dipesan)' : 'Nonaktifkan Produk (Tampil Abu-Abu)'}">
+          <i class="fa-solid ${isOff ? 'fa-ban' : 'fa-eye'}"></i>
         </button>
 
         <!-- Tombol Duplikat -->
@@ -3739,8 +3739,8 @@ window.openQuickEditProduct = (id) => {
     <!-- Visibility Toggle -->
     <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
       <div>
-        <label class="block text-xs font-bold text-slate-800 dark:text-white">Status Visibilitas Toko Online</label>
-        <p class="text-[10px] text-slate-400">Jika nonaktif, produk disembunyikan total dari katalog & pencarian pembeli</p>
+        <label class="block text-xs font-bold text-slate-800 dark:text-white">Status Penjualan Toko Online</label>
+        <p class="text-[10px] text-slate-400">Jika nonaktif, produk tetap tampil abu-abu di katalog tetapi tidak dapat dibeli pelanggan</p>
       </div>
       <label class="relative inline-flex items-center cursor-pointer">
         <input type="checkbox" id="qe-is-active" class="sr-only peer" ${!isOff ? 'checked' : ''} />
@@ -3897,13 +3897,13 @@ window.toggleProductStatus = async (id, toActive) => {
   const i = appData.products.findIndex(x => x.id === id);
   if (i > -1) {
     appData.products[i].isActive = toActive ? 'true' : 'false';
-    sLoad(toActive ? 'Menampilkan di toko...' : 'Menyembunyikan dari toko...');
+    sLoad(toActive ? 'Mengaktifkan produk...' : 'Menonaktifkan produk...');
     try {
       await db.collection("freshmart").doc("cms_data").collection("products").doc(id.toString()).update({ isActive: toActive ? 'true' : 'false' });
       appData.lastUpdate = Date.now();
       await saveApp();
       rAdmItms('products');
-      showToast(toActive ? "Produk Ditampilkan di Toko!" : "Produk Disembunyikan dari Toko!");
+      showToast(toActive ? "Produk Diaktifkan (Bisa Dipesan)!" : "Produk Dinonaktifkan (Tampil Abu-Abu)!");
     } catch (e) {
       showToast("Gagal update status!");
     }
@@ -3957,8 +3957,8 @@ window.getTabHelpBanner = (t) => {
           <p class="text-[11px] text-slate-500 dark:text-slate-400">Produk stok 0 <b>tetap tampil di katalog</b> dengan label <i>Stok Habis</i> agar pelanggan tetap tahu ketersediaannya.</p>
         </div>
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
-          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-eye-slash text-rose-500"></i> 3. Nonaktif (Sembunyi)</div>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400">Klik tombol mata jika ingin <b>menyembunyikan total</b> produk dari etalase online pembeli.</p>
+          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-ban text-rose-500"></i> 3. Nonaktif (Tampil Abu-Abu)</div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Klik tombol status jika ingin <b>menonaktifkan</b> produk. Produk tetap tampil abu-abu namun tidak bisa dibeli.</p>
         </div>
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
           <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-layer-group text-indigo-500"></i> 4. Varian & Grosir</div>
@@ -4107,8 +4107,8 @@ const guideTopicsData = {
               <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Produk dengan stok 0 <b>tetap tampil di katalog online</b> dengan tanda <i>"STOK HABIS"</i> agar pelanggan tahu toko menyediakan produk tersebut saat restok.</p>
             </div>
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
-              <span class="font-bold text-rose-600 dark:text-rose-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-eye-slash"></i> Nonaktif (Disembunyikan)</span>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Klik ikon mata untuk menonaktifkan barang. Produk nonaktif <b>disembunyikan total</b> dari etalase online dan kasir.</p>
+              <span class="font-bold text-rose-600 dark:text-rose-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-ban"></i> Nonaktif (Tampil Abu-Abu)</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Klik ikon status untuk menonaktifkan barang. Produk nonaktif <b>tetap tampil di katalog</b> dengan nuansa abu-abu dan tombol beli dikunci.</p>
             </div>
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
               <span class="font-bold text-indigo-600 dark:text-indigo-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-filter"></i> 4 Tab Filter Status</span>

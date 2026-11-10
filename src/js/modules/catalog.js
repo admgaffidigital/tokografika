@@ -84,16 +84,16 @@ window.rDyn = () => {
   setIn('footer-address', appData.store.address || 'Gg Rukun No.36, RT.08/RW.01...');
   setIn('footer-wa', appData.store.wa || '082137567097');
   setIn('footer-copy-name', appData.store.name || 'TOKO GRAFIKA');
-  
+
   if (el('footer-year')) el('footer-year').innerText = new Date().getFullYear();
-  
+
   let waNum = appData.store.wa || '082137567097';
   waNum = waNum.replace(/\D/g, '');
   if (waNum.startsWith('0')) waNum = '62' + waNum.substring(1);
-  
+
   let waEl = el('footer-wa-link');
   if (waEl) waEl.href = `https://wa.me/${waNum}?text=Halo%20Admin%20Toko,%20saya%20ingin%20bertanya.`;
-  
+
   let mapEl = el('footer-address-link');
   const mapFrame = el('footer-map-frame');
   const mapOverlayBtn = el('footer-map-overlay-btn');
@@ -115,7 +115,7 @@ window.rDyn = () => {
   }
   if (mapOverlayBtn) mapOverlayBtn.href = directMapsUrl;
   if (mapEl) mapEl.href = directMapsUrl;
-  
+
   // Render Media Sosial
   let socHtml = '';
   if (appData.store.social) {
@@ -126,7 +126,7 @@ window.rDyn = () => {
     if (s.yt) socHtml += `<a href="${esc(s.yt)}" target="_blank" title="YouTube" class="w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 hover:-translate-y-1 group border-2 hover:text-white" style="background-color:rgba(255,0,0,0.18);color:#cc0000;border-color:rgba(255,0,0,0.4);" onmouseover="this.style.backgroundColor='#ff0000';this.style.borderColor='#ff0000'" onmouseout="this.style.backgroundColor='rgba(255,0,0,0.18)';this.style.borderColor='rgba(255,0,0,0.4)'"><i class="fa-brands fa-youtube text-base group-hover:scale-110 transition-transform"></i></a>`;
   }
   setH('footer-social-links', socHtml);
-  
+
   // Render Logo Header & Footer
   const _logoImg = el('dyn-store-logo-img');
   const _logoIcon = el('dyn-store-logo-icon');
@@ -203,7 +203,7 @@ window.rDyn = () => {
   // Render Banner Promo (Disesuaikan untuk Rasio 16:9 Rapi & Tidak Terpotong)
   const bCont = el('dynamic-banners-container');
   const rawBanners = (appData.banners || []).filter(b => b && (b.img || b.title || b.subtitle));
-  
+
   if (!rawBanners.length) {
     if (bCont) {
       bCont.innerHTML = '';
@@ -216,14 +216,14 @@ window.rDyn = () => {
   } else {
     if (bCont) bCont.classList.remove('hidden');
     const bannerCount = rawBanners.length;
-    
+
     const bannersHtml = rawBanners.map((b, i) => {
       const rawImg = (b.img || '').trim();
       const fixedImg = rawImg ? fixD(rawImg) : '';
       const hasImg = fixedImg.length > 0;
       const hasTitle = b.title && b.title.trim().length > 0;
       const bgTheme = i % 2 === 0 ? 'var(--clr-p)' : 'var(--clr-p-dark)';
-      
+
       let widthCls = '';
       if (bannerCount === 1) {
         widthCls = 'w-full max-w-4xl mx-auto';
@@ -292,7 +292,7 @@ window.rDyn = () => {
   // Render Kartu Voucher Dinamis
   const vCont = el('dynamic-vouchers-container');
   const vSect = el('voucher-section');
-  
+
   if (vCont && vSect) {
     if (appData.vouchers && appData.vouchers.length > 0) {
       show('voucher-section');
@@ -301,7 +301,7 @@ window.rDyn = () => {
         if (v.type === 'product_percent') desc = `Diskon Produk ${v.value}%`;
         else if (v.type === 'shipping_percent') desc = `Diskon Ongkir ${v.value}%`;
         else if (v.type === 'shipping_flat') desc = `Potongan Ongkir ${fCur(v.value)}`;
-        
+
         return `
         <div class="snap-start shrink-0 w-64 bg-white dark:bg-slate-800 rounded-xl border-2 border-emerald-200 dark:border-emerald-800/50 shadow-sm flex overflow-hidden group cursor-pointer" onclick="copyVoucher('${esc(v.code)}')">
           <div class="bg-emerald-50 dark:bg-emerald-900/30 p-3 flex flex-col justify-center items-center border-r-2 border-dashed border-emerald-300 dark:border-emerald-700 w-[72px] shrink-0 relative overflow-hidden">
@@ -330,7 +330,7 @@ window.rDyn = () => {
 
   // Render Menu Kategori dengan Product Counter Otomatis
   const cL = [
-    { name: 'Semua Produk', img: appData.store.allProductsIcon || '' }, 
+    { name: 'Semua Produk', img: appData.store.allProductsIcon || '' },
     ...(appData.categories || [])
   ];
 
@@ -348,11 +348,11 @@ window.rDyn = () => {
   if (catBadge) {
     catBadge.innerText = `${(appData.categories || []).length} Kategori`;
   }
-  
+
   setH('dynamic-categories-container', cL.map(c => {
     const isAll = c.name === 'Semua Produk';
-    const count = isAll 
-      ? (appData.products || []).length 
+    const count = isAll
+      ? (appData.products || []).length
       : (appData.products || []).filter(p => p.category === c.name).length;
     const isActive = aCat === c.name;
     const encodedName = encodeURIComponent(c.name).replace(/'/g, "%27");
@@ -376,9 +376,9 @@ window.rDyn = () => {
       return `
       <div data-cat-name="${esc(c.name)}" onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="flex flex-col items-center gap-1.5 cursor-pointer shrink-0 w-[74px] sm:w-[88px] group snap-start">
         <div class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-2xl transition-all duration-300 group-hover:scale-105 flex items-center justify-center overflow-hidden ${isActive ? 'border-2 shadow-md ring-2 ring-offset-2 ring-emerald-500' : 'border-2 border-slate-200/90 dark:border-slate-700 bg-slate-50 dark:bg-slate-750 shadow-sm hover:border-slate-300'}" style="${isActive ? 'border-color:var(--clr-p);background-color:var(--clr-p-bg);' : ''}">
-          ${hasImg 
-            ? `<img data-src="${esc(fixD(c.img))}" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==" onerror="this.onerror=null;this.src='https://placehold.co/150/10b981/ffffff?text=Cat'" class="lazy-load opacity-0 transition-all duration-500 absolute inset-0 w-full h-full object-cover rounded-2xl"/>` 
-            : `<i class="fa-solid ${isAll ? 'fa-store' : 'fa-layer-group'} text-lg ${isActive ? '' : 'text-slate-500 dark:text-slate-400'}" style="${isActive ? 'color:var(--clr-p);' : ''}"></i>`}
+          ${hasImg
+          ? `<img data-src="${esc(fixD(c.img))}" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==" onerror="this.onerror=null;this.src='https://placehold.co/150/10b981/ffffff?text=Cat'" class="lazy-load opacity-0 transition-all duration-500 absolute inset-0 w-full h-full object-cover rounded-2xl"/>`
+          : `<i class="fa-solid ${isAll ? 'fa-store' : 'fa-layer-group'} text-lg ${isActive ? '' : 'text-slate-500 dark:text-slate-400'}" style="${isActive ? 'color:var(--clr-p);' : ''}"></i>`}
         </div>
         <div class="text-center w-full px-0.5">
           <span class="text-[10px] sm:text-[11px] block line-clamp-1 leading-tight ${isActive ? 'font-black' : 'font-bold text-slate-600 dark:text-slate-300'}" style="${isActive ? 'color:var(--clr-p);' : ''}">
@@ -394,9 +394,9 @@ window.rDyn = () => {
     return `
     <div data-cat-name="${esc(c.name)}" onclick="filterCategory(decodeURIComponent('${encodedName}'))" class="flex flex-col items-center gap-2 cursor-pointer shrink-0 w-[74px] sm:w-[86px] group snap-start">
       <div class="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl transition-all duration-300 group-hover:scale-105 flex items-center justify-center overflow-hidden ${isActive ? 'border-2 shadow-md ring-2 ring-offset-2 ring-emerald-500' : 'border-2 border-slate-200/90 dark:border-slate-700 bg-slate-50 dark:bg-slate-750 shadow-sm hover:border-slate-300'}" style="${isActive ? 'border-color:var(--clr-p);background-color:var(--clr-p-bg);' : ''}">
-        ${hasImg 
-          ? `<img data-src="${esc(fixD(c.img))}" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==" onerror="this.onerror=null;this.src='https://placehold.co/150/10b981/ffffff?text=Cat'" class="lazy-load opacity-0 transition-all duration-500 absolute inset-0 w-full h-full object-cover rounded-2xl"/>` 
-          : `<i class="fa-solid ${isAll ? 'fa-store' : 'fa-layer-group'} text-xl ${isActive ? '' : 'text-slate-500 dark:text-slate-400'}" style="${isActive ? 'color:var(--clr-p);' : ''}"></i>`}
+        ${hasImg
+        ? `<img data-src="${esc(fixD(c.img))}" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==" onerror="this.onerror=null;this.src='https://placehold.co/150/10b981/ffffff?text=Cat'" class="lazy-load opacity-0 transition-all duration-500 absolute inset-0 w-full h-full object-cover rounded-2xl"/>`
+        : `<i class="fa-solid ${isAll ? 'fa-store' : 'fa-layer-group'} text-xl ${isActive ? '' : 'text-slate-500 dark:text-slate-400'}" style="${isActive ? 'color:var(--clr-p);' : ''}"></i>`}
         <span class="absolute bottom-1 right-1 text-[8px] font-black px-1 py-0.2 rounded-md ${isActive ? 'bg-white text-slate-800 shadow-sm' : 'bg-slate-900/60 text-white backdrop-blur-xs'}">${count}</span>
       </div>
       <div class="text-center w-full px-0.5">
@@ -407,17 +407,17 @@ window.rDyn = () => {
     </div>
     `;
   }).join(''));
-  
+
   if (el('dyn-qris-img') && appData.payment) el('dyn-qris-img').src = appData.payment.qrisUrl;
-  
+
   cPage = 1;
   rCat();
 };
 
-window.filterCategory = c => { 
-  aCat = c; 
-  cPage = 1; 
-  
+window.filterCategory = c => {
+  aCat = c;
+  cPage = 1;
+
   // Update styling on category chips in-place to prevent scroll position reset
   const catCont = el('dynamic-categories-container');
   if (catCont) {
@@ -453,12 +453,12 @@ window.filterCategory = c => {
       if (isSelected) {
         try {
           chip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        } catch(e) {}
+        } catch (e) { }
       }
     });
   }
-  
-  rCat(); 
+
+  rCat();
   if (window.updateStoreSeo) updateStoreSeo(c === 'Semua Produk' ? '' : `Kategori ${c}`);
 };
 
@@ -501,17 +501,14 @@ window.toggleView = v => {
 
 const rCat = () => {
   let f = (appData.products || []).filter(p => {
-    // 1. Produk Nonaktif (Disembunyikan) tidak ditampilkan sama sekali di katalog
-    if (p.isActive === 'false' || p.isActive === false) return false;
-    
-    // 2. Filter Kategori
+    // 1. Filter Kategori
     if (aCat !== 'Semua Produk' && p.category !== aCat) return false;
-    
-    // 3. Filter Pencarian
+
+    // 2. Filter Pencarian
     if (!sQ) return true;
     let q = sQ.toLowerCase();
-    return (p.name || '').toLowerCase().includes(q) || 
-      ((p.sku || '').toLowerCase().includes(q)) || 
+    return (p.name || '').toLowerCase().includes(q) ||
+      ((p.sku || '').toLowerCase().includes(q)) ||
       (p.variants && p.variants.some(v => (v.sku || '').toLowerCase().includes(q)));
   }).sort((a, b) => {
     if (cSort === 'cheapest') return a.price - b.price;
@@ -524,7 +521,7 @@ const rCat = () => {
 
   const c = el('product-container');
   c.className = cView === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 lg:gap-5' : 'flex flex-col gap-3 max-w-4xl mx-auto';
-  
+
   if (!f.length) {
     c.innerHTML = `
     <div class="col-span-full text-center py-20 text-slate-400 font-bold bg-white dark:bg-slate-800 rounded-[1.25rem] border-2 border-slate-200 dark:border-slate-700 text-sm">
@@ -535,19 +532,26 @@ const rCat = () => {
     hide('load-more-container');
     return;
   }
-  
+
   const svgPlaceholder = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxIDEiPjwvc3ZnPg==";
   const v = f.slice(0, cPage * iPP);
 
   c.innerHTML = v.map(p => {
-    // Cek apakah produk kehabisan stok atau stok unlimited
+    // Cek apakah produk nonaktif, kehabisan stok, atau stok unlimited
+    const isOff = p.isActive === 'false' || p.isActive === false;
     const isUnlimited = (appData.store?.stockMode === 'unlimited') || p.isUnlimited === true || p.isUnlimited === 'true';
     const hasVars = p.variants && p.variants.length > 0;
-    const isOutOfStock = !isUnlimited && (hasVars 
+    const isOutOfStock = !isOff && !isUnlimited && (hasVars
       ? p.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0)
       : (p.stock !== undefined && p.stock !== null && p.stock !== '' && Number(p.stock) <= 0));
 
-    let nH = isOutOfStock ? `<div class="absolute top-1.5 right-1.5 z-20"><span class="bg-amber-500/95 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wider">STOK HABIS</span></div>` : '';
+    let nH = '';
+    if (isOff) {
+      nH = `<div class="absolute top-1.5 right-1.5 z-20"><span class="bg-slate-700/95 dark:bg-slate-900/95 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wider flex items-center gap-1"><i class="fa-solid fa-ban text-[7px] text-slate-300"></i> TIDAK TERSEDIA</span></div>`;
+    } else if (isOutOfStock) {
+      nH = `<div class="absolute top-1.5 right-1.5 z-20"><span class="bg-amber-500/95 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wider">STOK HABIS</span></div>`;
+    }
+
     let bH = `
     <div class="mb-1 flex flex-wrap gap-1 items-center overflow-hidden shrink-0">
       ${p.tag ? `<span class="bg-rose-50 dark:bg-rose-950/60 border border-rose-200/80 dark:border-rose-800/60 text-rose-600 dark:text-rose-400 px-1.5 py-0.5 rounded text-[8px] font-bold truncate max-w-full"><i class="fa-solid fa-fire text-[7px]"></i> ${esc(p.tag)}</span>` : ''}
@@ -560,46 +564,46 @@ const rCat = () => {
 
     if (cView === 'grid') {
       return `
-      <div class="card-modern overflow-hidden flex flex-col cursor-pointer group p-2.5 sm:p-3 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-200" onclick="openProductModal(${p.id})">
+      <div class="card-modern overflow-hidden flex flex-col cursor-pointer group p-2.5 sm:p-3 border ${isOff ? 'border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/70 opacity-80' : 'border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500'} transition-all duration-200" onclick="openProductModal(${p.id})">
         <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 mb-2.5">
-          <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${isOutOfStock ? 'grayscale opacity-75' : ''}"/>
+          <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 ${isOff ? 'grayscale opacity-60' : (isOutOfStock ? 'grayscale opacity-75 group-hover:scale-105' : 'group-hover:scale-105')}"/>
           ${nH}
         </div>
         <div class="flex-1 flex flex-col justify-between min-w-0 px-0.5 pb-0.5">
           <div class="flex flex-col min-w-0">
             ${bH}
-            <h4 class="text-xs font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
+            <h4 class="text-xs font-semibold ${isOff ? 'text-slate-500 dark:text-slate-400' : 'text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'} line-clamp-2 leading-snug mb-1.5 transition-colors">${esc(p.name)}</h4>
           </div>
           <div class="mt-auto pt-1.5 flex items-baseline justify-between gap-1 flex-wrap">
-            <span class="text-emerald-600 dark:text-emerald-400 font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
-            ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide shrink-0">/${esc(p.unit)}</span>` : ''}
+            <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
+            ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold ${isOff ? 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800' : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60'} px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide shrink-0">/${esc(p.unit)}</span>` : ''}
           </div>
         </div>
       </div>
       `;
     } else {
       return `
-      <div class="card-modern flex items-center p-3 gap-3.5 cursor-pointer group border border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-200" onclick="openProductModal(${p.id})">
+      <div class="card-modern flex items-center p-3 gap-3.5 cursor-pointer group border ${isOff ? 'border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/70 opacity-80' : 'border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500'} transition-all duration-200" onclick="openProductModal(${p.id})">
         <div class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60">
-          <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${isOutOfStock ? 'grayscale opacity-75' : ''}"/>
+          <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 ${isOff ? 'grayscale opacity-60' : (isOutOfStock ? 'grayscale opacity-75 group-hover:scale-105' : 'group-hover:scale-105')}"/>
           ${nH}
         </div>
         <div class="flex-1 min-w-0 pr-1 flex flex-col justify-between py-0.5 h-full">
           <div>
             ${bH}
-            <h4 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
+            <h4 class="text-xs sm:text-sm font-semibold ${isOff ? 'text-slate-500 dark:text-slate-400' : 'text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'} line-clamp-2 leading-snug mb-1 transition-colors">${esc(p.name)}</h4>
           </div>
           <div class="mt-auto pt-1 flex items-baseline gap-2">
-            <span class="text-emerald-600 dark:text-emerald-400 font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
-            ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide">/${esc(p.unit)}</span>` : ''}
+            <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
+            ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold ${isOff ? 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800' : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60'} px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide">/${esc(p.unit)}</span>` : ''}
           </div>
         </div>
       </div>
       `;
     }
   }).join('');
-  
-  setTimeout(observeLazyImages, 50); 
+
+  setTimeout(observeLazyImages, 50);
   v.length < f.length ? show('load-more-container') : hide('load-more-container');
 };
 
@@ -613,8 +617,8 @@ window.loadMoreProducts = async () => {
 window.openProductModal = i => {
   const p = (appData.products || []).find(x => x.id === i || String(x.id) === String(i));
   if (!p) return;
-  cProd = p; cVar = 0; cQty = 1; 
-  setV('modal-qty-input', 1); 
+  cProd = p; cVar = 0; cQty = 1;
+  setV('modal-qty-input', 1);
   rProdMod();
   // Bersihkan parameter ?p dari URL address bar segera setelah produk dibuka
   // sehingga jika halaman di-reload/muat ulang, browser kembali bersih ke katalog tanpa terus membuka modal produk
@@ -623,7 +627,7 @@ window.openProductModal = i => {
       const cleanUrl = window.location.origin + window.location.pathname + (window.location.hash || '');
       window.history.replaceState({ modal: 'product', pid: p.id }, '', cleanUrl);
     }
-  } catch (e) {}
+  } catch (e) { }
 
   const m = el('product-modal'), c = el('product-modal-content');
   if (m && c) {
@@ -656,7 +660,7 @@ window.closeProductModal = (fH = !1) => {
       u.searchParams.delete('p');
       history.replaceState({}, '', u.toString());
     }
-  } catch (e) {}
+  } catch (e) { }
 };
 
 // Objek helper untuk menyimpan data produk yang sedang siap dibagikan
@@ -823,28 +827,31 @@ const rProdMod = () => {
   if (!cProd) return;
   let p = cProd;
   let a = p.isActive !== 'false' && p.isActive !== false;
+  let isOff = !a;
   let hV = p.variants?.length > 0;
   let v = hV ? p.variants[cVar] : null;
-  
+
   const i = el('product-modal-img');
   if (i) {
     i.style.opacity = 0;
     setTimeout(() => {
       i.src = (v?.img || p.img || '');
+      i.className = 'w-full h-full object-cover transition-opacity duration-300' + (isOff ? ' grayscale opacity-75' : '');
       i.style.opacity = 1;
     }, 150);
   }
-  
+
   setIn('product-modal-title', p.name);
   setH('product-modal-price', `
     <div class="flex items-baseline gap-2 flex-wrap">
-      <span class="text-emerald-600 dark:text-emerald-400 font-black text-2xl sm:text-3xl">${fCur(v?.price ?? p.price)}</span>
+      <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-black text-2xl sm:text-3xl">${fCur(v?.price ?? p.price)}</span>
       ${p.unit ? `<span class="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700 uppercase tracking-wider">/ ${esc(p.unit)}</span>` : ''}
     </div>
   `);
   setIn('product-modal-desc', p.desc || '-');
-  
+
   setH('product-modal-badges', `
+    ${isOff ? `<span class="badge badge-xs bg-slate-700 text-white font-bold"><i class="fa-solid fa-ban text-[8px]"></i> Tidak Tersedia</span>` : ''}
     <span class="badge badge-xs badge-slate badge-normal-case">
       <i class="fa-solid fa-barcode"></i> ${esc(v?.sku || p.sku || '-')}
     </span>
@@ -853,26 +860,43 @@ const rProdMod = () => {
     </span>
     ${p.wholesale?.length ? `<span class="badge badge-xs badge-amber"><i class="fa-solid fa-tags"></i> Grosir</span>` : ''}
   `);
-  
+
   setH('product-modal-wholesale-container', p.wholesale?.length ? `
     <div class="mb-4 bg-amber-50/50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/50 rounded-xl p-4">
       <p class="text-[10px] font-bold text-amber-700 dark:text-amber-400 mb-2 uppercase tracking-widest"><i class="fa-solid fa-tags mr-1"></i> Harga Grosir</p>
       <div class="flex flex-col gap-1.5">
       ${p.wholesale.slice().sort((a, b) => a.minQty - b.minQty).map(w => `
         <div class="flex justify-between text-xs bg-white dark:bg-slate-800 p-2 rounded-lg border border-slate-200 dark:border-slate-700">
-          <span class="font-bold text-slate-600 dark:text-slate-300">&gt;= ${w.minQty}${p.unit ? ' '+p.unit : ''}</span>
+          <span class="font-bold text-slate-600 dark:text-slate-300">&gt;= ${w.minQty}${p.unit ? ' ' + p.unit : ''}</span>
           <span class="font-bold text-emerald-600 dark:text-emerald-400">${fCur(w.price)}</span>
         </div>
       `).join('')}
       </div>
     </div>
   ` : '');
-  
+
   const isUnlimited = (appData.store?.stockMode === 'unlimited') || p.isUnlimited === true || p.isUnlimited === 'true' || (hV && (v?.isUnlimited === true || v?.isUnlimited === 'true'));
   const curStock = hV ? (v?.stock) : p.stock;
-  const isOutOfStock = !isUnlimited && (curStock !== undefined && curStock !== null && curStock !== '' && Number(curStock) <= 0);
+  const isOutOfStock = !isOff && !isUnlimited && (curStock !== undefined && curStock !== null && curStock !== '' && Number(curStock) <= 0);
 
-  if (isOutOfStock) {
+  if (isOff) {
+    hide('modal-active-controls');
+    show('modal-inactive-controls');
+    const inActTxt = el('modal-inactive-controls');
+    if (inActTxt) {
+      inActTxt.innerHTML = `
+        <div class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 text-center text-slate-600 dark:text-slate-300 font-bold text-xs flex flex-col items-center justify-center gap-1.5 shadow-xs">
+          <div class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 mb-0.5">
+            <i class="fa-solid fa-ban text-sm"></i>
+          </div>
+          <span class="font-extrabold text-slate-800 dark:text-slate-100 text-sm">Produk Sedang Dinonaktifkan</span>
+          <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-relaxed max-w-sm">
+            Saat ini produk ini belum dapat dipesan oleh pelanggan. Silakan hubungi admin toko jika memerlukan informasi lebih lanjut.
+          </span>
+        </div>
+      `;
+    }
+  } else if (isOutOfStock) {
     hide('modal-active-controls');
     show('modal-inactive-controls');
     const inActTxt = el('modal-inactive-controls');
@@ -913,7 +937,7 @@ const uMPP = () => {
   let e = p;
   let eQ = cart.find(c => c.id === cProd.id)?.qty || 0;
   let tQ = cQty + eQ;
-  
+
   if (cProd.wholesale?.length) {
     for (let w of cProd.wholesale.slice().sort((a, b) => b.minQty - a.minQty)) {
       if (tQ >= w.minQty) { e = w.price; break; }
@@ -922,22 +946,22 @@ const uMPP = () => {
   setIn('btn-modal-price-preview', fCur(e * cQty));
 };
 
-window.updateModalQty = c => { 
+window.updateModalQty = c => {
   let current = cQty;
   let isDecimal = !Number.isInteger(current) || current < 1;
   let step = (cProd?.unit && ['kg', 'gram', 'ons', 'meter', 'liter', 'm', 'l'].includes(cProd.unit.toLowerCase()) && isDecimal) ? 0.25 : 1;
   let next = parseFloat((current + (c * step)).toFixed(2));
-  cQty = Math.max(0.01, next); 
-  setV('modal-qty-input', cQty); 
-  uMPP(); 
+  cQty = Math.max(0.01, next);
+  setV('modal-qty-input', cQty);
+  uMPP();
 };
 
-window.handleModalQtyChange = v => { 
+window.handleModalQtyChange = v => {
   let parsed = parseFloat(v);
   if (isNaN(parsed) || parsed <= 0) parsed = 1;
-  cQty = parseFloat(parsed.toFixed(2)); 
-  setV('modal-qty-input', cQty); 
-  uMPP(); 
+  cQty = parseFloat(parsed.toFixed(2));
+  setV('modal-qty-input', cQty);
+  uMPP();
 };
 
 window.selectVariant = i => { cVar = i; rProdMod(); };
@@ -1451,7 +1475,7 @@ window.showBuyerGuideTopic = (topic, shouldScroll = true) => {
           const leftPos = activeBtn.offsetLeft - (navCont.clientWidth / 2) + (activeBtn.clientWidth / 2);
           navCont.scrollTo({ left: Math.max(0, leftPos), behavior: 'smooth' });
         }
-      } catch(e) {}
+      } catch (e) { }
     }
   }
 

@@ -7148,13 +7148,10 @@ window.toggleView = v => {
 
 const rCat = () => {
   let f = (appData.products || []).filter(p => {
-    // 1. Produk Nonaktif (Disembunyikan) tidak ditampilkan sama sekali di katalog
-    if (p.isActive === 'false' || p.isActive === false) return false;
-    
-    // 2. Filter Kategori
+    // 1. Filter Kategori
     if (aCat !== 'Semua Produk' && p.category !== aCat) return false;
     
-    // 3. Filter Pencarian
+    // 2. Filter Pencarian
     if (!sQ) return true;
     let q = sQ.toLowerCase();
     return (p.name || '').toLowerCase().includes(q) || 
@@ -7187,14 +7184,21 @@ const rCat = () => {
   const v = f.slice(0, cPage * iPP);
 
   c.innerHTML = v.map(p => {
-    // Cek apakah produk kehabisan stok atau stok unlimited
+    // Cek apakah produk nonaktif, kehabisan stok, atau stok unlimited
+    const isOff = p.isActive === 'false' || p.isActive === false;
     const isUnlimited = (appData.store?.stockMode === 'unlimited') || p.isUnlimited === true || p.isUnlimited === 'true';
     const hasVars = p.variants && p.variants.length > 0;
-    const isOutOfStock = !isUnlimited && (hasVars 
+    const isOutOfStock = !isOff && !isUnlimited && (hasVars 
       ? p.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0)
       : (p.stock !== undefined && p.stock !== null && p.stock !== '' && Number(p.stock) <= 0));
 
-    let nH = isOutOfStock ? `<div class="absolute top-1.5 right-1.5 z-20"><span class="bg-amber-500/95 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wider">STOK HABIS</span></div>` : '';
+    let nH = '';
+    if (isOff) {
+      nH = `<div class="absolute top-1.5 right-1.5 z-20"><span class="bg-slate-700/95 dark:bg-slate-900/95 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wider flex items-center gap-1"><i class="fa-solid fa-ban text-[7px] text-slate-300"></i> TIDAK TERSEDIA</span></div>`;
+    } else if (isOutOfStock) {
+      nH = `<div class="absolute top-1.5 right-1.5 z-20"><span class="bg-amber-500/95 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wider">STOK HABIS</span></div>`;
+    }
+
     let bH = `
     <div class="mb-1 flex flex-wrap gap-1 items-center overflow-hidden shrink-0">
       ${p.tag ? `<span class="bg-rose-50 dark:bg-rose-950/60 border border-rose-200/80 dark:border-rose-800/60 text-rose-600 dark:text-rose-400 px-1.5 py-0.5 rounded text-[8px] font-bold truncate max-w-full"><i class="fa-solid fa-fire text-[7px]"></i> ${esc(p.tag)}</span>` : ''}
@@ -7207,38 +7211,38 @@ const rCat = () => {
 
     if (cView === 'grid') {
       return `
-      <div class="card-modern overflow-hidden flex flex-col cursor-pointer group p-2.5 sm:p-3 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-200" onclick="openProductModal(${p.id})">
+      <div class="card-modern overflow-hidden flex flex-col cursor-pointer group p-2.5 sm:p-3 border ${isOff ? 'border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/70 opacity-80' : 'border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500'} transition-all duration-200" onclick="openProductModal(${p.id})">
         <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 mb-2.5">
-          <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${isOutOfStock ? 'grayscale opacity-75' : ''}"/>
+          <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 ${isOff ? 'grayscale opacity-60' : (isOutOfStock ? 'grayscale opacity-75 group-hover:scale-105' : 'group-hover:scale-105')}"/>
           ${nH}
         </div>
         <div class="flex-1 flex flex-col justify-between min-w-0 px-0.5 pb-0.5">
           <div class="flex flex-col min-w-0">
             ${bH}
-            <h4 class="text-xs font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1.5 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
+            <h4 class="text-xs font-semibold ${isOff ? 'text-slate-500 dark:text-slate-400' : 'text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'} line-clamp-2 leading-snug mb-1.5 transition-colors">${esc(p.name)}</h4>
           </div>
           <div class="mt-auto pt-1.5 flex items-baseline justify-between gap-1 flex-wrap">
-            <span class="text-emerald-600 dark:text-emerald-400 font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
-            ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide shrink-0">/${esc(p.unit)}</span>` : ''}
+            <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
+            ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold ${isOff ? 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800' : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60'} px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide shrink-0">/${esc(p.unit)}</span>` : ''}
           </div>
         </div>
       </div>
       `;
     } else {
       return `
-      <div class="card-modern flex items-center p-3 gap-3.5 cursor-pointer group border border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 transition-all duration-200" onclick="openProductModal(${p.id})">
+      <div class="card-modern flex items-center p-3 gap-3.5 cursor-pointer group border ${isOff ? 'border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/70 opacity-80' : 'border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500'} transition-all duration-200" onclick="openProductModal(${p.id})">
         <div class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60">
-          <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${isOutOfStock ? 'grayscale opacity-75' : ''}"/>
+          <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 ${isOff ? 'grayscale opacity-60' : (isOutOfStock ? 'grayscale opacity-75 group-hover:scale-105' : 'group-hover:scale-105')}"/>
           ${nH}
         </div>
         <div class="flex-1 min-w-0 pr-1 flex flex-col justify-between py-0.5 h-full">
           <div>
             ${bH}
-            <h4 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-200 line-clamp-2 leading-snug mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">${esc(p.name)}</h4>
+            <h4 class="text-xs sm:text-sm font-semibold ${isOff ? 'text-slate-500 dark:text-slate-400' : 'text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'} line-clamp-2 leading-snug mb-1 transition-colors">${esc(p.name)}</h4>
           </div>
           <div class="mt-auto pt-1 flex items-baseline gap-2">
-            <span class="text-emerald-600 dark:text-emerald-400 font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
-            ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide">/${esc(p.unit)}</span>` : ''}
+            <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
+            ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold ${isOff ? 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800' : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60'} px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide">/${esc(p.unit)}</span>` : ''}
           </div>
         </div>
       </div>
@@ -7470,6 +7474,7 @@ const rProdMod = () => {
   if (!cProd) return;
   let p = cProd;
   let a = p.isActive !== 'false' && p.isActive !== false;
+  let isOff = !a;
   let hV = p.variants?.length > 0;
   let v = hV ? p.variants[cVar] : null;
   
@@ -7478,6 +7483,7 @@ const rProdMod = () => {
     i.style.opacity = 0;
     setTimeout(() => {
       i.src = (v?.img || p.img || '');
+      i.className = 'w-full h-full object-cover transition-opacity duration-300' + (isOff ? ' grayscale opacity-75' : '');
       i.style.opacity = 1;
     }, 150);
   }
@@ -7485,13 +7491,14 @@ const rProdMod = () => {
   setIn('product-modal-title', p.name);
   setH('product-modal-price', `
     <div class="flex items-baseline gap-2 flex-wrap">
-      <span class="text-emerald-600 dark:text-emerald-400 font-black text-2xl sm:text-3xl">${fCur(v?.price ?? p.price)}</span>
+      <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-black text-2xl sm:text-3xl">${fCur(v?.price ?? p.price)}</span>
       ${p.unit ? `<span class="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700 uppercase tracking-wider">/ ${esc(p.unit)}</span>` : ''}
     </div>
   `);
   setIn('product-modal-desc', p.desc || '-');
   
   setH('product-modal-badges', `
+    ${isOff ? `<span class="badge badge-xs bg-slate-700 text-white font-bold"><i class="fa-solid fa-ban text-[8px]"></i> Tidak Tersedia</span>` : ''}
     <span class="badge badge-xs badge-slate badge-normal-case">
       <i class="fa-solid fa-barcode"></i> ${esc(v?.sku || p.sku || '-')}
     </span>
@@ -7517,9 +7524,26 @@ const rProdMod = () => {
   
   const isUnlimited = (appData.store?.stockMode === 'unlimited') || p.isUnlimited === true || p.isUnlimited === 'true' || (hV && (v?.isUnlimited === true || v?.isUnlimited === 'true'));
   const curStock = hV ? (v?.stock) : p.stock;
-  const isOutOfStock = !isUnlimited && (curStock !== undefined && curStock !== null && curStock !== '' && Number(curStock) <= 0);
+  const isOutOfStock = !isOff && !isUnlimited && (curStock !== undefined && curStock !== null && curStock !== '' && Number(curStock) <= 0);
 
-  if (isOutOfStock) {
+  if (isOff) {
+    hide('modal-active-controls');
+    show('modal-inactive-controls');
+    const inActTxt = el('modal-inactive-controls');
+    if (inActTxt) {
+      inActTxt.innerHTML = `
+        <div class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 text-center text-slate-600 dark:text-slate-300 font-bold text-xs flex flex-col items-center justify-center gap-1.5 shadow-xs">
+          <div class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 mb-0.5">
+            <i class="fa-solid fa-ban text-sm"></i>
+          </div>
+          <span class="font-extrabold text-slate-800 dark:text-slate-100 text-sm">Produk Sedang Dinonaktifkan</span>
+          <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 leading-relaxed max-w-sm">
+            Saat ini produk ini belum dapat dipesan oleh pelanggan. Silakan hubungi admin toko jika memerlukan informasi lebih lanjut.
+          </span>
+        </div>
+      `;
+    }
+  } else if (isOutOfStock) {
     hide('modal-active-controls');
     show('modal-inactive-controls');
     const inActTxt = el('modal-inactive-controls');
@@ -8131,6 +8155,11 @@ window.showBuyerGuideTopic = (topic, shouldScroll = true) => {
 // =============================================================================
 
 window.confirmAddProductToCart = () => {
+  if (!cProd) return;
+  if (cProd.isActive === 'false' || cProd.isActive === false) {
+    showToast("Produk ini sedang dinonaktifkan!");
+    return;
+  }
   const v = cProd.variants?.[cVar];
   const vN = v?.name || null;
   const e = cart.find(i => i.id === cProd.id && i.variantName === vN);
@@ -8184,6 +8213,12 @@ window.rmWish = i => {
 
 window.moveWish = i => {
   const it = wishlist[i];
+  if (!it) return;
+  const prod = (appData.products || []).find(p => p.id === it.id || String(p.id) === String(it.id));
+  if (prod && (prod.isActive === 'false' || prod.isActive === false)) {
+    showToast("Produk ini sedang dinonaktifkan!");
+    return;
+  }
   const e = cart.find(c => c.id === it.id && c.variantName === it.variantName);
   if (e) e.qty++; else cart.push({ ...it, qty: 1 });
   updCart();
@@ -8375,6 +8410,14 @@ window.rmCart = i => {
 
 window.validateCartToCheckout = () => {
   if (!cart.length) return;
+  const inactiveItem = cart.find(c => {
+    const p = (appData.products || []).find(x => x.id === c.id || String(x.id) === String(c.id));
+    return p && (p.isActive === 'false' || p.isActive === false);
+  });
+  if (inactiveItem) {
+    showToast(`Produk "${inactiveItem.name}" sedang dinonaktifkan. Silakan hapus item tersebut dari keranjang.`);
+    return;
+  }
   changeView('view-checkout');
 };
 
@@ -8772,7 +8815,7 @@ const aF = {
     { key: 'category', label: 'Kategori', type: 'dynamic_select_category' }, 
     { key: 'supplierId', label: 'Asal Rekanan Supplier (Vendor)', type: 'dynamic_select_supplier' },
     { key: 'tag', label: 'Label/Tag', type: 'text' },
-    { key: 'isActive', label: 'Status Visibilitas Toko', type: 'select', options: [{ val: 'true', text: 'Aktif (Tampil di Toko)' }, { val: 'false', text: 'Nonaktif (Disembunyikan)' }] },
+    { key: 'isActive', label: 'Status Penjualan Toko', type: 'select', options: [{ val: 'true', text: 'Aktif (Tampil & Bisa Dipesan)' }, { val: 'false', text: 'Nonaktif (Tampil Abu-Abu, Tidak Bisa Dipesan)' }] },
     { key: 'desc', label: 'Deskripsi', type: 'textarea' }, 
     { key: 'wholesale', label: 'Grosir', type: 'wholesale_builder' },
     { key: 'variants', label: 'Varian', type: 'variants_builder' }
@@ -11839,9 +11882,9 @@ window.rAdmItms = t => {
             <div class="min-w-0"><p class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider truncate">Stok Kosong</p><h4 id="adm-count-empty" class="text-base sm:text-lg font-black text-amber-700 dark:text-amber-300 leading-none">${countEmpty}</h4></div>
           </div>
 
-          <!-- Tab 4: Nonaktif (Disembunyikan) -->
+          <!-- Tab 4: Nonaktif (Tampil Abu-Abu) -->
           <div id="adm-pill-inactive" onclick="window.adminProductRenderLimit=30;window.aPrtSort='inactive';rAdmItms('products')" class="cursor-pointer border-2 rounded-2xl p-3 flex items-center gap-2.5 transition-all ${getPillCls('inactive')}">
-            <div class="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-eye-slash"></i></div>
+            <div class="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 text-sm"><i class="fa-solid fa-ban"></i></div>
             <div class="min-w-0"><p class="text-[9px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider truncate">Nonaktif</p><h4 id="adm-count-inactive" class="text-base sm:text-lg font-black text-rose-700 dark:text-rose-300 leading-none">${countInactive}</h4></div>
           </div>
         </div>`;
@@ -11921,7 +11964,7 @@ window.rAdmItms = t => {
     let statusBadge = '';
     if (isP) {
       if (isOff) {
-        statusBadge = `<span class="badge badge-xs bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 font-bold"><i class="fa-solid fa-eye-slash text-[8px]"></i> Nonaktif (Sembunyi)</span>`;
+        statusBadge = `<span class="badge badge-xs bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 font-bold"><i class="fa-solid fa-ban text-[8px]"></i> Nonaktif (Tampil Abu-Abu)</span>`;
       } else if (isUnlimited) {
         statusBadge = `<span class="badge badge-xs bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-800 font-bold"><i class="fa-solid fa-infinity text-[8px]"></i> Stok Bebas</span>`;
       } else if (isOutOfStock) {
@@ -11986,8 +12029,8 @@ window.rAdmItms = t => {
         <button type="button" onclick="openStockOpnameModal(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 hover:text-white transition-all border border-cyan-200 dark:border-cyan-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Stok Opname (Audit Fisik)"><i class="fa-solid fa-clipboard-check"></i></button>
 
         <!-- Tombol Toggle Visibilitas Toko -->
-        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl ${isOff ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-emerald-600' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 hover:bg-emerald-600 hover:text-white'} border border-slate-200 dark:border-slate-600 transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); toggleProductStatus(${x.id}, ${isOff})" title="${isOff ? 'Tampilkan di Toko' : 'Sembunyikan dari Toko'}">
-          <i class="fa-solid ${isOff ? 'fa-eye-slash' : 'fa-eye'}"></i>
+        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl ${isOff ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-emerald-600' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 hover:bg-emerald-600 hover:text-white'} border border-slate-200 dark:border-slate-600 transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); toggleProductStatus(${x.id}, ${isOff})" title="${isOff ? 'Aktifkan Produk (Bisa Dipesan)' : 'Nonaktifkan Produk (Tampil Abu-Abu)'}">
+          <i class="fa-solid ${isOff ? 'fa-ban' : 'fa-eye'}"></i>
         </button>
 
         <!-- Tombol Duplikat -->
@@ -12491,8 +12534,8 @@ window.openQuickEditProduct = (id) => {
     <!-- Visibility Toggle -->
     <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between">
       <div>
-        <label class="block text-xs font-bold text-slate-800 dark:text-white">Status Visibilitas Toko Online</label>
-        <p class="text-[10px] text-slate-400">Jika nonaktif, produk disembunyikan total dari katalog & pencarian pembeli</p>
+        <label class="block text-xs font-bold text-slate-800 dark:text-white">Status Penjualan Toko Online</label>
+        <p class="text-[10px] text-slate-400">Jika nonaktif, produk tetap tampil abu-abu di katalog tetapi tidak dapat dibeli pelanggan</p>
       </div>
       <label class="relative inline-flex items-center cursor-pointer">
         <input type="checkbox" id="qe-is-active" class="sr-only peer" ${!isOff ? 'checked' : ''} />
@@ -12649,13 +12692,13 @@ window.toggleProductStatus = async (id, toActive) => {
   const i = appData.products.findIndex(x => x.id === id);
   if (i > -1) {
     appData.products[i].isActive = toActive ? 'true' : 'false';
-    sLoad(toActive ? 'Menampilkan di toko...' : 'Menyembunyikan dari toko...');
+    sLoad(toActive ? 'Mengaktifkan produk...' : 'Menonaktifkan produk...');
     try {
       await db.collection("freshmart").doc("cms_data").collection("products").doc(id.toString()).update({ isActive: toActive ? 'true' : 'false' });
       appData.lastUpdate = Date.now();
       await saveApp();
       rAdmItms('products');
-      showToast(toActive ? "Produk Ditampilkan di Toko!" : "Produk Disembunyikan dari Toko!");
+      showToast(toActive ? "Produk Diaktifkan (Bisa Dipesan)!" : "Produk Dinonaktifkan (Tampil Abu-Abu)!");
     } catch (e) {
       showToast("Gagal update status!");
     }
@@ -12709,8 +12752,8 @@ window.getTabHelpBanner = (t) => {
           <p class="text-[11px] text-slate-500 dark:text-slate-400">Produk stok 0 <b>tetap tampil di katalog</b> dengan label <i>Stok Habis</i> agar pelanggan tetap tahu ketersediaannya.</p>
         </div>
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
-          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-eye-slash text-rose-500"></i> 3. Nonaktif (Sembunyi)</div>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400">Klik tombol mata jika ingin <b>menyembunyikan total</b> produk dari etalase online pembeli.</p>
+          <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-ban text-rose-500"></i> 3. Nonaktif (Tampil Abu-Abu)</div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400">Klik tombol status jika ingin <b>menonaktifkan</b> produk. Produk tetap tampil abu-abu namun tidak bisa dibeli.</p>
         </div>
         <div class="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/60">
           <div class="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 mb-1"><i class="fa-solid fa-layer-group text-indigo-500"></i> 4. Varian & Grosir</div>
@@ -12859,8 +12902,8 @@ const guideTopicsData = {
               <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Produk dengan stok 0 <b>tetap tampil di katalog online</b> dengan tanda <i>"STOK HABIS"</i> agar pelanggan tahu toko menyediakan produk tersebut saat restok.</p>
             </div>
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
-              <span class="font-bold text-rose-600 dark:text-rose-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-eye-slash"></i> Nonaktif (Disembunyikan)</span>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Klik ikon mata untuk menonaktifkan barang. Produk nonaktif <b>disembunyikan total</b> dari etalase online dan kasir.</p>
+              <span class="font-bold text-rose-600 dark:text-rose-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-ban"></i> Nonaktif (Tampil Abu-Abu)</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Klik ikon status untuk menonaktifkan barang. Produk nonaktif <b>tetap tampil di katalog</b> dengan nuansa abu-abu dan tombol beli dikunci.</p>
             </div>
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
               <span class="font-bold text-indigo-600 dark:text-indigo-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-filter"></i> 4 Tab Filter Status</span>

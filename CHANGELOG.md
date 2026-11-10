@@ -2,6 +2,22 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-09-15] - Produk Nonaktif Tetap Tampil di Katalog (Grayscale Abu-Abu) & Proteksi Order
+### Fitur & Peningkatan Sesuai Revisi:
+- **Katalog Etalase Online (Storefront & Beranda):**
+  - Produk berstatus **Nonaktif** kini tetap tampil di beranda dan hasil pencarian/kategori toko, menjaga katalog tetap terlihat kaya dan lengkap.
+  - Kartu produk nonaktif otomatis diberi styling visual abu-abu (*grayscale opacity-60*), mematikan efek hover aktif, dan menampilkan badge **`TIDAK TERSEDIA`** di pojok foto produk.
+- **Proteksi Pemesanan Pelanggan (*Customer Order Guard*):**
+  - Pelanggan tetap dapat membuka modal detail produk untuk melihat foto dan membaca spesifikasi/deskripsi produk.
+  - Bagian kontrol kuantitas dan tombol **"Masuk Keranjang"** otomatis digantikan banner abu-abu informatif: *"Produk Sedang Dinonaktifkan (belum dapat dipesan pelanggan)"*.
+  - Proteksi lapis ganda di `cart.js` pada fungsi `confirmAddProductToCart`, `moveWish` (pindah dari favorit ke keranjang), dan validasi pra-checkout `validateCartToCheckout` untuk mencegah item nonaktif masuk ke transaksi.
+- **Penyelarasan Panel CMS Admin:**
+  - Status produk nonaktif di CMS Admin diperbarui dari `Nonaktif (Sembunyi)` menjadi **`Nonaktif (Tampil Abu-Abu)`** dengan ikon ban kontras.
+  - Label dan deskripsi toggle pada form edit produk dan modal *Quick Edit* diselaraskan agar pengelola toko mengetahui bahwa produk nonaktif tetap tampil sebagai arsip abu-abu di katalog.
+- **PWA Cache Update:** Versi Service Worker dinaikkan ke `freshmart-pwa-v10`.
+
+---
+
 ## [2026-09-15] - Desain Ulang Riwayat Kas Keluar & Top Pengadaan Barang (Anti Teks Terpotong)
 ### Peningkatan & Perbaikan Visual:
 - **Penyelesaian Bug Badge No. Faktur Terpotong (*Text-Wrap Hyphen Bug*):**
