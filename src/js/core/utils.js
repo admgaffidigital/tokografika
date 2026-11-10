@@ -525,3 +525,30 @@ window.closeModalSmooth = (modalId, boxId, type = 'bottom-sheet', callback = nul
   r.style.setProperty('--clr-p-25', `rgba(${v[3]},${v[4]},${v[5]},0.25)`);
   r.style.setProperty('--clr-p-35', `rgba(${v[3]},${v[4]},${v[5]},0.35)`);
 })();
+
+// =============================================================================
+// TRACKING KENAIKAN HARGA PRODUK
+// =============================================================================
+
+window.isPriceIncreaseActive = (item, maxDays = 14) => {
+  if (!item) return false;
+  const prev = Number(item.previousPrice || 0);
+  const cur = Number(item.price || 0);
+  if (prev <= 0 || cur <= prev) return false;
+
+  // Jika ada timestamp priceIncreasedAt, periksa batas waktu (default 14 hari)
+  if (item.priceIncreasedAt) {
+    const ageDays = (Date.now() - Number(item.priceIncreasedAt)) / (1000 * 60 * 60 * 24);
+    if (ageDays > maxDays) return false;
+  }
+  return true;
+};
+
+window.getPriceIncreaseInfo = (item, maxDays = 14) => {
+  if (!window.isPriceIncreaseActive(item, maxDays)) return null;
+  const prev = Number(item.previousPrice);
+  const cur = Number(item.price);
+  const diff = cur - prev;
+  const pct = Math.round((diff / prev) * 100);
+  return { prev, cur, diff, pct };
+};

@@ -2,6 +2,28 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-09-15] - Fitur Pelacak & Tampilan Nominal Kenaikan Harga Produk di Beranda & Modal
+### Fitur & Peningkatan Sesuai Permintaan Pelanggan:
+- **Tampilan Kenaikan Harga di Beranda (Grid & List View):**
+  - Menampilkan informasi transparan ketika suatu produk mengalami kenaikan harga pada katalog etalase toko.
+  - Kartu produk di beranda menampilkan harga lama yang dicoret serta badge naik yang elegan: e.g. `Rp 10.000` (coret) `▲ Naik Rp 800`.
+  - Jika produk memiliki multi-varian dan ada varian yang naik harganya, kartu etalase otomatis menampilkan badge kenaikan harga varian (`▲ Naik Rp...`).
+- **Detail Kenaikan Harga di Modal Produk (Detail Produk):**
+  - Pada modal detail produk (`rProdMod`), saat varian atau produk dibuka, sistem menyajikan harga lama tercoret, nominal kenaikan harga, serta persentase penyesuaian harga (e.g. `▲ Naik Rp 800 (+8%)`).
+  - Badge `Naik Rp...` disematkan di deretan badge produk.
+  - Pilihan tombol varian (`PILIH VARIAN`) menampilkan badge `+Rp...` untuk varian yang harganya telah disesuaikan.
+- **Penyelarasan Tampilan pada Menu Favorit Saya (Wishlist):**
+  - Item di daftar favorit yang mengalami kenaikan harga juga menyajikan harga lama tercoret dan badge `▲ Naik Rp...` mendampingi nominal harga live terbaru.
+- **Auto-Detection Cerdas di CMS Admin & Quick Edit:**
+  - **Auto-Detection:** Saat pengelola toko mengedit produk lewat modal form standar (`submitAdminForm`) maupun modal *Quick Edit* (`saveQuickEditProduct`), jika harga baru lebih tinggi dari harga sebelumnya, sistem secara otomatis merekam `previousPrice = oldPrice` dan `priceIncreasedAt = Date.now()`.
+  - **Reset Otomatis:** Jika di kemudian hari harga diturunkan kembali, indikator kenaikan harga otomatis di-reset (`previousPrice = 0`).
+  - **Masa Kedaluwarsa:** Indikator kenaikan harga aktif selama 14 hari sejak penyesuaian (`isPriceIncreaseActive`), sehingga setelah 14 hari kartu etalase otomatis kembali normal tanpa badge kenaikan.
+  - **Form Input Opsional:** Admin juga dapat mengisi atau mengosongkan manual kolom `Harga Sebelum Kenaikan (Rp - Opsional)` di CMS Admin.
+  - **Indikator List Admin:** Di daftar produk admin (`rAdmItms`), produk yang mengalami kenaikan harga ditandai dengan badge merah muda `▲ Naik Rp...`.
+- **PWA Cache Update:** Versi Service Worker dinaikkan ke `freshmart-pwa-v12`.
+
+---
+
 ## [2026-09-15] - Sinkronisasi Realtime Harga Produk pada Daftar Favorit (Wishlist) & Keranjang
 ### Peningkatan & Perbaikan Sistem:
 - **Sinkronisasi Otomatis Harga Favorit (`syncWishlistPrices`):**

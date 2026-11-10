@@ -237,6 +237,9 @@ const renderWish = () => {
       }
     }
 
+    const curProdOrVar = (p && i.variantName && hasVars) ? p.variants.find(v => v.name === i.variantName) : p;
+    const wishInc = (!isOff && curProdOrVar) ? window.getPriceIncreaseInfo(curProdOrVar) : null;
+
     return `
     <div class="card-modern p-4 flex gap-3 shadow-sm min-w-0 border ${isOff ? 'border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/70 opacity-80' : 'border-slate-200 dark:border-slate-700'}">
       <div class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
@@ -250,6 +253,14 @@ const renderWish = () => {
           ${i.unit ? `<span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold">/ ${esc(i.unit)}</span>` : ''}
           ${isOff ? `<span class="badge badge-xs bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 font-bold">Tidak Tersedia</span>` : ''}
         </div>
+        ${wishInc ? `
+          <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 line-through leading-none">${fCur(wishInc.prev)}</span>
+            <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60 leading-none shadow-2xs">
+              <i class="fa-solid fa-arrow-trend-up text-[7px]"></i> Naik ${fCur(wishInc.diff)}
+            </span>
+          </div>
+        ` : ''}
         <p class="${isOff ? 'text-slate-400 dark:text-slate-500 font-bold' : 'text-emerald-600 dark:text-emerald-400 font-bold'} mb-2 text-sm drop-shadow-sm">${fCur(i.price)}</p>
         <div class="flex gap-2 mt-auto">
           ${isOff ? `

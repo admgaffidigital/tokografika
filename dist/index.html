@@ -6265,6 +6265,33 @@ window.closeModalSmooth = (modalId, boxId, type = 'bottom-sheet', callback = nul
   r.style.setProperty('--clr-p-35', `rgba(${v[3]},${v[4]},${v[5]},0.35)`);
 })();
 
+// =============================================================================
+// TRACKING KENAIKAN HARGA PRODUK
+// =============================================================================
+
+window.isPriceIncreaseActive = (item, maxDays = 14) => {
+  if (!item) return false;
+  const prev = Number(item.previousPrice || 0);
+  const cur = Number(item.price || 0);
+  if (prev <= 0 || cur <= prev) return false;
+
+  // Jika ada timestamp priceIncreasedAt, periksa batas waktu (default 14 hari)
+  if (item.priceIncreasedAt) {
+    const ageDays = (Date.now() - Number(item.priceIncreasedAt)) / (1000 * 60 * 60 * 24);
+    if (ageDays > maxDays) return false;
+  }
+  return true;
+};
+
+window.getPriceIncreaseInfo = (item, maxDays = 14) => {
+  if (!window.isPriceIncreaseActive(item, maxDays)) return null;
+  const prev = Number(item.previousPrice);
+  const cur = Number(item.price);
+  const diff = cur - prev;
+  const pct = Math.round((diff / prev) * 100);
+  return { prev, cur, diff, pct };
+};
+
 
 // 3. Firebase SDK, Firestore Sync, & Cloud Services
 // =============================================================================
@@ -7226,6 +7253,34 @@ const rCat = () => {
     </div>
     `;
 
+    // Cek informasi kenaikan harga (jika bukan nonaktif)
+    const incInfo = !isOff ? window.getPriceIncreaseInfo(p) : null;
+    let varIncInfo = null;
+    if (!incInfo && !isOff && p.variants && p.variants.length > 0) {
+      const upV = p.variants.find(v => window.isPriceIncreaseActive(v));
+      if (upV) varIncInfo = window.getPriceIncreaseInfo(upV);
+    }
+
+    let incHtml = '';
+    if (incInfo) {
+      incHtml = `
+      <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+        <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 line-through leading-none">${fCur(incInfo.prev)}</span>
+        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60 leading-none shadow-2xs">
+          <i class="fa-solid fa-arrow-trend-up text-[7px]"></i> Naik ${fCur(incInfo.diff)}
+        </span>
+      </div>
+      `;
+    } else if (varIncInfo) {
+      incHtml = `
+      <div class="flex items-center gap-1 mb-1">
+        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60 leading-none shadow-2xs">
+          <i class="fa-solid fa-arrow-trend-up text-[7px]"></i> Naik ${fCur(varIncInfo.diff)}
+        </span>
+      </div>
+      `;
+    }
+
     if (cView === 'grid') {
       return `
       <div class="card-modern overflow-hidden flex flex-col cursor-pointer group p-2.5 sm:p-3 border ${isOff ? 'border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/70 opacity-80' : 'border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500'} transition-all duration-200" onclick="openProductModal(${p.id})">
@@ -7238,9 +7293,12 @@ const rCat = () => {
             ${bH}
             <h4 class="text-xs font-semibold ${isOff ? 'text-slate-500 dark:text-slate-400' : 'text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'} line-clamp-2 leading-snug mb-1.5 transition-colors">${esc(p.name)}</h4>
           </div>
-          <div class="mt-auto pt-1.5 flex items-baseline justify-between gap-1 flex-wrap">
-            <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
-            ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold ${isOff ? 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800' : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60'} px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide shrink-0">/${esc(p.unit)}</span>` : ''}
+          <div class="mt-auto pt-1 flex flex-col justify-end min-w-0">
+            ${incHtml}
+            <div class="flex items-baseline justify-between gap-1 flex-wrap">
+              <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
+              ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold ${isOff ? 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800' : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60'} px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide shrink-0">/${esc(p.unit)}</span>` : ''}
+            </div>
           </div>
         </div>
       </div>
@@ -7257,9 +7315,12 @@ const rCat = () => {
             ${bH}
             <h4 class="text-xs sm:text-sm font-semibold ${isOff ? 'text-slate-500 dark:text-slate-400' : 'text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'} line-clamp-2 leading-snug mb-1 transition-colors">${esc(p.name)}</h4>
           </div>
-          <div class="mt-auto pt-1 flex items-baseline gap-2">
-            <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
-            ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold ${isOff ? 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800' : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60'} px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide">/${esc(p.unit)}</span>` : ''}
+          <div class="mt-auto pt-1 flex flex-col justify-end min-w-0">
+            ${incHtml}
+            <div class="flex items-baseline gap-2">
+              <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
+              ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold ${isOff ? 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800' : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60'} px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide">/${esc(p.unit)}</span>` : ''}
+            </div>
           </div>
         </div>
       </div>
@@ -7494,6 +7555,7 @@ const rProdMod = () => {
   let isOff = !a;
   let hV = p.variants?.length > 0;
   let v = hV ? p.variants[cVar] : null;
+  let curItem = (hV && v) ? v : p;
 
   const i = el('product-modal-img');
   if (i) {
@@ -7505,8 +7567,23 @@ const rProdMod = () => {
     }, 150);
   }
 
+  // Info kenaikan harga produk atau varian aktif
+  const incInfo = !isOff ? window.getPriceIncreaseInfo(curItem) : null;
+  let incPriceHtml = '';
+  if (incInfo) {
+    incPriceHtml = `
+      <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+        <span class="text-xs sm:text-sm font-bold text-slate-400 dark:text-slate-500 line-through leading-none">${fCur(incInfo.prev)}</span>
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60 leading-none shadow-2xs">
+          <i class="fa-solid fa-arrow-trend-up text-[9px]"></i> Naik ${fCur(incInfo.diff)} (+${incInfo.pct}%)
+        </span>
+      </div>
+    `;
+  }
+
   setIn('product-modal-title', p.name);
   setH('product-modal-price', `
+    ${incPriceHtml}
     <div class="flex items-baseline gap-2 flex-wrap">
       <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-black text-2xl sm:text-3xl">${fCur(v?.price ?? p.price)}</span>
       ${p.unit ? `<span class="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700 uppercase tracking-wider">/ ${esc(p.unit)}</span>` : ''}
@@ -7516,6 +7593,7 @@ const rProdMod = () => {
 
   setH('product-modal-badges', `
     ${isOff ? `<span class="badge badge-xs bg-slate-700 text-white font-bold"><i class="fa-solid fa-ban text-[8px]"></i> Tidak Tersedia</span>` : ''}
+    ${incInfo ? `<span class="badge badge-xs bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 font-bold"><i class="fa-solid fa-arrow-trend-up text-[8px]"></i> Naik ${fCur(incInfo.diff)}</span>` : ''}
     <span class="badge badge-xs badge-slate badge-normal-case">
       <i class="fa-solid fa-barcode"></i> ${esc(v?.sku || p.sku || '-')}
     </span>
@@ -7581,9 +7659,11 @@ const rProdMod = () => {
     show('product-modal-options-container');
     setH('product-modal-options', p.variants.map((r, x) => {
       const vStock = !isUnlimited && (r.stock !== undefined && r.stock !== null && r.stock !== '' && Number(r.stock) <= 0);
+      const vInc = !isOff ? window.getPriceIncreaseInfo(r) : null;
       return `
       <button class="px-3.5 py-2 rounded-xl text-xs font-bold border-2 transition-all flex items-center gap-1.5 ${x === cVar ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-500 text-emerald-700 dark:text-emerald-400 shadow-sm' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-emerald-300 dark:hover:border-emerald-600'}" onclick="selectVariant(${x})">
         <span>${esc(r.name)}</span>
+        ${vInc ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200/80"><i class="fa-solid fa-arrow-trend-up text-[7px]"></i> +${fCur(vInc.diff)}</span>` : ''}
         ${vStock ? `<span class="text-[8px] font-bold px-1 py-0.2 rounded bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300">Habis</span>` : ''}
       </button>
       `;
@@ -8406,6 +8486,9 @@ const renderWish = () => {
       }
     }
 
+    const curProdOrVar = (p && i.variantName && hasVars) ? p.variants.find(v => v.name === i.variantName) : p;
+    const wishInc = (!isOff && curProdOrVar) ? window.getPriceIncreaseInfo(curProdOrVar) : null;
+
     return `
     <div class="card-modern p-4 flex gap-3 shadow-sm min-w-0 border ${isOff ? 'border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/70 opacity-80' : 'border-slate-200 dark:border-slate-700'}">
       <div class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
@@ -8419,6 +8502,14 @@ const renderWish = () => {
           ${i.unit ? `<span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold">/ ${esc(i.unit)}</span>` : ''}
           ${isOff ? `<span class="badge badge-xs bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 font-bold">Tidak Tersedia</span>` : ''}
         </div>
+        ${wishInc ? `
+          <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+            <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 line-through leading-none">${fCur(wishInc.prev)}</span>
+            <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60 leading-none shadow-2xs">
+              <i class="fa-solid fa-arrow-trend-up text-[7px]"></i> Naik ${fCur(wishInc.diff)}
+            </span>
+          </div>
+        ` : ''}
         <p class="${isOff ? 'text-slate-400 dark:text-slate-500 font-bold' : 'text-emerald-600 dark:text-emerald-400 font-bold'} mb-2 text-sm drop-shadow-sm">${fCur(i.price)}</p>
         <div class="flex gap-2 mt-auto">
           ${isOff ? `
@@ -8972,6 +9063,7 @@ const aF = {
     { key: 'name', label: 'Nama Produk', type: 'text' }, 
     { key: 'sku', label: 'Barcode / SKU (Bisa Auto / Manual)', type: 'sku' },
     { key: 'price', label: 'Harga Jual Dasar (Rp)', type: 'number' }, 
+    { key: 'previousPrice', label: 'Harga Sebelum Kenaikan (Rp - Opsional)', type: 'previousPrice' },
     { key: 'costPrice', label: 'Harga Modal / HPP (Rp)', type: 'costPrice' }, 
     { key: 'stock', label: 'Stok Tersedia (Jumlah)', type: 'stock' }, 
     { key: 'isUnlimited', label: 'Tipe Manajemen Stok', type: 'select', options: [{ val: 'false', text: 'Terbatas (Sesuai Jumlah Stok)' }, { val: 'true', text: '∞ Unlimited (Selalu Tersedia / Tanpa Batas Stok)' }] },
@@ -12156,6 +12248,20 @@ window.rAdmItms = t => {
     let wholBadge = isP && x.wholesale && x.wholesale.length ? `<span class="badge badge-xs badge-purple"><i class="fa-solid fa-tags"></i> Grosir</span>` : '';
     let costBadge = (isP && x.costPrice) ? `<span class="text-[10px] text-slate-400 font-medium bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">HPP: <b class="text-slate-700 dark:text-slate-300">${fCur(x.costPrice)}</b></span>` : '';
     
+    let priceIncBadge = '';
+    if (isP) {
+      const pInc = window.getPriceIncreaseInfo(x);
+      if (pInc) {
+        priceIncBadge = `<span class="badge badge-xs bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 font-bold"><i class="fa-solid fa-arrow-trend-up text-[8px]"></i> Naik ${fCur(pInc.diff)}</span>`;
+      } else if (hasVars) {
+        const vUp = x.variants.find(v => window.isPriceIncreaseActive(v));
+        if (vUp) {
+          const vInc = window.getPriceIncreaseInfo(vUp);
+          priceIncBadge = `<span class="badge badge-xs bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 font-bold"><i class="fa-solid fa-arrow-trend-up text-[8px]"></i> Varian Naik ${fCur(vInc.diff)}</span>`;
+        }
+      }
+    }
+    
     return `
     <div class="p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between cursor-pointer border-2 ${bC} shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 gap-3.5 group" onclick="oAEd('${t}',${x.id})">
       <div class="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0 flex-1">
@@ -12173,6 +12279,7 @@ window.rAdmItms = t => {
             ${skuBadge}
           </div>
           <div class="flex flex-wrap gap-1.5">
+            ${priceIncBadge}
             ${suppBadge}
             ${varsBadge}
             ${wholBadge}
@@ -12250,7 +12357,7 @@ window.oAEd = (t, id) => {
 
   const getIcon = (key) => {
     const icons = {
-      name: 'fa-box-open', sku: 'fa-barcode', price: 'fa-tag', costPrice: 'fa-coins', stock: 'fa-boxes-stacked', unit: 'fa-ruler', img: 'fa-image',
+      name: 'fa-box-open', sku: 'fa-barcode', price: 'fa-tag', previousPrice: 'fa-arrow-trend-up', costPrice: 'fa-coins', stock: 'fa-boxes-stacked', unit: 'fa-ruler', img: 'fa-image',
       category: 'fa-layer-group', supplierId: 'fa-truck-field', tag: 'fa-hashtag', isActive: 'fa-power-off',
       desc: 'fa-align-left', wholesale: 'fa-boxes-stacked', variants: 'fa-sitemap',
       code: 'fa-ticket', type: 'fa-filter', value: 'fa-coins',
@@ -12332,6 +12439,11 @@ window.oAEd = (t, id) => {
     } else if (k.key === 'price') {
       h += `<div class="relative">
         <input type="number" min="0" step="1" id="af-${k.key}" value="${esc(v)}" oninput="updateProductMarginPreview()" class="admin-input !py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full focus:bg-white dark:focus:bg-slate-800 transition-all font-bold" placeholder="Masukkan harga jual..."/>
+      </div>`;
+    } else if (k.key === 'previousPrice') {
+      h += `<div class="relative">
+        <input type="number" min="0" step="1" id="af-${k.key}" value="${esc(v)}" class="admin-input !py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full focus:bg-white dark:focus:bg-slate-800 transition-all font-bold" placeholder="Kosongkan jika ingin sistem auto-catat saat harga dinaikkan..."/>
+        <p class="text-[10px] text-slate-400 font-semibold mt-1 italic">*Jika diisi atau sistem mendeteksi kenaikan harga, di beranda akan muncul badge "▲ Naik Rp..." dan harga lama yang dicoret selama 14 hari.</p>
       </div>`;
     } else if (k.key === 'costPrice') {
       if (!window.canViewCostPrice()) {
@@ -12574,6 +12686,47 @@ window.submitAdminForm = async () => {
       d.supplierId = '';
       d.supplierName = '';
     }
+
+    if (eId) {
+      const existingProd = (appData.products || []).find(x => x.id === eId);
+      if (existingProd) {
+        const oldP = Number(existingProd.price || 0);
+        const newP = Number(d.price || 0);
+        const manualPrev = Number(d.previousPrice || 0);
+
+        if (manualPrev > 0 && newP > manualPrev) {
+          d.previousPrice = manualPrev;
+          d.priceIncreasedAt = existingProd.priceIncreasedAt || Date.now();
+        } else if (newP > oldP && oldP > 0) {
+          d.previousPrice = oldP;
+          d.priceIncreasedAt = Date.now();
+        } else if (newP < oldP) {
+          d.previousPrice = 0;
+          d.priceIncreasedAt = null;
+        } else if (existingProd.previousPrice && existingProd.price === newP) {
+          d.previousPrice = existingProd.previousPrice;
+          d.priceIncreasedAt = existingProd.priceIncreasedAt;
+        }
+
+        if (d.variants && Array.isArray(d.variants) && existingProd.variants && Array.isArray(existingProd.variants)) {
+          d.variants = d.variants.map((vNew, idx) => {
+            const vOld = existingProd.variants[idx] || existingProd.variants.find(ev => ev.name === vNew.name);
+            if (vOld) {
+              const oldVP = Number(vOld.price || 0);
+              const newVP = Number(vNew.price || 0);
+              if (newVP > oldVP && oldVP > 0) {
+                return { ...vNew, previousPrice: oldVP, priceIncreasedAt: Date.now() };
+              } else if (newVP < oldVP) {
+                return { ...vNew, previousPrice: 0, priceIncreasedAt: null };
+              } else if (vOld.previousPrice && vOld.price === newVP) {
+                return { ...vNew, previousPrice: vOld.previousPrice, priceIncreasedAt: vOld.priceIncreasedAt };
+              }
+            }
+            return vNew;
+          });
+        }
+      }
+    }
   }
   
   if (!appData[activeTab]) appData[activeTab] = [];
@@ -12738,6 +12891,7 @@ window.openQuickEditProduct = (id) => {
       <div>
         <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider"><i class="fa-solid fa-tag text-emerald-600 mr-1"></i> Harga Jual (Rp)</label>
         <input type="number" id="qe-price" value="${p.price || 0}" class="admin-input !py-2.5 !text-sm font-bold w-full" placeholder="0" min="0" />
+        ${p.previousPrice && p.price > p.previousPrice ? `<p class="text-[9px] text-rose-500 font-bold mt-1"><i class="fa-solid fa-arrow-trend-up"></i> Sebelumnya: ${fCur(p.previousPrice)} (+${fCur(p.price - p.previousPrice)})</p>` : ''}
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider"><i class="fa-solid fa-coins text-amber-500 mr-1"></i> HPP / Modal (Rp)</label>
@@ -12766,6 +12920,7 @@ window.openQuickEditProduct = (id) => {
             <div>
               <span class="block text-[9px] font-semibold text-slate-400 mb-0.5">Harga (Rp)</span>
               <input type="number" id="qe-var-price-${idx}" value="${v.price || 0}" class="admin-input !py-1.5 !px-2 !text-xs font-bold w-full" min="0" />
+              ${v.previousPrice && v.price > v.previousPrice ? `<span class="text-[8px] text-rose-500 font-bold block mt-0.5 truncate"><i class="fa-solid fa-arrow-trend-up"></i> +${fCur(v.price - v.previousPrice)}</span>` : ''}
             </div>
             <div>
               <span class="block text-[9px] font-semibold text-slate-400 mb-0.5">HPP (Rp)</span>
@@ -12810,7 +12965,16 @@ window.saveQuickEditProduct = async () => {
 
   const hasVars = p.variants && p.variants.length > 0;
   if (!hasVars) {
-    p.price = Math.max(0, Number(getV('qe-price') || 0));
+    const oldPrice = Number(p.price || 0);
+    const newPrice = Math.max(0, Number(getV('qe-price') || 0));
+    if (newPrice > oldPrice && oldPrice > 0) {
+      p.previousPrice = oldPrice;
+      p.priceIncreasedAt = Date.now();
+    } else if (newPrice < oldPrice) {
+      p.previousPrice = 0;
+      p.priceIncreasedAt = null;
+    }
+    p.price = newPrice;
     p.costPrice = Math.max(0, Number(getV('qe-cost-price') || 0));
     p.stock = Math.max(0, Number(getV('qe-stock') || 0));
   } else {
@@ -12818,7 +12982,18 @@ window.saveQuickEditProduct = async () => {
       const vP = el(`qe-var-price-${idx}`);
       const vC = el(`qe-var-cost-${idx}`);
       const vS = el(`qe-var-stock-${idx}`);
-      if (vP) v.price = Math.max(0, Number(vP.value || 0));
+      if (vP) {
+        const oldVP = Number(v.price || 0);
+        const newVP = Math.max(0, Number(vP.value || 0));
+        if (newVP > oldVP && oldVP > 0) {
+          v.previousPrice = oldVP;
+          v.priceIncreasedAt = Date.now();
+        } else if (newVP < oldVP) {
+          v.previousPrice = 0;
+          v.priceIncreasedAt = null;
+        }
+        v.price = newVP;
+      }
       if (vC) v.costPrice = Math.max(0, Number(vC.value || 0));
       if (vS) v.stock = Math.max(0, Number(vS.value || 0));
     });

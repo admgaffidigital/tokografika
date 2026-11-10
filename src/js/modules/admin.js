@@ -12,6 +12,7 @@ const aF = {
     { key: 'name', label: 'Nama Produk', type: 'text' }, 
     { key: 'sku', label: 'Barcode / SKU (Bisa Auto / Manual)', type: 'sku' },
     { key: 'price', label: 'Harga Jual Dasar (Rp)', type: 'number' }, 
+    { key: 'previousPrice', label: 'Harga Sebelum Kenaikan (Rp - Opsional)', type: 'previousPrice' },
     { key: 'costPrice', label: 'Harga Modal / HPP (Rp)', type: 'costPrice' }, 
     { key: 'stock', label: 'Stok Tersedia (Jumlah)', type: 'stock' }, 
     { key: 'isUnlimited', label: 'Tipe Manajemen Stok', type: 'select', options: [{ val: 'false', text: 'Terbatas (Sesuai Jumlah Stok)' }, { val: 'true', text: '∞ Unlimited (Selalu Tersedia / Tanpa Batas Stok)' }] },
@@ -3196,6 +3197,20 @@ window.rAdmItms = t => {
     let wholBadge = isP && x.wholesale && x.wholesale.length ? `<span class="badge badge-xs badge-purple"><i class="fa-solid fa-tags"></i> Grosir</span>` : '';
     let costBadge = (isP && x.costPrice) ? `<span class="text-[10px] text-slate-400 font-medium bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">HPP: <b class="text-slate-700 dark:text-slate-300">${fCur(x.costPrice)}</b></span>` : '';
     
+    let priceIncBadge = '';
+    if (isP) {
+      const pInc = window.getPriceIncreaseInfo(x);
+      if (pInc) {
+        priceIncBadge = `<span class="badge badge-xs bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 font-bold"><i class="fa-solid fa-arrow-trend-up text-[8px]"></i> Naik ${fCur(pInc.diff)}</span>`;
+      } else if (hasVars) {
+        const vUp = x.variants.find(v => window.isPriceIncreaseActive(v));
+        if (vUp) {
+          const vInc = window.getPriceIncreaseInfo(vUp);
+          priceIncBadge = `<span class="badge badge-xs bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 font-bold"><i class="fa-solid fa-arrow-trend-up text-[8px]"></i> Varian Naik ${fCur(vInc.diff)}</span>`;
+        }
+      }
+    }
+    
     return `
     <div class="p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between cursor-pointer border-2 ${bC} shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 gap-3.5 group" onclick="oAEd('${t}',${x.id})">
       <div class="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0 flex-1">
@@ -3213,6 +3228,7 @@ window.rAdmItms = t => {
             ${skuBadge}
           </div>
           <div class="flex flex-wrap gap-1.5">
+            ${priceIncBadge}
             ${suppBadge}
             ${varsBadge}
             ${wholBadge}
@@ -3290,7 +3306,7 @@ window.oAEd = (t, id) => {
 
   const getIcon = (key) => {
     const icons = {
-      name: 'fa-box-open', sku: 'fa-barcode', price: 'fa-tag', costPrice: 'fa-coins', stock: 'fa-boxes-stacked', unit: 'fa-ruler', img: 'fa-image',
+      name: 'fa-box-open', sku: 'fa-barcode', price: 'fa-tag', previousPrice: 'fa-arrow-trend-up', costPrice: 'fa-coins', stock: 'fa-boxes-stacked', unit: 'fa-ruler', img: 'fa-image',
       category: 'fa-layer-group', supplierId: 'fa-truck-field', tag: 'fa-hashtag', isActive: 'fa-power-off',
       desc: 'fa-align-left', wholesale: 'fa-boxes-stacked', variants: 'fa-sitemap',
       code: 'fa-ticket', type: 'fa-filter', value: 'fa-coins',
@@ -3372,6 +3388,11 @@ window.oAEd = (t, id) => {
     } else if (k.key === 'price') {
       h += `<div class="relative">
         <input type="number" min="0" step="1" id="af-${k.key}" value="${esc(v)}" oninput="updateProductMarginPreview()" class="admin-input !py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full focus:bg-white dark:focus:bg-slate-800 transition-all font-bold" placeholder="Masukkan harga jual..."/>
+      </div>`;
+    } else if (k.key === 'previousPrice') {
+      h += `<div class="relative">
+        <input type="number" min="0" step="1" id="af-${k.key}" value="${esc(v)}" class="admin-input !py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 w-full focus:bg-white dark:focus:bg-slate-800 transition-all font-bold" placeholder="Kosongkan jika ingin sistem auto-catat saat harga dinaikkan..."/>
+        <p class="text-[10px] text-slate-400 font-semibold mt-1 italic">*Jika diisi atau sistem mendeteksi kenaikan harga, di beranda akan muncul badge "▲ Naik Rp..." dan harga lama yang dicoret selama 14 hari.</p>
       </div>`;
     } else if (k.key === 'costPrice') {
       if (!window.canViewCostPrice()) {
@@ -3614,6 +3635,47 @@ window.submitAdminForm = async () => {
       d.supplierId = '';
       d.supplierName = '';
     }
+
+    if (eId) {
+      const existingProd = (appData.products || []).find(x => x.id === eId);
+      if (existingProd) {
+        const oldP = Number(existingProd.price || 0);
+        const newP = Number(d.price || 0);
+        const manualPrev = Number(d.previousPrice || 0);
+
+        if (manualPrev > 0 && newP > manualPrev) {
+          d.previousPrice = manualPrev;
+          d.priceIncreasedAt = existingProd.priceIncreasedAt || Date.now();
+        } else if (newP > oldP && oldP > 0) {
+          d.previousPrice = oldP;
+          d.priceIncreasedAt = Date.now();
+        } else if (newP < oldP) {
+          d.previousPrice = 0;
+          d.priceIncreasedAt = null;
+        } else if (existingProd.previousPrice && existingProd.price === newP) {
+          d.previousPrice = existingProd.previousPrice;
+          d.priceIncreasedAt = existingProd.priceIncreasedAt;
+        }
+
+        if (d.variants && Array.isArray(d.variants) && existingProd.variants && Array.isArray(existingProd.variants)) {
+          d.variants = d.variants.map((vNew, idx) => {
+            const vOld = existingProd.variants[idx] || existingProd.variants.find(ev => ev.name === vNew.name);
+            if (vOld) {
+              const oldVP = Number(vOld.price || 0);
+              const newVP = Number(vNew.price || 0);
+              if (newVP > oldVP && oldVP > 0) {
+                return { ...vNew, previousPrice: oldVP, priceIncreasedAt: Date.now() };
+              } else if (newVP < oldVP) {
+                return { ...vNew, previousPrice: 0, priceIncreasedAt: null };
+              } else if (vOld.previousPrice && vOld.price === newVP) {
+                return { ...vNew, previousPrice: vOld.previousPrice, priceIncreasedAt: vOld.priceIncreasedAt };
+              }
+            }
+            return vNew;
+          });
+        }
+      }
+    }
   }
   
   if (!appData[activeTab]) appData[activeTab] = [];
@@ -3778,6 +3840,7 @@ window.openQuickEditProduct = (id) => {
       <div>
         <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider"><i class="fa-solid fa-tag text-emerald-600 mr-1"></i> Harga Jual (Rp)</label>
         <input type="number" id="qe-price" value="${p.price || 0}" class="admin-input !py-2.5 !text-sm font-bold w-full" placeholder="0" min="0" />
+        ${p.previousPrice && p.price > p.previousPrice ? `<p class="text-[9px] text-rose-500 font-bold mt-1"><i class="fa-solid fa-arrow-trend-up"></i> Sebelumnya: ${fCur(p.previousPrice)} (+${fCur(p.price - p.previousPrice)})</p>` : ''}
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider"><i class="fa-solid fa-coins text-amber-500 mr-1"></i> HPP / Modal (Rp)</label>
@@ -3806,6 +3869,7 @@ window.openQuickEditProduct = (id) => {
             <div>
               <span class="block text-[9px] font-semibold text-slate-400 mb-0.5">Harga (Rp)</span>
               <input type="number" id="qe-var-price-${idx}" value="${v.price || 0}" class="admin-input !py-1.5 !px-2 !text-xs font-bold w-full" min="0" />
+              ${v.previousPrice && v.price > v.previousPrice ? `<span class="text-[8px] text-rose-500 font-bold block mt-0.5 truncate"><i class="fa-solid fa-arrow-trend-up"></i> +${fCur(v.price - v.previousPrice)}</span>` : ''}
             </div>
             <div>
               <span class="block text-[9px] font-semibold text-slate-400 mb-0.5">HPP (Rp)</span>
@@ -3850,7 +3914,16 @@ window.saveQuickEditProduct = async () => {
 
   const hasVars = p.variants && p.variants.length > 0;
   if (!hasVars) {
-    p.price = Math.max(0, Number(getV('qe-price') || 0));
+    const oldPrice = Number(p.price || 0);
+    const newPrice = Math.max(0, Number(getV('qe-price') || 0));
+    if (newPrice > oldPrice && oldPrice > 0) {
+      p.previousPrice = oldPrice;
+      p.priceIncreasedAt = Date.now();
+    } else if (newPrice < oldPrice) {
+      p.previousPrice = 0;
+      p.priceIncreasedAt = null;
+    }
+    p.price = newPrice;
     p.costPrice = Math.max(0, Number(getV('qe-cost-price') || 0));
     p.stock = Math.max(0, Number(getV('qe-stock') || 0));
   } else {
@@ -3858,7 +3931,18 @@ window.saveQuickEditProduct = async () => {
       const vP = el(`qe-var-price-${idx}`);
       const vC = el(`qe-var-cost-${idx}`);
       const vS = el(`qe-var-stock-${idx}`);
-      if (vP) v.price = Math.max(0, Number(vP.value || 0));
+      if (vP) {
+        const oldVP = Number(v.price || 0);
+        const newVP = Math.max(0, Number(vP.value || 0));
+        if (newVP > oldVP && oldVP > 0) {
+          v.previousPrice = oldVP;
+          v.priceIncreasedAt = Date.now();
+        } else if (newVP < oldVP) {
+          v.previousPrice = 0;
+          v.priceIncreasedAt = null;
+        }
+        v.price = newVP;
+      }
       if (vC) v.costPrice = Math.max(0, Number(vC.value || 0));
       if (vS) v.stock = Math.max(0, Number(vS.value || 0));
     });

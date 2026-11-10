@@ -574,6 +574,34 @@ const rCat = () => {
     </div>
     `;
 
+    // Cek informasi kenaikan harga (jika bukan nonaktif)
+    const incInfo = !isOff ? window.getPriceIncreaseInfo(p) : null;
+    let varIncInfo = null;
+    if (!incInfo && !isOff && p.variants && p.variants.length > 0) {
+      const upV = p.variants.find(v => window.isPriceIncreaseActive(v));
+      if (upV) varIncInfo = window.getPriceIncreaseInfo(upV);
+    }
+
+    let incHtml = '';
+    if (incInfo) {
+      incHtml = `
+      <div class="flex items-center gap-1.5 mb-1 flex-wrap">
+        <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 line-through leading-none">${fCur(incInfo.prev)}</span>
+        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60 leading-none shadow-2xs">
+          <i class="fa-solid fa-arrow-trend-up text-[7px]"></i> Naik ${fCur(incInfo.diff)}
+        </span>
+      </div>
+      `;
+    } else if (varIncInfo) {
+      incHtml = `
+      <div class="flex items-center gap-1 mb-1">
+        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60 leading-none shadow-2xs">
+          <i class="fa-solid fa-arrow-trend-up text-[7px]"></i> Naik ${fCur(varIncInfo.diff)}
+        </span>
+      </div>
+      `;
+    }
+
     if (cView === 'grid') {
       return `
       <div class="card-modern overflow-hidden flex flex-col cursor-pointer group p-2.5 sm:p-3 border ${isOff ? 'border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/70 opacity-80' : 'border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500'} transition-all duration-200" onclick="openProductModal(${p.id})">
@@ -586,9 +614,12 @@ const rCat = () => {
             ${bH}
             <h4 class="text-xs font-semibold ${isOff ? 'text-slate-500 dark:text-slate-400' : 'text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'} line-clamp-2 leading-snug mb-1.5 transition-colors">${esc(p.name)}</h4>
           </div>
-          <div class="mt-auto pt-1.5 flex items-baseline justify-between gap-1 flex-wrap">
-            <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
-            ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold ${isOff ? 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800' : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60'} px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide shrink-0">/${esc(p.unit)}</span>` : ''}
+          <div class="mt-auto pt-1 flex flex-col justify-end min-w-0">
+            ${incHtml}
+            <div class="flex items-baseline justify-between gap-1 flex-wrap">
+              <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
+              ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold ${isOff ? 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800' : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60'} px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide shrink-0">/${esc(p.unit)}</span>` : ''}
+            </div>
           </div>
         </div>
       </div>
@@ -605,9 +636,12 @@ const rCat = () => {
             ${bH}
             <h4 class="text-xs sm:text-sm font-semibold ${isOff ? 'text-slate-500 dark:text-slate-400' : 'text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'} line-clamp-2 leading-snug mb-1 transition-colors">${esc(p.name)}</h4>
           </div>
-          <div class="mt-auto pt-1 flex items-baseline gap-2">
-            <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
-            ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold ${isOff ? 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800' : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60'} px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide">/${esc(p.unit)}</span>` : ''}
+          <div class="mt-auto pt-1 flex flex-col justify-end min-w-0">
+            ${incHtml}
+            <div class="flex items-baseline gap-2">
+              <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
+              ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold ${isOff ? 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800' : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60'} px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide">/${esc(p.unit)}</span>` : ''}
+            </div>
           </div>
         </div>
       </div>
@@ -842,6 +876,7 @@ const rProdMod = () => {
   let isOff = !a;
   let hV = p.variants?.length > 0;
   let v = hV ? p.variants[cVar] : null;
+  let curItem = (hV && v) ? v : p;
 
   const i = el('product-modal-img');
   if (i) {
@@ -853,8 +888,23 @@ const rProdMod = () => {
     }, 150);
   }
 
+  // Info kenaikan harga produk atau varian aktif
+  const incInfo = !isOff ? window.getPriceIncreaseInfo(curItem) : null;
+  let incPriceHtml = '';
+  if (incInfo) {
+    incPriceHtml = `
+      <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+        <span class="text-xs sm:text-sm font-bold text-slate-400 dark:text-slate-500 line-through leading-none">${fCur(incInfo.prev)}</span>
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60 leading-none shadow-2xs">
+          <i class="fa-solid fa-arrow-trend-up text-[9px]"></i> Naik ${fCur(incInfo.diff)} (+${incInfo.pct}%)
+        </span>
+      </div>
+    `;
+  }
+
   setIn('product-modal-title', p.name);
   setH('product-modal-price', `
+    ${incPriceHtml}
     <div class="flex items-baseline gap-2 flex-wrap">
       <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-black text-2xl sm:text-3xl">${fCur(v?.price ?? p.price)}</span>
       ${p.unit ? `<span class="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700 uppercase tracking-wider">/ ${esc(p.unit)}</span>` : ''}
@@ -864,6 +914,7 @@ const rProdMod = () => {
 
   setH('product-modal-badges', `
     ${isOff ? `<span class="badge badge-xs bg-slate-700 text-white font-bold"><i class="fa-solid fa-ban text-[8px]"></i> Tidak Tersedia</span>` : ''}
+    ${incInfo ? `<span class="badge badge-xs bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 font-bold"><i class="fa-solid fa-arrow-trend-up text-[8px]"></i> Naik ${fCur(incInfo.diff)}</span>` : ''}
     <span class="badge badge-xs badge-slate badge-normal-case">
       <i class="fa-solid fa-barcode"></i> ${esc(v?.sku || p.sku || '-')}
     </span>
@@ -929,9 +980,11 @@ const rProdMod = () => {
     show('product-modal-options-container');
     setH('product-modal-options', p.variants.map((r, x) => {
       const vStock = !isUnlimited && (r.stock !== undefined && r.stock !== null && r.stock !== '' && Number(r.stock) <= 0);
+      const vInc = !isOff ? window.getPriceIncreaseInfo(r) : null;
       return `
       <button class="px-3.5 py-2 rounded-xl text-xs font-bold border-2 transition-all flex items-center gap-1.5 ${x === cVar ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-500 text-emerald-700 dark:text-emerald-400 shadow-sm' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-emerald-300 dark:hover:border-emerald-600'}" onclick="selectVariant(${x})">
         <span>${esc(r.name)}</span>
+        ${vInc ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200/80"><i class="fa-solid fa-arrow-trend-up text-[7px]"></i> +${fCur(vInc.diff)}</span>` : ''}
         ${vStock ? `<span class="text-[8px] font-bold px-1 py-0.2 rounded bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300">Habis</span>` : ''}
       </button>
       `;
