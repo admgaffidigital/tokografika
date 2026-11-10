@@ -2,6 +2,18 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-09-15] - Harmonisasi UI/UX Mobile: Tampilan Etalase Seragam Bebas Jomplang & Toolbar Admin Responsif
+### Optimalisasi Tampilan Antarmuka & Pengalaman Pengguna (UI/UX):
+- **Kartu Produk Etalase Seragam & Sejajar (Bebas Jomplang):**
+  - **Ketinggian Baris Badge Terstandarisasi (`h-5`):** Menstandarisasi baris badge status toko di bawah foto menjadi 1 baris konsisten (20px) sehingga tidak ada kartu yang melorot/jomplang akibat jumlah badge yang berbeda.
+  - **Floating Status Badge pada Foto:** Menempatkan penanda kuantitas keranjang (`[🛒 x di Keranjang]`) dan penanda favorit (`[❤️]`) sebagai *floating overlay* elegan di sudut foto produk, mencegah penumpukan teks berdesakan di kartu mobile (*bebas sempit*).
+  - **Baseline Judul Produk Seragam (`min-h-[2.35rem]`):** Mengunci ketinggian kotak nama produk dengan batasan 2 baris (`line-clamp-2`), memastikan posisi nominal harga selalu sejajar secara horizontal di seluruh kisi katalog 2 kolom mobile.
+- **Bilah Aksi Admin CMS Responsif Layar Kecil:**
+  - Mengonfigurasi bilah tombol aksi produk admin (`action toolbar`) dengan `justify-between w-full` pada layar ponsel sehingga ke-7 tombol terdistribusi proporsional seperti bilah navigasi aplikasi asli tanpa terdesak atau berhimpitan.
+- **Pill Filter & Statistik Simetris:** Memastikan grid indikator status di admin tetap proporsional 2 kolom di mobile dan 4 kolom di desktop.
+
+---
+
 ## [2026-09-15] - Perbaikan Bug Event Bubbling Modal Edit Cepat & Penyimpanan Produk Admin
 ### Perbaikan & Optimalisasi Sistem:
 - **Penyelesaian Masalah Modal Edit Cepat Merembet ke Edit Data Produk:**
