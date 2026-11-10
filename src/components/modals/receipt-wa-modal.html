@@ -1,0 +1,138 @@
+<!-- ========================================================================= -->
+<!-- MODAL: RECEIPT WHATSAPP SHARING (MODERN GLASSMORPHIC MODAL)              -->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[110] bg-slate-900/70 hidden opacity-0 modal-backdrop-smooth flex items-end sm:items-center justify-center p-0 sm:p-4' id='receipt-wa-modal' onclick='if(event.target===this) closeReceiptWaModal()'>
+  <div class='w-full max-w-lg bg-white dark:bg-slate-800 rounded-t-[2rem] sm:rounded-2xl max-h-[92dvh] overflow-y-auto transform translate-y-full sm:translate-y-0 bottom-sheet-smooth hide-scrollbar shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col relative' id='receipt-wa-modal-box'>
+    
+    <!-- Mobile Drag Handle -->
+    <div class="sm:hidden w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mt-2.5 mb-1 shrink-0"></div>
+
+    <!-- Sticky Header -->
+    <div class='sticky top-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md px-5 py-3.5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center z-20 rounded-t-2xl'>
+      <div class='flex items-center gap-2.5 min-w-0'>
+        <div class='w-9 h-9 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg border border-emerald-500/30 shrink-0 shadow-sm'>
+          <i class='fa-brands fa-whatsapp'></i>
+        </div>
+        <div>
+          <h3 class='font-bold text-slate-900 dark:text-white text-sm leading-tight flex items-center gap-1.5'>
+            Kirim Struk via WhatsApp
+          </h3>
+          <p class='text-[10px] text-slate-500 dark:text-slate-400 font-medium'>Bagikan rincian belanja & pembayaran langsung</p>
+        </div>
+      </div>
+      <button type='button' class='w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-600 dark:hover:text-rose-400 transition-all border border-slate-200 dark:border-slate-600 active:scale-95' onclick='closeReceiptWaModal()' title='Tutup'>
+        <i class='fa-solid fa-xmark text-sm'></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class='p-5 space-y-4 flex-1 bg-slate-50 dark:bg-slate-900/50'>
+      
+      <!-- Order Summary Card -->
+      <div class='bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200/90 dark:border-slate-700/80 shadow-sm relative overflow-hidden'>
+        <div class='flex items-start justify-between gap-3'>
+          <div>
+            <span class='text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5'>Pesanan</span>
+            <h4 class='text-sm sm:text-base font-extrabold text-slate-900 dark:text-white font-mono' id='receipt-wa-order-id'>#ORD-0000</h4>
+            <p class='text-xs text-slate-600 dark:text-slate-300 font-medium mt-1 flex items-center gap-1.5'>
+              <i class='fa-solid fa-user text-slate-400 text-[11px]'></i>
+              <span id='receipt-wa-customer-name'>-</span>
+            </p>
+          </div>
+          <div class='text-right'>
+            <span class='text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5'>Total Tagihan</span>
+            <div class='text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400' id='receipt-wa-order-total'>Rp 0</div>
+            <span class='inline-block text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 mt-1 uppercase' id='receipt-wa-pay-badge'>TUNAI</span>
+          </div>
+        </div>
+
+        <!-- Info Rekening Bank jika Transfer -->
+        <div id='receipt-wa-bank-info-box' class='hidden mt-3 pt-3 border-t border-dashed border-slate-200 dark:border-slate-700'>
+          <div class='flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-2 rounded-xl border border-emerald-200 dark:border-emerald-800/60'>
+            <i class='fa-solid fa-building-columns text-emerald-600 dark:text-emerald-400'></i>
+            <span>Info rekening transfer toko otomatis disertakan dalam struk.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone Input Card -->
+      <div class='bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200/90 dark:border-slate-700/80 shadow-sm space-y-2.5'>
+        <label for='receipt-wa-phone-input' class='block text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center justify-between'>
+          <span>Nomor WhatsApp Tujuan:</span>
+          <span class='text-[10px] font-medium text-slate-400'>Format: 08xx / 628xx</span>
+        </label>
+        
+        <div class='relative flex items-center'>
+          <div class='absolute left-3 flex items-center gap-1.5 pointer-events-none text-slate-400 text-xs font-semibold'>
+            <i class='fa-brands fa-whatsapp text-emerald-500 text-base'></i>
+            <span class='text-slate-300 dark:text-slate-600'>|</span>
+          </div>
+          <input 
+            type='tel' 
+            id='receipt-wa-phone-input' 
+            class='w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-all font-mono' 
+            placeholder='Contoh: 08123456789 atau 62812...' 
+            onkeydown='if(event.key==="Enter") executeSubmitReceiptWa()'
+            autocomplete='tel'
+          />
+        </div>
+        <p class='text-[10px] text-slate-500 dark:text-slate-400 leading-normal'>
+          <i class='fa-solid fa-circle-info text-emerald-500 mr-1'></i> Jika nomor dikosongkan, aplikasi WhatsApp akan terbuka dan Anda bisa memilih kontak secara bebas.
+        </p>
+      </div>
+
+      <!-- Collapsible Receipt Text Preview -->
+      <div class='bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/90 dark:border-slate-700/80 shadow-sm overflow-hidden'>
+        <button type='button' onclick='toggleReceiptWaPreview()' class='w-full px-4 py-3 flex items-center justify-between text-left text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors'>
+          <span class='flex items-center gap-2'>
+            <i class='fa-solid fa-receipt text-emerald-500'></i>
+            <span>Preview Teks Struk</span>
+          </span>
+          <span class='flex items-center gap-1.5 text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold'>
+            <span id='receipt-wa-preview-toggle-text'>Lihat Teks</span>
+            <i id='receipt-wa-preview-icon' class='fa-solid fa-chevron-down transition-transform duration-200'></i>
+          </span>
+        </button>
+        <div id='receipt-wa-preview-body' class='hidden px-4 pb-4 border-t border-slate-100 dark:border-slate-700'>
+          <div class='mt-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-950 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-slate-300 max-h-48 overflow-y-auto whitespace-pre-wrap select-all border border-slate-200 dark:border-slate-800' id='receipt-wa-preview-text'></div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class='space-y-2.5 pt-1'>
+        <button 
+          type='button' 
+          onclick='executeSubmitReceiptWa()' 
+          class='w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-600/25 active:scale-[0.98] transition-all'
+        >
+          <i class='fa-brands fa-whatsapp text-lg'></i>
+          <span>Kirim ke WhatsApp</span>
+        </button>
+
+        <div class='grid grid-cols-2 gap-2.5'>
+          <button 
+            type='button' 
+            onclick='executeOpenWaDirectApp()' 
+            class='py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-600 transition-all active:scale-95'
+            title='Buka WhatsApp dan pilih kontak'
+          >
+            <i class='fa-solid fa-address-book text-emerald-500'></i>
+            <span>Pilih Kontak</span>
+          </button>
+          
+          <button 
+            type='button' 
+            onclick='executeCopyReceiptWaText()' 
+            class='py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-600 transition-all active:scale-95'
+            title='Salin seluruh teks struk ke clipboard'
+          >
+            <i class='fa-solid fa-copy text-blue-500'></i>
+            <span>Salin Teks Struk</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

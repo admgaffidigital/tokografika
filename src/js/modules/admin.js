@@ -1966,15 +1966,15 @@ window.openOrderDetail = i => {
             <i class="fa-solid fa-print"></i>
           </div>
           <div>
-            <h4 class="font-bold text-slate-800 dark:text-white text-xs">Cetak Dokumen Pesanan</h4>
-            <p class="text-[10px] text-slate-400 font-medium">Pilih format cetak struk kasir atau dokumen A4</p>
+            <h4 class="font-bold text-slate-800 dark:text-white text-xs">Cetak & Bagikan Dokumen Pesanan</h4>
+            <p class="text-[10px] text-slate-400 font-medium">Pilih format cetak struk kasir, kirim WhatsApp, atau dokumen A4</p>
           </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
         <!-- Tombol 1: Struk Kasir Thermal -->
-        <button type="button" onclick="openReceiptPreview()" class="p-3.5 rounded-xl border-2 border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/50 dark:bg-emerald-950/20 hover:bg-emerald-100/60 dark:hover:bg-emerald-900/40 hover:border-emerald-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
+        <button type="button" onclick="openReceiptPreview()" class="p-3 sm:p-3.5 rounded-xl border-2 border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/50 dark:bg-emerald-950/20 hover:bg-emerald-100/60 dark:hover:bg-emerald-900/40 hover:border-emerald-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
           <div class="flex items-center justify-between">
             <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-xs shadow-sm group-hover:scale-110 transition-transform">
               <i class="fa-solid fa-receipt"></i>
@@ -1987,8 +1987,22 @@ window.openOrderDetail = i => {
           </div>
         </button>
 
-        <!-- Tombol 2: Invoice Tagihan A4 -->
-        <button type="button" onclick="generateA4Document('invoice')" class="p-3.5 rounded-xl border-2 border-blue-200 dark:border-blue-800/60 bg-blue-50/50 dark:bg-blue-950/20 hover:bg-blue-100/60 dark:hover:bg-blue-900/40 hover:border-blue-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
+        <!-- Tombol 2: Kirim WhatsApp -->
+        <button type="button" onclick="shareReceiptWhatsApp()" class="p-3 sm:p-3.5 rounded-xl border-2 border-teal-200 dark:border-teal-800/60 bg-teal-50/50 dark:bg-teal-950/20 hover:bg-teal-100/60 dark:hover:bg-teal-900/40 hover:border-teal-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
+          <div class="flex items-center justify-between">
+            <div class="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center text-sm shadow-sm group-hover:scale-110 transition-transform">
+              <i class="fa-brands fa-whatsapp"></i>
+            </div>
+            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-teal-200/80 dark:bg-teal-800/60 text-teal-800 dark:text-teal-200 uppercase tracking-wider">WA</span>
+          </div>
+          <div>
+            <div class="text-xs font-bold text-slate-800 dark:text-white leading-tight">Kirim WA</div>
+            <div class="text-[10px] text-teal-700 dark:text-teal-300 font-semibold mt-0.5">Struk & Rekening</div>
+          </div>
+        </button>
+
+        <!-- Tombol 3: Invoice Tagihan A4 -->
+        <button type="button" onclick="generateA4Document('invoice')" class="p-3 sm:p-3.5 rounded-xl border-2 border-blue-200 dark:border-blue-800/60 bg-blue-50/50 dark:bg-blue-950/20 hover:bg-blue-100/60 dark:hover:bg-blue-900/40 hover:border-blue-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
           <div class="flex items-center justify-between">
             <div class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center text-xs shadow-sm group-hover:scale-110 transition-transform">
               <i class="fa-solid fa-file-invoice"></i>
@@ -1997,21 +2011,21 @@ window.openOrderDetail = i => {
           </div>
           <div>
             <div class="text-xs font-bold text-slate-800 dark:text-white leading-tight">Faktur / Invoice</div>
-            <div class="text-[10px] text-blue-700 dark:text-blue-300 font-semibold mt-0.5">Tagihan Resmi Bisnis</div>
+            <div class="text-[10px] text-blue-700 dark:text-blue-300 font-semibold mt-0.5">Tagihan Resmi</div>
           </div>
         </button>
 
-        <!-- Tombol 3: Surat Jalan A4 -->
-        <button type="button" onclick="generateA4Document('surat-jalan')" class="p-3.5 rounded-xl border-2 border-rose-200 dark:border-rose-800/60 bg-rose-50/50 dark:bg-rose-950/20 hover:bg-rose-100/60 dark:hover:bg-rose-900/40 hover:border-rose-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
+        <!-- Tombol 4: Surat Jalan A4 -->
+        <button type="button" onclick="generateA4Document('surat-jalan')" class="p-3 sm:p-3.5 rounded-xl border-2 border-amber-200 dark:border-amber-800/60 bg-amber-50/50 dark:bg-amber-950/20 hover:bg-amber-100/60 dark:hover:bg-amber-900/40 hover:border-amber-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
           <div class="flex items-center justify-between">
-            <div class="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center text-xs shadow-sm group-hover:scale-110 transition-transform">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center text-xs shadow-sm group-hover:scale-110 transition-transform">
               <i class="fa-solid fa-truck"></i>
             </div>
-            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-rose-200/80 dark:bg-rose-800/60 text-rose-800 dark:text-rose-200 uppercase tracking-wider">PDF A4</span>
+            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-amber-200/80 dark:bg-amber-800/60 text-amber-800 dark:text-amber-200 uppercase tracking-wider">PDF A4</span>
           </div>
           <div>
             <div class="text-xs font-bold text-slate-800 dark:text-white leading-tight">Surat Jalan</div>
-            <div class="text-[10px] text-rose-700 dark:text-rose-300 font-semibold mt-0.5">Ekspedisi & Logistik</div>
+            <div class="text-[10px] text-amber-700 dark:text-amber-300 font-semibold mt-0.5">Ekspedisi Logistik</div>
           </div>
         </button>
       </div>

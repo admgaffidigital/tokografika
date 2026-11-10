@@ -553,29 +553,181 @@ window.shareReceiptWhatsApp = (targetOrder = null) => {
   txt += `--------------------------------\n`;
   txt += `_${sFooter}_\n`;
 
-  // Target Phone: prioritaskan nomor pembeli jika tersedia
+  // Target Phone: ambil nomor pembeli jika tersedia
   let targetPhone = (o.customer?.phone || o.customer?.wa || '').replace(/\D/g, '');
-  if (!targetPhone) {
-    const inputPhone = prompt('Kirim Struk ke WhatsApp Pelanggan:\nMasukkan nomor WhatsApp tujuan (contoh: 08123456789), atau klik Batal / kosongkan untuk buka daftar obrolan WhatsApp:', '');
-    if (inputPhone === null) return; // Batal ditekan
-    targetPhone = inputPhone.trim().replace(/\D/g, '');
-  }
-
   if (targetPhone.startsWith('0')) targetPhone = '62' + targetPhone.substring(1);
 
-  const waUrl = targetPhone 
-    ? `https://wa.me/${targetPhone}?text=${encodeURIComponent(txt)}`
+  // Buka Modern Modal WhatsApp (Tanpa prompt browser klasik bawaan)
+  if (typeof window.openReceiptWaModal === 'function') {
+    window.openReceiptWaModal(o, txt, targetPhone);
+  } else {
+    // Fallback direct open jika modal belum terpasang
+    const waUrl = targetPhone 
+      ? `https://wa.me/${targetPhone}?text=${encodeURIComponent(txt)}`
+      : `https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`;
+
+    try {
+      window.open(waUrl, '_blank');
+      showToast('Membuka WhatsApp untuk mengirim struk...');
+    } catch (err) {
+      console.warn('[FreshMart] Pop-up WhatsApp diblokir browser:', err);
+      showToast('Pop-up WhatsApp diblokir browser!');
+    }
+  }
+};
+
+// =============================================================================
+// MODAL WHATSAPP STRUK (MODERN GLASSMORPHIC - TANPA BROWSER PROMPT)
+// =============================================================================
+let _activeWaReceiptData = {
+  order: null,
+  text: '',
+  phone: ''
+};
+
+window.openReceiptWaModal = (order, text, defaultPhone = '') => {
+  if (!order) return;
+  _activeWaReceiptData = {
+    order: order,
+    text: text || '',
+    phone: defaultPhone || ''
+  };
+
+  const idEl = document.getElementById('receipt-wa-order-id');
+  if (idEl) idEl.textContent = `#${order.orderId || order.id || '0000'}`;
+
+  const custEl = document.getElementById('receipt-wa-customer-name');
+  if (custEl) custEl.textContent = order.customer?.name || 'Umum / Walk-in';
+
+  const totalEl = document.getElementById('receipt-wa-order-total');
+  const grandTotal = order.payment?.grandTotal ?? order.total ?? 0;
+  if (totalEl) totalEl.textContent = `Rp ${grandTotal.toLocaleString('id-ID')}`;
+
+  const payBadge = document.getElementById('receipt-wa-pay-badge');
+  if (payBadge) payBadge.textContent = String(order.payment?.method || 'TUNAI').toUpperCase();
+
+  const isTransfer = String(order.payment?.methodKey || order.payment?.method || '').toLowerCase().includes('transfer');
+  const bankBox = document.getElementById('receipt-wa-bank-info-box');
+  if (bankBox) {
+    if (isTransfer && appData?.banks && appData.banks.length > 0) {
+      bankBox.classList.remove('hidden');
+    } else {
+      bankBox.classList.add('hidden');
+    }
+  }
+
+  const phoneInput = document.getElementById('receipt-wa-phone-input');
+  if (phoneInput) {
+    phoneInput.value = defaultPhone || '';
+  }
+
+  const previewText = document.getElementById('receipt-wa-preview-text');
+  if (previewText) {
+    previewText.textContent = text || '';
+  }
+
+  // Reset preview collapsible ke kondisi tersembunyi
+  const previewBody = document.getElementById('receipt-wa-preview-body');
+  const previewIcon = document.getElementById('receipt-wa-preview-icon');
+  const previewToggleText = document.getElementById('receipt-wa-preview-toggle-text');
+  if (previewBody) previewBody.classList.add('hidden');
+  if (previewIcon) previewIcon.classList.remove('rotate-180');
+  if (previewToggleText) previewToggleText.textContent = 'Lihat Teks';
+
+  window.openModalSmooth('receipt-wa-modal', 'receipt-wa-modal-box', 'bottom-sheet', () => {
+    if (phoneInput && !defaultPhone) {
+      setTimeout(() => phoneInput.focus(), 150);
+    }
+  });
+};
+
+window.closeReceiptWaModal = () => {
+  window.closeModalSmooth('receipt-wa-modal', 'receipt-wa-modal-box', 'bottom-sheet');
+};
+
+window.toggleReceiptWaPreview = () => {
+  const previewBody = document.getElementById('receipt-wa-preview-body');
+  const previewIcon = document.getElementById('receipt-wa-preview-icon');
+  const previewToggleText = document.getElementById('receipt-wa-preview-toggle-text');
+  if (!previewBody) return;
+
+  const isHidden = previewBody.classList.contains('hidden');
+  if (isHidden) {
+    previewBody.classList.remove('hidden');
+    if (previewIcon) previewIcon.classList.add('rotate-180');
+    if (previewToggleText) previewToggleText.textContent = 'Tutup Teks';
+  } else {
+    previewBody.classList.add('hidden');
+    if (previewIcon) previewIcon.classList.remove('rotate-180');
+    if (previewToggleText) previewToggleText.textContent = 'Lihat Teks';
+  }
+};
+
+window.executeSubmitReceiptWa = () => {
+  const phoneInput = document.getElementById('receipt-wa-phone-input');
+  let rawPhone = phoneInput ? phoneInput.value.trim().replace(/\D/g, '') : '';
+  if (rawPhone.startsWith('0')) rawPhone = '62' + rawPhone.substring(1);
+
+  const txt = _activeWaReceiptData.text || '';
+  const waUrl = rawPhone 
+    ? `https://wa.me/${rawPhone}?text=${encodeURIComponent(txt)}`
     : `https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`;
 
   try {
     window.open(waUrl, '_blank');
-    showToast('Membuka WhatsApp untuk mengirim struk...');
+    window.closeReceiptWaModal();
+    showToast(rawPhone ? 'Membuka chat WhatsApp...' : 'Membuka WhatsApp untuk memilih kontak...');
   } catch (err) {
     console.warn('[FreshMart] Pop-up WhatsApp diblokir browser:', err);
     showToast('Pop-up WhatsApp diblokir browser!');
   }
 };
 
+window.executeOpenWaDirectApp = () => {
+  const txt = _activeWaReceiptData.text || '';
+  const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`;
+  try {
+    window.open(waUrl, '_blank');
+    window.closeReceiptWaModal();
+    showToast('Membuka WhatsApp untuk memilih kontak...');
+  } catch (err) {
+    showToast('Pop-up WhatsApp diblokir browser!');
+  }
+};
+
+window.executeCopyReceiptWaText = () => {
+  const txt = _activeWaReceiptData.text || '';
+  if (!txt) {
+    showToast('Tidak ada teks untuk disalin!');
+    return;
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(() => {
+      showToast('Teks struk berhasil disalin ke clipboard!');
+    }).catch(() => {
+      _fallbackCopyText(txt);
+    });
+  } else {
+    _fallbackCopyText(txt);
+  }
+};
+
+function _fallbackCopyText(text) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Teks struk berhasil disalin!');
+  } catch (e) {
+    showToast('Gagal menyalin teks!');
+  }
+}
 
 window.closePreviewModal = () => {
   window.closeModalSmooth('pdf-preview-modal', null, 'centered', () => {

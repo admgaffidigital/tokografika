@@ -1966,7 +1966,7 @@ html.dark .badge-counter {
 <!-- MODAL: ADMIN ORDER DETAIL & PRINT OPTIONS                                 -->
 <!-- ========================================================================= -->
 <div class='fixed inset-0 z-[100] bg-slate-900/70 hidden flex items-end sm:items-center justify-center p-0 sm:p-6 opacity-0 modal-backdrop-smooth' id='admin-order-modal' onclick='if(event.target===this) closeOrderDetailModal()'>
-  <div class='bg-white dark:bg-slate-800 rounded-t-[2rem] sm:rounded-2xl w-full max-w-full sm:max-w-lg md:max-w-xl lg:max-w-3xl xl:max-w-4xl max-h-[92dvh] sm:max-h-[88dvh] overflow-y-auto hide-scrollbar shadow-2xl border-t sm:border border-slate-200/80 dark:border-slate-700/80 relative transform translate-y-full sm:translate-y-0 sm:scale-95 bottom-sheet-smooth flex flex-col' id='admin-order-modal-box'>
+  <div class='bg-white dark:bg-slate-800 rounded-t-[2rem] sm:rounded-2xl w-full max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[92dvh] sm:max-h-[88dvh] overflow-y-auto hide-scrollbar shadow-2xl border-t sm:border border-slate-200/80 dark:border-slate-700/80 relative transform translate-y-full sm:translate-y-0 sm:scale-95 bottom-sheet-smooth flex flex-col' id='admin-order-modal-box'>
     
     <!-- Mobile Drag Handle -->
     <div class="sm:hidden w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mt-2.5 mb-1 shrink-0"></div>
@@ -1974,29 +1974,38 @@ html.dark .badge-counter {
       <h3 class='font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2'>
         <i class='fa-solid fa-file-invoice text-emerald-600 dark:text-emerald-400'></i> Detail Pesanan
       </h3>
-      <button class='w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-600 dark:hover:text-rose-400 transition-all' onclick='closeOrderDetailModal()'>
+      <button class='w-8 h-8 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-600 dark:hover:text-rose-400 transition-all' onclick='closeOrderDetailModal()' title='Tutup'>
         <i class='fa-solid fa-xmark'></i>
       </button>
     </div>
     
-    <div class='p-5 space-y-4 flex-1 bg-slate-50 dark:bg-slate-900' id='admin-order-modal-content'></div>
+    <div class='p-4 sm:p-6 space-y-4 flex-1 bg-slate-50 dark:bg-slate-900' id='admin-order-modal-content'></div>
     
-    <div class='p-3.5 sm:p-4 sticky bottom-0 bg-white dark:bg-slate-800 border-t-2 border-slate-200 dark:border-slate-700 z-20 rounded-b-2xl flex items-center gap-2'>
-      <button type='button' class='flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md active:scale-95' onclick='openReceiptPreview()'>
-        <i class='fa-solid fa-receipt text-xs'></i> <span>Struk Kasir</span>
-      </button>
-      <button type='button' class='py-2.5 px-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95' onclick='shareReceiptWhatsApp()' title='Kirim Rincian Struk via WhatsApp'>
-        <i class='fa-brands fa-whatsapp text-sm'></i> <span class='hidden sm:inline'>Kirim</span> WA
-      </button>
-      <button type='button' class='flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md active:scale-95' onclick='generateA4Document("invoice")'>
-        <i class='fa-solid fa-file-invoice text-xs'></i> <span>Invoice</span>
-      </button>
-      <button type='button' class='flex-1 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md active:scale-95' onclick='generateA4Document("surat-jalan")'>
-        <i class='fa-solid fa-truck text-xs'></i> <span>Surat Jalan</span>
-      </button>
-      <button type='button' class='w-10 h-10 bg-rose-50 dark:bg-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 font-bold rounded-xl text-xs transition-all flex items-center justify-center shrink-0 border border-rose-200 dark:border-rose-800 active:scale-95' onclick='deleteOrder(cVOrd)' title='Hapus Pesanan'>
-        <i class='fa-solid fa-trash'></i>
-      </button>
+    <div class='p-3 sm:p-4 sticky bottom-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-700 z-20 rounded-b-2xl shadow-xl'>
+      <div class='flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5'>
+        <!-- Dokumen & Hapus (Secondary Actions) -->
+        <div class='flex items-center gap-2 order-2 sm:order-1'>
+          <button type='button' class='h-10 px-3 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 border border-rose-200 dark:border-rose-800 active:scale-95' onclick='deleteOrder(cVOrd)' title='Hapus Pesanan'>
+            <i class='fa-solid fa-trash-can'></i> <span>Hapus</span>
+          </button>
+          <button type='button' class='flex-1 sm:flex-none h-10 px-3.5 bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-600 active:scale-95' onclick='generateA4Document("invoice")' title='Cetak Faktur Invoice A4'>
+            <i class='fa-solid fa-file-invoice text-blue-500'></i> <span>Invoice</span>
+          </button>
+          <button type='button' class='flex-1 sm:flex-none h-10 px-3.5 bg-slate-100 dark:bg-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-600 active:scale-95' onclick='generateA4Document("surat-jalan")' title='Cetak Surat Jalan A4'>
+            <i class='fa-solid fa-truck text-amber-500'></i> <span>Surat Jalan</span>
+          </button>
+        </div>
+
+        <!-- Struk Kasir & WhatsApp (Primary Actions) -->
+        <div class='flex items-center gap-2 order-1 sm:order-2 flex-1 sm:justify-end'>
+          <button type='button' class='flex-1 sm:flex-initial h-10 px-4 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 font-bold rounded-xl text-xs border border-emerald-300 dark:border-emerald-700/80 transition-all flex items-center justify-center gap-2 shadow-sm active:scale-95' onclick='shareReceiptWhatsApp()' title='Kirim Rincian Struk via WhatsApp'>
+            <i class='fa-brands fa-whatsapp text-emerald-600 dark:text-emerald-400 text-base'></i> <span>Kirim WA</span>
+          </button>
+          <button type='button' class='flex-1 sm:flex-initial h-10 px-5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-lg active:scale-95' onclick='openReceiptPreview()'>
+            <i class='fa-solid fa-receipt text-xs'></i> <span>Struk Kasir</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -2048,6 +2057,145 @@ html.dark .badge-counter {
         </button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- MODAL: RECEIPT WHATSAPP SHARING (MODERN GLASSMORPHIC MODAL)              -->
+<!-- ========================================================================= -->
+<div class='fixed inset-0 z-[110] bg-slate-900/70 hidden opacity-0 modal-backdrop-smooth flex items-end sm:items-center justify-center p-0 sm:p-4' id='receipt-wa-modal' onclick='if(event.target===this) closeReceiptWaModal()'>
+  <div class='w-full max-w-lg bg-white dark:bg-slate-800 rounded-t-[2rem] sm:rounded-2xl max-h-[92dvh] overflow-y-auto transform translate-y-full sm:translate-y-0 bottom-sheet-smooth hide-scrollbar shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col relative' id='receipt-wa-modal-box'>
+    
+    <!-- Mobile Drag Handle -->
+    <div class="sm:hidden w-12 h-1 bg-slate-300 dark:bg-slate-700 rounded-full mx-auto mt-2.5 mb-1 shrink-0"></div>
+
+    <!-- Sticky Header -->
+    <div class='sticky top-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md px-5 py-3.5 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center z-20 rounded-t-2xl'>
+      <div class='flex items-center gap-2.5 min-w-0'>
+        <div class='w-9 h-9 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-lg border border-emerald-500/30 shrink-0 shadow-sm'>
+          <i class='fa-brands fa-whatsapp'></i>
+        </div>
+        <div>
+          <h3 class='font-bold text-slate-900 dark:text-white text-sm leading-tight flex items-center gap-1.5'>
+            Kirim Struk via WhatsApp
+          </h3>
+          <p class='text-[10px] text-slate-500 dark:text-slate-400 font-medium'>Bagikan rincian belanja & pembayaran langsung</p>
+        </div>
+      </div>
+      <button type='button' class='w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-600 dark:hover:text-rose-400 transition-all border border-slate-200 dark:border-slate-600 active:scale-95' onclick='closeReceiptWaModal()' title='Tutup'>
+        <i class='fa-solid fa-xmark text-sm'></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class='p-5 space-y-4 flex-1 bg-slate-50 dark:bg-slate-900/50'>
+      
+      <!-- Order Summary Card -->
+      <div class='bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200/90 dark:border-slate-700/80 shadow-sm relative overflow-hidden'>
+        <div class='flex items-start justify-between gap-3'>
+          <div>
+            <span class='text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5'>Pesanan</span>
+            <h4 class='text-sm sm:text-base font-extrabold text-slate-900 dark:text-white font-mono' id='receipt-wa-order-id'>#ORD-0000</h4>
+            <p class='text-xs text-slate-600 dark:text-slate-300 font-medium mt-1 flex items-center gap-1.5'>
+              <i class='fa-solid fa-user text-slate-400 text-[11px]'></i>
+              <span id='receipt-wa-customer-name'>-</span>
+            </p>
+          </div>
+          <div class='text-right'>
+            <span class='text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5'>Total Tagihan</span>
+            <div class='text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400' id='receipt-wa-order-total'>Rp 0</div>
+            <span class='inline-block text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 mt-1 uppercase' id='receipt-wa-pay-badge'>TUNAI</span>
+          </div>
+        </div>
+
+        <!-- Info Rekening Bank jika Transfer -->
+        <div id='receipt-wa-bank-info-box' class='hidden mt-3 pt-3 border-t border-dashed border-slate-200 dark:border-slate-700'>
+          <div class='flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-2 rounded-xl border border-emerald-200 dark:border-emerald-800/60'>
+            <i class='fa-solid fa-building-columns text-emerald-600 dark:text-emerald-400'></i>
+            <span>Info rekening transfer toko otomatis disertakan dalam struk.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phone Input Card -->
+      <div class='bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200/90 dark:border-slate-700/80 shadow-sm space-y-2.5'>
+        <label for='receipt-wa-phone-input' class='block text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center justify-between'>
+          <span>Nomor WhatsApp Tujuan:</span>
+          <span class='text-[10px] font-medium text-slate-400'>Format: 08xx / 628xx</span>
+        </label>
+        
+        <div class='relative flex items-center'>
+          <div class='absolute left-3 flex items-center gap-1.5 pointer-events-none text-slate-400 text-xs font-semibold'>
+            <i class='fa-brands fa-whatsapp text-emerald-500 text-base'></i>
+            <span class='text-slate-300 dark:text-slate-600'>|</span>
+          </div>
+          <input 
+            type='tel' 
+            id='receipt-wa-phone-input' 
+            class='w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-all font-mono' 
+            placeholder='Contoh: 08123456789 atau 62812...' 
+            onkeydown='if(event.key==="Enter") executeSubmitReceiptWa()'
+            autocomplete='tel'
+          />
+        </div>
+        <p class='text-[10px] text-slate-500 dark:text-slate-400 leading-normal'>
+          <i class='fa-solid fa-circle-info text-emerald-500 mr-1'></i> Jika nomor dikosongkan, aplikasi WhatsApp akan terbuka dan Anda bisa memilih kontak secara bebas.
+        </p>
+      </div>
+
+      <!-- Collapsible Receipt Text Preview -->
+      <div class='bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/90 dark:border-slate-700/80 shadow-sm overflow-hidden'>
+        <button type='button' onclick='toggleReceiptWaPreview()' class='w-full px-4 py-3 flex items-center justify-between text-left text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors'>
+          <span class='flex items-center gap-2'>
+            <i class='fa-solid fa-receipt text-emerald-500'></i>
+            <span>Preview Teks Struk</span>
+          </span>
+          <span class='flex items-center gap-1.5 text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold'>
+            <span id='receipt-wa-preview-toggle-text'>Lihat Teks</span>
+            <i id='receipt-wa-preview-icon' class='fa-solid fa-chevron-down transition-transform duration-200'></i>
+          </span>
+        </button>
+        <div id='receipt-wa-preview-body' class='hidden px-4 pb-4 border-t border-slate-100 dark:border-slate-700'>
+          <div class='mt-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-950 font-mono text-[11px] leading-relaxed text-slate-700 dark:text-slate-300 max-h-48 overflow-y-auto whitespace-pre-wrap select-all border border-slate-200 dark:border-slate-800' id='receipt-wa-preview-text'></div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class='space-y-2.5 pt-1'>
+        <button 
+          type='button' 
+          onclick='executeSubmitReceiptWa()' 
+          class='w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-600/25 active:scale-[0.98] transition-all'
+        >
+          <i class='fa-brands fa-whatsapp text-lg'></i>
+          <span>Kirim ke WhatsApp</span>
+        </button>
+
+        <div class='grid grid-cols-2 gap-2.5'>
+          <button 
+            type='button' 
+            onclick='executeOpenWaDirectApp()' 
+            class='py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-600 transition-all active:scale-95'
+            title='Buka WhatsApp dan pilih kontak'
+          >
+            <i class='fa-solid fa-address-book text-emerald-500'></i>
+            <span>Pilih Kontak</span>
+          </button>
+          
+          <button 
+            type='button' 
+            onclick='executeCopyReceiptWaText()' 
+            class='py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-600 transition-all active:scale-95'
+            title='Salin seluruh teks struk ke clipboard'
+          >
+            <i class='fa-solid fa-copy text-blue-500'></i>
+            <span>Salin Teks Struk</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 </div>
 
@@ -11762,15 +11910,15 @@ window.openOrderDetail = i => {
             <i class="fa-solid fa-print"></i>
           </div>
           <div>
-            <h4 class="font-bold text-slate-800 dark:text-white text-xs">Cetak Dokumen Pesanan</h4>
-            <p class="text-[10px] text-slate-400 font-medium">Pilih format cetak struk kasir atau dokumen A4</p>
+            <h4 class="font-bold text-slate-800 dark:text-white text-xs">Cetak & Bagikan Dokumen Pesanan</h4>
+            <p class="text-[10px] text-slate-400 font-medium">Pilih format cetak struk kasir, kirim WhatsApp, atau dokumen A4</p>
           </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
         <!-- Tombol 1: Struk Kasir Thermal -->
-        <button type="button" onclick="openReceiptPreview()" class="p-3.5 rounded-xl border-2 border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/50 dark:bg-emerald-950/20 hover:bg-emerald-100/60 dark:hover:bg-emerald-900/40 hover:border-emerald-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
+        <button type="button" onclick="openReceiptPreview()" class="p-3 sm:p-3.5 rounded-xl border-2 border-emerald-200 dark:border-emerald-800/60 bg-emerald-50/50 dark:bg-emerald-950/20 hover:bg-emerald-100/60 dark:hover:bg-emerald-900/40 hover:border-emerald-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
           <div class="flex items-center justify-between">
             <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center text-xs shadow-sm group-hover:scale-110 transition-transform">
               <i class="fa-solid fa-receipt"></i>
@@ -11783,8 +11931,22 @@ window.openOrderDetail = i => {
           </div>
         </button>
 
-        <!-- Tombol 2: Invoice Tagihan A4 -->
-        <button type="button" onclick="generateA4Document('invoice')" class="p-3.5 rounded-xl border-2 border-blue-200 dark:border-blue-800/60 bg-blue-50/50 dark:bg-blue-950/20 hover:bg-blue-100/60 dark:hover:bg-blue-900/40 hover:border-blue-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
+        <!-- Tombol 2: Kirim WhatsApp -->
+        <button type="button" onclick="shareReceiptWhatsApp()" class="p-3 sm:p-3.5 rounded-xl border-2 border-teal-200 dark:border-teal-800/60 bg-teal-50/50 dark:bg-teal-950/20 hover:bg-teal-100/60 dark:hover:bg-teal-900/40 hover:border-teal-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
+          <div class="flex items-center justify-between">
+            <div class="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center text-sm shadow-sm group-hover:scale-110 transition-transform">
+              <i class="fa-brands fa-whatsapp"></i>
+            </div>
+            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-teal-200/80 dark:bg-teal-800/60 text-teal-800 dark:text-teal-200 uppercase tracking-wider">WA</span>
+          </div>
+          <div>
+            <div class="text-xs font-bold text-slate-800 dark:text-white leading-tight">Kirim WA</div>
+            <div class="text-[10px] text-teal-700 dark:text-teal-300 font-semibold mt-0.5">Struk & Rekening</div>
+          </div>
+        </button>
+
+        <!-- Tombol 3: Invoice Tagihan A4 -->
+        <button type="button" onclick="generateA4Document('invoice')" class="p-3 sm:p-3.5 rounded-xl border-2 border-blue-200 dark:border-blue-800/60 bg-blue-50/50 dark:bg-blue-950/20 hover:bg-blue-100/60 dark:hover:bg-blue-900/40 hover:border-blue-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
           <div class="flex items-center justify-between">
             <div class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center text-xs shadow-sm group-hover:scale-110 transition-transform">
               <i class="fa-solid fa-file-invoice"></i>
@@ -11793,21 +11955,21 @@ window.openOrderDetail = i => {
           </div>
           <div>
             <div class="text-xs font-bold text-slate-800 dark:text-white leading-tight">Faktur / Invoice</div>
-            <div class="text-[10px] text-blue-700 dark:text-blue-300 font-semibold mt-0.5">Tagihan Resmi Bisnis</div>
+            <div class="text-[10px] text-blue-700 dark:text-blue-300 font-semibold mt-0.5">Tagihan Resmi</div>
           </div>
         </button>
 
-        <!-- Tombol 3: Surat Jalan A4 -->
-        <button type="button" onclick="generateA4Document('surat-jalan')" class="p-3.5 rounded-xl border-2 border-rose-200 dark:border-rose-800/60 bg-rose-50/50 dark:bg-rose-950/20 hover:bg-rose-100/60 dark:hover:bg-rose-900/40 hover:border-rose-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
+        <!-- Tombol 4: Surat Jalan A4 -->
+        <button type="button" onclick="generateA4Document('surat-jalan')" class="p-3 sm:p-3.5 rounded-xl border-2 border-amber-200 dark:border-amber-800/60 bg-amber-50/50 dark:bg-amber-950/20 hover:bg-amber-100/60 dark:hover:bg-amber-900/40 hover:border-amber-400 transition-all text-left flex flex-col justify-between gap-2.5 group active:scale-95 shadow-sm">
           <div class="flex items-center justify-between">
-            <div class="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center text-xs shadow-sm group-hover:scale-110 transition-transform">
+            <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center text-xs shadow-sm group-hover:scale-110 transition-transform">
               <i class="fa-solid fa-truck"></i>
             </div>
-            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-rose-200/80 dark:bg-rose-800/60 text-rose-800 dark:text-rose-200 uppercase tracking-wider">PDF A4</span>
+            <span class="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-amber-200/80 dark:bg-amber-800/60 text-amber-800 dark:text-amber-200 uppercase tracking-wider">PDF A4</span>
           </div>
           <div>
             <div class="text-xs font-bold text-slate-800 dark:text-white leading-tight">Surat Jalan</div>
-            <div class="text-[10px] text-rose-700 dark:text-rose-300 font-semibold mt-0.5">Ekspedisi & Logistik</div>
+            <div class="text-[10px] text-amber-700 dark:text-amber-300 font-semibold mt-0.5">Ekspedisi Logistik</div>
           </div>
         </button>
       </div>
@@ -19376,29 +19538,181 @@ window.shareReceiptWhatsApp = (targetOrder = null) => {
   txt += `--------------------------------\n`;
   txt += `_${sFooter}_\n`;
 
-  // Target Phone: prioritaskan nomor pembeli jika tersedia
+  // Target Phone: ambil nomor pembeli jika tersedia
   let targetPhone = (o.customer?.phone || o.customer?.wa || '').replace(/\D/g, '');
-  if (!targetPhone) {
-    const inputPhone = prompt('Kirim Struk ke WhatsApp Pelanggan:\nMasukkan nomor WhatsApp tujuan (contoh: 08123456789), atau klik Batal / kosongkan untuk buka daftar obrolan WhatsApp:', '');
-    if (inputPhone === null) return; // Batal ditekan
-    targetPhone = inputPhone.trim().replace(/\D/g, '');
-  }
-
   if (targetPhone.startsWith('0')) targetPhone = '62' + targetPhone.substring(1);
 
-  const waUrl = targetPhone 
-    ? `https://wa.me/${targetPhone}?text=${encodeURIComponent(txt)}`
+  // Buka Modern Modal WhatsApp (Tanpa prompt browser klasik bawaan)
+  if (typeof window.openReceiptWaModal === 'function') {
+    window.openReceiptWaModal(o, txt, targetPhone);
+  } else {
+    // Fallback direct open jika modal belum terpasang
+    const waUrl = targetPhone 
+      ? `https://wa.me/${targetPhone}?text=${encodeURIComponent(txt)}`
+      : `https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`;
+
+    try {
+      window.open(waUrl, '_blank');
+      showToast('Membuka WhatsApp untuk mengirim struk...');
+    } catch (err) {
+      console.warn('[FreshMart] Pop-up WhatsApp diblokir browser:', err);
+      showToast('Pop-up WhatsApp diblokir browser!');
+    }
+  }
+};
+
+// =============================================================================
+// MODAL WHATSAPP STRUK (MODERN GLASSMORPHIC - TANPA BROWSER PROMPT)
+// =============================================================================
+let _activeWaReceiptData = {
+  order: null,
+  text: '',
+  phone: ''
+};
+
+window.openReceiptWaModal = (order, text, defaultPhone = '') => {
+  if (!order) return;
+  _activeWaReceiptData = {
+    order: order,
+    text: text || '',
+    phone: defaultPhone || ''
+  };
+
+  const idEl = document.getElementById('receipt-wa-order-id');
+  if (idEl) idEl.textContent = `#${order.orderId || order.id || '0000'}`;
+
+  const custEl = document.getElementById('receipt-wa-customer-name');
+  if (custEl) custEl.textContent = order.customer?.name || 'Umum / Walk-in';
+
+  const totalEl = document.getElementById('receipt-wa-order-total');
+  const grandTotal = order.payment?.grandTotal ?? order.total ?? 0;
+  if (totalEl) totalEl.textContent = `Rp ${grandTotal.toLocaleString('id-ID')}`;
+
+  const payBadge = document.getElementById('receipt-wa-pay-badge');
+  if (payBadge) payBadge.textContent = String(order.payment?.method || 'TUNAI').toUpperCase();
+
+  const isTransfer = String(order.payment?.methodKey || order.payment?.method || '').toLowerCase().includes('transfer');
+  const bankBox = document.getElementById('receipt-wa-bank-info-box');
+  if (bankBox) {
+    if (isTransfer && appData?.banks && appData.banks.length > 0) {
+      bankBox.classList.remove('hidden');
+    } else {
+      bankBox.classList.add('hidden');
+    }
+  }
+
+  const phoneInput = document.getElementById('receipt-wa-phone-input');
+  if (phoneInput) {
+    phoneInput.value = defaultPhone || '';
+  }
+
+  const previewText = document.getElementById('receipt-wa-preview-text');
+  if (previewText) {
+    previewText.textContent = text || '';
+  }
+
+  // Reset preview collapsible ke kondisi tersembunyi
+  const previewBody = document.getElementById('receipt-wa-preview-body');
+  const previewIcon = document.getElementById('receipt-wa-preview-icon');
+  const previewToggleText = document.getElementById('receipt-wa-preview-toggle-text');
+  if (previewBody) previewBody.classList.add('hidden');
+  if (previewIcon) previewIcon.classList.remove('rotate-180');
+  if (previewToggleText) previewToggleText.textContent = 'Lihat Teks';
+
+  window.openModalSmooth('receipt-wa-modal', 'receipt-wa-modal-box', 'bottom-sheet', () => {
+    if (phoneInput && !defaultPhone) {
+      setTimeout(() => phoneInput.focus(), 150);
+    }
+  });
+};
+
+window.closeReceiptWaModal = () => {
+  window.closeModalSmooth('receipt-wa-modal', 'receipt-wa-modal-box', 'bottom-sheet');
+};
+
+window.toggleReceiptWaPreview = () => {
+  const previewBody = document.getElementById('receipt-wa-preview-body');
+  const previewIcon = document.getElementById('receipt-wa-preview-icon');
+  const previewToggleText = document.getElementById('receipt-wa-preview-toggle-text');
+  if (!previewBody) return;
+
+  const isHidden = previewBody.classList.contains('hidden');
+  if (isHidden) {
+    previewBody.classList.remove('hidden');
+    if (previewIcon) previewIcon.classList.add('rotate-180');
+    if (previewToggleText) previewToggleText.textContent = 'Tutup Teks';
+  } else {
+    previewBody.classList.add('hidden');
+    if (previewIcon) previewIcon.classList.remove('rotate-180');
+    if (previewToggleText) previewToggleText.textContent = 'Lihat Teks';
+  }
+};
+
+window.executeSubmitReceiptWa = () => {
+  const phoneInput = document.getElementById('receipt-wa-phone-input');
+  let rawPhone = phoneInput ? phoneInput.value.trim().replace(/\D/g, '') : '';
+  if (rawPhone.startsWith('0')) rawPhone = '62' + rawPhone.substring(1);
+
+  const txt = _activeWaReceiptData.text || '';
+  const waUrl = rawPhone 
+    ? `https://wa.me/${rawPhone}?text=${encodeURIComponent(txt)}`
     : `https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`;
 
   try {
     window.open(waUrl, '_blank');
-    showToast('Membuka WhatsApp untuk mengirim struk...');
+    window.closeReceiptWaModal();
+    showToast(rawPhone ? 'Membuka chat WhatsApp...' : 'Membuka WhatsApp untuk memilih kontak...');
   } catch (err) {
     console.warn('[FreshMart] Pop-up WhatsApp diblokir browser:', err);
     showToast('Pop-up WhatsApp diblokir browser!');
   }
 };
 
+window.executeOpenWaDirectApp = () => {
+  const txt = _activeWaReceiptData.text || '';
+  const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`;
+  try {
+    window.open(waUrl, '_blank');
+    window.closeReceiptWaModal();
+    showToast('Membuka WhatsApp untuk memilih kontak...');
+  } catch (err) {
+    showToast('Pop-up WhatsApp diblokir browser!');
+  }
+};
+
+window.executeCopyReceiptWaText = () => {
+  const txt = _activeWaReceiptData.text || '';
+  if (!txt) {
+    showToast('Tidak ada teks untuk disalin!');
+    return;
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(() => {
+      showToast('Teks struk berhasil disalin ke clipboard!');
+    }).catch(() => {
+      _fallbackCopyText(txt);
+    });
+  } else {
+    _fallbackCopyText(txt);
+  }
+};
+
+function _fallbackCopyText(text) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Teks struk berhasil disalin!');
+  } catch (e) {
+    showToast('Gagal menyalin teks!');
+  }
+}
 
 window.closePreviewModal = () => {
   window.closeModalSmooth('pdf-preview-modal', null, 'centered', () => {
@@ -22008,6 +22322,8 @@ const ALL_MODAL_HANDLERS = [
   { id: 'supplier-modal', close: () => typeof closeSupplierModal === 'function' && closeSupplierModal() },
   { id: 'stock-opname-modal', close: () => typeof closeStockOpnameModal === 'function' && closeStockOpnameModal() },
   { id: 'order-detail-modal', close: () => typeof closeOrderDetailModal === 'function' && closeOrderDetailModal() },
+  { id: 'admin-order-modal', close: () => typeof closeOrderDetailModal === 'function' && closeOrderDetailModal() },
+  { id: 'receipt-wa-modal', close: () => typeof closeReceiptWaModal === 'function' && closeReceiptWaModal() },
   { id: 'quick-edit-modal', close: () => typeof closeQuickEditModal === 'function' && closeQuickEditModal() },
   { id: 'camera-scanner-modal', close: () => typeof closeCameraScanner === 'function' && closeCameraScanner() },
   { id: 'pricetag-modal', close: () => typeof closePricetagModal === 'function' && closePricetagModal() },

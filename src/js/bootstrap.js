@@ -27,6 +27,8 @@ const ALL_MODAL_HANDLERS = [
   { id: 'supplier-modal', close: () => typeof closeSupplierModal === 'function' && closeSupplierModal() },
   { id: 'stock-opname-modal', close: () => typeof closeStockOpnameModal === 'function' && closeStockOpnameModal() },
   { id: 'order-detail-modal', close: () => typeof closeOrderDetailModal === 'function' && closeOrderDetailModal() },
+  { id: 'admin-order-modal', close: () => typeof closeOrderDetailModal === 'function' && closeOrderDetailModal() },
+  { id: 'receipt-wa-modal', close: () => typeof closeReceiptWaModal === 'function' && closeReceiptWaModal() },
   { id: 'quick-edit-modal', close: () => typeof closeQuickEditModal === 'function' && closeQuickEditModal() },
   { id: 'camera-scanner-modal', close: () => typeof closeCameraScanner === 'function' && closeCameraScanner() },
   { id: 'pricetag-modal', close: () => typeof closePricetagModal === 'function' && closePricetagModal() },

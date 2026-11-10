@@ -2,6 +2,37 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-11-11] - Redesain Modal Detail Pesanan & Custom Glassmorphic WhatsApp Receipt Modal (Menghilangkan Pop-up Browser Klasik)
+### 1. Modern Custom WhatsApp Receipt Modal (`#receipt-wa-modal`):
+- **100% Menghapus Pop-up Dialog Bawaan Browser (`window.prompt`):**
+  - Menggantikan dialog abu-abu bawaan browser yang tampak klasik/kuno dengan modal kustom elegan bertema glassmorphic modern.
+  - Memiliki kartu ringkasan pesanan (No. Pesanan, Nama Pemesan, Total Tagihan, Metode Pembayaran).
+  - Dilengkapi input nomor WhatsApp tujuan berformat telco Indonesia (`08xx` / `628xx`) dengan normalisasi otomatis saat dikirim.
+  - Jika pesanan memiliki metode pembayaran **Transfer**, sistem menampilkan kartu notifikasi hijau bahwa rekening bank toko otomatis disertakan di dalam teks struk.
+- **Aksi Cepat Berbagi Serbaguna:**
+  - **Kirim ke WhatsApp:** Membuka chat langsung ke nomor yang dituju (atau buka contact picker jika dikosongkan).
+  - **Pilih Kontak:** Membuka WhatsApp secara instan untuk memilih kontak pelanggan bebas di daftar obrolan WhatsApp.
+  - **Salin Teks Struk:** Menyalin seluruh teks struk yang rapi ke clipboard untuk dikirimkan melalui SMS, Telegram, atau media lain.
+  - **Preview Teks Struk (Collapsible):** Dapat melihat dan mengecek rincian teks pesan struk sebelum dikirimkan.
+- **Terintegrasi Universal:**
+  - Terhubung mulus dari tombol **Kirim WA** pada Modal Detail Pesanan Admin, Modal Cetak Struk Kasir (*Receipt Preview*), dan Layar Transaksi Berhasil POS Kasir.
+  - Terdaftar pada `bootstrap.js` sehingga tombol back HP otomatis menutup modal secara alami.
+
+### 2. Desain Ulang Tata Letak Modal Detail Pesanan Admin (`admin-order-modal`):
+- **Pelebaran Dimensi Dialog yang Lega (*Spacious Layout*):**
+  - Meningkatkan lebar maksimum modal dari sebelumnya yang sempit menjadi `sm:max-w-2xl md:max-w-3xl lg:max-w-4xl` sehingga data pesanan, pemesan, alamat, dan rincian belanja tampil lapang, profesional, dan nyaman dibaca di tablet maupun desktop.
+- **Redesain Bilah Aksi Bawah (*Bottom Action Bar*):**
+  - Menghilangkan tampilan 5 tombol yang berdesakan dalam 1 baris sempit.
+  - Mengatur hierarki tombol secara rapi dan ergonomis:
+    - **Aksi Utama (Kanan / Atas di Mobile):** Tombol hijau solid **Struk Kasir** dan tombol **Kirim WA** dengan ukuran lega dan proporsional.
+    - **Aksi Sekunder (Kiri / Bawah di Mobile):** Tombol **Hapus**, **Invoice (A4)**, dan **Surat Jalan (A4)** dengan styling bersih dan elegan.
+- **Pembaruan Hub Dokumen Pesanan (In-Modal Document Hub):**
+  - Memperbarui grid dokumen menjadi 4 kartu responsif (`grid-cols-2 sm:grid-cols-4`):
+    1. **Struk Kasir** (Thermal POS 58/80mm)
+    2. **Kirim WA** (Struk & Rekening WhatsApp)
+    3. **Faktur / Invoice** (PDF Resmi Bisnis A4)
+    4. **Surat Jalan** (Ekspedisi & Logistik A4)
+
 ## [2026-11-10] - Harmonisasi Warna Indikator Perubahan Harga: Hijau untuk Naik & Merah untuk Turun
 ### 1. Warna Standar Finansial & Retail:
 - **Harga Naik (`isUp: true`) → HIJAU (*Emerald*):**
