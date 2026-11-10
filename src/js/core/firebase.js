@@ -371,9 +371,12 @@ window.refreshFromCloud = async () => {
     if (typeof loadAppData === 'function') {
       await loadAppData();
     }
+    if (typeof rDyn === 'function') rDyn();
+    if (typeof rCat === 'function') rCat();
+    if (typeof updWish === 'function') updWish();
+    if (typeof updCart === 'function') updCart();
     hLoad();
-    showToast('Data toko diperbarui dari Cloud! 🔄');
-    setTimeout(() => location.reload(), 600);
+    showToast('Data toko berhasil diperbarui! 🔄');
   } catch(e) {
     hLoad();
     showToast('Gagal memuat ulang data cloud!');
