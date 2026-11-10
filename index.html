@@ -7296,21 +7296,19 @@ const rCat = () => {
       nH = `<div class="absolute top-1.5 right-1.5 z-20"><span class="bg-amber-500/95 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wider">STOK HABIS</span></div>`;
     }
     if (!isOff && inCartQty > 0) {
-      nH += `<div class="absolute top-1.5 left-1.5 z-20 pointer-events-none"><span class="bg-emerald-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm flex items-center gap-1 leading-none"><i class="fa-solid fa-cart-shopping text-[7px]"></i> ${inCartQty} di Keranjang</span></div>`;
+      nH += `<div class="absolute top-1.5 left-1.5 z-20 pointer-events-none"><span class="bg-emerald-600/95 backdrop-blur-xs text-white text-[8px] sm:text-[9px] font-black px-1.5 py-0.5 rounded-md shadow-xs flex items-center gap-1 leading-none"><i class="fa-solid fa-cart-shopping text-[7px]"></i> ${inCartQty} di Keranjang</span></div>`;
     }
     if (inWishlist) {
-      nH += `<div class="absolute bottom-1.5 right-1.5 z-20 pointer-events-none"><span class="w-5 h-5 rounded-full bg-white/95 dark:bg-slate-800/95 text-rose-500 border border-rose-100 dark:border-rose-900/60 flex items-center justify-center text-[9px] shadow-xs"><i class="fa-solid fa-heart"></i></span></div>`;
+      nH += `<div class="absolute bottom-1.5 right-1.5 z-20 pointer-events-none"><span class="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/95 dark:bg-slate-800/95 text-rose-500 border border-rose-100 dark:border-rose-900/60 flex items-center justify-center text-[9px] shadow-xs"><i class="fa-solid fa-heart"></i></span></div>`;
     }
 
     let bH = `
-    <div class="mb-1 flex flex-wrap gap-1 items-center overflow-hidden shrink-0">
-      ${inCartQty > 0 ? `<span class="bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded text-[8px] font-bold truncate max-w-full" title="Item ini ada di keranjang belanja"><i class="fa-solid fa-cart-shopping text-[7px]"></i> Di Keranjang (${inCartQty})</span>` : ''}
-      ${inWishlist ? `<span class="bg-rose-50 dark:bg-rose-950/70 border border-rose-300 dark:border-rose-700 text-rose-600 dark:text-rose-400 px-1.5 py-0.5 rounded text-[8px] font-bold truncate max-w-full" title="Item ini ada di favorit saya"><i class="fa-solid fa-heart text-[7px]"></i> Favorit</span>` : ''}
-      ${p.tag ? `<span class="bg-rose-50 dark:bg-rose-950/60 border border-rose-200/80 dark:border-rose-800/60 text-rose-600 dark:text-rose-400 px-1.5 py-0.5 rounded text-[8px] font-bold truncate max-w-full"><i class="fa-solid fa-fire text-[7px]"></i> ${esc(p.tag)}</span>` : ''}
-      <span class="bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded text-[8px] font-semibold truncate max-w-full">
+    <div class="h-5 mb-1.5 flex items-center gap-1 overflow-hidden shrink-0">
+      ${p.tag ? `<span class="bg-rose-50 dark:bg-rose-950/60 border border-rose-200/80 dark:border-rose-800/60 text-rose-600 dark:text-rose-400 px-1.5 py-0.5 rounded text-[8px] font-bold truncate max-w-[90px]"><i class="fa-solid fa-fire text-[7px]"></i> ${esc(p.tag)}</span>` : ''}
+      <span class="bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded text-[8px] font-semibold truncate shrink-0">
         <i class="fa-solid fa-check text-[7px]"></i> Official
       </span>
-      ${p.wholesale?.length ? `<span class="bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/60 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded text-[8px] font-semibold truncate max-w-full"><i class="fa-solid fa-tags text-[7px]"></i> Grosir</span>` : ''}
+      ${p.wholesale?.length ? `<span class="bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/60 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded text-[8px] font-semibold truncate shrink-0"><i class="fa-solid fa-tags text-[7px]"></i> Grosir</span>` : ''}
     </div>
     `;
 
@@ -7352,7 +7350,7 @@ const rCat = () => {
         <div class="flex-1 flex flex-col justify-between min-w-0 px-0.5 pb-0.5">
           <div class="flex flex-col min-w-0">
             ${bH}
-            <h4 class="text-xs font-semibold ${isOff ? 'text-slate-500 dark:text-slate-400' : 'text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'} line-clamp-2 leading-snug mb-1.5 transition-colors">${esc(p.name)}</h4>
+            <h4 class="text-xs font-semibold ${isOff ? 'text-slate-500 dark:text-slate-400' : 'text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'} line-clamp-2 leading-snug min-h-[2.35rem] mb-1.5 transition-colors">${esc(p.name)}</h4>
           </div>
           <div class="mt-auto pt-1 flex flex-col justify-end min-w-0">
             ${incHtml}
@@ -12519,7 +12517,7 @@ window.rAdmItms = t => {
       </div>
       
       <!-- Action Toolbar (Clean, Unified Pill Container) -->
-      <div class="flex items-center gap-1.5 sm:gap-2 pt-2.5 sm:pt-0 border-t border-slate-100 dark:border-slate-700/80 sm:border-t-0 shrink-0 justify-end flex-wrap" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 pt-2.5 sm:pt-0 border-t border-slate-100 dark:border-slate-700/80 sm:border-t-0 shrink-0 w-full sm:w-auto flex-wrap" onclick="event.stopPropagation()">
         ${isP ? `
         <!-- Tombol Cetak Price Tag / Label Harga -->
         <button type="button" onclick="event.stopPropagation(); openPricetagForSingleProduct(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500 hover:text-white transition-all border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Cetak Price Tag / Label Harga Barang Ini"><i class="fa-solid fa-tags"></i></button>

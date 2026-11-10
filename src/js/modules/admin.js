@@ -3239,7 +3239,7 @@ window.rAdmItms = t => {
       </div>
       
       <!-- Action Toolbar (Clean, Unified Pill Container) -->
-      <div class="flex items-center gap-1.5 sm:gap-2 pt-2.5 sm:pt-0 border-t border-slate-100 dark:border-slate-700/80 sm:border-t-0 shrink-0 justify-end flex-wrap" onclick="event.stopPropagation()">
+      <div class="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 pt-2.5 sm:pt-0 border-t border-slate-100 dark:border-slate-700/80 sm:border-t-0 shrink-0 w-full sm:w-auto flex-wrap" onclick="event.stopPropagation()">
         ${isP ? `
         <!-- Tombol Cetak Price Tag / Label Harga -->
         <button type="button" onclick="event.stopPropagation(); openPricetagForSingleProduct(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500 hover:text-white transition-all border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Cetak Price Tag / Label Harga Barang Ini"><i class="fa-solid fa-tags"></i></button>
