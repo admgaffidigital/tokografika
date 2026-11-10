@@ -2,6 +2,21 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-09-15] - Pembaruan Menyeluruh Panduan Interaktif Toko (Buku Panduan CMS & Panduan Pembeli)
+### Dokumentasi & Panduan Interaktif Sistem:
+- **Pembaruan Buku Panduan CMS Admin (`cms-guide-modal`):**
+  - **Edit Cepat Instan:** Panduan langkah demi langkah mengubah stok, HPP modal, harga jual, dan supplier tanpa form panjang.
+  - **Pelacak Kenaikan Harga Otomatis:** Dokumentasi sistem deteksi kenaikan harga, pencatatan otomatis `previousPrice`, dan tampilan badge `▲ Naik Rp...` selama 14 hari.
+  - **Sinkronisasi Cloud Real-Time:** Penjelasan sinkronisasi instan Firestore antar perangkat tanpa stale cache di iPhone/Safari.
+  - **3 Status Produk:** Penjelasan detail status Aktif, Stok Habis (tetap tampil), dan Nonaktif (tampil abu-abu + checkout dikunci).
+- **Pembaruan Panduan Pembeli Toko Online (`buyer-guide-modal`):**
+  - **Panduan Stok & Ketersediaan:** Menjelaskan arti status *Ready Stock*, *Stok Habis*, dan *Tidak Tersedia*.
+  - **Panduan Penanda Status Keranjang & Favorit:** Edukasi penggunaan lencana hijau `[x di Keranjang]` dan ikon hati `[❤️]` di katalog depan.
+  - **Panduan Pencarian Cepat di Keranjang & Favorit:** Petunjuk mencari belanjaan di keranjang/wishlist serta shortcut "Cari di Katalog".
+  - **Panduan Transparansi Kenaikan Harga:** Edukasi harga lama dicoret dan info penyesuaian nominal harga.
+
+---
+
 ## [2026-09-15] - Harmonisasi UI/UX Mobile: Tampilan Etalase Seragam Bebas Jomplang & Toolbar Admin Responsif
 ### Optimalisasi Tampilan Antarmuka & Pengalaman Pengguna (UI/UX):
 - **Kartu Produk Etalase Seragam & Sejajar (Bebas Jomplang):**

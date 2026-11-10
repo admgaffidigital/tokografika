@@ -1107,7 +1107,7 @@ const buyerGuideTopicsData = {
     `
   },
   stock_info: {
-    title: 'Informasi Stok & Ketersediaan Produk',
+    title: 'Informasi Stok, Status Produk & Pencarian Belanja',
     icon: 'fa-box-open',
     content: `
       <div class="space-y-4 text-xs sm:text-sm">
@@ -1116,35 +1116,61 @@ const buyerGuideTopicsData = {
             <i class="fa-solid fa-boxes-stacked"></i> Status Ketersediaan Stok Realtime
           </h4>
           <p class="text-xs leading-relaxed text-slate-700 dark:text-slate-300 font-medium">
-            Katalog toko kami selalu menyinkronkan data ketersediaan barang secara realtime agar Anda selalu mendapatkan informasi stok yang akurat.
+            Katalog toko kami selalu menyinkronkan data ketersediaan barang secara realtime agar Anda selalu mendapatkan informasi stok dan harga yang paling akurat.
           </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
-            <div class="flex items-center gap-2">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <div class="flex items-center gap-1.5">
               <span class="px-2 py-0.5 rounded text-[9px] font-black bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 uppercase">Ready Stock</span>
-              <h5 class="font-bold text-slate-900 dark:text-white text-xs">Produk Tersedia</h5>
             </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              Produk dengan stok siap kirim dapat langsung Anda masukkan ke keranjang belanja dan diproses checkout secara instan.
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Produk Tersedia</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+              Produk siap kirim dapat langsung Anda masukkan ke keranjang belanja dan diproses checkout secara instan.
             </p>
           </div>
 
-          <div class="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-2">
-            <div class="flex items-center gap-2">
+          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <div class="flex items-center gap-1.5">
               <span class="px-2 py-0.5 rounded text-[9px] font-black bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 uppercase">Stok Habis</span>
-              <h5 class="font-bold text-slate-900 dark:text-white text-xs">Stok Sedang Kosong</h5>
             </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-              Produk yang stoknya habis <b>tetap dapat Anda lihat spesifikasi dan harganya</b> di katalog. Anda dapat menghubungi CS kami via WhatsApp untuk menanyakan jadwal restock atau pre-order.
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Stok Sedang Kosong</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+              Produk tetap tampil di katalog dengan tanda <i>"STOK HABIS"</i> agar Anda tetap dapat melihat detail barang sambil menunggu jadwal restock.
+            </p>
+          </div>
+
+          <div class="p-3.5 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-1.5">
+            <div class="flex items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded text-[9px] font-black bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 uppercase">Tidak Tersedia</span>
+            </div>
+            <h5 class="font-bold text-slate-900 dark:text-white text-xs">Nonaktif / Penyesuaian</h5>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+              Tampil abu-abu di katalog untuk barang yang sedang dinonaktifkan sementara oleh toko dan pembelian dikunci otomatis.
             </p>
           </div>
         </div>
 
-        <div class="p-3.5 rounded-2xl border flex items-center gap-2.5 text-xs font-semibold" style="background-color:var(--clr-p-bg);border-color:rgba(0,0,0,0.06);color:var(--clr-p)">
-          <i class="fa-solid fa-bell text-amber-500 text-sm"></i>
-          <span>Jika suatu produk memiliki varian, Anda dapat memilih varian lain yang masih memiliki sisa stok tersedia.</span>
+        <!-- Highlight Fitur Baru Pembeli -->
+        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-700/80 space-y-3">
+          <h5 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm flex items-center gap-2">
+            <i class="fa-solid fa-sparkles text-amber-500"></i> Fitur Kemudahan Berbelanja Terbaru:
+          </h5>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-600 dark:text-slate-300">
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
+              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-cart-shopping"></i> Penanda Status di Katalog</span>
+              <p class="text-[11px] leading-relaxed">Setiap produk yang telah dimasukkan ke keranjang menampilkan badge hijau <b>[x di Keranjang]</b> dan ikon hati merah di kartu depan agar Anda tidak lupa.</p>
+            </div>
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs">
+              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-magnifying-glass"></i> Cari Cepat di Keranjang & Favorit</span>
+              <p class="text-[11px] leading-relaxed">Bagi Anda yang berbelanja grosir dalam jumlah banyak, gunakan kolom pencarian di dalam keranjang untuk memastikan barang sudah masuk atau langsung cari ke katalog.</p>
+            </div>
+            <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-xs sm:col-span-2">
+              <span class="font-bold text-rose-600 dark:text-rose-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-arrow-trend-up"></i> Transparansi Kenaikan Harga</span>
+              <p class="text-[11px] leading-relaxed">Jika produk mengalami penyesuaian harga terbaru, harga lama akan dicoret dan nominal kenaikan (<b>▲ Naik Rp...</b>) ditampilkan secara jujur dan transparan.</p>
+            </div>
+          </div>
         </div>
       </div>
     `

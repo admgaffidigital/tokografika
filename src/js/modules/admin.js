@@ -4190,24 +4190,24 @@ const guideTopicsData = {
         <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 space-y-3">
           <div class="flex items-center gap-2 text-amber-700 dark:text-amber-300 font-black text-xs sm:text-sm">
             <i class="fa-solid fa-bolt text-amber-500 text-base"></i>
-            <span>FITUR UNGGULAN TERBARU: Edit Cepat & 3 Status Produk</span>
+            <span>FITUR UNGGULAN TERBARU: Edit Cepat, Kenaikan Harga & Real-Time Sync</span>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-700 dark:text-slate-300">
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
               <span class="font-bold text-amber-600 dark:text-amber-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-bolt"></i> Tombol Edit Cepat (Ikon Petir)</span>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Klik ikon petir kuning pada kartu produk untuk memperbarui <b>Stok</b>, <b>HPP Modal</b>, dan <b>Harga Jual</b> secara instan tanpa perlu membuka form edit yang panjang.</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Klik ikon petir hijau pada kartu produk untuk memperbarui <b>Stok</b>, <b>HPP Modal</b>, <b>Supplier</b>, dan <b>Harga Jual</b> secara instan dan mandiri langsung ke database cloud.</p>
             </div>
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
-              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-box"></i> Stok Kosong (Tetap Tampil)</span>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Produk dengan stok 0 <b>tetap tampil di katalog online</b> dengan tanda <i>"STOK HABIS"</i> agar pelanggan tahu toko menyediakan produk tersebut saat restok.</p>
+              <span class="font-bold text-rose-600 dark:text-rose-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-arrow-trend-up"></i> Pelacak Kenaikan Harga Otomatis</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Saat harga dinaikkan, sistem otomatis mencatat harga lama dan memunculkan badge transparan <b>▲ Naik Rp...</b> di etalase selama 14 hari. Jika harga diturunkan kembali, label otomatis di-reset.</p>
             </div>
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
-              <span class="font-bold text-rose-600 dark:text-rose-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-ban"></i> Nonaktif (Tampil Abu-Abu)</span>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Klik ikon status untuk menonaktifkan barang. Produk nonaktif <b>tetap tampil di katalog</b> dengan nuansa abu-abu dan tombol beli dikunci.</p>
+              <span class="font-bold text-emerald-600 dark:text-emerald-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-rotate text-emerald-500"></i> Sinkronisasi Cloud Real-Time</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Pembaruan produk langsung disinkronkan ke Cloud Firestore. HP pelanggan (Android & iPhone Safari) langsung memperbarui tampilan harga & stok secara otomatis tanpa perlu reload.</p>
             </div>
             <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-amber-200/80 dark:border-amber-800/50 shadow-xs">
-              <span class="font-bold text-indigo-600 dark:text-indigo-400 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-filter"></i> 4 Tab Filter Status</span>
-              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Filter daftar produk dengan 1 klik: <b>Semua Produk</b>, <b>Aktif Ready</b>, <b>Stok Kosong</b>, atau <b>Nonaktif</b>.</p>
+              <span class="font-bold text-slate-700 dark:text-slate-300 block mb-1 flex items-center gap-1.5"><i class="fa-solid fa-ban text-rose-500"></i> Nonaktif (Tampil Abu-Abu)</span>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">Klik ikon mata/larangan untuk menonaktifkan barang. Produk nonaktif <b>tetap tampil di katalog</b> dengan nuansa abu-abu dan proteksi checkout dikunci otomatis.</p>
             </div>
           </div>
         </div>
