@@ -2,6 +2,16 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-09-15] - Perbaikan Bug Event Bubbling Modal Edit Cepat & Penyimpanan Produk Admin
+### Perbaikan & Optimalisasi Sistem:
+- **Penyelesaian Masalah Modal Edit Cepat Merembet ke Edit Data Produk:**
+  - **Identifikasi Masalah:** Tombol petir (Edit Cepat) dan tombol Stok Opname pada daftar produk CMS Admin sebelumnya belum dilengkapi `event.stopPropagation()`. Ketika tombol Edit Cepat ditekan, event klik merembet (*bubble up*) ke baris kartu produk yang memiliki pemicu `onclick="oAEd('products', id)"`. Hal ini menyebabkan modal Edit Data Lengkap terbuka di belakang modal Edit Cepat secara bersamaan. Saat pengguna menekan "Simpan Perubahan", modal Edit Cepat tertutup namun pengguna mendapati dirinya berada di modal Edit Produk Lengkap.
+  - **Isolasi Klik Bilah Aksi (`event.stopPropagation`):** Menambahkan `event.stopPropagation()` pada tombol Edit Cepat (`openQuickEditProduct`) dan Stok Opname (`openStockOpnameModal`), serta pada kontainer *action toolbar* sebagai proteksi lapis ganda.
+  - **Auto-Dismiss Modal Lapis Belakang (`closeAdminModal`):** Saat modal Edit Cepat atau Stok Opname dibuka, dibatalkan, atau disimpan, sistem secara otomatis memastikan modal Edit Produk Lengkap ditutup bersih.
+  - **Optimasi `saveQuickEditProduct`:** Menambahkan proteksi anti dobel klik (`isSaving`), sinkronisasi kalkulasi total stok produk dari akumulasi varian, serta toleransi pencarian ID produk berbasis numerik/string.
+
+---
+
 ## [2026-09-15] - Perbaikan Bug Sinkronisasi Cache Data pada iPhone / Safari & Real-time Cloud Sync
 ### Perbaikan & Optimalisasi Sistem:
 - **Penyelesaian Masalah Data Tidak Berubah di iPhone / Safari (`tokogrosir.id`):**
