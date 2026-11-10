@@ -2,6 +2,29 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-11-10] - Audit Menyeluruh Keamanan & Performa, Hardening Tipe ID Produk, serta Sinkronisasi POS Instan
+### 1. Hardening & Pencegahan Bug Tipe ID Produk Admin:
+- **Sanitasi Parameter ID Produk (`String` vs `Number`):**
+  - Seluruh tombol aksi produk pada Admin CMS (Cetak Price Tag, Edit Cepat, Stok Opname, Toggle Visibilitas, Duplikat, Edit Lengkap, dan Hapus) kini dibungkus dengan tanda kutip aman `'${x.id}'`. Hal ini mencegah *Uncaught ReferenceError* ketika produk memiliki ID alfanumerik.
+  - Memperbarui fungsi lookup produk (`oAEd`, `oADel`, `duplicateProduct`, `toggleProductStatus`) menggunakan pencarian tangguh `(x.id === id || String(x.id) === String(id))` dan fallback array aman.
+
+### 2. Sinkronisasi Instan POS pada Penyimpanan Aplikasi (`saveApp`):
+- **Real-Time POS In-Place Update:**
+  - Memanggil `syncPosCartPrices()` dan `renderPosCart()` langsung di dalam siklus `saveApp()` lokal. Ketika admin atau kasir mengubah harga/stok pada tab atau perangkat lokal, keranjang kasir POS langsung terbarui seketika (0ms).
+
+### 3. Audit Keamanan Database & Arsitektur Performa:
+- **Audit Keamanan Database:**
+  - Verifikasi sanitasi output HTML dinamis (`esc()`) terhadap potensi serangan XSS.
+  - Verifikasi proteksi brute-force login admin & kasir (lockout 30 detik setelah 5x gagal).
+  - Rekomendasi aturan keamanan Firestore Security Rules untuk membatasi hak akses tulis (*write*).
+- **Audit Performa Website & PWA:**
+  - Arsitektur Cache-First (First render ~0ms dari `localStorage`).
+  - Efisiensi kuota Firestore: `startPriceWatcher` hanya memantau 1 dokumen metadata (`cms_data`).
+  - Rendering bertahap (`adminProductRenderLimit = 30`) menjaga kelancaran 60 FPS pada mobile.
+  - Image Lazy Loading dengan `IntersectionObserver` dan placeholder SVG ringan.
+
+---
+
 ## [2026-09-15] - Integrasi & Sinkronisasi Total POS Kasir Toko dengan Pembaruan Real-Time
 ### Integrasi POS Kasir & Transaksi Toko Fisik:
 - **Sinkronisasi Otomatis POS Kasir Real-Time (`syncPosCartPrices`):**
