@@ -33,11 +33,14 @@
       <button class='w-full py-2.5 text-white font-bold rounded-xl text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md' id='btn-print-thermal-action' style='background-color: var(--clr-p);' onclick='executePrintReceipt()'>
         <i class='fa-solid fa-print'></i> Print Thermal (58mm)
       </button>
-      <div class='flex gap-2 w-full'>
-        <button class='flex-1 py-2 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md' style='background-color: var(--clr-p);' onclick='downloadReceiptImage()'>
+      <div class='grid grid-cols-3 gap-2 w-full'>
+        <button type='button' class='py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md active:scale-95' onclick='shareReceiptWhatsApp()' title='Kirim Struk ke WhatsApp'>
+          <i class='fa-brands fa-whatsapp text-sm'></i> Kirim WA
+        </button>
+        <button type='button' class='py-2 bg-slate-700 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md active:scale-95' onclick='downloadReceiptImage()' title='Download Gambar Struk'>
           <i class='fa-solid fa-image'></i> Gambar
         </button>
-        <button class='flex-1 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md' onclick='downloadReceiptPDF()'>
+        <button type='button' class='py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm hover:shadow-md active:scale-95' onclick='downloadReceiptPDF()' title='Download PDF Struk'>
           <i class='fa-solid fa-file-pdf'></i> PDF
         </button>
       </div>

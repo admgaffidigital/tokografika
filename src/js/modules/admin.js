@@ -2328,6 +2328,10 @@ const rAdmSet = () => {
                 <input type="checkbox" id="set-receipt-show-powered" ${appData.store.receiptShowPowered !== false ? 'checked' : ''} class="rounded text-emerald-600 focus:ring-emerald-500" />
                 <span class="font-medium text-slate-700 dark:text-slate-300">Tampilkan "Powered by"</span>
               </label>
+              <label class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 cursor-pointer col-span-full sm:col-span-2">
+                <input type="checkbox" id="set-receipt-show-bank" ${appData.store.receiptShowBank !== false ? 'checked' : ''} class="rounded text-emerald-600 focus:ring-emerald-500" />
+                <span class="font-medium text-slate-700 dark:text-slate-300">Tampilkan Info Rekening Bank Toko (Khusus Pembayaran Transfer)</span>
+              </label>
             </div>
           </div>
         </div>
@@ -2573,6 +2577,7 @@ window.saveAdminSettings = async () => {
     appData.store.receiptShowBarcode = el('set-receipt-show-barcode')?.checked ?? false;
     appData.store.receiptShowNotes = el('set-receipt-show-notes')?.checked ?? false;
     appData.store.receiptShowPowered = el('set-receipt-show-powered')?.checked ?? true;
+    appData.store.receiptShowBank = el('set-receipt-show-bank')?.checked ?? true;
     try { 
       localStorage.setItem('freshmart_bg_style', appData.store.bgStyle); 
       localStorage.setItem('freshmart_bg_image', appData.store.bgImage || '');

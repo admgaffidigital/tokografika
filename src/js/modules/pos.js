@@ -1628,6 +1628,15 @@ window.printPosReceipt = () => {
   }
 };
 
+window.sharePosReceiptWa = () => {
+  if (!posLastOrder) { showToast('Tidak ada data transaksi!'); return; }
+  if (typeof shareReceiptWhatsApp === 'function') {
+    shareReceiptWhatsApp(posLastOrder);
+  } else {
+    showToast('Fungsi kirim WhatsApp belum tersedia!');
+  }
+};
+
 window.printPosInvoice = () => {
   if (!posLastOrder) { showToast('Tidak ada data transaksi!'); return; }
   if (typeof generatePosA4Document === 'function') {

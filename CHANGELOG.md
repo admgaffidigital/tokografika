@@ -2,6 +2,24 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-11-10] - Fitur Kirim Struk WhatsApp & Integrasi Rekening Bank Toko Khusus Metode Transfer
+### 1. Fitur Bagikan Struk ke WhatsApp (POS, Admin, & Preview Struk):
+- **Tombol Kirim Struk WhatsApp (`shareReceiptWhatsApp`):**
+  - Menambahkan tombol aksi hijau WhatsApp di modal **Preview Struk Kasir** (`receipt-modal.html`), modal **Sukses Transaksi POS** (`pos-success-modal`), dan **Detail Pesanan Admin** (`admin-order-modal.html`).
+  - Mengirimkan rincian struk belanja digital yang rapi, mencakup kop nama toko, nomor struk, waktu transaksi, kasir, daftar belanjaan (qty × harga), subtotal, diskon, dan total akhir langsung ke WhatsApp pembeli (atau membuka pemilih kontak WhatsApp jika nomor pelanggan belum tercatat).
+
+### 2. Integrasi Rekening Bank Khusus Metode Transfer (*Conditional Bank Details*):
+- **Otomatis & Bersih Hanya Saat Metode Transfer Dipilih:**
+  - **Pada Pesan WhatsApp:** Menampilkan daftar rekening bank toko (`appData.banks`: Nama Bank, No. Rekening, dan Atas Nama) secara otomatis saat metode pembayaran adalah **Transfer**. Jika metode yang dipilih adalah Tunai (Cash), COD, EDC, atau QRIS, daftar rekening bank **tidak** akan ditampilkan sehingga struk tetap ringkas dan tidak membingungkan.
+  - **Pada Struk Kasir Thermal (Fisik 58mm/80mm & Digital Preview):** Menambahkan blok *"REKENING TRANSFER TOKO"* di bawah baris metode pembayaran khusus transaksi transfer. Tercetak jelas pada mode printer thermal Bluetooth/raw text (`executePrintReceipt`) maupun tampilan struk visual/gambar/PDF.
+  - **Pada Checkout Web (`checkout.js`):** Saat pembeli melakukan pemesanan via katalog toko dan memilih metode bayar Transfer, rincian rekening toko otomatis disematkan pada pesan WhatsApp pemesanan beserta instruksi kirim bukti transfer.
+
+### 3. Pengaturan Admin Fleksibel di Pengaturan Toko:
+- **Toggle Konfigurasi Struk Kasir:**
+  - Menambahkan sakelar `"Tampilkan Info Rekening Bank Toko (Khusus Pembayaran Transfer)"` (`set-receipt-show-bank`) di menu **Admin Toko → Format Struk Kasir**, sehingga pemilik toko dapat dengan mudah mengaktifkan atau menonaktifkan fitur ini sesuai preferensi.
+
+
+
 ## [2026-11-10] - Audit Menyeluruh Keamanan & Performa, Hardening Tipe ID Produk, serta Sinkronisasi POS Instan
 ### 1. Hardening & Pencegahan Bug Tipe ID Produk Admin:
 - **Sanitasi Parameter ID Produk (`String` vs `Number`):**

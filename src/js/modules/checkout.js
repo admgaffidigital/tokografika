@@ -338,6 +338,13 @@ window.processOrder = async () => {
     if (sD) x += `Diskon Voucher: -${fCur(sD)}\n`;
     x += `*TOTAL: ${fCur(tot)}*\nBayar: ${m.toUpperCase()}\n`;
     if (m === 'cod') x += `_*(Siapkan Uang Pas)*_\n`;
+    if (m === 'transfer' && appData.banks && appData.banks.length > 0) {
+      x += `\n💳 *REKENING TRANSFER TOKO:*\n`;
+      appData.banks.forEach(b => {
+        x += `• *${b.bankName}:* \`${b.bankAccount}\` (a.n. ${b.bankOwner})\n`;
+      });
+      x += `_Mohon kirimkan foto/tangkapan layar bukti transfer ke chat ini._\n`;
+    }
     
     hLoad();
     try { window.open(`https://wa.me/${w}?text=${encodeURIComponent(x)}`, '_blank'); } catch(waErr) { console.warn('[FreshMart] WA popup diblokir browser:', waErr); }

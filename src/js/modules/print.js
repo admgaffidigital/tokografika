@@ -195,6 +195,25 @@ const _renderReceiptHtml = (o, paperSize = '58') => {
     `;
   }
 
+  // Info Rekening Bank Toko (Khusus Pembayaran Transfer)
+  const isTransferOrder = String(o.payment?.methodKey || o.payment?.method || '').toLowerCase().includes('transfer');
+  const showBankSection = (appData.store?.receiptShowBank !== false) && isTransferOrder && (appData.banks && appData.banks.length > 0);
+  if (showBankSection) {
+    h += `
+      <div style="margin: 4px 0; padding: 3.5px 0; border-top: 1px dashed #000; border-bottom: 1px dashed #000; text-align:center; width:100%; box-sizing:border-box;">
+        <div style="font-weight:900; font-size:${is80 ? '11px' : '9px'}; letter-spacing:0.5px; margin-bottom:2px; color:#000;">
+          REKENING TRANSFER TOKO:
+        </div>
+        ${appData.banks.map(b => `
+          <div style="font-size:${is80 ? '10.5px' : '8.5px'}; line-height:1.3; margin:2px 0; color:#000;">
+            <div style="font-weight:900;">${esc(b.bankName)}: ${esc(b.bankAccount)}</div>
+            <div style="font-size:${is80 ? '9px' : '7.5px'}; color:#222;">a.n. ${esc(b.bankOwner)}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
   // Barcode (if enabled)
   if (showBarcode) {
     h += _generateReceiptBarcodeSvg(o.orderId || o.id, is80);
@@ -333,6 +352,17 @@ window.executePrintReceipt = () => {
         sT += "-".repeat(len) + "\n";
         sT += pC(`*** ANDA HEMAT: Rp ${savings.toLocaleString('id-ID')} ***`) + "\n";
       }
+      // Info Rekening Bank Toko (Khusus Pembayaran Transfer)
+      const isTransferThermal = String(o.payment?.methodKey || o.payment?.method || '').toLowerCase().includes('transfer');
+      const showBankThermal = (appData.store?.receiptShowBank !== false) && isTransferThermal && (appData.banks && appData.banks.length > 0);
+      if (showBankThermal) {
+        sT += "-".repeat(len) + "\n";
+        sT += pC("REKENING TRANSFER TOKO:") + "\n";
+        appData.banks.forEach(b => {
+          sT += pLR(b.bankName + ": " + b.bankAccount, "") + "\n";
+          sT += pLR(" a.n " + b.bankOwner, "") + "\n";
+        });
+      }
       sT += "-".repeat(len) + "\n";
       if (appData.store.footerText) sT += pC(appData.store.footerText) + "\n";
       if (showNotes) {
@@ -452,6 +482,98 @@ window.downloadReceiptPDF = async () => {
   }
   isSaving = false;
   hLoad();
+};
+
+window.shareReceiptWhatsApp = (targetOrder = null) => {
+  const o = targetOrder || ((typeof posLastOrder !== 'undefined' && posLastOrder && (posLastOrder.orderId === cVOrd || posLastOrder.id === cVOrd)) ? posLastOrder : gOrds.find(x => x.orderId === cVOrd));
+  if (!o) {
+    showToast('Pilih pesanan terlebih dahulu!');
+    return;
+  }
+
+  const sN = (appData.store?.name || 'TOKO GRAFIKA').toUpperCase();
+  const sW = appData.store?.wa || '';
+  const sAddr = appData.store?.address || '';
+  const sFooter = appData.store?.footerText || 'Terima kasih telah berbelanja di toko kami.';
+
+  let txt = `🧾 *STRUK PEMBELIAN - ${sN}*\n`;
+  if (sAddr) txt += `${sAddr}\n`;
+  if (sW) txt += `WA Toko: ${sW}\n`;
+  txt += `--------------------------------\n`;
+
+  const d = (o.dateString || o.createdAt)
+    ? new Date(o.dateString || o.createdAt).toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+    : new Date().toLocaleString('id-ID');
+
+  txt += `*No. Struk:* #${o.orderId || o.id}\n`;
+  txt += `*Waktu:* ${d}\n`;
+  txt += `*Kasir:* ${o.cashier || 'Admin / Kasir'}\n`;
+  if (o.customer?.name && o.customer.name !== 'Umum / Walk-in') {
+    txt += `*Pelanggan:* ${o.customer.name}\n`;
+  }
+  txt += `--------------------------------\n`;
+  txt += `*RINCIAN BELANJA:*\n`;
+
+  (o.items || []).forEach(i => {
+    const rawName = i.name + (i.variantName ? ` (${i.variantName})` : '');
+    const effP = i.effectivePrice || i.price || 0;
+    const qty = i.qty || 1;
+    const unit = i.unit ? ' ' + i.unit : '';
+    const itemTotal = qty * effP;
+    txt += `• ${rawName}\n  ${qty}${unit} × Rp ${effP.toLocaleString('id-ID')} = *Rp ${itemTotal.toLocaleString('id-ID')}*\n`;
+  });
+
+  txt += `--------------------------------\n`;
+  txt += `Subtotal: Rp ${(o.payment?.subtotal || o.subtotal || 0).toLocaleString('id-ID')}\n`;
+  if (o.payment?.productDiscount) txt += `Diskon Promo: -Rp ${o.payment.productDiscount.toLocaleString('id-ID')}\n`;
+  if (o.customer?.deliveryMethod !== 'pickup' && o.type !== 'pos' && o.payment?.shippingCost) {
+    txt += `Ongkos Kirim: Rp ${o.payment.shippingCost.toLocaleString('id-ID')}\n`;
+  }
+  if (o.payment?.shippingDiscount) txt += `Potongan Ongkir: -Rp ${o.payment.shippingDiscount.toLocaleString('id-ID')}\n`;
+  txt += `*TOTAL AKHIR: Rp ${(o.payment?.grandTotal || o.total || 0).toLocaleString('id-ID')}*\n`;
+
+  const payMethod = String(o.payment?.method || 'TUNAI').toUpperCase();
+  txt += `*Metode Bayar:* ${payMethod}\n`;
+
+  if (o.payment?.cashReceived) {
+    txt += `Bayar Tunai: Rp ${(o.payment.cashReceived).toLocaleString('id-ID')}\n`;
+    txt += `Kembalian: Rp ${(o.payment.change || 0).toLocaleString('id-ID')}\n`;
+  }
+
+  // KHUSUS METODE TRANSFER: TAMPILKAN REKENING BANK TOKO
+  const isTransfer = String(o.payment?.methodKey || o.payment?.method || '').toLowerCase().includes('transfer');
+  if (isTransfer && appData.banks && appData.banks.length > 0) {
+    txt += `\n💳 *REKENING TRANSFER TOKO:*\n`;
+    appData.banks.forEach(b => {
+      txt += `• *${b.bankName}:* \`${b.bankAccount}\` (a.n. ${b.bankOwner})\n`;
+    });
+    txt += `_Mohon kirimkan bukti transfer setelah melakukan pembayaran._\n`;
+  }
+
+  txt += `--------------------------------\n`;
+  txt += `_${sFooter}_\n`;
+
+  // Target Phone: prioritaskan nomor pembeli jika tersedia
+  let targetPhone = (o.customer?.phone || o.customer?.wa || '').replace(/\D/g, '');
+  if (!targetPhone) {
+    const inputPhone = prompt('Kirim Struk ke WhatsApp Pelanggan:\nMasukkan nomor WhatsApp tujuan (contoh: 08123456789), atau klik Batal / kosongkan untuk buka daftar obrolan WhatsApp:', '');
+    if (inputPhone === null) return; // Batal ditekan
+    targetPhone = inputPhone.trim().replace(/\D/g, '');
+  }
+
+  if (targetPhone.startsWith('0')) targetPhone = '62' + targetPhone.substring(1);
+
+  const waUrl = targetPhone 
+    ? `https://wa.me/${targetPhone}?text=${encodeURIComponent(txt)}`
+    : `https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`;
+
+  try {
+    window.open(waUrl, '_blank');
+    showToast('Membuka WhatsApp untuk mengirim struk...');
+  } catch (err) {
+    console.warn('[FreshMart] Pop-up WhatsApp diblokir browser:', err);
+    showToast('Pop-up WhatsApp diblokir browser!');
+  }
 };
 
 

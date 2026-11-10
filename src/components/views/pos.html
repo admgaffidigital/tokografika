@@ -665,23 +665,28 @@
         </div>
       </div>
 
-      <!-- Print Options -->
-      <p class='text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center mt-3'>Cetak Dokumen</p>
-      <div class='grid grid-cols-3 gap-2'>
+      <!-- Print & Share Options -->
+      <p class='text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center mt-3'>Cetak & Bagikan Struk</p>
+      <div class='grid grid-cols-4 gap-2'>
         <button type='button' onclick='printPosReceipt()' 
-          class='flex flex-col items-center gap-1.5 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-400 transition-all active:scale-95'>
-          <i class='fa-solid fa-receipt text-emerald-600 dark:text-emerald-400 text-base'></i>
-          <span class='text-[10px] font-bold text-slate-700 dark:text-slate-300'>Struk<br/>Thermal</span>
+          class='flex flex-col items-center gap-1.5 p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:border-emerald-400 transition-all active:scale-95' title='Cetak Struk Thermal'>
+          <i class='fa-solid fa-receipt text-emerald-600 dark:text-emerald-400 text-sm sm:text-base'></i>
+          <span class='text-[9px] sm:text-[10px] font-bold text-slate-700 dark:text-slate-300 text-center leading-tight'>Struk<br/>Thermal</span>
+        </button>
+        <button type='button' onclick='sharePosReceiptWa()' 
+          class='flex flex-col items-center gap-1.5 p-2 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/40 hover:bg-emerald-100 hover:border-emerald-500 transition-all active:scale-95' title='Kirim Struk ke WhatsApp Pelanggan'>
+          <i class='fa-brands fa-whatsapp text-emerald-600 dark:text-emerald-400 text-sm sm:text-base'></i>
+          <span class='text-[9px] sm:text-[10px] font-bold text-emerald-700 dark:text-emerald-300 text-center leading-tight'>Kirim<br/>WA</span>
         </button>
         <button type='button' onclick='printPosInvoice()' 
-          class='flex flex-col items-center gap-1.5 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950/30 hover:border-blue-400 transition-all active:scale-95'>
-          <i class='fa-solid fa-file-invoice text-blue-600 dark:text-blue-400 text-base'></i>
-          <span class='text-[10px] font-bold text-slate-700 dark:text-slate-300'>Invoice<br/>A4</span>
+          class='flex flex-col items-center gap-1.5 p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950/30 hover:border-blue-400 transition-all active:scale-95' title='Cetak Faktur Invoice A4'>
+          <i class='fa-solid fa-file-invoice text-blue-600 dark:text-blue-400 text-sm sm:text-base'></i>
+          <span class='text-[9px] sm:text-[10px] font-bold text-slate-700 dark:text-slate-300 text-center leading-tight'>Invoice<br/>A4</span>
         </button>
         <button type='button' onclick='printPosSuratJalan()' 
-          class='flex flex-col items-center gap-1.5 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-purple-50 dark:hover:bg-purple-950/30 hover:border-purple-400 transition-all active:scale-95'>
-          <i class='fa-solid fa-truck text-purple-600 dark:text-purple-400 text-base'></i>
-          <span class='text-[10px] font-bold text-slate-700 dark:text-slate-300'>Surat<br/>Jalan</span>
+          class='flex flex-col items-center gap-1.5 p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-purple-50 dark:hover:bg-purple-950/30 hover:border-purple-400 transition-all active:scale-95' title='Cetak Surat Jalan A4'>
+          <i class='fa-solid fa-truck text-purple-600 dark:text-purple-400 text-sm sm:text-base'></i>
+          <span class='text-[9px] sm:text-[10px] font-bold text-slate-700 dark:text-slate-300 text-center leading-tight'>Surat<br/>Jalan</span>
         </button>
       </div>
 
