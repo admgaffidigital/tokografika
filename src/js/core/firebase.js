@@ -102,7 +102,19 @@ const loadAppData = async () => {
     if (icon) icon.className = 'fa-solid fa-sun text-sm text-amber-500'; 
   }
 
-  // 0. INSTANT PRO ACTIVATION: Cek apakah lisensi PRO sudah tersimpan
+  // 0. CACHE-BUSTER & FORCE SYNC VERSION:
+  // Membersihkan sisa cache lawas di Safari/iOS agar otomatis sinkron ke data Firestore terbaru
+  const APP_DATA_VERSION = '2026-09-15-v4';
+  if (sL('freshmart_data_version') !== APP_DATA_VERSION) {
+    try {
+      localStorage.removeItem('freshmart_last_update');
+      localStorage.removeItem('freshmart_products');
+      localStorage.removeItem('freshmart_cms_data');
+      ssL('freshmart_data_version', APP_DATA_VERSION);
+    } catch(e) {}
+  }
+
+  // 0.1 INSTANT PRO ACTIVATION: Cek apakah lisensi PRO sudah tersimpan
   const savedPro = (localStorage.getItem('freshmart_cache_PRO') || '').trim().toUpperCase();
   if (savedPro) {
     const masterKeys = ['TOKOGRAFIKA2026', 'GRAFIKA-PRO-2026', 'GRAFIKA-MASTER-PRO', 'PRO-DEV-2026', 'PRO'];
@@ -139,7 +151,7 @@ const loadAppData = async () => {
 
   // 2. BACKGROUND / ASYNC SYNC: Ambil data terbaru dari Firestore (Hemat Kuota: 1 Dokumen Baca)
   try {
-    const d = await withTimeout(db.collection("freshmart").doc("cms_data").get(), 4000);
+    const d = await withTimeout(db.collection("freshmart").doc("cms_data").get(), 7000);
     let localProducts = JSON.parse(sL('freshmart_products') || 'null');
     let localUpdate = parseInt(sL('freshmart_last_update') || '0');
     
@@ -162,14 +174,17 @@ const loadAppData = async () => {
         await db.collection("freshmart").doc("cms_data").update({ products: firebase.firestore.FieldValue.delete(), lastUpdate: Date.now() });
         appData.products = f.products.sort((a, b) => (b.id || 0) - (a.id || 0)); 
         ssL('freshmart_products', JSON.stringify(appData.products));
+        ssL('freshmart_last_update', (appData.lastUpdate || Date.now()).toString());
       } else {
-        if (localProducts && localUpdate >= serverUpdate) {
+        if (localProducts && localProducts.length > 0 && localUpdate > 0 && localUpdate >= serverUpdate) {
           appData.products = localProducts;
         } else { 
-          const pSnap = await withTimeout(db.collection("freshmart").doc("cms_data").collection("products").get(), 4000); 
-          appData.products = pSnap.docs.map(doc => doc.data()).sort((a, b) => (b.id || 0) - (a.id || 0)); 
-          ssL('freshmart_products', JSON.stringify(appData.products)); 
-          ssL('freshmart_last_update', serverUpdate.toString()); 
+          const pSnap = await withTimeout(db.collection("freshmart").doc("cms_data").collection("products").get(), 7000); 
+          if (pSnap && !pSnap.empty) {
+            appData.products = pSnap.docs.map(doc => doc.data()).sort((a, b) => (b.id || 0) - (a.id || 0)); 
+            ssL('freshmart_products', JSON.stringify(appData.products)); 
+            ssL('freshmart_last_update', serverUpdate.toString()); 
+          }
         }
       }
       // Update cache CMS
@@ -177,7 +192,7 @@ const loadAppData = async () => {
       delete copyData.products;
       ssL('freshmart_cms_data', JSON.stringify(copyData));
     }
-  } catch (e) { 
+  } catch (e) {  
     console.warn('[FreshMart] Firestore offline, using local cache fallback'); 
     if (!hasLocalData) {
       const l = JSON.parse(sL('freshmart_cms_data') || 'null'); 

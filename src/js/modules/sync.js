@@ -98,12 +98,12 @@ const _debouncedSync = (updatedProduct) => {
 };
 
 window.startPriceWatcher = () => {
-  // Hanya pasang 1 listener hemat kuota pada dokumen metadata cms_data (Bukan membaca semua subkoleksi!)
+  // Pasang 1 listener hemat kuota pada dokumen metadata cms_data
   if (!_priceWatcherLegacyUnsub && typeof db !== 'undefined' && db.collection) {
     let _lastSeenUpdate = parseInt(sL('freshmart_last_update') || '0');
     _priceWatcherLegacyUnsub = db.collection('freshmart')
       .doc('cms_data')
-      .onSnapshot(snapshot => {
+      .onSnapshot(async snapshot => {
         if (!snapshot.exists) return;
         const data = snapshot.data();
         if (!data) return;
@@ -112,15 +112,21 @@ window.startPriceWatcher = () => {
         // Jika ada pembaruan data dari admin di server
         if (serverUpdate && serverUpdate > _lastSeenUpdate) {
           _lastSeenUpdate = serverUpdate;
-          ssL('freshmart_last_update', serverUpdate.toString());
 
-          // Jika ada produk lama di cms_data
-          if (data.products && Array.isArray(data.products)) {
-            data.products.forEach(newProd => {
-              const idx = appData.products.findIndex(p => p.id == newProd.id);
-              if (idx > -1) appData.products[idx] = { ...appData.products[idx], ...newProd };
-              _debouncedSync(newProd);
-            });
+          try {
+            // Ambil data produk terbaru dari subkoleksi products
+            const pSnap = await db.collection("freshmart").doc("cms_data").collection("products").get();
+            if (pSnap && !pSnap.empty) {
+              appData.products = pSnap.docs.map(doc => doc.data()).sort((a, b) => (b.id || 0) - (a.id || 0));
+              ssL('freshmart_products', JSON.stringify(appData.products));
+            }
+            ssL('freshmart_last_update', serverUpdate.toString());
+            if (typeof syncWishlistPrices === 'function') syncWishlistPrices();
+            if (typeof syncCartPrices === 'function') syncCartPrices();
+            if (typeof rDyn === 'function') rDyn();
+            if (typeof rCat === 'function') rCat();
+          } catch (e) {
+            console.warn('[PriceWatcher] Error syncing updated products from Firestore:', e);
           }
         }
       }, err => {

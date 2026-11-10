@@ -3752,7 +3752,7 @@ html.dark .badge-counter {
   <!-- Glass Header -->
   <div class='glass-header shrink-0 px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-center sticky top-0'>
     <div class='flex items-center justify-between w-full max-w-7xl gap-2'>
-      <div class='flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1'>
+      <div class='flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1 cursor-pointer' onclick='refreshFromCloud()' title='Ketuk untuk sinkronisasi data toko terbaru'>
         <div class='w-10 h-10 sm:w-11 sm:h-11 bg-white/20 rounded-2xl flex items-center justify-center shadow-xs border border-white/30 overflow-hidden shrink-0'>
           <img class='w-full h-full object-contain hidden' id='dyn-store-logo-img' src='' alt='Store Logo'/>
           <i class='fa-solid fa-store text-lg sm:text-xl text-white hidden' id='dyn-store-logo-icon'></i>
@@ -6428,7 +6428,19 @@ const loadAppData = async () => {
     if (icon) icon.className = 'fa-solid fa-sun text-sm text-amber-500'; 
   }
 
-  // 0. INSTANT PRO ACTIVATION: Cek apakah lisensi PRO sudah tersimpan
+  // 0. CACHE-BUSTER & FORCE SYNC VERSION:
+  // Membersihkan sisa cache lawas di Safari/iOS agar otomatis sinkron ke data Firestore terbaru
+  const APP_DATA_VERSION = '2026-09-15-v4';
+  if (sL('freshmart_data_version') !== APP_DATA_VERSION) {
+    try {
+      localStorage.removeItem('freshmart_last_update');
+      localStorage.removeItem('freshmart_products');
+      localStorage.removeItem('freshmart_cms_data');
+      ssL('freshmart_data_version', APP_DATA_VERSION);
+    } catch(e) {}
+  }
+
+  // 0.1 INSTANT PRO ACTIVATION: Cek apakah lisensi PRO sudah tersimpan
   const savedPro = (localStorage.getItem('freshmart_cache_PRO') || '').trim().toUpperCase();
   if (savedPro) {
     const masterKeys = ['TOKOGRAFIKA2026', 'GRAFIKA-PRO-2026', 'GRAFIKA-MASTER-PRO', 'PRO-DEV-2026', 'PRO'];
@@ -6465,7 +6477,7 @@ const loadAppData = async () => {
 
   // 2. BACKGROUND / ASYNC SYNC: Ambil data terbaru dari Firestore (Hemat Kuota: 1 Dokumen Baca)
   try {
-    const d = await withTimeout(db.collection("freshmart").doc("cms_data").get(), 4000);
+    const d = await withTimeout(db.collection("freshmart").doc("cms_data").get(), 7000);
     let localProducts = JSON.parse(sL('freshmart_products') || 'null');
     let localUpdate = parseInt(sL('freshmart_last_update') || '0');
     
@@ -6488,14 +6500,17 @@ const loadAppData = async () => {
         await db.collection("freshmart").doc("cms_data").update({ products: firebase.firestore.FieldValue.delete(), lastUpdate: Date.now() });
         appData.products = f.products.sort((a, b) => (b.id || 0) - (a.id || 0)); 
         ssL('freshmart_products', JSON.stringify(appData.products));
+        ssL('freshmart_last_update', (appData.lastUpdate || Date.now()).toString());
       } else {
-        if (localProducts && localUpdate >= serverUpdate) {
+        if (localProducts && localProducts.length > 0 && localUpdate > 0 && localUpdate >= serverUpdate) {
           appData.products = localProducts;
         } else { 
-          const pSnap = await withTimeout(db.collection("freshmart").doc("cms_data").collection("products").get(), 4000); 
-          appData.products = pSnap.docs.map(doc => doc.data()).sort((a, b) => (b.id || 0) - (a.id || 0)); 
-          ssL('freshmart_products', JSON.stringify(appData.products)); 
-          ssL('freshmart_last_update', serverUpdate.toString()); 
+          const pSnap = await withTimeout(db.collection("freshmart").doc("cms_data").collection("products").get(), 7000); 
+          if (pSnap && !pSnap.empty) {
+            appData.products = pSnap.docs.map(doc => doc.data()).sort((a, b) => (b.id || 0) - (a.id || 0)); 
+            ssL('freshmart_products', JSON.stringify(appData.products)); 
+            ssL('freshmart_last_update', serverUpdate.toString()); 
+          }
         }
       }
       // Update cache CMS
@@ -6503,7 +6518,7 @@ const loadAppData = async () => {
       delete copyData.products;
       ssL('freshmart_cms_data', JSON.stringify(copyData));
     }
-  } catch (e) { 
+  } catch (e) {  
     console.warn('[FreshMart] Firestore offline, using local cache fallback'); 
     if (!hasLocalData) {
       const l = JSON.parse(sL('freshmart_cms_data') || 'null'); 
@@ -12957,7 +12972,7 @@ window.submitAdminForm = async () => {
       await db.collection("freshmart").doc("cms_data").collection("products").doc(d.id.toString()).set(d);
       appData.lastUpdate = Date.now();
     }
-    await saveApp();
+    await saveApp(true);
     closeAdminModal();
     rAdmItms(cTab);
     showToast("Tersimpan!");
@@ -12978,7 +12993,7 @@ window.oADel = async (t, id) => {
       if (t === 'products') {
         await db.collection("freshmart").doc("cms_data").collection("products").doc(id.toString()).delete();
         appData.lastUpdate = Date.now();
-        await saveApp();
+        await saveApp(true);
         cart = cart.filter(i => i.id !== id);
         wishlist = wishlist.filter(i => i.id !== id);
         updCart();
@@ -12986,7 +13001,7 @@ window.oADel = async (t, id) => {
         ssL('freshmart_cart', JSON.stringify(cart));
         ssL('freshmart_wishlist', JSON.stringify(wishlist));
       } else {
-        await saveApp();
+        await saveApp(true);
       }
       rAdmItms(t);
       showToast("Berhasil Dihapus!");
@@ -13227,7 +13242,7 @@ window.saveQuickEditProduct = async () => {
   try {
     await db.collection("freshmart").doc("cms_data").collection("products").doc(id.toString()).set(p);
     appData.lastUpdate = Date.now();
-    await saveApp();
+    await saveApp(true);
     rAdmItms('products');
     closeQuickEditModal();
     showToast("Produk berhasil diperbarui!");
@@ -13247,7 +13262,7 @@ window.toggleProductStatus = async (id, toActive) => {
     try {
       await db.collection("freshmart").doc("cms_data").collection("products").doc(id.toString()).update({ isActive: toActive ? 'true' : 'false' });
       appData.lastUpdate = Date.now();
-      await saveApp();
+      await saveApp(true);
       rAdmItms('products');
       showToast(toActive ? "Produk Diaktifkan (Bisa Dipesan)!" : "Produk Dinonaktifkan (Tampil Abu-Abu)!");
     } catch (e) {
@@ -20833,12 +20848,12 @@ const _debouncedSync = (updatedProduct) => {
 };
 
 window.startPriceWatcher = () => {
-  // Hanya pasang 1 listener hemat kuota pada dokumen metadata cms_data (Bukan membaca semua subkoleksi!)
+  // Pasang 1 listener hemat kuota pada dokumen metadata cms_data
   if (!_priceWatcherLegacyUnsub && typeof db !== 'undefined' && db.collection) {
     let _lastSeenUpdate = parseInt(sL('freshmart_last_update') || '0');
     _priceWatcherLegacyUnsub = db.collection('freshmart')
       .doc('cms_data')
-      .onSnapshot(snapshot => {
+      .onSnapshot(async snapshot => {
         if (!snapshot.exists) return;
         const data = snapshot.data();
         if (!data) return;
@@ -20847,15 +20862,21 @@ window.startPriceWatcher = () => {
         // Jika ada pembaruan data dari admin di server
         if (serverUpdate && serverUpdate > _lastSeenUpdate) {
           _lastSeenUpdate = serverUpdate;
-          ssL('freshmart_last_update', serverUpdate.toString());
 
-          // Jika ada produk lama di cms_data
-          if (data.products && Array.isArray(data.products)) {
-            data.products.forEach(newProd => {
-              const idx = appData.products.findIndex(p => p.id == newProd.id);
-              if (idx > -1) appData.products[idx] = { ...appData.products[idx], ...newProd };
-              _debouncedSync(newProd);
-            });
+          try {
+            // Ambil data produk terbaru dari subkoleksi products
+            const pSnap = await db.collection("freshmart").doc("cms_data").collection("products").get();
+            if (pSnap && !pSnap.empty) {
+              appData.products = pSnap.docs.map(doc => doc.data()).sort((a, b) => (b.id || 0) - (a.id || 0));
+              ssL('freshmart_products', JSON.stringify(appData.products));
+            }
+            ssL('freshmart_last_update', serverUpdate.toString());
+            if (typeof syncWishlistPrices === 'function') syncWishlistPrices();
+            if (typeof syncCartPrices === 'function') syncCartPrices();
+            if (typeof rDyn === 'function') rDyn();
+            if (typeof rCat === 'function') rCat();
+          } catch (e) {
+            console.warn('[PriceWatcher] Error syncing updated products from Firestore:', e);
           }
         }
       }, err => {

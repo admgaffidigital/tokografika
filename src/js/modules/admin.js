@@ -3695,7 +3695,7 @@ window.submitAdminForm = async () => {
       await db.collection("freshmart").doc("cms_data").collection("products").doc(d.id.toString()).set(d);
       appData.lastUpdate = Date.now();
     }
-    await saveApp();
+    await saveApp(true);
     closeAdminModal();
     rAdmItms(cTab);
     showToast("Tersimpan!");
@@ -3716,7 +3716,7 @@ window.oADel = async (t, id) => {
       if (t === 'products') {
         await db.collection("freshmart").doc("cms_data").collection("products").doc(id.toString()).delete();
         appData.lastUpdate = Date.now();
-        await saveApp();
+        await saveApp(true);
         cart = cart.filter(i => i.id !== id);
         wishlist = wishlist.filter(i => i.id !== id);
         updCart();
@@ -3724,7 +3724,7 @@ window.oADel = async (t, id) => {
         ssL('freshmart_cart', JSON.stringify(cart));
         ssL('freshmart_wishlist', JSON.stringify(wishlist));
       } else {
-        await saveApp();
+        await saveApp(true);
       }
       rAdmItms(t);
       showToast("Berhasil Dihapus!");
@@ -3965,7 +3965,7 @@ window.saveQuickEditProduct = async () => {
   try {
     await db.collection("freshmart").doc("cms_data").collection("products").doc(id.toString()).set(p);
     appData.lastUpdate = Date.now();
-    await saveApp();
+    await saveApp(true);
     rAdmItms('products');
     closeQuickEditModal();
     showToast("Produk berhasil diperbarui!");
@@ -3985,7 +3985,7 @@ window.toggleProductStatus = async (id, toActive) => {
     try {
       await db.collection("freshmart").doc("cms_data").collection("products").doc(id.toString()).update({ isActive: toActive ? 'true' : 'false' });
       appData.lastUpdate = Date.now();
-      await saveApp();
+      await saveApp(true);
       rAdmItms('products');
       showToast(toActive ? "Produk Diaktifkan (Bisa Dipesan)!" : "Produk Dinonaktifkan (Tampil Abu-Abu)!");
     } catch (e) {

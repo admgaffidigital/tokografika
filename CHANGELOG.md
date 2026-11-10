@@ -2,6 +2,18 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-09-15] - Perbaikan Bug Sinkronisasi Cache Data pada iPhone / Safari & Real-time Cloud Sync
+### Perbaikan & Optimalisasi Sistem:
+- **Penyelesaian Masalah Data Tidak Berubah di iPhone / Safari (`tokogrosir.id`):**
+  - **Identifikasi Masalah:** Ditemukan bug pada listener sinkronisasi (`startPriceWatcher` di `sync.js`) di mana pembaruan produk dari subkoleksi Firestore tidak terpanggil saat metadata berubah, namun stempel waktu `freshmart_last_update` terlanjur diperbarui di `localStorage` iPhone. Akibatnya, saat pembeli me-refresh halaman di Safari, sistem menganggap data lokal sudah setara dengan server (`localUpdate >= serverUpdate`), sehingga produk lama dari cache lokal terus ditampilkan dan perubahan status/harga tidak terlihat.
+  - **Mekanisme Cache-Buster Otomatis (`APP_DATA_VERSION = 2026-09-15-v4`):** Menambahkan sistem invalidasi versi cache otomatis pada `loadAppData`. Saat pembeli membuka toko di iPhone/Safari, sisa cache lokal lawas yang tersangkut otomatis dibersihkan dan dipaksa mengunduh data produk terbaru dari Firestore.
+  - **Perbaikan Real-time Listener (`sync.js`):** `onSnapshot` kini secara aktif mengambil dokumen produk terbaru dari subkoleksi `products`, memperbarui `appData.products`, menyimpan cache baru ke `localStorage`, dan merender ulang katalog secara *live* tanpa perlu me-reload halaman.
+  - **Penyimpanan Instan Tanpa Debounce Delay (`saveApp(true)`):** Semua tindakan perubahan admin (edit produk, quick edit, dan toggle status nonaktif) kini mengeksekusi sinkronisasi Firestore secara langsung (*force immediate*), memastikan data di cloud selalu terbarui seketika.
+  - **Akses Pintasan Sinkronisasi:** Mengetuk nama atau logo toko di header beranda kini memicu sinkronisasi ulang data dari cloud secara instan (`refreshFromCloud`).
+- **PWA Cache Update:** Versi Service Worker dinaikkan ke `freshmart-pwa-v14`.
+
+---
+
 ## [2026-09-15] - Fitur Pencarian Cepat di Keranjang Belanja & Favorit serta Indikator Status Keranjang di Beranda
 ### Fitur & Peningkatan Sesuai Permintaan Pelanggan:
 - **Pencarian Instan di Dalam Keranjang Belanja (`handleCartSearch`):**
