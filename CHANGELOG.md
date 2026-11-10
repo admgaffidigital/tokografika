@@ -29,6 +29,9 @@ Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan 
   - Mengaitkan warna latar belakang badge langsung ke variabel tema toko (`var(--clr-p, #00897b)`), sehingga warnanya selalu selaras dengan palet header, tombol aksi, dan identitas toko.
   - Menambahkan cincin pemisah anti-bleed putih (`ring-2 ring-white/95 dark:ring-slate-900/95`) dan bayangan elevasi (*elevation shadow*) agar lencana terlihat kontras, mewah, dan jelas di atas berbagai warna foto produk.
   - Menyesuaikan ukuran tipografi dan ikon troli menjadi lebih tegas dan mudah dibaca (`text-[10px] sm:text-[11px]` dengan angka kuantitas tebal).
+- **Adaptasi Khusus Mode Tampilan Daftar / List View (`cView === 'list'`):**
+  - Pada thumbnail kecil mode list (80px), lencana disesuaikan menjadi mini-pill non-wrapping `[🛒 x]` (`whitespace-nowrap`) sehingga foto produk tidak tertutup oleh teks panjang yang terlipat 2 baris.
+  - Keterangan lengkap `[🛒 x di Keranjang]` dipindahkan ke baris badge informasi produk di samping nama dan tag kategori, memanfaatkan ruang horizontal yang luas secara rapi dan estetis.
 
 ---
 

@@ -562,21 +562,51 @@ const rCat = () => {
     const inCartQty = cartMatches.reduce((acc, c) => acc + (Number(c.qty) || 0), 0);
     const inWishlist = wishlist.some(w => String(w.id) === String(p.id));
 
-    let nH = '';
+    // Badges Overlay untuk Grid View (Foto Besar)
+    let nHGrid = '';
     if (isOff) {
-      nH = `<div class="absolute top-2 right-2 z-20 pointer-events-none"><span class="bg-slate-800/95 dark:bg-slate-900/95 text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-md ring-2 ring-white/95 dark:ring-slate-900/95 uppercase tracking-wider flex items-center gap-1.5 leading-none backdrop-blur-xs"><i class="fa-solid fa-ban text-[8px] text-slate-300"></i> TIDAK TERSEDIA</span></div>`;
+      nHGrid = `<div class="absolute top-2 right-2 z-20 pointer-events-none"><span class="bg-slate-800/95 dark:bg-slate-900/95 text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-md ring-2 ring-white/95 dark:ring-slate-900/95 uppercase tracking-wider flex items-center gap-1.5 leading-none backdrop-blur-xs whitespace-nowrap"><i class="fa-solid fa-ban text-[8px] text-slate-300"></i> TIDAK TERSEDIA</span></div>`;
     } else if (isOutOfStock) {
-      nH = `<div class="absolute top-2 right-2 z-20 pointer-events-none"><span class="bg-amber-500/95 text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-md ring-2 ring-white/95 dark:ring-slate-900/95 uppercase tracking-wider flex items-center gap-1.5 leading-none backdrop-blur-xs"><i class="fa-solid fa-boxes-stacked text-[8px]"></i> STOK HABIS</span></div>`;
+      nHGrid = `<div class="absolute top-2 right-2 z-20 pointer-events-none"><span class="bg-amber-500/95 text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-md ring-2 ring-white/95 dark:ring-slate-900/95 uppercase tracking-wider flex items-center gap-1.5 leading-none backdrop-blur-xs whitespace-nowrap"><i class="fa-solid fa-boxes-stacked text-[8px]"></i> STOK HABIS</span></div>`;
     }
     if (!isOff && inCartQty > 0) {
-      nH += `<div class="absolute top-2 left-2 z-20 pointer-events-none"><span class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-white text-[10px] sm:text-[11px] font-bold shadow-md ring-2 ring-white/95 dark:ring-slate-900/95 tracking-tight backdrop-blur-xs" style="background-color:var(--clr-p, #00897b);box-shadow:0 3px 10px rgba(0,0,0,0.18);"><i class="fa-solid fa-cart-shopping text-[9px] sm:text-[10px]"></i><span><b class="font-black">${inCartQty}</b> di Keranjang</span></span></div>`;
+      nHGrid += `<div class="absolute top-2 left-2 z-20 pointer-events-none"><span class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-white text-[10px] sm:text-[11px] font-bold shadow-md ring-2 ring-white/95 dark:ring-slate-900/95 tracking-tight backdrop-blur-xs whitespace-nowrap" style="background-color:var(--clr-p, #00897b);box-shadow:0 3px 10px rgba(0,0,0,0.18);"><i class="fa-solid fa-cart-shopping text-[9px] sm:text-[10px]"></i><span><b class="font-black">${inCartQty}</b> di Keranjang</span></span></div>`;
     }
     if (inWishlist) {
-      nH += `<div class="absolute bottom-2 right-2 z-20 pointer-events-none"><span class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/95 dark:bg-slate-800/95 text-rose-500 shadow-md ring-2 ring-white/95 dark:ring-slate-900/95 flex items-center justify-center text-[10px]"><i class="fa-solid fa-heart"></i></span></div>`;
+      nHGrid += `<div class="absolute bottom-2 right-2 z-20 pointer-events-none"><span class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-white/95 dark:bg-slate-800/95 text-rose-500 shadow-md ring-2 ring-white/95 dark:ring-slate-900/95 flex items-center justify-center text-[10px]"><i class="fa-solid fa-heart"></i></span></div>`;
     }
+
+    // Badges Overlay untuk List View (Thumbnail 80px Compact)
+    let nHList = '';
+    if (isOff) {
+      nHList = `<div class="absolute top-1.5 right-1.5 z-20 pointer-events-none"><span class="bg-slate-800/95 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow-sm ring-1.5 ring-white/90 uppercase tracking-wider flex items-center gap-1 leading-none whitespace-nowrap"><i class="fa-solid fa-ban text-[7px] text-slate-300"></i> Nonaktif</span></div>`;
+    } else if (isOutOfStock) {
+      nHList = `<div class="absolute top-1.5 right-1.5 z-20 pointer-events-none"><span class="bg-amber-500/95 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow-sm ring-1.5 ring-white/90 uppercase tracking-wider leading-none whitespace-nowrap">Habis</span></div>`;
+    }
+    if (!isOff && inCartQty > 0) {
+      nHList += `<div class="absolute top-1.5 left-1.5 z-20 pointer-events-none"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-white text-[9px] font-bold shadow-sm ring-1.5 ring-white/95 dark:ring-slate-900/95 tracking-tight whitespace-nowrap" style="background-color:var(--clr-p, #00897b);"><i class="fa-solid fa-cart-shopping text-[8px]"></i> <b>${inCartQty}</b></span></div>`;
+    }
+    if (inWishlist) {
+      nHList += `<div class="absolute bottom-1.5 right-1.5 z-20 pointer-events-none"><span class="w-5 h-5 rounded-full bg-white/95 dark:bg-slate-800/95 text-rose-500 shadow-xs ring-1.5 ring-white/90 flex items-center justify-center text-[8px]"><i class="fa-solid fa-heart"></i></span></div>`;
+    }
+
+    const cartBadgeList = (!isOff && inCartQty > 0) 
+      ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-white text-[8px] sm:text-[9px] font-bold shadow-2xs shrink-0 whitespace-nowrap" style="background-color:var(--clr-p, #00897b);"><i class="fa-solid fa-cart-shopping text-[7px] sm:text-[8px]"></i> <b>${inCartQty}</b> di Keranjang</span>` 
+      : '';
 
     let bH = `
     <div class="h-5 mb-1.5 flex items-center gap-1 overflow-hidden shrink-0">
+      ${p.tag ? `<span class="bg-rose-50 dark:bg-rose-950/60 border border-rose-200/80 dark:border-rose-800/60 text-rose-600 dark:text-rose-400 px-1.5 py-0.5 rounded text-[8px] font-bold truncate max-w-[90px]"><i class="fa-solid fa-fire text-[7px]"></i> ${esc(p.tag)}</span>` : ''}
+      <span class="bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded text-[8px] font-semibold truncate shrink-0">
+        <i class="fa-solid fa-check text-[7px]"></i> Official
+      </span>
+      ${p.wholesale?.length ? `<span class="bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/60 text-amber-600 dark:text-amber-400 px-1.5 py-0.5 rounded text-[8px] font-semibold truncate shrink-0"><i class="fa-solid fa-tags text-[7px]"></i> Grosir</span>` : ''}
+    </div>
+    `;
+
+    let bHList = `
+    <div class="h-5 mb-1.5 flex items-center gap-1.5 overflow-hidden shrink-0">
+      ${cartBadgeList}
       ${p.tag ? `<span class="bg-rose-50 dark:bg-rose-950/60 border border-rose-200/80 dark:border-rose-800/60 text-rose-600 dark:text-rose-400 px-1.5 py-0.5 rounded text-[8px] font-bold truncate max-w-[90px]"><i class="fa-solid fa-fire text-[7px]"></i> ${esc(p.tag)}</span>` : ''}
       <span class="bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded text-[8px] font-semibold truncate shrink-0">
         <i class="fa-solid fa-check text-[7px]"></i> Official
@@ -618,7 +648,7 @@ const rCat = () => {
       <div class="card-modern overflow-hidden flex flex-col cursor-pointer group p-2.5 sm:p-3 border ${isOff ? 'border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/70 opacity-80' : 'border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500'} transition-all duration-200" onclick="openProductModal(${p.id})">
         <div class="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 mb-2.5">
           <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 ${isOff ? 'grayscale opacity-60' : (isOutOfStock ? 'grayscale opacity-75 group-hover:scale-105' : 'group-hover:scale-105')}"/>
-          ${nH}
+          ${nHGrid}
         </div>
         <div class="flex-1 flex flex-col justify-between min-w-0 px-0.5 pb-0.5">
           <div class="flex flex-col min-w-0">
@@ -640,11 +670,11 @@ const rCat = () => {
       <div class="card-modern flex items-center p-3 gap-3.5 cursor-pointer group border ${isOff ? 'border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/70 opacity-80' : 'border-slate-200 dark:bg-slate-800 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500'} transition-all duration-200" onclick="openProductModal(${p.id})">
         <div class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60">
           <img data-src="${esc(p.img)}" src="${svgPlaceholder}" onerror="window.imgErrRetry(this,'No Image',400)" class="lazy-load opacity-0 w-full h-full object-cover transition-all duration-500 ${isOff ? 'grayscale opacity-60' : (isOutOfStock ? 'grayscale opacity-75 group-hover:scale-105' : 'group-hover:scale-105')}"/>
-          ${nH}
+          ${nHList}
         </div>
         <div class="flex-1 min-w-0 pr-1 flex flex-col justify-between py-0.5 h-full">
           <div>
-            ${bH}
+            ${bHList}
             <h4 class="text-xs sm:text-sm font-semibold ${isOff ? 'text-slate-500 dark:text-slate-400' : 'text-slate-800 dark:text-slate-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400'} line-clamp-2 leading-snug mb-1 transition-colors">${esc(p.name)}</h4>
           </div>
           <div class="mt-auto pt-1 flex flex-col justify-end min-w-0">
