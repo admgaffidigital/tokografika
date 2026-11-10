@@ -474,7 +474,7 @@ const renderPosProductCardGrid = (p) => {
               ${isOff ? `<span class="text-[9px] font-bold text-rose-500 leading-none">Nonaktif</span>` : (isUnlimited ? `<span class="text-[9px] font-bold text-slate-400 leading-none">∞ Stok Bebas</span>` : (hasVariants ? `<span class="text-[9px] font-medium text-slate-400 leading-none">Stok ${totalStock}</span>` : `<span class="text-[9px] font-semibold ${stock > 5 ? 'text-slate-400' : (stock > 0 ? 'text-amber-500 font-bold' : 'text-rose-500 font-bold')} leading-none">Stok ${stock} ${esc(p.unit || 'pcs')}</span>`))}
             </div>
             <div class="text-xs sm:text-[15px] font-black text-emerald-600 dark:text-emerald-400 leading-tight mt-0.5 truncate">${fCur(price)}</div>
-            ${pInc ? `<div class="text-[8px] font-bold text-rose-500 leading-none mt-0.5 truncate"><i class="fa-solid fa-arrow-trend-up"></i> Naik ${fCur(pInc.diff)}</div>` : ''}
+            ${pInc ? `<div class="text-[8px] font-bold ${pInc.isUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} leading-none mt-0.5 truncate"><i class="fa-solid ${pInc.icon}"></i> ${pInc.label}</div>` : ''}
           </div>
           
           <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-xs shrink-0">
@@ -522,7 +522,7 @@ const renderPosProductCardList = (p) => {
           ${hasVariants ? `<span class="text-[9px] font-bold text-slate-400">Mulai</span>` : ''}
           <span class="text-sm sm:text-base font-black text-emerald-600 dark:text-emerald-400">${fCur(price)}</span>
           ${p.unit ? `<span class="text-[10px] text-slate-400 font-semibold">/${esc(p.unit)}</span>` : ''}
-          ${pInc ? `<span class="text-[9px] font-bold text-rose-500 ml-1.5"><i class="fa-solid fa-arrow-trend-up"></i> Naik ${fCur(pInc.diff)}</span>` : ''}
+          ${pInc ? `<span class="text-[9px] font-bold ${pInc.isUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} ml-1.5"><i class="fa-solid ${pInc.icon}"></i> ${pInc.label}</span>` : ''}
         </div>
       </div>
 

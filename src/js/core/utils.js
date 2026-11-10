@@ -534,7 +534,7 @@ window.isPriceIncreaseActive = (item, maxDays = 14) => {
   if (!item) return false;
   const prev = Number(item.previousPrice || 0);
   const cur = Number(item.price || 0);
-  if (prev <= 0 || cur <= prev) return false;
+  if (prev <= 0 || cur === prev) return false;
 
   // Jika ada timestamp priceIncreasedAt, periksa batas waktu (default 14 hari)
   if (item.priceIncreasedAt) {
@@ -549,6 +549,20 @@ window.getPriceIncreaseInfo = (item, maxDays = 14) => {
   const prev = Number(item.previousPrice);
   const cur = Number(item.price);
   const diff = cur - prev;
-  const pct = Math.round((diff / prev) * 100);
-  return { prev, cur, diff, pct };
+  const isUp = diff > 0;
+  const absDiff = Math.abs(diff);
+  const pct = Math.round((absDiff / prev) * 100);
+  return { 
+    prev, 
+    cur, 
+    diff: absDiff, 
+    rawDiff: diff, 
+    pct, 
+    isUp,
+    badgeClass: isUp 
+      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60' 
+      : 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60',
+    icon: isUp ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down',
+    label: isUp ? `Naik ${fCur(absDiff)}` : `Turun ${fCur(absDiff)}`
+  };
 };

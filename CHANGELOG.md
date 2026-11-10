@@ -2,6 +2,22 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-11-10] - Harmonisasi Warna Indikator Perubahan Harga: Hijau untuk Naik & Merah untuk Turun
+### 1. Warna Standar Finansial & Retail:
+- **Harga Naik (`isUp: true`) → HIJAU (*Emerald*):**
+  - Mengubah badge **▲ Naik Rp...** dari sebelumnya warna mawar/merah muda menjadi **Hijau Emerald** (`bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border-emerald-200/80 dark:border-emerald-800/60`).
+  - Diterapkan secara seragam di:
+    - Kartu produk katalog etalase (Grid View & List View)
+    - Modal rincian produk (harga utama & lencana header)
+    - Pilihan varian produk (*variant selector pills*)
+    - Halaman Wishlist / Favorit
+    - Katalog kasir POS (*POS product cards*)
+    - Daftar produk Admin CMS & Modal Edit Cepat (*Quick Edit*)
+- **Harga Turun (`isUp: false`) → MERAH (*Rose/Red*):**
+  - Ketika harga produk atau varian diturunkan dari harga sebelumnya, sistem menampilkan badge **▼ Turun Rp...** berwarna **Merah Rose** yang kontras (`bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border-rose-200/80 dark:border-rose-800/60`).
+
+
+
 ## [2026-11-10] - Fitur Native Pull-to-Refresh Gesture (Tarik Layar ke Bawah untuk Muat Ulang)
 ### 1. Pengalaman Asli Aplikasi Mobile (*Native-like App Experience*):
 - **Gesture Tarik ke Bawah (Pull-to-Refresh):**

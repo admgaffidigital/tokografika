@@ -3240,12 +3240,12 @@ window.rAdmItms = t => {
     if (isP) {
       const pInc = window.getPriceIncreaseInfo(x);
       if (pInc) {
-        priceIncBadge = `<span class="badge badge-xs bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 font-bold"><i class="fa-solid fa-arrow-trend-up text-[8px]"></i> Naik ${fCur(pInc.diff)}</span>`;
+        priceIncBadge = `<span class="badge badge-xs ${pInc.badgeClass} font-bold"><i class="fa-solid ${pInc.icon} text-[8px]"></i> ${pInc.label}</span>`;
       } else if (hasVars) {
         const vUp = x.variants.find(v => window.isPriceIncreaseActive(v));
         if (vUp) {
           const vInc = window.getPriceIncreaseInfo(vUp);
-          priceIncBadge = `<span class="badge badge-xs bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 font-bold"><i class="fa-solid fa-arrow-trend-up text-[8px]"></i> Varian Naik ${fCur(vInc.diff)}</span>`;
+          priceIncBadge = `<span class="badge badge-xs ${vInc.badgeClass} font-bold"><i class="fa-solid ${vInc.icon} text-[8px]"></i> Varian ${vInc.label}</span>`;
         }
       }
     }
@@ -3682,15 +3682,12 @@ window.submitAdminForm = async () => {
         const newP = Number(d.price || 0);
         const manualPrev = Number(d.previousPrice || 0);
 
-        if (manualPrev > 0 && newP > manualPrev) {
+        if (manualPrev > 0 && newP !== manualPrev) {
           d.previousPrice = manualPrev;
           d.priceIncreasedAt = existingProd.priceIncreasedAt || Date.now();
-        } else if (newP > oldP && oldP > 0) {
+        } else if (newP !== oldP && oldP > 0) {
           d.previousPrice = oldP;
           d.priceIncreasedAt = Date.now();
-        } else if (newP < oldP) {
-          d.previousPrice = 0;
-          d.priceIncreasedAt = null;
         } else if (existingProd.previousPrice && existingProd.price === newP) {
           d.previousPrice = existingProd.previousPrice;
           d.priceIncreasedAt = existingProd.priceIncreasedAt;
@@ -3702,10 +3699,8 @@ window.submitAdminForm = async () => {
             if (vOld) {
               const oldVP = Number(vOld.price || 0);
               const newVP = Number(vNew.price || 0);
-              if (newVP > oldVP && oldVP > 0) {
+              if (newVP !== oldVP && oldVP > 0) {
                 return { ...vNew, previousPrice: oldVP, priceIncreasedAt: Date.now() };
-              } else if (newVP < oldVP) {
-                return { ...vNew, previousPrice: 0, priceIncreasedAt: null };
               } else if (vOld.previousPrice && vOld.price === newVP) {
                 return { ...vNew, previousPrice: vOld.previousPrice, priceIncreasedAt: vOld.priceIncreasedAt };
               }
@@ -3883,7 +3878,7 @@ window.openQuickEditProduct = (id) => {
       <div>
         <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider"><i class="fa-solid fa-tag text-emerald-600 mr-1"></i> Harga Jual (Rp)</label>
         <input type="number" id="qe-price" value="${p.price || 0}" class="admin-input !py-2.5 !text-sm font-bold w-full" placeholder="0" min="0" />
-        ${p.previousPrice && p.price > p.previousPrice ? `<p class="text-[9px] text-rose-500 font-bold mt-1"><i class="fa-solid fa-arrow-trend-up"></i> Sebelumnya: ${fCur(p.previousPrice)} (+${fCur(p.price - p.previousPrice)})</p>` : ''}
+        ${p.previousPrice && p.price !== p.previousPrice ? `<p class="text-[9px] ${p.price > p.previousPrice ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} font-bold mt-1"><i class="fa-solid ${p.price > p.previousPrice ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'}"></i> Sebelumnya: ${fCur(p.previousPrice)} (${p.price > p.previousPrice ? '+' : '-'}${fCur(Math.abs(p.price - p.previousPrice))})</p>` : ''}
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider"><i class="fa-solid fa-coins text-amber-500 mr-1"></i> HPP / Modal (Rp)</label>
@@ -3912,7 +3907,7 @@ window.openQuickEditProduct = (id) => {
             <div>
               <span class="block text-[9px] font-semibold text-slate-400 mb-0.5">Harga (Rp)</span>
               <input type="number" id="qe-var-price-${idx}" value="${v.price || 0}" class="admin-input !py-1.5 !px-2 !text-xs font-bold w-full" min="0" />
-              ${v.previousPrice && v.price > v.previousPrice ? `<span class="text-[8px] text-rose-500 font-bold block mt-0.5 truncate"><i class="fa-solid fa-arrow-trend-up"></i> +${fCur(v.price - v.previousPrice)}</span>` : ''}
+              ${v.previousPrice && v.price !== v.previousPrice ? `<span class="text-[8px] ${v.price > v.previousPrice ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} font-bold block mt-0.5 truncate"><i class="fa-solid ${v.price > v.previousPrice ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'}"></i> ${v.price > v.previousPrice ? '+' : '-'}${fCur(Math.abs(v.price - v.previousPrice))}</span>` : ''}
             </div>
             <div>
               <span class="block text-[9px] font-semibold text-slate-400 mb-0.5">HPP (Rp)</span>
@@ -3964,12 +3959,9 @@ window.saveQuickEditProduct = async () => {
   if (!hasVars) {
     const oldPrice = Number(p.price || 0);
     const newPrice = Math.max(0, Number(getV('qe-price') || 0));
-    if (newPrice > oldPrice && oldPrice > 0) {
+    if (newPrice !== oldPrice && oldPrice > 0) {
       p.previousPrice = oldPrice;
       p.priceIncreasedAt = Date.now();
-    } else if (newPrice < oldPrice) {
-      p.previousPrice = 0;
-      p.priceIncreasedAt = null;
     }
     p.price = newPrice;
     p.costPrice = Math.max(0, Number(getV('qe-cost-price') || 0));
@@ -3982,12 +3974,9 @@ window.saveQuickEditProduct = async () => {
       if (vP) {
         const oldVP = Number(v.price || 0);
         const newVP = Math.max(0, Number(vP.value || 0));
-        if (newVP > oldVP && oldVP > 0) {
+        if (newVP !== oldVP && oldVP > 0) {
           v.previousPrice = oldVP;
           v.priceIncreasedAt = Date.now();
-        } else if (newVP < oldVP) {
-          v.previousPrice = 0;
-          v.priceIncreasedAt = null;
         }
         v.price = newVP;
       }

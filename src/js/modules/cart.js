@@ -376,8 +376,8 @@ const renderWish = () => {
         ${wishInc ? `
           <div class="flex items-center gap-1.5 mb-1 flex-wrap">
             <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 line-through leading-none">${fCur(wishInc.prev)}</span>
-            <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60 leading-none shadow-2xs">
-              <i class="fa-solid fa-arrow-trend-up text-[7px]"></i> Naik ${fCur(wishInc.diff)}
+            <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-black ${wishInc.badgeClass} leading-none shadow-2xs">
+              <i class="fa-solid ${wishInc.icon} text-[7px]"></i> ${wishInc.label}
             </span>
           </div>
         ` : ''}

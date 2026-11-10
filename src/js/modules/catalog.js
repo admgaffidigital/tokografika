@@ -628,16 +628,16 @@ const rCat = () => {
       incHtml = `
       <div class="flex items-center gap-1.5 mb-1 flex-wrap">
         <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 line-through leading-none">${fCur(incInfo.prev)}</span>
-        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60 leading-none shadow-2xs">
-          <i class="fa-solid fa-arrow-trend-up text-[7px]"></i> Naik ${fCur(incInfo.diff)}
+        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-black ${incInfo.badgeClass} leading-none shadow-2xs">
+          <i class="fa-solid ${incInfo.icon} text-[7px]"></i> ${incInfo.label}
         </span>
       </div>
       `;
     } else if (varIncInfo) {
       incHtml = `
       <div class="flex items-center gap-1 mb-1">
-        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60 leading-none shadow-2xs">
-          <i class="fa-solid fa-arrow-trend-up text-[7px]"></i> Naik ${fCur(varIncInfo.diff)}
+        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-black ${varIncInfo.badgeClass} leading-none shadow-2xs">
+          <i class="fa-solid ${varIncInfo.icon} text-[7px]"></i> ${varIncInfo.label}
         </span>
       </div>
       `;
@@ -936,8 +936,8 @@ const rProdMod = () => {
     incPriceHtml = `
       <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
         <span class="text-xs sm:text-sm font-bold text-slate-400 dark:text-slate-500 line-through leading-none">${fCur(incInfo.prev)}</span>
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60 leading-none shadow-2xs">
-          <i class="fa-solid fa-arrow-trend-up text-[9px]"></i> Naik ${fCur(incInfo.diff)} (+${incInfo.pct}%)
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black ${incInfo.badgeClass} leading-none shadow-2xs">
+          <i class="fa-solid ${incInfo.icon} text-[9px]"></i> ${incInfo.isUp ? `Naik ${fCur(incInfo.diff)} (+${incInfo.pct}%)` : `Turun ${fCur(incInfo.diff)} (-${incInfo.pct}%)`}
         </span>
       </div>
     `;
@@ -962,7 +962,7 @@ const rProdMod = () => {
     ${isOff ? `<span class="badge badge-xs bg-slate-700 text-white font-bold"><i class="fa-solid fa-ban text-[8px]"></i> Tidak Tersedia</span>` : ''}
     ${modInCartQty > 0 ? `<span class="badge badge-xs bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 font-bold"><i class="fa-solid fa-cart-shopping text-[8px]"></i> Di Keranjang (${modInCartQty})</span>` : ''}
     ${modInWishlist ? `<span class="badge badge-xs bg-rose-50 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 border border-rose-300 dark:border-rose-700 font-bold"><i class="fa-solid fa-heart text-[8px]"></i> Di Favorit</span>` : ''}
-    ${incInfo ? `<span class="badge badge-xs bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 font-bold"><i class="fa-solid fa-arrow-trend-up text-[8px]"></i> Naik ${fCur(incInfo.diff)}</span>` : ''}
+    ${incInfo ? `<span class="badge badge-xs ${incInfo.badgeClass} font-bold"><i class="fa-solid ${incInfo.icon} text-[8px]"></i> ${incInfo.label}</span>` : ''}
     <span class="badge badge-xs badge-slate badge-normal-case">
       <i class="fa-solid fa-barcode"></i> ${esc(v?.sku || p.sku || '-')}
     </span>
@@ -1034,7 +1034,7 @@ const rProdMod = () => {
       <button class="px-3.5 py-2 rounded-xl text-xs font-bold border-2 transition-all flex items-center gap-1.5 ${x === cVar ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-500 text-emerald-700 dark:text-emerald-400 shadow-sm' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-emerald-300 dark:hover:border-emerald-600'}" onclick="selectVariant(${x})">
         <span>${esc(r.name)}</span>
         ${vInCart ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300/80"><i class="fa-solid fa-cart-shopping text-[7px]"></i> ${vInCart.qty}</span>` : ''}
-        ${vInc ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200/80"><i class="fa-solid fa-arrow-trend-up text-[7px]"></i> +${fCur(vInc.diff)}</span>` : ''}
+        ${vInc ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded ${vInc.badgeClass}"><i class="fa-solid ${vInc.icon} text-[7px]"></i> ${vInc.isUp ? `+${fCur(vInc.diff)}` : `-${fCur(vInc.diff)}`}</span>` : ''}
         ${vStock ? `<span class="text-[8px] font-bold px-1 py-0.2 rounded bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300">Habis</span>` : ''}
       </button>
       `;
