@@ -6609,6 +6609,10 @@ const saveApp = async (forceImmediate = false) => {
     ssL('freshmart_products', JSON.stringify(appData.products)); 
     if (typeof syncWishlistPrices === 'function') syncWishlistPrices();
     if (typeof syncCartPrices === 'function') syncCartPrices();
+    if (typeof syncPosCartPrices === 'function') {
+      const pChanged = syncPosCartPrices();
+      if (pChanged && typeof renderPosCart === 'function') renderPosCart();
+    }
     if (appData.store && appData.store.themeColor) {
       try { localStorage.setItem('freshmart_theme_color', appData.store.themeColor); } catch(e) {}
     }
@@ -12520,7 +12524,7 @@ window.rAdmItms = t => {
     }
     
     return `
-    <div class="p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between cursor-pointer border-2 ${bC} shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 gap-3.5 group" onclick="oAEd('${t}',${x.id})">
+    <div class="p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between cursor-pointer border-2 ${bC} shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 gap-3.5 group" onclick="oAEd('${t}', '${x.id}')">
       <div class="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0 flex-1">
         ${img}
         <div class="min-w-0 flex flex-col justify-center">
@@ -12549,32 +12553,32 @@ window.rAdmItms = t => {
       <div class="flex items-center justify-between sm:justify-end gap-1.5 sm:gap-2 pt-2.5 sm:pt-0 border-t border-slate-100 dark:border-slate-700/80 sm:border-t-0 shrink-0 w-full sm:w-auto flex-wrap" onclick="event.stopPropagation()">
         ${isP ? `
         <!-- Tombol Cetak Price Tag / Label Harga -->
-        <button type="button" onclick="event.stopPropagation(); openPricetagForSingleProduct(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500 hover:text-white transition-all border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Cetak Price Tag / Label Harga Barang Ini"><i class="fa-solid fa-tags"></i></button>
+        <button type="button" onclick="event.stopPropagation(); openPricetagForSingleProduct('${x.id}')" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500 hover:text-white transition-all border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Cetak Price Tag / Label Harga Barang Ini"><i class="fa-solid fa-tags"></i></button>
 
         <!-- Tombol Edit Cepat -->
-        <button type="button" onclick="event.stopPropagation(); openQuickEditProduct(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white transition-all border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Edit Cepat (Stok, HPP & Harga)"><i class="fa-solid fa-bolt"></i></button>
+        <button type="button" onclick="event.stopPropagation(); openQuickEditProduct('${x.id}')" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white transition-all border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Edit Cepat (Stok, HPP & Harga)"><i class="fa-solid fa-bolt"></i></button>
 
         <!-- Tombol Stok Opname Instan -->
-        <button type="button" onclick="event.stopPropagation(); openStockOpnameModal(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 hover:text-white transition-all border border-cyan-200 dark:border-cyan-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Stok Opname (Audit Fisik)"><i class="fa-solid fa-clipboard-check"></i></button>
+        <button type="button" onclick="event.stopPropagation(); openStockOpnameModal('${x.id}')" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 hover:text-white transition-all border border-cyan-200 dark:border-cyan-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Stok Opname (Audit Fisik)"><i class="fa-solid fa-clipboard-check"></i></button>
 
         <!-- Tombol Toggle Visibilitas Toko -->
-        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl ${isOff ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-emerald-600' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 hover:bg-emerald-600 hover:text-white'} border border-slate-200 dark:border-slate-600 transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); toggleProductStatus(${x.id}, ${isOff})" title="${isOff ? 'Aktifkan Produk (Bisa Dipesan)' : 'Nonaktifkan Produk (Tampil Abu-Abu)'}">
+        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl ${isOff ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-emerald-600' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 hover:bg-emerald-600 hover:text-white'} border border-slate-200 dark:border-slate-600 transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); toggleProductStatus('${x.id}', ${isOff})" title="${isOff ? 'Aktifkan Produk (Bisa Dipesan)' : 'Nonaktifkan Produk (Tampil Abu-Abu)'}">
           <i class="fa-solid ${isOff ? 'fa-ban' : 'fa-eye'}"></i>
         </button>
 
         <!-- Tombol Duplikat -->
-        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); duplicateProduct(${x.id})" title="Duplikat Produk">
+        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); duplicateProduct('${x.id}')" title="Duplikat Produk">
           <i class="fa-solid fa-copy"></i>
         </button>
         ` : ''}
 
         <!-- Tombol Edit Detail Lengkap -->
-        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-800 hover:text-white dark:hover:bg-white dark:hover:text-slate-800 transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); oAEd('${t}',${x.id})" title="Edit Detail Lengkap">
+        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-800 hover:text-white dark:hover:bg-white dark:hover:text-slate-800 transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); oAEd('${t}', '${x.id}')" title="Edit Detail Lengkap">
           <i class="fa-solid fa-pen"></i>
         </button>
 
         <!-- Tombol Hapus -->
-        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-rose-50 dark:bg-rose-900/30 border border-rose-100 dark:border-rose-800 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); oADel('${t}',${x.id})" title="Hapus Permanen">
+        <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-rose-50 dark:bg-rose-900/30 border border-rose-100 dark:border-rose-800 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); oADel('${t}', '${x.id}')" title="Hapus Permanen">
           <i class="fa-solid fa-trash"></i>
         </button>
       </div>
@@ -12601,7 +12605,7 @@ window.oAEd = (t, id) => {
   if (!isAdm) return;
   window.cModalTab = t;
   eId = id; 
-  let d = id ? (appData[t] || []).find(x => x.id === id) : null;
+  let d = id ? (appData[t] || []).find(x => x.id === id || String(x.id) === String(id)) : null;
   
   setIn('admin-modal-title', id ? 'Edit Data' : 'Tambah Data');
   let f = aF[t] || []; 
@@ -12990,7 +12994,7 @@ window.submitAdminForm = async () => {
   
   if (eId) {
     d.id = eId;
-    let i = appData[activeTab].findIndex(x => x.id === eId);
+    let i = appData[activeTab].findIndex(x => x.id === eId || String(x.id) === String(eId));
     if (i > -1) appData[activeTab][i] = d;
   } else {
     d.id = Date.now();
@@ -13018,15 +13022,17 @@ window.oADel = async (t, id) => {
   showConfirm("Hapus Data", "Data yang dihapus tidak bisa dikembalikan lagi.", async () => {
     if (isSaving) return;
     isSaving = true;
-    appData[t] = appData[t].filter(x => x.id !== id);
+    if (appData[t]) {
+      appData[t] = appData[t].filter(x => x.id !== id && String(x.id) !== String(id));
+    }
     sLoad('Menghapus...');
     try {
       if (t === 'products') {
         await db.collection("freshmart").doc("cms_data").collection("products").doc(id.toString()).delete();
         appData.lastUpdate = Date.now();
         await saveApp(true);
-        cart = cart.filter(i => i.id !== id);
-        wishlist = wishlist.filter(i => i.id !== id);
+        cart = cart.filter(i => i.id !== id && String(i.id) !== String(id));
+        wishlist = wishlist.filter(i => i.id !== id && String(i.id) !== String(id));
         updCart();
         updWish();
         ssL('freshmart_cart', JSON.stringify(cart));
@@ -13048,7 +13054,7 @@ window.duplicateProduct = async (id) => {
   showConfirm("Duplikat Produk", "Menyalin data produk ini ke item baru?", async () => {
     if (isSaving) return;
     isSaving = true;
-    const original = appData.products.find(x => x.id === id);
+    const original = (appData.products || []).find(x => x.id === id || String(x.id) === String(id));
     if (!original) { isSaving = false; return; }
     let duplicated = JSON.parse(JSON.stringify(original));
     duplicated.id = Date.now() + Math.floor(Math.random() * 1000);
@@ -13057,6 +13063,7 @@ window.duplicateProduct = async (id) => {
     if (duplicated.variants && duplicated.variants.length > 0) {
       duplicated.variants = duplicated.variants.map(v => { v.sku = ""; return v; });
     }
+    if (!appData.products) appData.products = [];
     appData.products.unshift(duplicated);
     sLoad('Menyalin...');
     try {
@@ -13296,7 +13303,7 @@ window.saveQuickEditProduct = async () => {
 window.toggleProductStatus = async (id, toActive) => {
   if (isSaving) return;
   isSaving = true;
-  const i = appData.products.findIndex(x => x.id === id);
+  const i = (appData.products || []).findIndex(x => x.id === id || String(x.id) === String(id));
   if (i > -1) {
     appData.products[i].isActive = toActive ? 'true' : 'false';
     sLoad(toActive ? 'Mengaktifkan produk...' : 'Menonaktifkan produk...');

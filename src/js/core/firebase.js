@@ -283,6 +283,10 @@ const saveApp = async (forceImmediate = false) => {
     ssL('freshmart_products', JSON.stringify(appData.products)); 
     if (typeof syncWishlistPrices === 'function') syncWishlistPrices();
     if (typeof syncCartPrices === 'function') syncCartPrices();
+    if (typeof syncPosCartPrices === 'function') {
+      const pChanged = syncPosCartPrices();
+      if (pChanged && typeof renderPosCart === 'function') renderPosCart();
+    }
     if (appData.store && appData.store.themeColor) {
       try { localStorage.setItem('freshmart_theme_color', appData.store.themeColor); } catch(e) {}
     }
