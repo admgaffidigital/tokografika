@@ -23,6 +23,21 @@
       <h3 class='font-bold text-slate-800 dark:text-white text-base mb-1'>Belum Ada Favorit</h3>
       <p class='text-slate-500 dark:text-slate-400 text-xs font-medium'>Kumpulkan produk impianmu di sini.</p>
     </div>
+    <!-- Kolom Pencarian Item Favorit Saya -->
+    <div class='px-4 max-w-3xl lg:max-w-4xl mx-auto w-full mb-3 hidden' id='wishlist-search-container'>
+      <div class='relative flex items-center'>
+        <i class='fa-solid fa-magnifying-glass absolute left-3.5 text-slate-400 text-xs pointer-events-none'></i>
+        <input type='text' id='wishlist-search-input' placeholder='Cari item di favorit saya...' oninput='handleWishlistSearch(this.value)' class='w-full pl-9 pr-9 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-all shadow-2xs' />
+        <button type='button' id='btn-wishlist-search-clear' onclick='clearWishlistSearch()' class='absolute right-2.5 w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 hover:text-slate-800 dark:hover:text-white hidden flex items-center justify-center text-[10px] transition-all' title='Hapus pencarian'>
+          <i class='fa-solid fa-xmark'></i>
+        </button>
+      </div>
+      <div id='wishlist-search-status' class='hidden text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1.5 px-1 flex items-center justify-between'>
+        <span id='wishlist-search-status-text'></span>
+        <button type='button' onclick='clearWishlistSearch()' class='text-emerald-600 dark:text-emerald-400 hover:underline'>Lihat Semua</button>
+      </div>
+    </div>
+
     <div class='px-4 space-y-3 max-w-3xl lg:max-w-4xl mx-auto w-full' id='wishlist-items-container'></div>
   </div>
 </div>

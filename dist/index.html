@@ -4180,6 +4180,21 @@ html.dark .badge-counter {
     <!-- Free Shipping Progress Banner -->
     <div class='px-4 max-w-3xl lg:max-w-4xl mx-auto w-full mb-3 hidden' id='cart-free-shipping-container'></div>
 
+    <!-- Kolom Pencarian Item Keranjang Belanja -->
+    <div class='px-4 max-w-3xl lg:max-w-4xl mx-auto w-full mb-3 hidden' id='cart-search-container'>
+      <div class='relative flex items-center'>
+        <i class='fa-solid fa-magnifying-glass absolute left-3.5 text-slate-400 text-xs pointer-events-none'></i>
+        <input type='text' id='cart-search-input' placeholder='Cari item di keranjang belanja...' oninput='handleCartSearch(this.value)' class='w-full pl-9 pr-9 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-all shadow-2xs' />
+        <button type='button' id='btn-cart-search-clear' onclick='clearCartSearch()' class='absolute right-2.5 w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 hover:text-slate-800 dark:hover:text-white hidden flex items-center justify-center text-[10px] transition-all' title='Hapus pencarian'>
+          <i class='fa-solid fa-xmark'></i>
+        </button>
+      </div>
+      <div id='cart-search-status' class='hidden text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1.5 px-1 flex items-center justify-between'>
+        <span id='cart-search-status-text'></span>
+        <button type='button' onclick='clearCartSearch()' class='text-emerald-600 dark:text-emerald-400 hover:underline'>Lihat Semua</button>
+      </div>
+    </div>
+
     <div class='px-4 space-y-3 max-w-3xl lg:max-w-4xl mx-auto w-full pb-4' id='cart-items-container'></div>
   </div>
   
@@ -4497,6 +4512,21 @@ html.dark .badge-counter {
       <h3 class='font-bold text-slate-800 dark:text-white text-base mb-1'>Belum Ada Favorit</h3>
       <p class='text-slate-500 dark:text-slate-400 text-xs font-medium'>Kumpulkan produk impianmu di sini.</p>
     </div>
+    <!-- Kolom Pencarian Item Favorit Saya -->
+    <div class='px-4 max-w-3xl lg:max-w-4xl mx-auto w-full mb-3 hidden' id='wishlist-search-container'>
+      <div class='relative flex items-center'>
+        <i class='fa-solid fa-magnifying-glass absolute left-3.5 text-slate-400 text-xs pointer-events-none'></i>
+        <input type='text' id='wishlist-search-input' placeholder='Cari item di favorit saya...' oninput='handleWishlistSearch(this.value)' class='w-full pl-9 pr-9 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500 transition-all shadow-2xs' />
+        <button type='button' id='btn-wishlist-search-clear' onclick='clearWishlistSearch()' class='absolute right-2.5 w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-500 hover:text-slate-800 dark:hover:text-white hidden flex items-center justify-center text-[10px] transition-all' title='Hapus pencarian'>
+          <i class='fa-solid fa-xmark'></i>
+        </button>
+      </div>
+      <div id='wishlist-search-status' class='hidden text-[11px] font-bold text-slate-500 dark:text-slate-400 mt-1.5 px-1 flex items-center justify-between'>
+        <span id='wishlist-search-status-text'></span>
+        <button type='button' onclick='clearWishlistSearch()' class='text-emerald-600 dark:text-emerald-400 hover:underline'>Lihat Semua</button>
+      </div>
+    </div>
+
     <div class='px-4 space-y-3 max-w-3xl lg:max-w-4xl mx-auto w-full' id='wishlist-items-container'></div>
   </div>
 </div>
@@ -7236,15 +7266,28 @@ const rCat = () => {
       ? p.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0)
       : (p.stock !== undefined && p.stock !== null && p.stock !== '' && Number(p.stock) <= 0));
 
+    // Cek apakah item sudah ada di keranjang belanja atau favorit
+    const cartMatches = cart.filter(c => String(c.id) === String(p.id));
+    const inCartQty = cartMatches.reduce((acc, c) => acc + (Number(c.qty) || 0), 0);
+    const inWishlist = wishlist.some(w => String(w.id) === String(p.id));
+
     let nH = '';
     if (isOff) {
       nH = `<div class="absolute top-1.5 right-1.5 z-20"><span class="bg-slate-700/95 dark:bg-slate-900/95 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wider flex items-center gap-1"><i class="fa-solid fa-ban text-[7px] text-slate-300"></i> TIDAK TERSEDIA</span></div>`;
     } else if (isOutOfStock) {
       nH = `<div class="absolute top-1.5 right-1.5 z-20"><span class="bg-amber-500/95 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wider">STOK HABIS</span></div>`;
     }
+    if (!isOff && inCartQty > 0) {
+      nH += `<div class="absolute top-1.5 left-1.5 z-20 pointer-events-none"><span class="bg-emerald-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm flex items-center gap-1 leading-none"><i class="fa-solid fa-cart-shopping text-[7px]"></i> ${inCartQty} di Keranjang</span></div>`;
+    }
+    if (inWishlist) {
+      nH += `<div class="absolute bottom-1.5 right-1.5 z-20 pointer-events-none"><span class="w-5 h-5 rounded-full bg-white/95 dark:bg-slate-800/95 text-rose-500 border border-rose-100 dark:border-rose-900/60 flex items-center justify-center text-[9px] shadow-xs"><i class="fa-solid fa-heart"></i></span></div>`;
+    }
 
     let bH = `
     <div class="mb-1 flex flex-wrap gap-1 items-center overflow-hidden shrink-0">
+      ${inCartQty > 0 ? `<span class="bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded text-[8px] font-bold truncate max-w-full" title="Item ini ada di keranjang belanja"><i class="fa-solid fa-cart-shopping text-[7px]"></i> Di Keranjang (${inCartQty})</span>` : ''}
+      ${inWishlist ? `<span class="bg-rose-50 dark:bg-rose-950/70 border border-rose-300 dark:border-rose-700 text-rose-600 dark:text-rose-400 px-1.5 py-0.5 rounded text-[8px] font-bold truncate max-w-full" title="Item ini ada di favorit saya"><i class="fa-solid fa-heart text-[7px]"></i> Favorit</span>` : ''}
       ${p.tag ? `<span class="bg-rose-50 dark:bg-rose-950/60 border border-rose-200/80 dark:border-rose-800/60 text-rose-600 dark:text-rose-400 px-1.5 py-0.5 rounded text-[8px] font-bold truncate max-w-full"><i class="fa-solid fa-fire text-[7px]"></i> ${esc(p.tag)}</span>` : ''}
       <span class="bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded text-[8px] font-semibold truncate max-w-full">
         <i class="fa-solid fa-check text-[7px]"></i> Official
@@ -7581,6 +7624,11 @@ const rProdMod = () => {
     `;
   }
 
+  // Info status keranjang & favorit untuk item aktif ini
+  const modCartMatches = cart.filter(c => String(c.id) === String(p.id) && (!hV || !v || c.variantName === v.name));
+  const modInCartQty = modCartMatches.reduce((acc, c) => acc + (Number(c.qty) || 0), 0);
+  const modInWishlist = wishlist.some(w => String(w.id) === String(p.id) && (!hV || !v || w.variantName === v.name));
+
   setIn('product-modal-title', p.name);
   setH('product-modal-price', `
     ${incPriceHtml}
@@ -7593,6 +7641,8 @@ const rProdMod = () => {
 
   setH('product-modal-badges', `
     ${isOff ? `<span class="badge badge-xs bg-slate-700 text-white font-bold"><i class="fa-solid fa-ban text-[8px]"></i> Tidak Tersedia</span>` : ''}
+    ${modInCartQty > 0 ? `<span class="badge badge-xs bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 font-bold"><i class="fa-solid fa-cart-shopping text-[8px]"></i> Di Keranjang (${modInCartQty})</span>` : ''}
+    ${modInWishlist ? `<span class="badge badge-xs bg-rose-50 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 border border-rose-300 dark:border-rose-700 font-bold"><i class="fa-solid fa-heart text-[8px]"></i> Di Favorit</span>` : ''}
     ${incInfo ? `<span class="badge badge-xs bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 font-bold"><i class="fa-solid fa-arrow-trend-up text-[8px]"></i> Naik ${fCur(incInfo.diff)}</span>` : ''}
     <span class="badge badge-xs badge-slate badge-normal-case">
       <i class="fa-solid fa-barcode"></i> ${esc(v?.sku || p.sku || '-')}
@@ -7660,9 +7710,11 @@ const rProdMod = () => {
     setH('product-modal-options', p.variants.map((r, x) => {
       const vStock = !isUnlimited && (r.stock !== undefined && r.stock !== null && r.stock !== '' && Number(r.stock) <= 0);
       const vInc = !isOff ? window.getPriceIncreaseInfo(r) : null;
+      const vInCart = cart.find(c => String(c.id) === String(p.id) && c.variantName === r.name);
       return `
       <button class="px-3.5 py-2 rounded-xl text-xs font-bold border-2 transition-all flex items-center gap-1.5 ${x === cVar ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-500 text-emerald-700 dark:text-emerald-400 shadow-sm' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-emerald-300 dark:hover:border-emerald-600'}" onclick="selectVariant(${x})">
         <span>${esc(r.name)}</span>
+        ${vInCart ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300/80"><i class="fa-solid fa-cart-shopping text-[7px]"></i> ${vInCart.qty}</span>` : ''}
         ${vInc ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200/80"><i class="fa-solid fa-arrow-trend-up text-[7px]"></i> +${fCur(vInc.diff)}</span>` : ''}
         ${vStock ? `<span class="text-[8px] font-bold px-1 py-0.2 rounded bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300">Habis</span>` : ''}
       </button>
@@ -8387,6 +8439,9 @@ const updWish = () => {
     b.innerText = wishlist.length;
     b.classList.toggle('scale-0', !wishlist.length);
   }
+  if (typeof rCat === 'function' && el('view-catalog') && !el('view-catalog').classList.contains('hidden')) {
+    rCat();
+  }
 };
 
 const updCart = () => {
@@ -8395,6 +8450,87 @@ const updCart = () => {
   setIn('cart-badge', q);
   const b = el('cart-badge');
   if (b) b.classList.toggle('scale-0', !q);
+  if (typeof rCat === 'function' && el('view-catalog') && !el('view-catalog').classList.contains('hidden')) {
+    rCat();
+  }
+};
+
+// =============================================================================
+// SEARCH / FILTER ITEM DI KERANJANG & FAVORIT
+// =============================================================================
+
+window.cartSearchQuery = '';
+window.wishlistSearchQuery = '';
+
+window.handleCartSearch = (val) => {
+  clearTimeout(window._cartSearchTimer);
+  const q = (val || '').trim();
+  const clearBtn = el('btn-cart-search-clear');
+  if (clearBtn) {
+    if (q) {
+      clearBtn.classList.remove('hidden');
+      clearBtn.classList.add('flex');
+    } else {
+      clearBtn.classList.add('hidden');
+      clearBtn.classList.remove('flex');
+    }
+  }
+  window._cartSearchTimer = setTimeout(() => {
+    window.cartSearchQuery = q.toLowerCase();
+    renderCart();
+  }, 150);
+};
+
+window.clearCartSearch = () => {
+  const inp = el('cart-search-input');
+  if (inp) inp.value = '';
+  const clearBtn = el('btn-cart-search-clear');
+  if (clearBtn) {
+    clearBtn.classList.add('hidden');
+    clearBtn.classList.remove('flex');
+  }
+  window.cartSearchQuery = '';
+  renderCart();
+};
+
+window.handleWishlistSearch = (val) => {
+  clearTimeout(window._wishSearchTimer);
+  const q = (val || '').trim();
+  const clearBtn = el('btn-wishlist-search-clear');
+  if (clearBtn) {
+    if (q) {
+      clearBtn.classList.remove('hidden');
+      clearBtn.classList.add('flex');
+    } else {
+      clearBtn.classList.add('hidden');
+      clearBtn.classList.remove('flex');
+    }
+  }
+  window._wishSearchTimer = setTimeout(() => {
+    window.wishlistSearchQuery = q.toLowerCase();
+    renderWish();
+  }, 150);
+};
+
+window.clearWishlistSearch = () => {
+  const inp = el('wishlist-search-input');
+  if (inp) inp.value = '';
+  const clearBtn = el('btn-wishlist-search-clear');
+  if (clearBtn) {
+    clearBtn.classList.add('hidden');
+    clearBtn.classList.remove('flex');
+  }
+  window.wishlistSearchQuery = '';
+  renderWish();
+};
+
+window.searchInCatalogFromCart = (keyword) => {
+  changeView('view-catalog');
+  const si = el('search-input');
+  if (si) {
+    si.value = keyword;
+    if (typeof handleSearch === 'function') handleSearch(keyword);
+  }
 };
 
 window.rmWish = i => {
@@ -8456,6 +8592,11 @@ window.clearCart = () => {
 const renderWish = () => {
   if (typeof syncWishlistPrices === 'function') syncWishlistPrices();
   if (!wishlist.length) {
+    hide('wishlist-search-container');
+    hide('wishlist-search-status');
+    const inp = el('wishlist-search-input');
+    if (inp) inp.value = '';
+    window.wishlistSearchQuery = '';
     show('wishlist-empty-state');
     hide('btn-clear-wishlist');
     show('spacer-wishlist');
@@ -8463,10 +8604,41 @@ const renderWish = () => {
     return;
   }
   hide('wishlist-empty-state');
+  show('wishlist-search-container');
   show('btn-clear-wishlist');
   hide('spacer-wishlist');
 
-  setH('wishlist-items-container', wishlist.map((i, x) => {
+  const q = window.wishlistSearchQuery || '';
+  const statusEl = el('wishlist-search-status');
+  const statusText = el('wishlist-search-status-text');
+  const filteredWish = q ? wishlist.filter(i => (i.name || '').toLowerCase().includes(q) || (i.variantName || '').toLowerCase().includes(q)) : wishlist;
+
+  if (q) {
+    show('wishlist-search-status');
+    if (statusText) statusText.innerText = `Menampilkan ${filteredWish.length} dari ${wishlist.length} barang di favorit`;
+  } else {
+    hide('wishlist-search-status');
+  }
+
+  if (q && !filteredWish.length) {
+    setH('wishlist-items-container', `
+      <div class="card-modern p-6 text-center text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+        <div class="w-12 h-12 mx-auto rounded-full bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center text-rose-500 mb-3 text-lg border border-rose-100 dark:border-rose-900/60">
+          <i class="fa-solid fa-heart-crack"></i>
+        </div>
+        <h4 class="font-bold text-slate-800 dark:text-white text-xs sm:text-sm mb-1">Item Belum Ada di Favorit</h4>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-4 font-medium leading-relaxed">Barang "<span class="font-bold text-slate-800 dark:text-white">${esc(q)}</span>" belum disimpan ke daftar favorit Anda.</p>
+        <div class="flex items-center justify-center gap-2">
+          <button type="button" onclick="searchInCatalogFromCart('${esc(q)}')" class="btn-primary !py-2.5 !px-4 !text-xs flex items-center gap-1.5 shadow-sm active:scale-95"><i class="fa-solid fa-magnifying-glass text-[10px]"></i> Cari di Katalog Toko</button>
+          <button type="button" onclick="clearWishlistSearch()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-200 transition-all active:scale-95">Reset</button>
+        </div>
+      </div>
+    `);
+    return;
+  }
+
+  setH('wishlist-items-container', filteredWish.map((i) => {
+    const x = wishlist.indexOf(i);
     const p = (appData.products || []).find(prod => String(prod.id) === String(i.id));
     const isOff = p && (p.isActive === 'false' || p.isActive === false);
     const isUnlimited = (appData.store?.stockMode === 'unlimited') || (p && (p.isUnlimited === true || p.isUnlimited === 'true'));
@@ -8530,6 +8702,11 @@ const renderWish = () => {
 const renderCart = () => {
   if (typeof syncCartPrices === 'function') syncCartPrices();
   if (!cart.length) {
+    hide('cart-search-container');
+    hide('cart-search-status');
+    const inp = el('cart-search-input');
+    if (inp) inp.value = '';
+    window.cartSearchQuery = '';
     show('cart-empty-state');
     hide('cart-bottom-bar');
     hide('btn-clear-cart');
@@ -8541,40 +8718,74 @@ const renderCart = () => {
     return;
   }
   hide('cart-empty-state');
+  show('cart-search-container');
   show('cart-bottom-bar');
   show('btn-clear-cart');
   hide('spacer-cart');
 
+  // Subtotal dihitung dari seluruh item keranjang agar akurat
   let s = 0;
-  setH('cart-items-container', cart.map((i, x) => {
-    let e = getEffP(i), w = e < i.price;
-    s += e * i.qty;
-    return `
-    <div class="card-modern p-3.5 flex gap-3 relative overflow-hidden group shadow-sm min-w-0 border border-slate-200 dark:border-slate-700">
-      ${w ? `<div class="badge badge-ribbon badge-solid-amber">GROSIR</div>` : ''}
-      <img src="${esc(i.img)}" class="w-20 h-20 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'"/>
-      <div class="flex-1 flex flex-col min-w-0">
-        <h4 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-white pr-6 truncate">${esc(i.name)}</h4>
-        ${i.variantName ? `<span class="mt-1 inline-flex items-center gap-1"><span class="badge badge-xs badge-slate badge-normal-case">${esc(i.variantName)}</span>${i.unit ? ` <span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold">· ${esc(i.unit)}</span>` : ''}</span>` : (i.unit ? `<span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">${esc(i.unit)}</span>` : '')}
-        <div class="flex justify-between items-end mt-auto pt-2 min-w-0">
-          <div>
-            ${w ? `<p class="text-[9px] line-through text-slate-400 font-bold">${fCur(i.price)}</p>` : ''}
-            <p class="text-emerald-600 dark:text-emerald-400 font-semibold text-sm drop-shadow-sm">${fCur(e)}</p>
-          </div>
-          <div class="flex flex-col items-end gap-1.5">
-            <button onclick="rmCart(${x})" class="text-slate-400 hover:text-rose-500 absolute top-3 right-3 bg-white dark:bg-slate-800 w-6 h-6 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all"><i class="fa-solid fa-xmark text-[10px]"></i></button>
-            <div class="flex bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg h-7 overflow-hidden shrink-0">
-              <button onclick="updCQty(${x},-1)" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold"><i class="fa-solid fa-minus text-[8px]"></i></button>
-              <span class="w-6 flex items-center justify-center text-xs font-semibold bg-white dark:bg-slate-800 text-slate-800 dark:text-white">${i.qty}</span>
-              <button onclick="updCQty(${x},1)" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold"><i class="fa-solid fa-plus text-[8px]"></i></button>
+  cart.forEach(i => {
+    s += getEffP(i) * i.qty;
+  });
+  setIn('cart-subtotal', fCur(s));
+
+  const q = window.cartSearchQuery || '';
+  const statusEl = el('cart-search-status');
+  const statusText = el('cart-search-status-text');
+  const filteredCart = q ? cart.filter(i => (i.name || '').toLowerCase().includes(q) || (i.variantName || '').toLowerCase().includes(q)) : cart;
+
+  if (q) {
+    show('cart-search-status');
+    if (statusText) statusText.innerText = `Menampilkan ${filteredCart.length} dari ${cart.length} barang di keranjang`;
+  } else {
+    hide('cart-search-status');
+  }
+
+  if (q && !filteredCart.length) {
+    setH('cart-items-container', `
+      <div class="card-modern p-6 text-center text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xs">
+        <div class="w-12 h-12 mx-auto rounded-full bg-slate-100 dark:bg-slate-700/60 flex items-center justify-center text-slate-400 mb-3 text-lg">
+          <i class="fa-solid fa-cart-arrow-down"></i>
+        </div>
+        <h4 class="font-bold text-slate-800 dark:text-white text-xs sm:text-sm mb-1">Item Belum Ada di Keranjang</h4>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 mb-4 font-medium leading-relaxed">Barang "<span class="font-bold text-slate-800 dark:text-white">${esc(q)}</span>" belum dimasukkan ke keranjang belanja Anda.</p>
+        <div class="flex items-center justify-center gap-2">
+          <button type="button" onclick="searchInCatalogFromCart('${esc(q)}')" class="btn-primary !py-2.5 !px-4 !text-xs flex items-center gap-1.5 shadow-sm active:scale-95"><i class="fa-solid fa-magnifying-glass text-[10px]"></i> Cari di Katalog Toko</button>
+          <button type="button" onclick="clearCartSearch()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-xs hover:bg-slate-200 transition-all active:scale-95">Reset</button>
+        </div>
+      </div>
+    `);
+  } else {
+    setH('cart-items-container', filteredCart.map((i) => {
+      const x = cart.indexOf(i);
+      let e = getEffP(i), w = e < i.price;
+      return `
+      <div class="card-modern p-3.5 flex gap-3 relative overflow-hidden group shadow-sm min-w-0 border border-slate-200 dark:border-slate-700">
+        ${w ? `<div class="badge badge-ribbon badge-solid-amber">GROSIR</div>` : ''}
+        <img src="${esc(i.img)}" class="w-20 h-20 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'"/>
+        <div class="flex-1 flex flex-col min-w-0">
+          <h4 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-white pr-6 truncate">${esc(i.name)}</h4>
+          ${i.variantName ? `<span class="mt-1 inline-flex items-center gap-1"><span class="badge badge-xs badge-slate badge-normal-case">${esc(i.variantName)}</span>${i.unit ? ` <span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold">· ${esc(i.unit)}</span>` : ''}</span>` : (i.unit ? `<span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold mt-0.5">${esc(i.unit)}</span>` : '')}
+          <div class="flex justify-between items-end mt-auto pt-2 min-w-0">
+            <div>
+              ${w ? `<p class="text-[9px] line-through text-slate-400 font-bold">${fCur(i.price)}</p>` : ''}
+              <p class="text-emerald-600 dark:text-emerald-400 font-semibold text-sm drop-shadow-sm">${fCur(e)}</p>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <button onclick="rmCart(${x})" class="text-slate-400 hover:text-rose-500 absolute top-3 right-3 bg-white dark:bg-slate-800 w-6 h-6 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all"><i class="fa-solid fa-xmark text-[10px]"></i></button>
+              <div class="flex bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg h-7 overflow-hidden shrink-0">
+                <button onclick="updCQty(${x},-1)" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold"><i class="fa-solid fa-minus text-[8px]"></i></button>
+                <span class="w-6 flex items-center justify-center text-xs font-semibold bg-white dark:bg-slate-800 text-slate-800 dark:text-white">${i.qty}</span>
+                <button onclick="updCQty(${x},1)" class="w-7 flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 font-bold"><i class="fa-solid fa-plus text-[8px]"></i></button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    `;
-  }).join(''));
-  setIn('cart-subtotal', fCur(s));
+      `;
+    }).join(''));
+  }
 
   // Progress Bar Gratis Ongkir Otomatis
   const fsContainer = el('cart-free-shipping-container');

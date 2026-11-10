@@ -557,15 +557,28 @@ const rCat = () => {
       ? p.variants.every(v => v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0)
       : (p.stock !== undefined && p.stock !== null && p.stock !== '' && Number(p.stock) <= 0));
 
+    // Cek apakah item sudah ada di keranjang belanja atau favorit
+    const cartMatches = cart.filter(c => String(c.id) === String(p.id));
+    const inCartQty = cartMatches.reduce((acc, c) => acc + (Number(c.qty) || 0), 0);
+    const inWishlist = wishlist.some(w => String(w.id) === String(p.id));
+
     let nH = '';
     if (isOff) {
       nH = `<div class="absolute top-1.5 right-1.5 z-20"><span class="bg-slate-700/95 dark:bg-slate-900/95 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wider flex items-center gap-1"><i class="fa-solid fa-ban text-[7px] text-slate-300"></i> TIDAK TERSEDIA</span></div>`;
     } else if (isOutOfStock) {
       nH = `<div class="absolute top-1.5 right-1.5 z-20"><span class="bg-amber-500/95 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm uppercase tracking-wider">STOK HABIS</span></div>`;
     }
+    if (!isOff && inCartQty > 0) {
+      nH += `<div class="absolute top-1.5 left-1.5 z-20 pointer-events-none"><span class="bg-emerald-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm flex items-center gap-1 leading-none"><i class="fa-solid fa-cart-shopping text-[7px]"></i> ${inCartQty} di Keranjang</span></div>`;
+    }
+    if (inWishlist) {
+      nH += `<div class="absolute bottom-1.5 right-1.5 z-20 pointer-events-none"><span class="w-5 h-5 rounded-full bg-white/95 dark:bg-slate-800/95 text-rose-500 border border-rose-100 dark:border-rose-900/60 flex items-center justify-center text-[9px] shadow-xs"><i class="fa-solid fa-heart"></i></span></div>`;
+    }
 
     let bH = `
     <div class="mb-1 flex flex-wrap gap-1 items-center overflow-hidden shrink-0">
+      ${inCartQty > 0 ? `<span class="bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded text-[8px] font-bold truncate max-w-full" title="Item ini ada di keranjang belanja"><i class="fa-solid fa-cart-shopping text-[7px]"></i> Di Keranjang (${inCartQty})</span>` : ''}
+      ${inWishlist ? `<span class="bg-rose-50 dark:bg-rose-950/70 border border-rose-300 dark:border-rose-700 text-rose-600 dark:text-rose-400 px-1.5 py-0.5 rounded text-[8px] font-bold truncate max-w-full" title="Item ini ada di favorit saya"><i class="fa-solid fa-heart text-[7px]"></i> Favorit</span>` : ''}
       ${p.tag ? `<span class="bg-rose-50 dark:bg-rose-950/60 border border-rose-200/80 dark:border-rose-800/60 text-rose-600 dark:text-rose-400 px-1.5 py-0.5 rounded text-[8px] font-bold truncate max-w-full"><i class="fa-solid fa-fire text-[7px]"></i> ${esc(p.tag)}</span>` : ''}
       <span class="bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded text-[8px] font-semibold truncate max-w-full">
         <i class="fa-solid fa-check text-[7px]"></i> Official
@@ -902,6 +915,11 @@ const rProdMod = () => {
     `;
   }
 
+  // Info status keranjang & favorit untuk item aktif ini
+  const modCartMatches = cart.filter(c => String(c.id) === String(p.id) && (!hV || !v || c.variantName === v.name));
+  const modInCartQty = modCartMatches.reduce((acc, c) => acc + (Number(c.qty) || 0), 0);
+  const modInWishlist = wishlist.some(w => String(w.id) === String(p.id) && (!hV || !v || w.variantName === v.name));
+
   setIn('product-modal-title', p.name);
   setH('product-modal-price', `
     ${incPriceHtml}
@@ -914,6 +932,8 @@ const rProdMod = () => {
 
   setH('product-modal-badges', `
     ${isOff ? `<span class="badge badge-xs bg-slate-700 text-white font-bold"><i class="fa-solid fa-ban text-[8px]"></i> Tidak Tersedia</span>` : ''}
+    ${modInCartQty > 0 ? `<span class="badge badge-xs bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 font-bold"><i class="fa-solid fa-cart-shopping text-[8px]"></i> Di Keranjang (${modInCartQty})</span>` : ''}
+    ${modInWishlist ? `<span class="badge badge-xs bg-rose-50 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 border border-rose-300 dark:border-rose-700 font-bold"><i class="fa-solid fa-heart text-[8px]"></i> Di Favorit</span>` : ''}
     ${incInfo ? `<span class="badge badge-xs bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/80 font-bold"><i class="fa-solid fa-arrow-trend-up text-[8px]"></i> Naik ${fCur(incInfo.diff)}</span>` : ''}
     <span class="badge badge-xs badge-slate badge-normal-case">
       <i class="fa-solid fa-barcode"></i> ${esc(v?.sku || p.sku || '-')}
@@ -981,9 +1001,11 @@ const rProdMod = () => {
     setH('product-modal-options', p.variants.map((r, x) => {
       const vStock = !isUnlimited && (r.stock !== undefined && r.stock !== null && r.stock !== '' && Number(r.stock) <= 0);
       const vInc = !isOff ? window.getPriceIncreaseInfo(r) : null;
+      const vInCart = cart.find(c => String(c.id) === String(p.id) && c.variantName === r.name);
       return `
       <button class="px-3.5 py-2 rounded-xl text-xs font-bold border-2 transition-all flex items-center gap-1.5 ${x === cVar ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-500 text-emerald-700 dark:text-emerald-400 shadow-sm' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-emerald-300 dark:hover:border-emerald-600'}" onclick="selectVariant(${x})">
         <span>${esc(r.name)}</span>
+        ${vInCart ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300/80"><i class="fa-solid fa-cart-shopping text-[7px]"></i> ${vInCart.qty}</span>` : ''}
         ${vInc ? `<span class="text-[8px] font-black px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200/80"><i class="fa-solid fa-arrow-trend-up text-[7px]"></i> +${fCur(vInc.diff)}</span>` : ''}
         ${vStock ? `<span class="text-[8px] font-bold px-1 py-0.2 rounded bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300">Habis</span>` : ''}
       </button>

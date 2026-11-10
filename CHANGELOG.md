@@ -2,6 +2,25 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-09-15] - Fitur Pencarian Cepat di Keranjang Belanja & Favorit serta Indikator Status Keranjang di Beranda
+### Fitur & Peningkatan Sesuai Permintaan Pelanggan:
+- **Pencarian Instan di Dalam Keranjang Belanja (`handleCartSearch`):**
+  - Menyematkan bilah pencarian modern di bagian atas daftar keranjang belanja (`view-cart`) untuk mempermudah pembeli (khususnya grosir/ritel dengan banyak belanjaan) mengecek apakah suatu item sudah dimasukkan atau belum.
+  - Memfilter daftar keranjang secara *real-time* saat pembeli mengetik nama produk atau nama varian.
+  - Menampilkan ringkasan status pencarian (contoh: *“Menampilkan 1 dari 15 barang di keranjang”*) serta tombol reset (*“Lihat Semua”*).
+  - Jika item belum ada di keranjang, sistem menyajikan pemberitahuan informatif *"Item Belum Ada di Keranjang"* dilengkapi tombol shortcut **[Cari di Katalog Toko]** yang langsung membuka katalog dan mencari kata kunci tersebut.
+  - Subtotal keranjang dan alur checkout tetap aman terhitung dari seluruh isi keranjang.
+- **Pencarian Instan di Dalam Favorit Saya (`handleWishlistSearch`):**
+  - Menyematkan bilah pencarian responsif pada menu favorit (`view-wishlist`) dengan fungsi penyaringan langsung dan pesan informatif bila barang belum tersimpan di favorit.
+- **Indikator Cerdas Status Keranjang & Favorit pada Kartu Produk di Beranda / Pencarian Global:**
+  - Saat pembeli mencari atau menjelajahi produk di beranda, setiap kartu produk (Grid & List View) kini langsung menyajikan lencana status:
+    - 🛒 **Di Keranjang (x3)**: Lencana hijau kontras di baris tag dan sudut foto produk yang menampilkan jumlah kuantitas barang yang telah masuk keranjang.
+    - ❤️ **Favorit**: Lencana penanda merah muda dan ikon hati saat produk tersimpan di wishlist.
+  - Pada modal detail produk (`product-modal`) dan tombol varian produk (`PILIH VARIAN`), kuantitas item yang telah berada di keranjang langsung terlihat jelas.
+- **PWA Cache Update:** Versi Service Worker dinaikkan ke `freshmart-pwa-v13`.
+
+---
+
 ## [2026-09-15] - Fitur Pelacak & Tampilan Nominal Kenaikan Harga Produk di Beranda & Modal
 ### Fitur & Peningkatan Sesuai Permintaan Pelanggan:
 - **Tampilan Kenaikan Harga di Beranda (Grid & List View):**
