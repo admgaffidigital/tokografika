@@ -14326,7 +14326,7 @@ let posCart = [];
 let posPendingTransactions = [];
 try {
   posPendingTransactions = JSON.parse(localStorage.getItem('freshmart_pos_pending') || '[]');
-} catch(e) {
+} catch (e) {
   posPendingTransactions = [];
 }
 let activeCashier = null;
@@ -14462,17 +14462,17 @@ window.initPosView = async () => {
   }
 
   changeView('view-pos');
-  
+
   const storeName = appData.store?.name || 'FreshMart Store';
   setIn('pos-store-name', storeName);
-  
+
   const cashierName = activeCashier?.name || (cRole === 'admin' ? 'Admin Master' : 'Kasir Toko');
   setIn('pos-cashier-name', cashierName);
-  
+
   const roleBadge = el('pos-role-badge');
   if (roleBadge) {
     roleBadge.innerText = cRole === 'admin' ? 'MASTER' : 'KASIR';
-    roleBadge.className = cRole === 'admin' 
+    roleBadge.className = cRole === 'admin'
       ? 'bg-amber-500/30 text-amber-200 border border-amber-400/40 text-[8px] sm:text-[9px] font-black px-2 py-0.5 rounded-full'
       : 'bg-white/20 text-white border border-white/30 text-[8px] sm:text-[9px] font-bold px-2 py-0.5 rounded-full';
   }
@@ -14603,7 +14603,7 @@ window.selectPosCategory = (cat) => {
   const labelEl = el('pos-active-cat-label');
   if (labelEl) labelEl.innerText = cat;
   closePosCategoryModal();
-  
+
   // Update pills bar styling in-place without destroying DOM to preserve horizontal scroll position
   const pillsBar = el('pos-category-pills-bar');
   if (pillsBar) {
@@ -14628,11 +14628,11 @@ window.selectPosCategory = (cat) => {
       if (isSelected) {
         try {
           btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        } catch(e) {}
+        } catch (e) { }
       }
     });
   }
-  
+
   renderPosProducts();
 };
 
@@ -14649,7 +14649,7 @@ window.setPosViewMode = (mode) => {
   posViewMode = mode;
   const btnGrid = el('btn-pos-view-grid');
   const btnList = el('btn-pos-view-list');
-  
+
   if (mode === 'grid') {
     if (btnGrid) {
       btnGrid.className = 'btn-solid no-glass w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-xs font-black transition-all !text-slate-900 !bg-white shadow-sm';
@@ -14871,7 +14871,7 @@ window.addToCartPos = (productId, variantId = null, qty = 1) => {
   if (variantId) {
     const variant = (product.variants || []).find(v => String(v.id || v.name) === String(variantId));
     if (!variant) return;
-    
+
     const existingIdx = posCart.findIndex(c => String(c.id) === String(productId) && String(c.variantId) === String(variantId));
     if (existingIdx > -1) {
       posCart[existingIdx].qty = Math.round((posCart[existingIdx].qty + qty) * 100) / 100;
@@ -14879,7 +14879,7 @@ window.addToCartPos = (productId, variantId = null, qty = 1) => {
       const basePrice = parseFloat(variant.price) || 0;
       const isWholesale = product.wholesaleMinQty > 0 && (qty >= product.wholesaleMinQty);
       const effectivePrice = isWholesale ? (product.wholesalePrice || basePrice) : (product.salePrice > 0 ? product.salePrice : basePrice);
-      
+
       const vImg = variant.img || product.img || product.image || '';
       posCart.push({
         id: String(productId),
@@ -14909,7 +14909,7 @@ window.addToCartPos = (productId, variantId = null, qty = 1) => {
       const isWholesale = product.wholesaleMinQty > 0 && (qty >= product.wholesaleMinQty);
       const effectivePrice = isWholesale ? (product.wholesalePrice || basePrice) : basePrice;
       const pImg = product.img || product.image || (product.images && product.images[0]) || '';
-      
+
       posCart.push({
         id: String(productId),
         variantId: null,
@@ -14940,7 +14940,7 @@ window.syncPosCartPrices = () => {
     if (!p) return;
     if (p.name && item.name !== p.name) { item.name = p.name; changed = true; }
     if (item.unit !== (p.unit || '')) { item.unit = p.unit || ''; changed = true; }
-    
+
     let basePrice = parseFloat(p.salePrice > 0 ? p.salePrice : (p.price || 0)) || 0;
     if (item.variantId && p.variants && p.variants.length > 0) {
       const v = p.variants.find(vr => String(vr.id || vr.name) === String(item.variantId));
@@ -15251,7 +15251,7 @@ window.closePosCartDrawer = () => {
 const _savePendingTransactions = () => {
   try {
     localStorage.setItem('freshmart_pos_pending', JSON.stringify(posPendingTransactions));
-  } catch(e) {
+  } catch (e) {
     console.warn('[POS] Failed to save pending transactions:', e);
   }
   updatePosPendingBadge();
@@ -15276,10 +15276,10 @@ window.holdPosTransaction = (customNote = null) => {
     showToast('Keranjang kasir masih kosong untuk ditahan!');
     return;
   }
-  
+
   const defaultName = `Antrian #${posPendingTransactions.length + 1}`;
   let note = typeof customNote === 'string' && customNote.trim() ? customNote.trim() : defaultName;
-  
+
   const pendingObj = {
     id: 'HLD-' + Date.now().toString().slice(-6),
     timestamp: Date.now(),
@@ -15292,18 +15292,18 @@ window.holdPosTransaction = (customNote = null) => {
     totalQty: posCart.reduce((acc, item) => acc + item.qty, 0),
     grandTotal: posCart.reduce((acc, item) => acc + (getEffP(item) * item.qty), 0)
   };
-  
+
   posPendingTransactions.unshift(pendingObj);
   _savePendingTransactions();
-  
+
   posCart = [];
   renderPosCart();
   renderPosProducts();
   closePosCartDrawer();
-  
+
   const inputEl = el('pos-pending-note-input');
   if (inputEl) inputEl.value = '';
-  
+
   if (typeof playPosBeep === 'function') playPosBeep('hold');
   showToast(`Transaksi ditahan sebagai "${esc(note)}"!`);
   if (el('pos-pending-modal') && !el('pos-pending-modal').classList.contains('hidden')) {
@@ -15329,14 +15329,14 @@ window.renderPosPendingList = () => {
   const container = el('pos-pending-list-container');
   const subtitle = el('pos-pending-modal-subtitle');
   if (!container) return;
-  
+
   const count = posPendingTransactions.length;
   if (subtitle) {
-    subtitle.innerText = count > 0 
-      ? `Terdapat ${count} antrian transaksi belanja yang sedang ditahan` 
+    subtitle.innerText = count > 0
+      ? `Terdapat ${count} antrian transaksi belanja yang sedang ditahan`
       : 'Belum ada antrian belanja pelanggan yang ditahan';
   }
-  
+
   if (count === 0) {
     container.innerHTML = `
       <div class="py-12 flex flex-col items-center justify-center text-center text-slate-400 dark:text-slate-500">
@@ -15349,7 +15349,7 @@ window.renderPosPendingList = () => {
     `;
     return;
   }
-  
+
   container.innerHTML = posPendingTransactions.map((item) => `
     <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 shadow-xs hover:border-amber-400 dark:hover:border-amber-500 transition-all flex flex-col gap-3">
       <div class="flex items-start justify-between gap-2">
@@ -15387,9 +15387,9 @@ window.resumePendingTransaction = (pendingId) => {
     showToast('Data pending tidak ditemukan!');
     return;
   }
-  
+
   const pendingObj = posPendingTransactions[foundIdx];
-  
+
   const proceedRestore = () => {
     posCart = JSON.parse(JSON.stringify(pendingObj.items));
     posPendingTransactions.splice(foundIdx, 1);
@@ -15400,7 +15400,7 @@ window.resumePendingTransaction = (pendingId) => {
     openPosCartDrawer();
     showToast(`Transaksi "${esc(pendingObj.note)}" dilanjutkan! ▶️`);
   };
-  
+
   if (posCart.length > 0) {
     showConfirm(
       'Keranjang Sedang Berisi Item',
@@ -15440,7 +15440,7 @@ window.playPosBeep = (type = 'success') => {
     const gain = ctx.createGain();
     osc.connect(gain);
     gain.connect(ctx.destination);
-    
+
     if (type === 'success') {
       osc.frequency.setValueAtTime(880, ctx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.08);
@@ -15455,7 +15455,7 @@ window.playPosBeep = (type = 'success') => {
       osc.start();
       osc.stop(ctx.currentTime + 0.15);
     }
-  } catch(e) {}
+  } catch (e) { }
 };
 
 // Keyboard Shortcuts for POS
@@ -15509,7 +15509,7 @@ const _getPosGrandTotal = () => _getPosSubtotal() + posShippingCost;
 
 window.openPosPaymentModal = () => {
   if (!posCart.length) { showToast('Keranjang masih kosong!'); return; }
-  
+
   // Reset wizard state
   posDeliveryMethod = 'pickup';
   posShippingCost = 0;
@@ -15534,7 +15534,7 @@ window.goPosStep = (step) => {
   if (step > posCurrentStep) {
     if (posCurrentStep === 3) return; // Can't go beyond step 3
   }
-  
+
   // Validation
   if (step === 3 && posCurrentStep === 2) {
     // Validate delivery step
@@ -15697,7 +15697,7 @@ window.recalcPosTotal = () => {
 
 window.setPosPaymentMethod = (method) => {
   posPaymentMethod = method;
-  
+
   document.querySelectorAll('.pos-method-btn').forEach(btn => {
     const m = btn.getAttribute('data-method');
     const isSelected = m === method;
@@ -15706,7 +15706,7 @@ window.setPosPaymentMethod = (method) => {
 
   const cashSection = el('pos-cash-input-section');
   const noncashSection = el('pos-noncash-info-section');
-  
+
   if (cashSection) cashSection.classList.toggle('hidden', method !== 'cash');
   if (noncashSection) noncashSection.classList.toggle('hidden', method === 'cash');
 
@@ -15749,7 +15749,7 @@ window.calculatePosChange = () => {
 
   const changeDisplay = el('pos-change-display');
   const changeBox = el('pos-change-display-box');
-  
+
   if (changeDisplay) {
     if (received === 0) {
       changeDisplay.innerText = 'Rp 0';
@@ -15876,15 +15876,15 @@ window.submitPosTransaction = async () => {
             const currentStock = typeof prod.stock !== 'undefined' && prod.stock !== '' ? (parseInt(prod.stock) || 0) : 100;
             prod.stock = Math.max(0, currentStock - cartItem.qty);
           }
-          
+
           // Sync perubahan stok ke Firestore
           if (typeof db !== 'undefined' && db.collection) {
-            db.collection('freshmart').doc('cms_data').collection('products').doc(prod.id.toString()).set(prod).catch(() => {});
+            db.collection('freshmart').doc('cms_data').collection('products').doc(prod.id.toString()).set(prod).catch(() => { });
           }
         }
       }
     });
-    
+
     hLoad();
     closePosPaymentModal();
 
@@ -15902,7 +15902,7 @@ window.submitPosTransaction = async () => {
     if (el('pos-delivery-address')) el('pos-delivery-address').value = '';
     if (el('pos-courier-name')) el('pos-courier-name').value = '';
     if (el('pos-shipping-cost')) el('pos-shipping-cost').value = '0';
-    
+
   } catch (error) {
     console.error('[FreshMart POS] Transaction error:', error);
     hLoad();
