@@ -26,7 +26,7 @@ window.confirmAddToWishlist = () => {
   const v = cProd.variants?.[cVar];
   const vN = v?.name || null;
 
-  if (wishlist.find(i => i.id === cProd.id && i.variantName === vN)) {
+  if (wishlist.find(i => String(i.id) === String(cProd.id) && i.variantName === vN)) {
     return showToast("Sudah di Favorit!");
   }
   wishlist.push({ id: cProd.id, name: cProd.name, variantName: vN, price: v?.price ?? cProd.price, img: v?.img || cProd.img, unit: cProd.unit || '' });
@@ -34,6 +34,102 @@ window.confirmAddToWishlist = () => {
   updWish();
   closeProductModal();
   showToast("Dimasukkan ke Favorit");
+};
+
+// =============================================================================
+// SINKRONISASI REALTIME HARGA MASTER UNTUK WISHLIST & KERANJANG
+// =============================================================================
+
+window.syncWishlistPrices = () => {
+  if (!wishlist || !wishlist.length || !appData?.products || !appData.products.length) return false;
+  let changed = false;
+
+  wishlist.forEach(item => {
+    const p = appData.products.find(x => String(x.id) === String(item.id));
+    if (!p) return;
+
+    // Sinkronisasi nama & satuan
+    if (p.name && item.name !== p.name) {
+      item.name = p.name;
+      changed = true;
+    }
+    if (item.unit !== (p.unit || '')) {
+      item.unit = p.unit || '';
+      changed = true;
+    }
+
+    // Dapatkan harga terbaru sesuai varian atau master
+    let latestPrice = Number(p.price) || 0;
+    let latestImg = p.img || '';
+
+    if (item.variantName && p.variants && p.variants.length > 0) {
+      const v = p.variants.find(v => v.name === item.variantName);
+      if (v) {
+        if (v.price !== undefined && v.price !== null) latestPrice = Number(v.price);
+        if (v.img) latestImg = v.img;
+      }
+    }
+
+    if (latestImg && item.img !== fixD(latestImg)) {
+      item.img = fixD(latestImg);
+      changed = true;
+    }
+
+    if (Number(item.price) !== latestPrice) {
+      item.price = latestPrice;
+      changed = true;
+    }
+  });
+
+  if (changed) {
+    ssL('freshmart_wishlist', JSON.stringify(wishlist));
+  }
+  return changed;
+};
+
+window.syncCartPrices = () => {
+  if (!cart || !cart.length || !appData?.products || !appData.products.length) return false;
+  let changed = false;
+
+  cart.forEach(item => {
+    const p = appData.products.find(x => String(x.id) === String(item.id));
+    if (!p) return;
+
+    if (p.name && item.name !== p.name) {
+      item.name = p.name;
+      changed = true;
+    }
+    if (item.unit !== (p.unit || '')) {
+      item.unit = p.unit || '';
+      changed = true;
+    }
+
+    let latestPrice = Number(p.price) || 0;
+    let latestImg = p.img || '';
+
+    if (item.variantName && p.variants && p.variants.length > 0) {
+      const v = p.variants.find(v => v.name === item.variantName);
+      if (v) {
+        if (v.price !== undefined && v.price !== null) latestPrice = Number(v.price);
+        if (v.img) latestImg = v.img;
+      }
+    }
+
+    if (latestImg && item.img !== fixD(latestImg)) {
+      item.img = fixD(latestImg);
+      changed = true;
+    }
+
+    if (Number(item.price) !== latestPrice) {
+      item.price = latestPrice;
+      changed = true;
+    }
+  });
+
+  if (changed) {
+    ssL('freshmart_cart', JSON.stringify(cart));
+  }
+  return changed;
 };
 
 const updWish = () => {
@@ -62,13 +158,29 @@ window.rmWish = i => {
 window.moveWish = i => {
   const it = wishlist[i];
   if (!it) return;
-  const prod = (appData.products || []).find(p => p.id === it.id || String(p.id) === String(it.id));
+  const prod = (appData.products || []).find(p => String(p.id) === String(it.id));
   if (prod && (prod.isActive === 'false' || prod.isActive === false)) {
     showToast("Produk ini sedang dinonaktifkan!");
     return;
   }
-  const e = cart.find(c => c.id === it.id && c.variantName === it.variantName);
-  if (e) e.qty++; else cart.push({ ...it, qty: 1 });
+
+  // Dapatkan harga live produk terkini
+  let livePrice = it.price;
+  if (prod) {
+    livePrice = Number(prod.price) || it.price;
+    if (it.variantName && prod.variants && prod.variants.length > 0) {
+      const v = prod.variants.find(v => v.name === it.variantName);
+      if (v && v.price !== undefined && v.price !== null) livePrice = Number(v.price);
+    }
+  }
+
+  const e = cart.find(c => String(c.id) === String(it.id) && c.variantName === it.variantName);
+  if (e) {
+    e.qty++;
+    e.price = livePrice;
+  } else {
+    cart.push({ ...it, price: livePrice, qty: 1 });
+  }
   updCart();
   showToast("Ke Keranjang!");
 };
@@ -93,6 +205,7 @@ window.clearCart = () => {
 };
 
 const renderWish = () => {
+  if (typeof syncWishlistPrices === 'function') syncWishlistPrices();
   if (!wishlist.length) {
     show('wishlist-empty-state');
     hide('btn-clear-wishlist');
@@ -104,23 +217,58 @@ const renderWish = () => {
   show('btn-clear-wishlist');
   hide('spacer-wishlist');
 
-  setH('wishlist-items-container', wishlist.map((i, x) => `
-    <div class="card-modern p-4 flex gap-3 shadow-sm min-w-0 border border-slate-200 dark:border-slate-700">
-      <img src="${esc(i.img)}" class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'"/>
+  setH('wishlist-items-container', wishlist.map((i, x) => {
+    const p = (appData.products || []).find(prod => String(prod.id) === String(i.id));
+    const isOff = p && (p.isActive === 'false' || p.isActive === false);
+    const isUnlimited = (appData.store?.stockMode === 'unlimited') || (p && (p.isUnlimited === true || p.isUnlimited === 'true'));
+    const hasVars = p && p.variants && p.variants.length > 0;
+
+    let isOutOfStock = false;
+    if (p && !isUnlimited && !isOff) {
+      if (i.variantName && hasVars) {
+        const v = p.variants.find(v => v.name === i.variantName);
+        if (v && v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0) {
+          isOutOfStock = true;
+        }
+      } else {
+        if (p.stock !== undefined && p.stock !== null && p.stock !== '' && Number(p.stock) <= 0) {
+          isOutOfStock = true;
+        }
+      }
+    }
+
+    return `
+    <div class="card-modern p-4 flex gap-3 shadow-sm min-w-0 border ${isOff ? 'border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/70 opacity-80' : 'border-slate-200 dark:border-slate-700'}">
+      <div class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+        <img src="${esc(i.img)}" class="w-full h-full object-cover ${isOff ? 'grayscale opacity-60' : (isOutOfStock ? 'grayscale opacity-75' : '')}" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'"/>
+        ${isOff ? `<div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center p-1 text-center"><span class="text-[8px] font-black text-white bg-slate-800/90 px-1.5 py-0.5 rounded shadow">NONAKTIF</span></div>` : (isOutOfStock ? `<div class="absolute inset-0 bg-black/50 flex items-center justify-center p-1 text-center"><span class="text-[8px] font-black text-white bg-amber-600/90 px-1.5 py-0.5 rounded shadow">HABIS</span></div>` : '')}
+      </div>
       <div class="flex-1 flex flex-col min-w-0">
-        <h4 class="text-sm font-semibold text-slate-800 dark:text-white mb-1 truncate">${esc(i.name)}</h4>
-        ${i.variantName ? `<span class="mb-1.5 inline-flex"><span class="badge badge-xs badge-slate badge-normal-case">${esc(i.variantName)}</span></span>` : ''}
-        <p class="text-emerald-600 dark:text-emerald-400 font-bold mb-2 text-sm drop-shadow-sm">${fCur(i.price)}</p>
+        <h4 class="text-sm font-semibold ${isOff ? 'text-slate-500 dark:text-slate-400' : 'text-slate-800 dark:text-white'} mb-1 truncate">${esc(i.name)}</h4>
+        <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
+          ${i.variantName ? `<span class="badge badge-xs badge-slate badge-normal-case">${esc(i.variantName)}</span>` : ''}
+          ${i.unit ? `<span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold">/ ${esc(i.unit)}</span>` : ''}
+          ${isOff ? `<span class="badge badge-xs bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 font-bold">Tidak Tersedia</span>` : ''}
+        </div>
+        <p class="${isOff ? 'text-slate-400 dark:text-slate-500 font-bold' : 'text-emerald-600 dark:text-emerald-400 font-bold'} mb-2 text-sm drop-shadow-sm">${fCur(i.price)}</p>
         <div class="flex gap-2 mt-auto">
-          <button onclick="moveWish(${x})" class="flex-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 text-[10px] font-bold py-2 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/50 active:scale-95 transition-all">Ke Keranjang</button>
-          <button onclick="rmWish(${x})" class="w-8 h-8 shrink-0 rounded-lg bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-500 dark:text-rose-400 flex items-center justify-center hover:bg-rose-100 dark:hover:bg-rose-900/50 active:scale-90 transition-all"><i class="fa-solid fa-trash text-[10px]"></i></button>
+          ${isOff ? `
+            <button disabled class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 text-[10px] font-bold py-2 rounded-lg cursor-not-allowed">Tidak Tersedia</button>
+          ` : (isOutOfStock ? `
+            <button disabled class="flex-1 bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800 text-[10px] font-bold py-2 rounded-lg cursor-not-allowed">Stok Habis</button>
+          ` : `
+            <button onclick="moveWish(${x})" class="flex-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 text-[10px] font-bold py-2 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/50 active:scale-95 transition-all">Ke Keranjang</button>
+          `)}
+          <button onclick="rmWish(${x})" class="w-8 h-8 shrink-0 rounded-lg bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 text-rose-500 dark:text-rose-400 flex items-center justify-center hover:bg-rose-100 dark:hover:bg-rose-900/50 active:scale-90 transition-all" title="Hapus dari Favorit"><i class="fa-solid fa-trash text-[10px]"></i></button>
         </div>
       </div>
     </div>
-  `).join(''));
+    `;
+  }).join(''));
 };
 
 const renderCart = () => {
+  if (typeof syncCartPrices === 'function') syncCartPrices();
   if (!cart.length) {
     show('cart-empty-state');
     hide('cart-bottom-bar');

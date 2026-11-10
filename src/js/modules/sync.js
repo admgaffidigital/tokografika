@@ -10,7 +10,7 @@ const syncProductPrice = (updatedProduct) => {
 
   // --- Sinkronisasi KERANJANG ---
   cart.forEach(item => {
-    if (item.id !== updatedProduct.id) return;
+    if (String(item.id) !== String(updatedProduct.id)) return;
 
     if (item.unit !== (updatedProduct.unit || '')) {
       item.unit = updatedProduct.unit || '';
@@ -39,7 +39,7 @@ const syncProductPrice = (updatedProduct) => {
 
   // --- Sinkronisasi FAVORIT (WISHLIST) ---
   wishlist.forEach(item => {
-    if (item.id !== updatedProduct.id) return;
+    if (String(item.id) !== String(updatedProduct.id)) return;
 
     if (item.unit !== (updatedProduct.unit || '')) {
       item.unit = updatedProduct.unit || '';

@@ -210,6 +210,9 @@ const loadAppData = async () => {
       cart.forEach(i => { if(i.img) i.img = fixD(i.img); }); 
       wishlist.forEach(i => { if(i.img) i.img = fixD(i.img); });
       
+      if (typeof syncWishlistPrices === 'function') syncWishlistPrices();
+      if (typeof syncCartPrices === 'function') syncCartPrices();
+
       updWish();
       updCart();
       sQ = '';
@@ -263,6 +266,8 @@ const saveApp = async (forceImmediate = false) => {
     ssL('freshmart_cms_data', JSON.stringify(copyData)); 
     ssL('freshmart_last_update', appData.lastUpdate.toString()); 
     ssL('freshmart_products', JSON.stringify(appData.products)); 
+    if (typeof syncWishlistPrices === 'function') syncWishlistPrices();
+    if (typeof syncCartPrices === 'function') syncCartPrices();
     if (appData.store && appData.store.themeColor) {
       try { localStorage.setItem('freshmart_theme_color', appData.store.themeColor); } catch(e) {}
     }

@@ -2,6 +2,20 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-09-15] - Sinkronisasi Realtime Harga Produk pada Daftar Favorit (Wishlist) & Keranjang
+### Peningkatan & Perbaikan Sistem:
+- **Sinkronisasi Otomatis Harga Favorit (`syncWishlistPrices`):**
+  - Mengatasi masalah harga barang di menu "Favorit Saya" (Wishlist) yang sebelumnya tetap tertahan pada harga lama saat pertama kali disimpan ke bookmark lokal (misal: Mentega Amanda 250gr Dus tertahan di Rp 305.000 meskipun harga master telah naik ke Rp 306.000).
+  - Setiap kali pelanggan membuka halaman Favorit (`renderWish`), sistem kini secara otomatis merekonsiliasi seluruh item favorit dengan data master produk terkini di `appData.products`, memperbarui harga dasar maupun harga multi-varian secara instan dan otomatis menyimpannya ke `localStorage`.
+- **Sinkronisasi Otomatis Keranjang & Kalkulasi Harga Efektif (`syncCartPrices` & `getEffP`):**
+  - Menghubungkan kalkulasi `getEffP` langsung ke harga live master produk di `appData.products` sehingga pesanan di keranjang, rincian subtotal, dan pesan WhatsApp checkout selalu menggunakan nominal harga terbaru yang valid.
+  - Saat pelanggan memindahkan barang dari Favorit ke Keranjang (`moveWish`), nominal harga yang disalin dipastikan 100% menggunakan harga master live terbaru.
+- **Pendeteksian Status Ketersediaan di Favorit:**
+  - Item favorit yang produknya telah dinonaktifkan atau kehabisan stok otomatis menampilkan badge status `Tidak Tersedia` / `Stok Habis` dan tombol "Ke Keranjang" dikunci agar tidak dapat dipesan.
+- **PWA Cache Update:** Versi Service Worker dinaikkan ke `freshmart-pwa-v11`.
+
+---
+
 ## [2026-09-15] - Produk Nonaktif Tetap Tampil di Katalog (Grayscale Abu-Abu) & Proteksi Order
 ### Fitur & Peningkatan Sesuai Revisi:
 - **Katalog Etalase Online (Storefront & Beranda):**

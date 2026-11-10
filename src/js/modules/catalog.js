@@ -3,13 +3,25 @@
 // =============================================================================
 
 window.getEffP = i => {
-  const p = appData.products.find(x => x.id === i.id);
-  if (!p || !p.wholesale || !p.wholesale.length) return i.price;
-  const t = cart.filter(c => c.id === i.id).reduce((s, c) => s + c.qty, 0);
-  for (let w of p.wholesale.slice().sort((a, b) => b.minQty - a.minQty)) {
-    if (t >= w.minQty) return w.price;
+  const p = (appData.products || []).find(x => String(x.id) === String(i.id));
+  if (!p) return i.price || 0;
+
+  // Dapatkan harga live produk terkini (sesuai varian jika ada)
+  let currentBasePrice = Number(p.price) || 0;
+  if (i.variantName && p.variants && p.variants.length > 0) {
+    const v = p.variants.find(v => v.name === i.variantName);
+    if (v && v.price !== undefined && v.price !== null) {
+      currentBasePrice = Number(v.price);
+    }
   }
-  return i.price;
+
+  // Cek apakah berlaku harga grosir bertingkat
+  if (!p.wholesale || !p.wholesale.length) return currentBasePrice;
+  const t = cart.filter(c => String(c.id) === String(i.id)).reduce((s, c) => s + (Number(c.qty) || 0), 0);
+  for (let w of p.wholesale.slice().sort((a, b) => b.minQty - a.minQty)) {
+    if (t >= w.minQty) return Number(w.price);
+  }
+  return currentBasePrice;
 };
 
 window.slideBanner = (dir) => {
