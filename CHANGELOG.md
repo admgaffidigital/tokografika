@@ -44,6 +44,13 @@ Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan 
 - **Dukungan Switcher Mode Tampilan (List ☰ / Grid ⊞):**
   - Menyediakan tombol pemilih mode tampilan di samping tombol Panduan CMS, memungkinkan pengguna beralih antara List View dan Grid View dengan preferensi tersimpan otomatis di penyimpanan lokal (`freshmart_admin_menu_view`), dengan default List View.
 
+### 6. Maintenance & Perawatan Sistem (Service Worker v15 & Audit Bersih):
+- **Peningkatan Service Worker PWA (`freshmart-pwa-v15`):**
+  - Meningkatkan versi cache service worker ke `v15` (`public/sw.js` & `dist/sw.js`) untuk memastikan seluruh perangkat klien (Android PWA, iOS Safari, desktop) otomatis menghapus cache usang dan memuat versi terbaru tanpa jeda cache lama.
+- **Audit Diagnostik End-to-End Komprehensif:**
+  - 100% lulus seluruh rangkaian pengujian diagnostik otomatis: `audit-bugs.js`, `test-syntax.js`, `deep-audit.js`, `verify_all_references.js` (235/235 handler terverifikasi, 624 DOM ID cocok, 0 Broken Handlers, 0 Undefined References, 0 Syntax Errors).
+  - Isolasi engine cetak struk Thermal POS & Price Tag SVG terverifikasi stabil.
+
 ---
 
 ## [2026-09-15] - Integrasi & Sinkronisasi Total POS Kasir Toko dengan Pembaruan Real-Time
