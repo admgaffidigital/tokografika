@@ -23,6 +23,13 @@ Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan 
   - Rendering bertahap (`adminProductRenderLimit = 30`) menjaga kelancaran 60 FPS pada mobile.
   - Image Lazy Loading dengan `IntersectionObserver` dan placeholder SVG ringan.
 
+### 4. Redesain & Harmonisasi Badge Keranjang Produk Etalase:
+- **Kapsul Proporsional & Selaras Tema Toko (`var(--clr-p)`):**
+  - Mengubah bentuk badge `[x di Keranjang]` dari sebelumnya persegi panjang pipih (*gepeng & sempit*) menjadi bentuk kapsul elegan (*rounded-full pill*) dengan padding vertikal dan horizontal yang proporsional (`px-2.5 sm:px-3 py-1`).
+  - Mengaitkan warna latar belakang badge langsung ke variabel tema toko (`var(--clr-p, #00897b)`), sehingga warnanya selalu selaras dengan palet header, tombol aksi, dan identitas toko.
+  - Menambahkan cincin pemisah anti-bleed putih (`ring-2 ring-white/95 dark:ring-slate-900/95`) dan bayangan elevasi (*elevation shadow*) agar lencana terlihat kontras, mewah, dan jelas di atas berbagai warna foto produk.
+  - Menyesuaikan ukuran tipografi dan ikon troli menjadi lebih tegas dan mudah dibaca (`text-[10px] sm:text-[11px]` dengan angka kuantitas tebal).
+
 ---
 
 ## [2026-09-15] - Integrasi & Sinkronisasi Total POS Kasir Toko dengan Pembaruan Real-Time
