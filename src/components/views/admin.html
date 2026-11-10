@@ -36,121 +36,302 @@
   <div class='scroll-content flex-1 min-h-0 overflow-y-auto w-full relative' style='padding-bottom: calc(2rem + env(safe-area-inset-bottom, 16px));'>
     <div class='max-w-7xl mx-auto pt-4 sm:pt-6 px-3 sm:px-6 lg:px-8 w-full'>
       <div class='fade-in-scale block' id='admin-dashboard-view'>
-        <div class='flex items-center justify-between mb-5 px-1'>
-          <h3 class='font-bold text-slate-800 dark:text-white text-lg'>Menu Utama</h3>
-          <button type='button' onclick='openCmsGuide()' class='text-xs font-bold text-slate-500 hover:text-emerald-600 dark:text-slate-400 flex items-center gap-1.5 py-1 px-2.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md transition-all'>
-            <i class='fa-solid fa-book-bookmark text-amber-500'></i>
-            <span>Buku Panduan CMS</span>
-          </button>
+        <!-- Header Menu Utama & View Switcher -->
+        <div class='flex items-center justify-between mb-4 sm:mb-5 px-1 flex-wrap gap-2.5'>
+          <div>
+            <h3 class='font-bold text-slate-800 dark:text-white text-lg sm:text-xl tracking-tight'>Menu Utama</h3>
+            <p class='text-[11px] sm:text-xs text-slate-400 dark:text-slate-500 font-medium'>Pusat kendali & manajemen operasional toko</p>
+          </div>
+          <div class='flex items-center gap-2'>
+            <!-- Switcher List View / Grid View -->
+            <div class='bg-slate-100 dark:bg-slate-800/80 p-0.5 rounded-xl border border-slate-200/80 dark:border-slate-700/80 flex items-center shadow-xs'>
+              <button type='button' id='btn-admin-menu-list' onclick='setAdminMenuView("list")' class='w-8 h-8 rounded-lg flex items-center justify-center text-xs transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-xs font-bold' title='Tampilan List View'>
+                <i class='fa-solid fa-list-ul'></i>
+              </button>
+              <button type='button' id='btn-admin-menu-grid' onclick='setAdminMenuView("grid")' class='w-8 h-8 rounded-lg flex items-center justify-center text-xs transition-all text-slate-400 hover:text-slate-600 dark:hover:text-slate-200' title='Tampilan Grid'>
+                <i class='fa-solid fa-grip'></i>
+              </button>
+            </div>
+
+            <button type='button' onclick='openCmsGuide()' class='text-xs font-bold text-slate-600 hover:text-emerald-600 dark:text-slate-300 flex items-center gap-1.5 py-2 px-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow transition-all active:scale-95'>
+              <i class='fa-solid fa-book-bookmark text-amber-500'></i>
+              <span class='hidden xs:inline'>Buku Panduan CMS</span>
+              <span class='xs:hidden'>Panduan</span>
+            </button>
+          </div>
         </div>
         
-        <div class='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 sm:gap-4 pb-8'>
-          <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-emerald-300/80 dark:border-emerald-700/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group relative overflow-hidden active:scale-95' onclick='initPosView()'>
-            <div class='absolute top-2 right-2 bg-emerald-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm hover:shadow-md'>
-              POS
+        <!-- Menu Utama List Container (Default: List View) -->
+        <div id='admin-menu-container' class='adm-menu-list pb-8'>
+          <!-- 1. POS Kasir -->
+          <button class='adm-menu-btn bg-white dark:bg-slate-800 rounded-2xl border border-emerald-300/80 dark:border-emerald-700/80 shadow-xs hover:shadow-md hover:border-emerald-500 dark:hover:border-emerald-400 hover:-translate-y-0.5 transition-all duration-200 flex group active:scale-[0.99] relative overflow-hidden text-left' onclick='initPosView()'>
+            <div class='adm-menu-main flex items-center gap-3.5 min-w-0 flex-1'>
+              <div class='w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-200 text-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 shadow-2xs'>
+                <i class='fa-solid fa-cash-register text-xl'></i>
+              </div>
+              <div class='adm-menu-text min-w-0 flex-1'>
+                <div class='flex items-center gap-2 mb-0.5 flex-wrap'>
+                  <h4 class='text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate'>POS Kasir Toko</h4>
+                  <span class='bg-emerald-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider shadow-2xs'>POS</span>
+                </div>
+                <p class='adm-menu-subtitle text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 font-medium'>Transaksi kasir toko fisik, scan barcode & cetak struk</p>
+              </div>
             </div>
-            <div class='w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-all duration-200 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400'>
-              <i class='fa-solid fa-cash-register text-xl'></i>
+            <div class='adm-menu-arrow w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-700/50 items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40 transition-all shrink-0 ml-2'>
+              <i class='fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform'></i>
             </div>
-            <span class='text-[11px] font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider'>POS Kasir</span>
           </button>
 
-          <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group active:scale-95' onclick='openAdminTab(&apos;orders&apos;)'>
-            <div class='w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-all duration-200' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
-              <i class='fa-solid fa-receipt text-xl'></i>
+          <!-- 2. Pesanan -->
+          <button class='adm-menu-btn bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:-translate-y-0.5 transition-all duration-200 flex group active:scale-[0.99] relative overflow-hidden text-left' onclick='openAdminTab(&apos;orders&apos;)'>
+            <div class='adm-menu-main flex items-center gap-3.5 min-w-0 flex-1'>
+              <div class='w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-200 text-lg shadow-2xs' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
+                <i class='fa-solid fa-receipt text-xl'></i>
+              </div>
+              <div class='adm-menu-text min-w-0 flex-1'>
+                <div class='flex items-center gap-2 mb-0.5 flex-wrap'>
+                  <h4 class='text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate'>Kelola Pesanan Online</h4>
+                </div>
+                <p class='adm-menu-subtitle text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 font-medium'>Pantau orderan masuk, konfirmasi pembayaran & resi</p>
+              </div>
             </div>
-            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Pesanan</span>
+            <div class='adm-menu-arrow w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-700/50 items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40 transition-all shrink-0 ml-2'>
+              <i class='fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform'></i>
+            </div>
           </button>
 
-          <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600 hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group active:scale-95' onclick='openAdminTab(&apos;settings&apos;)'>
-            <div class='w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400 flex items-center justify-center group-hover:scale-105 transition-all duration-200'>
-              <i class='fa-solid fa-gear text-xl'></i>
+          <!-- 3. Toko -->
+          <button class='adm-menu-btn bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-slate-600 hover:-translate-y-0.5 transition-all duration-200 flex group active:scale-[0.99] relative overflow-hidden text-left' onclick='openAdminTab(&apos;settings&apos;)'>
+            <div class='adm-menu-main flex items-center gap-3.5 min-w-0 flex-1'>
+              <div class='w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-200 text-lg shadow-2xs'>
+                <i class='fa-solid fa-gear text-xl'></i>
+              </div>
+              <div class='adm-menu-text min-w-0 flex-1'>
+                <div class='flex items-center gap-2 mb-0.5 flex-wrap'>
+                  <h4 class='text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate'>Pengaturan Toko</h4>
+                </div>
+                <p class='adm-menu-subtitle text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 font-medium'>Profil toko, logo, kurir pengiriman, kontak & QRIS</p>
+              </div>
             </div>
-            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Toko</span>
+            <div class='adm-menu-arrow w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-700/50 items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40 transition-all shrink-0 ml-2'>
+              <i class='fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform'></i>
+            </div>
           </button>
 
-          <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group active:scale-95' onclick='openAdminTab(&apos;products&apos;)'>
-            <div class='w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-all duration-200' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
-              <i class='fa-solid fa-box-open text-xl'></i>
+          <!-- 4. Produk -->
+          <button class='adm-menu-btn bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:-translate-y-0.5 transition-all duration-200 flex group active:scale-[0.99] relative overflow-hidden text-left' onclick='openAdminTab(&apos;products&apos;)'>
+            <div class='adm-menu-main flex items-center gap-3.5 min-w-0 flex-1'>
+              <div class='w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-200 text-lg shadow-2xs' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
+                <i class='fa-solid fa-box-open text-xl'></i>
+              </div>
+              <div class='adm-menu-text min-w-0 flex-1'>
+                <div class='flex items-center gap-2 mb-0.5 flex-wrap'>
+                  <h4 class='text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate'>Katalog Produk & Stok</h4>
+                </div>
+                <p class='adm-menu-subtitle text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 font-medium'>Edit cepat, harga jual, modal HPP, varian, grosir & supplier</p>
+              </div>
             </div>
-            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Produk</span>
+            <div class='adm-menu-arrow w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-700/50 items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40 transition-all shrink-0 ml-2'>
+              <i class='fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform'></i>
+            </div>
           </button>
 
-          <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group active:scale-95' onclick='openAdminTab(&apos;categories&apos;)'>
-            <div class='w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-all duration-200' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
-              <i class='fa-solid fa-tags text-xl'></i>
+          <!-- 5. Kategori -->
+          <button class='adm-menu-btn bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:-translate-y-0.5 transition-all duration-200 flex group active:scale-[0.99] relative overflow-hidden text-left' onclick='openAdminTab(&apos;categories&apos;)'>
+            <div class='adm-menu-main flex items-center gap-3.5 min-w-0 flex-1'>
+              <div class='w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-200 text-lg shadow-2xs' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
+                <i class='fa-solid fa-tags text-xl'></i>
+              </div>
+              <div class='adm-menu-text min-w-0 flex-1'>
+                <div class='flex items-center gap-2 mb-0.5 flex-wrap'>
+                  <h4 class='text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate'>Kategori & Etalase</h4>
+                </div>
+                <p class='adm-menu-subtitle text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 font-medium'>Kelompokkan jenis barang & rapikan etalase beranda</p>
+              </div>
             </div>
-            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Kategori</span>
+            <div class='adm-menu-arrow w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-700/50 items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40 transition-all shrink-0 ml-2'>
+              <i class='fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform'></i>
+            </div>
           </button>
 
-          <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:border-purple-200 dark:hover:border-purple-500/30 hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group active:scale-95' onclick='openAdminTab(&apos;vouchers&apos;)'>
-            <div class='w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center group-hover:scale-105 transition-all duration-200'>
-              <i class='fa-solid fa-ticket text-xl'></i>
+          <!-- 6. Voucher -->
+          <button class='adm-menu-btn bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:border-purple-300 dark:hover:border-purple-500/40 hover:-translate-y-0.5 transition-all duration-200 flex group active:scale-[0.99] relative overflow-hidden text-left' onclick='openAdminTab(&apos;vouchers&apos;)'>
+            <div class='adm-menu-main flex items-center gap-3.5 min-w-0 flex-1'>
+              <div class='w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-200 text-lg shadow-2xs'>
+                <i class='fa-solid fa-ticket text-xl'></i>
+              </div>
+              <div class='adm-menu-text min-w-0 flex-1'>
+                <div class='flex items-center gap-2 mb-0.5 flex-wrap'>
+                  <h4 class='text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate'>Voucher & Promo Diskon</h4>
+                </div>
+                <p class='adm-menu-subtitle text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 font-medium'>Kupon potongan harga belanja & voucher diskon ongkir</p>
+              </div>
             </div>
-            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Voucher</span>
+            <div class='adm-menu-arrow w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-700/50 items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40 transition-all shrink-0 ml-2'>
+              <i class='fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform'></i>
+            </div>
           </button>
 
-          <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-500/30 hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group active:scale-95' onclick='openAdminTab(&apos;banks&apos;)'>
-            <div class='w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-105 transition-all duration-200'>
-              <i class='fa-solid fa-building-columns text-xl'></i>
+          <!-- 7. Rekening -->
+          <button class='adm-menu-btn bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-500/40 hover:-translate-y-0.5 transition-all duration-200 flex group active:scale-[0.99] relative overflow-hidden text-left' onclick='openAdminTab(&apos;banks&apos;)'>
+            <div class='adm-menu-main flex items-center gap-3.5 min-w-0 flex-1'>
+              <div class='w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-200 text-lg shadow-2xs'>
+                <i class='fa-solid fa-building-columns text-xl'></i>
+              </div>
+              <div class='adm-menu-text min-w-0 flex-1'>
+                <div class='flex items-center gap-2 mb-0.5 flex-wrap'>
+                  <h4 class='text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate'>Rekening Bank & QRIS</h4>
+                </div>
+                <p class='adm-menu-subtitle text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 font-medium'>Nomor rekening bank transfer tujuan & QRIS barcode toko</p>
+              </div>
             </div>
-            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Rekening</span>
+            <div class='adm-menu-arrow w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-700/50 items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40 transition-all shrink-0 ml-2'>
+              <i class='fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform'></i>
+            </div>
           </button>
 
-          <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:border-pink-200 dark:hover:border-pink-500/30 hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group active:scale-95' onclick='openAdminTab(&apos;banners&apos;)'>
-            <div class='w-12 h-12 rounded-xl bg-pink-50 dark:bg-pink-500/10 text-pink-500 dark:text-pink-400 flex items-center justify-center group-hover:scale-105 transition-all duration-200'>
-              <i class='fa-solid fa-images text-xl'></i>
+          <!-- 8. Banner -->
+          <button class='adm-menu-btn bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:border-pink-300 dark:hover:border-pink-500/40 hover:-translate-y-0.5 transition-all duration-200 flex group active:scale-[0.99] relative overflow-hidden text-left' onclick='openAdminTab(&apos;banners&apos;)'>
+            <div class='adm-menu-main flex items-center gap-3.5 min-w-0 flex-1'>
+              <div class='w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-pink-50 dark:bg-pink-500/10 text-pink-500 dark:text-pink-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-200 text-lg shadow-2xs'>
+                <i class='fa-solid fa-images text-xl'></i>
+              </div>
+              <div class='adm-menu-text min-w-0 flex-1'>
+                <div class='flex items-center gap-2 mb-0.5 flex-wrap'>
+                  <h4 class='text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate'>Banner Promo Beranda</h4>
+                </div>
+                <p class='adm-menu-subtitle text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 font-medium'>Banner slide promosi gambar 16:9 di halaman beranda</p>
+              </div>
             </div>
-            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Banner</span>
+            <div class='adm-menu-arrow w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-700/50 items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40 transition-all shrink-0 ml-2'>
+              <i class='fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform'></i>
+            </div>
           </button>
           
-          <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group active:scale-95' id='btn-menu-accounts' onclick='openAdminTab(&apos;accounts&apos;)'>
-            <div class='w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-all duration-200' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
-              <i class='fa-solid fa-users-gear text-xl'></i>
+          <!-- 9. Kasir / Akun -->
+          <button class='adm-menu-btn bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:-translate-y-0.5 transition-all duration-200 flex group active:scale-[0.99] relative overflow-hidden text-left' id='btn-menu-accounts' onclick='openAdminTab(&apos;accounts&apos;)'>
+            <div class='adm-menu-main flex items-center gap-3.5 min-w-0 flex-1'>
+              <div class='w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-200 text-lg shadow-2xs' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
+                <i class='fa-solid fa-users-gear text-xl'></i>
+              </div>
+              <div class='adm-menu-text min-w-0 flex-1'>
+                <div class='flex items-center gap-2 mb-0.5 flex-wrap'>
+                  <h4 class='text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate'>Manajemen Akun Kasir</h4>
+                </div>
+                <p class='adm-menu-subtitle text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 font-medium'>Kelola akun login staf kasir & batas izin akses menu</p>
+              </div>
             </div>
-            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Kasir</span>
+            <div class='adm-menu-arrow w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-700/50 items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40 transition-all shrink-0 ml-2'>
+              <i class='fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform'></i>
+            </div>
           </button>
 
-          <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-500/30 hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group active:scale-95' id='btn-menu-reports' onclick='openAdminTab(&apos;reports&apos;)'>
-            <div class='w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-105 transition-all duration-200'>
-              <i class='fa-solid fa-chart-line text-xl'></i>
+          <!-- 10. Laporan Laba -->
+          <button class='adm-menu-btn bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-500/40 hover:-translate-y-0.5 transition-all duration-200 flex group active:scale-[0.99] relative overflow-hidden text-left' id='btn-menu-reports' onclick='openAdminTab(&apos;reports&apos;)'>
+            <div class='adm-menu-main flex items-center gap-3.5 min-w-0 flex-1'>
+              <div class='w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-200 text-lg shadow-2xs'>
+                <i class='fa-solid fa-chart-line text-xl'></i>
+              </div>
+              <div class='adm-menu-text min-w-0 flex-1'>
+                <div class='flex items-center gap-2 mb-0.5 flex-wrap'>
+                  <h4 class='text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate'>Laporan Keuntungan & Laba</h4>
+                </div>
+                <p class='adm-menu-subtitle text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 font-medium'>Analisa omset penjualan, modal HPP & estimasi laba bersih</p>
+              </div>
             </div>
-            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Laporan Laba</span>
+            <div class='adm-menu-arrow w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-700/50 items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40 transition-all shrink-0 ml-2'>
+              <i class='fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform'></i>
+            </div>
           </button>
 
-          <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:border-teal-300 dark:hover:border-teal-500/30 hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group active:scale-95' id='btn-menu-purchases' onclick='openAdminTab(&apos;purchases&apos;)'>
-            <div class='w-12 h-12 rounded-xl bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center group-hover:scale-105 transition-all duration-200'>
-              <i class='fa-solid fa-cart-flatbed text-xl'></i>
+          <!-- 11. Pembelian & Hutang -->
+          <button class='adm-menu-btn bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:border-teal-300 dark:hover:border-teal-500/40 hover:-translate-y-0.5 transition-all duration-200 flex group active:scale-[0.99] relative overflow-hidden text-left' id='btn-menu-purchases' onclick='openAdminTab(&apos;purchases&apos;)'>
+            <div class='adm-menu-main flex items-center gap-3.5 min-w-0 flex-1'>
+              <div class='w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-200 text-lg shadow-2xs'>
+                <i class='fa-solid fa-cart-flatbed text-xl'></i>
+              </div>
+              <div class='adm-menu-text min-w-0 flex-1'>
+                <div class='flex items-center gap-2 mb-0.5 flex-wrap'>
+                  <h4 class='text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate'>Kulakan & Hutang Supplier</h4>
+                </div>
+                <p class='adm-menu-subtitle text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 font-medium'>Catat faktur masuk, jatuh tempo supplier & histori bayar</p>
+              </div>
             </div>
-            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Pembelian & Hutang</span>
+            <div class='adm-menu-arrow w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-700/50 items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40 transition-all shrink-0 ml-2'>
+              <i class='fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform'></i>
+            </div>
           </button>
 
-          <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:border-cyan-300 dark:hover:border-cyan-500/30 hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group active:scale-95' id='btn-menu-stock-opname' onclick='openAdminTab(&apos;stock_opname&apos;)'>
-            <div class='w-12 h-12 rounded-xl bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center group-hover:scale-105 transition-all duration-200'>
-              <i class='fa-solid fa-clipboard-check text-xl'></i>
+          <!-- 12. Stok Opname -->
+          <button class='adm-menu-btn bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:border-cyan-300 dark:hover:border-cyan-500/40 hover:-translate-y-0.5 transition-all duration-200 flex group active:scale-[0.99] relative overflow-hidden text-left' id='btn-menu-stock-opname' onclick='openAdminTab(&apos;stock_opname&apos;)'>
+            <div class='adm-menu-main flex items-center gap-3.5 min-w-0 flex-1'>
+              <div class='w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-cyan-50 dark:bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-200 text-lg shadow-2xs'>
+                <i class='fa-solid fa-clipboard-check text-xl'></i>
+              </div>
+              <div class='adm-menu-text min-w-0 flex-1'>
+                <div class='flex items-center gap-2 mb-0.5 flex-wrap'>
+                  <h4 class='text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate'>Audit Fisik & Stok Opname</h4>
+                </div>
+                <p class='adm-menu-subtitle text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 font-medium'>Audit berkala selisih stok sistem vs hitungan fisik toko</p>
+              </div>
             </div>
-            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Stok Opname</span>
+            <div class='adm-menu-arrow w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-700/50 items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40 transition-all shrink-0 ml-2'>
+              <i class='fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform'></i>
+            </div>
           </button>
 
-          <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:border-rose-300 dark:hover:border-rose-500/30 hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group active:scale-95' id='btn-menu-pricetag' onclick='openPricetagModal()'>
-            <div class='w-12 h-12 rounded-xl bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center group-hover:scale-105 transition-all duration-200'>
-              <i class='fa-solid fa-tags text-xl'></i>
+          <!-- 13. Pricetag Studio -->
+          <button class='adm-menu-btn bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:border-rose-300 dark:hover:border-rose-500/40 hover:-translate-y-0.5 transition-all duration-200 flex group active:scale-[0.99] relative overflow-hidden text-left' id='btn-menu-pricetag' onclick='openPricetagModal()'>
+            <div class='adm-menu-main flex items-center gap-3.5 min-w-0 flex-1'>
+              <div class='w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-200 text-lg shadow-2xs'>
+                <i class='fa-solid fa-tags text-xl'></i>
+              </div>
+              <div class='adm-menu-text min-w-0 flex-1'>
+                <div class='flex items-center gap-2 mb-0.5 flex-wrap'>
+                  <h4 class='text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate'>Cetak Price Tag & Barcode</h4>
+                </div>
+                <p class='adm-menu-subtitle text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 font-medium'>Label harga rak toko, barcode vektor & tier diskon grosir</p>
+              </div>
             </div>
-            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Pricetag Studio</span>
+            <div class='adm-menu-arrow w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-700/50 items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40 transition-all shrink-0 ml-2'>
+              <i class='fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform'></i>
+            </div>
           </button>
 
-          <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group active:scale-95' id='btn-menu-backup-sync' onclick='openBackupSyncModal()'>
-            <div class='w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-all duration-200' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
-              <i class='fa-solid fa-cloud-arrow-up text-xl'></i>
+          <!-- 14. Backup & Cloud -->
+          <button class='adm-menu-btn bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:border-emerald-400 dark:hover:border-emerald-500/50 hover:-translate-y-0.5 transition-all duration-200 flex group active:scale-[0.99] relative overflow-hidden text-left' id='btn-menu-backup-sync' onclick='openBackupSyncModal()'>
+            <div class='adm-menu-main flex items-center gap-3.5 min-w-0 flex-1'>
+              <div class='w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-200 text-lg shadow-2xs' style='background-color:var(--clr-p-bg);color:var(--clr-p)'>
+                <i class='fa-solid fa-cloud-arrow-up text-xl'></i>
+              </div>
+              <div class='adm-menu-text min-w-0 flex-1'>
+                <div class='flex items-center gap-2 mb-0.5 flex-wrap'>
+                  <h4 class='text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate'>Backup Data & Cloud Sync</h4>
+                </div>
+                <p class='adm-menu-subtitle text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 font-medium'>Ekspor cadangan JSON, pulihkan data & sinkron awan</p>
+              </div>
             </div>
-            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Backup & Cloud</span>
+            <div class='adm-menu-arrow w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-700/50 items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40 transition-all shrink-0 ml-2'>
+              <i class='fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform'></i>
+            </div>
           </button>
 
-          <button class='bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-500/30 hover:-translate-y-0.5 transition-all duration-200 flex flex-col items-center justify-center gap-3 group active:scale-95' onclick='openCmsGuide()'>
-            <div class='w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-105 transition-all duration-200'>
-              <i class='fa-solid fa-book-open-reader text-xl'></i>
+          <!-- 15. Panduan CMS -->
+          <button class='adm-menu-btn bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-xs hover:shadow-md hover:border-amber-300 dark:hover:border-amber-500/40 hover:-translate-y-0.5 transition-all duration-200 flex group active:scale-[0.99] relative overflow-hidden text-left' onclick='openCmsGuide()'>
+            <div class='adm-menu-main flex items-center gap-3.5 min-w-0 flex-1'>
+              <div class='w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-all duration-200 text-lg shadow-2xs'>
+                <i class='fa-solid fa-book-open-reader text-xl'></i>
+              </div>
+              <div class='adm-menu-text min-w-0 flex-1'>
+                <div class='flex items-center gap-2 mb-0.5 flex-wrap'>
+                  <h4 class='text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors truncate'>Buku Panduan Admin CMS</h4>
+                </div>
+                <p class='adm-menu-subtitle text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 font-medium'>Tutorial interaktif cara pakai seluruh fitur toko & kasir</p>
+              </div>
             </div>
-            <span class='text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider'>Panduan CMS</span>
+            <div class='adm-menu-arrow w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-700/50 items-center justify-center text-slate-400 group-hover:text-emerald-600 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/40 transition-all shrink-0 ml-2'>
+              <i class='fa-solid fa-chevron-right text-xs group-hover:translate-x-0.5 transition-transform'></i>
+            </div>
           </button>
         </div>
       </div>

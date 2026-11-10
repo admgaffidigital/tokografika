@@ -78,6 +78,39 @@ window.openAdminMenu = () => {
       }
     }
   });
+
+  const savedMenuView = sL('freshmart_admin_menu_view') || 'list';
+  if (typeof setAdminMenuView === 'function') setAdminMenuView(savedMenuView);
+};
+
+window.setAdminMenuView = (mode) => {
+  const container = el('admin-menu-container');
+  const btnList = el('btn-admin-menu-list');
+  const btnGrid = el('btn-admin-menu-grid');
+  if (!container) return;
+
+  const m = mode === 'grid' ? 'grid' : 'list';
+  try { ssL('freshmart_admin_menu_view', m); } catch(e) {}
+
+  if (m === 'grid') {
+    container.classList.remove('adm-menu-list');
+    container.classList.add('adm-menu-grid');
+    if (btnGrid) {
+      btnGrid.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-xs font-bold';
+    }
+    if (btnList) {
+      btnList.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs transition-all text-slate-400 hover:text-slate-600 dark:hover:text-slate-200';
+    }
+  } else {
+    container.classList.remove('adm-menu-grid');
+    container.classList.add('adm-menu-list');
+    if (btnList) {
+      btnList.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs transition-all bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-xs font-bold';
+    }
+    if (btnGrid) {
+      btnGrid.className = 'w-8 h-8 rounded-lg flex items-center justify-center text-xs transition-all text-slate-400 hover:text-slate-600 dark:hover:text-slate-200';
+    }
+  }
 };
 
 window.processAdminLogin = () => {

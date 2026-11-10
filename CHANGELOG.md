@@ -33,6 +33,17 @@ Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan 
   - Pada thumbnail kecil mode list (80px), lencana disesuaikan menjadi mini-pill non-wrapping `[🛒 x]` (`whitespace-nowrap`) sehingga foto produk tidak tertutup oleh teks panjang yang terlipat 2 baris.
   - Keterangan lengkap `[🛒 x di Keranjang]` dipindahkan ke baris badge informasi produk di samping nama dan tag kategori, memanfaatkan ruang horizontal yang luas secara rapi dan estetis.
 
+### 5. Redesain Menu Utama Admin CMS Menjadi List View Elegan:
+- **Tampilan List View Modern & Informatif:**
+  - Mengubah tampilan Menu Utama Admin CMS dari kotak-kotak grid masif (*chunky grid*) menjadi deretan kartu baris (*List View*) yang jauh lebih cantik, proporsional, dan nyaman di ponsel maupun desktop.
+  - Setiap menu kini dilengkapi dengan:
+    - Ikon berwarna tematik (*soft pastel & theme color squircle*).
+    - Judul menu yang tegas dan jelas.
+    - Subtitle deskripsi fungsi fitur yang informatif (misal: "Edit cepat, harga jual, modal HPP, varian, grosir & supplier").
+    - Indikator panah navigasi (*chevron-right*) beranimasi halus saat disentuh/hover.
+- **Dukungan Switcher Mode Tampilan (List ☰ / Grid ⊞):**
+  - Menyediakan tombol pemilih mode tampilan di samping tombol Panduan CMS, memungkinkan pengguna beralih antara List View dan Grid View dengan preferensi tersimpan otomatis di penyimpanan lokal (`freshmart_admin_menu_view`), dengan default List View.
+
 ---
 
 ## [2026-09-15] - Integrasi & Sinkronisasi Total POS Kasir Toko dengan Pembaruan Real-Time
