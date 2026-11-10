@@ -399,3 +399,222 @@ window.showIosInstallGuide = () => {
     false
   );
 };
+
+// =============================================================================
+// NATIVE-STYLE PULL-TO-REFRESH ENGINE (PWA & MOBILE HYBRID)
+// =============================================================================
+(() => {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+
+  let startY = 0;
+  let startX = 0;
+  let currentY = 0;
+  let isPulling = false;
+  let isCandidate = false;
+  let isRefreshing = false;
+  let passedThreshold = false;
+  const THRESHOLD = 65;
+  const MAX_PULL = 92;
+
+  const _getActiveScrollContainer = () => {
+    const activeView = [...document.querySelectorAll('.view-section')].find(e => !e.classList.contains('hidden'));
+    if (!activeView) return window;
+    const scrollEl = activeView.querySelector('.scroll-content') || activeView;
+    return scrollEl;
+  };
+
+  const _getScrollTop = () => {
+    const sc = _getActiveScrollContainer();
+    if (sc === window || !sc) {
+      return window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    }
+    return sc.scrollTop || 0;
+  };
+
+  const _isModalOpen = () => {
+    return !!document.querySelector('.modal-backdrop-smooth:not(.hidden)') || 
+           !!document.querySelector('#global-loader:not(.hidden)');
+  };
+
+  const onTouchStart = (e) => {
+    if (isRefreshing || _isModalOpen()) return;
+    if (!e.touches || e.touches.length !== 1) return;
+
+    // Aktifkan hanya bila scroll berada tepat di posisi atas
+    if (_getScrollTop() <= 2) {
+      startY = e.touches[0].clientY;
+      startX = e.touches[0].clientX;
+      currentY = startY;
+      isCandidate = true;
+      isPulling = false;
+      passedThreshold = false;
+    } else {
+      isCandidate = false;
+    }
+  };
+
+  const onTouchMove = (e) => {
+    if (!isCandidate || isRefreshing || _isModalOpen()) return;
+    if (!e.touches || e.touches.length !== 1) return;
+
+    currentY = e.touches[0].clientY;
+    const deltaY = currentY - startY;
+    const deltaX = e.touches[0].clientX - startX;
+
+    // Abaikan jika gerakan dominan ke samping (horizontal carousel / tab scroll)
+    if (Math.abs(deltaX) > Math.abs(deltaY) * 1.25 && !isPulling) {
+      isCandidate = false;
+      return;
+    }
+
+    // Jika scroll ke atas atau user telah berpindah scroll ke bawah
+    if (deltaY <= 0 || _getScrollTop() > 2) {
+      if (isPulling) _resetIndicator(true);
+      isCandidate = false;
+      isPulling = false;
+      return;
+    }
+
+    // Rubber-band resistance curve
+    const pullDistance = Math.min(MAX_PULL, Math.pow(deltaY, 0.82) * 1.6);
+
+    if (pullDistance > 12) {
+      isPulling = true;
+      if (e.cancelable) e.preventDefault();
+
+      const indicator = el('ptr-indicator');
+      const icon = el('ptr-icon');
+      const iconBox = el('ptr-icon-box');
+      const text = el('ptr-text');
+
+      if (indicator) {
+        indicator.style.transition = 'none';
+        indicator.style.opacity = Math.min(1, pullDistance / 35).toFixed(2);
+        indicator.style.transform = `translate(-50%, ${pullDistance}px)`;
+      }
+
+      const progress = Math.min(1, pullDistance / THRESHOLD);
+      const rot = progress * 180;
+      if (icon) {
+        icon.style.transform = `rotate(${rot}deg)`;
+      }
+
+      if (pullDistance >= THRESHOLD) {
+        if (!passedThreshold) {
+          passedThreshold = true;
+          if (navigator.vibrate) try { navigator.vibrate(15); } catch(err){}
+        }
+        if (text) text.innerText = 'Lepaskan untuk memuat ulang';
+        if (iconBox) {
+          iconBox.className = 'w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center transition-all duration-150 shrink-0 shadow-sm';
+        }
+      } else {
+        passedThreshold = false;
+        if (text) text.innerText = 'Tarik untuk memuat ulang';
+        if (iconBox) {
+          iconBox.className = 'w-6 h-6 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all duration-150 shrink-0';
+        }
+      }
+    }
+  };
+
+  const onTouchEnd = async () => {
+    if (!isCandidate && !isPulling) return;
+    isCandidate = false;
+
+    const indicator = el('ptr-indicator');
+    const icon = el('ptr-icon');
+    const iconBox = el('ptr-icon-box');
+    const text = el('ptr-text');
+
+    if (passedThreshold && isPulling && !isRefreshing) {
+      isRefreshing = true;
+      isPulling = false;
+
+      if (indicator) {
+        indicator.style.transition = 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s';
+        indicator.style.transform = 'translate(-50%, 72px)';
+      }
+      if (icon) {
+        icon.className = 'fa-solid fa-arrows-rotate fa-spin text-xs';
+        icon.style.transform = '';
+      }
+      if (iconBox) {
+        iconBox.className = 'w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center transition-all shrink-0 shadow-sm';
+      }
+      if (text) text.innerText = 'Memperbarui data...';
+
+      try {
+        if (typeof window.refreshFromCloud === 'function') {
+          await window.refreshFromCloud();
+        } else if (typeof loadAppData === 'function') {
+          localStorage.removeItem('freshmart_last_update');
+          localStorage.removeItem('freshmart_products');
+          localStorage.removeItem('freshmart_cms_data');
+          await loadAppData();
+          if (typeof rDyn === 'function') rDyn();
+          if (typeof rCat === 'function') rCat();
+          showToast('Data berhasil diperbarui! 🔄');
+        }
+
+        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.getRegistration().then(reg => reg?.update().catch(() => {}));
+        }
+
+        if (text) text.innerText = 'Data Berhasil Diperbarui! ✓';
+        if (icon) icon.className = 'fa-solid fa-check text-xs';
+        if (navigator.vibrate) try { navigator.vibrate([12, 40, 15]); } catch(err){}
+      } catch (err) {
+        console.warn('[FreshMart PTR] Refresh error:', err);
+        if (text) text.innerText = 'Gagal memuat data cloud';
+      }
+
+      setTimeout(() => {
+        _resetIndicator();
+      }, 450);
+    } else {
+      _resetIndicator();
+    }
+  };
+
+  const _resetIndicator = (immediate = false) => {
+    isPulling = false;
+    isCandidate = false;
+    passedThreshold = false;
+    isRefreshing = false;
+
+    const indicator = el('ptr-indicator');
+    const icon = el('ptr-icon');
+    const iconBox = el('ptr-icon-box');
+    const text = el('ptr-text');
+
+    if (indicator) {
+      if (immediate) {
+        indicator.style.transition = 'none';
+        indicator.style.transform = 'translate(-50%, 0)';
+        indicator.style.opacity = '0';
+      } else {
+        indicator.style.transition = 'transform 0.25s ease-out, opacity 0.25s ease-out';
+        indicator.style.transform = 'translate(-50%, 0)';
+        indicator.style.opacity = '0';
+      }
+    }
+
+    setTimeout(() => {
+      if (icon) {
+        icon.className = 'fa-solid fa-arrow-down text-xs transition-transform duration-150';
+        icon.style.transform = '';
+      }
+      if (iconBox) {
+        iconBox.className = 'w-6 h-6 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all duration-200 shrink-0';
+      }
+      if (text) text.innerText = 'Tarik untuk memuat ulang';
+    }, 250);
+  };
+
+  // Event Listeners
+  document.addEventListener('touchstart', onTouchStart, { passive: true });
+  document.addEventListener('touchmove', onTouchMove, { passive: false });
+  document.addEventListener('touchend', onTouchEnd, { passive: true });
+  document.addEventListener('touchcancel', () => _resetIndicator(true), { passive: true });
+})();

@@ -6,6 +6,16 @@
   <span class='font-bold text-xs sm:text-sm tracking-wide' id='toast-message'>Notifikasi</span>
 </div>
 
+<!-- Native-style Pull-to-Refresh Indicator (PWA Mobile) -->
+<div id="ptr-indicator" class="fixed left-1/2 z-[9995] pointer-events-none opacity-0 select-none will-change-transform" style="top: -64px; transform: translate(-50%, 0);">
+  <div class="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md text-slate-800 dark:text-slate-100 px-4 py-2 rounded-full border border-slate-200/90 dark:border-slate-700/90 shadow-2xl flex items-center gap-2.5 text-xs font-bold ring-1 ring-black/5 dark:ring-white/10">
+    <div id="ptr-icon-box" class="w-6 h-6 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center transition-all duration-150 shrink-0">
+      <i id="ptr-icon" class="fa-solid fa-arrow-down text-xs transition-transform duration-150"></i>
+    </div>
+    <span id="ptr-text" class="tracking-tight text-[11px] sm:text-xs font-bold text-slate-700 dark:text-slate-200">Tarik untuk memuat ulang</span>
+  </div>
+</div>
+
 <div class='fixed inset-0 z-[9999] bg-slate-900 flex flex-col items-center justify-center text-white hidden transition-opacity duration-300' id='global-loader'>
   <div class='relative w-20 h-20 flex items-center justify-center mb-5'>
     <div class='absolute inset-0 rounded-full animate-spin' style='border:4px solid var(--clr-p,#059669);border-top-color:transparent;opacity:0.8'></div>

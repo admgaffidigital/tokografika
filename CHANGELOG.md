@@ -2,6 +2,23 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-11-10] - Fitur Native Pull-to-Refresh Gesture (Tarik Layar ke Bawah untuk Muat Ulang)
+### 1. Pengalaman Asli Aplikasi Mobile (*Native-like App Experience*):
+- **Gesture Tarik ke Bawah (Pull-to-Refresh):**
+  - Mengimplementasikan deteksi gesture sentuh (*touch gesture engine*) alami pada layar perangkat mobile, tablet, maupun standalone PWA.
+  - Ketika pengguna berada di bagian paling atas halaman (`scrollTop <= 2px`) dan menarik layar ke bawah, indikator dinamis berbentuk kapsul mengambang (*floating pill with backdrop blur*) muncul secara mulus dari atas layar.
+  - Memiliki kurva redaman elastis (*rubber-band damping curve*) dengan rotasi panah proporsional yang berputar hingga 180° dan berubah warna saat melewati ambang batas 65px.
+  - **Umpan Balik Haptik (*Haptic Vibration*):** Menghasilkan getaran haptik mikro halus pada perangkat seluler saat ambang batas tarikan tercapai dan saat pembaruan berhasil.
+
+### 2. Sinkronisasi Data Cerdas (*Smart Background Cloud Refresh*):
+- **Pembaruan Tanpa Kedip Putih (*Flicker-Free In-Place Update*):**
+  - Memanggil `refreshFromCloud()` untuk menyinkronkan data toko, katalog produk, kategori, banner, keranjang, dan harga langsung secara instan tanpa membuat layar ponsel berkedip putih seperti reload browser biasa.
+  - Memeriksa pembaruan Service Worker PWA di latar belakang secara otomatis.
+  - Dilengkapi pengaman konflik geser horizontal (misal geser tab atau slider) serta proteksi saat modal pop-up sedang terbuka.
+  - Menyediakan fallback aman ke `location.reload()` jika terjadi anomali koneksi jaringan.
+
+
+
 ## [2026-11-10] - Fitur Kirim Struk WhatsApp & Integrasi Rekening Bank Toko Khusus Metode Transfer
 ### 1. Fitur Bagikan Struk ke WhatsApp (POS, Admin, & Preview Struk):
 - **Tombol Kirim Struk WhatsApp (`shareReceiptWhatsApp`):**
