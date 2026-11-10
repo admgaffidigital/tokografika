@@ -375,6 +375,9 @@ window.refreshFromCloud = async () => {
     if (typeof rCat === 'function') rCat();
     if (typeof updWish === 'function') updWish();
     if (typeof updCart === 'function') updCart();
+    if (typeof syncPosCartPrices === 'function') syncPosCartPrices();
+    if (typeof renderPosProducts === 'function') renderPosProducts();
+    if (typeof renderPosCart === 'function') renderPosCart();
     hLoad();
     showToast('Data toko berhasil diperbarui! 🔄');
   } catch(e) {

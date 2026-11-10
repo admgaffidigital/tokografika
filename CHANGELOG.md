@@ -2,6 +2,18 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-09-15] - Integrasi & Sinkronisasi Total POS Kasir Toko dengan Pembaruan Real-Time
+### Integrasi POS Kasir & Transaksi Toko Fisik:
+- **Sinkronisasi Otomatis POS Kasir Real-Time (`syncPosCartPrices`):**
+  - Keranjang belanja kasir POS kini memiliki pemantau sinkronisasi otomatis (`syncPosCartPrices`). Saat admin memperbarui harga di CMS atau dari perangkat lain, harga barang di keranjang kasir otomatis menyesuaikan harga terbaru.
+  - Listener Cloud Firestore (`startPriceWatcher`) dan tombol pembaruan instan (`refreshFromCloud`) otomatis memicu render ulang produk kasir (`renderPosProducts`) dan keranjang kasir (`renderPosCart`) secara seketika (*live in-place*).
+- **Indikator Kenaikan Harga di Layar Kasir:**
+  - Kartu produk POS kini menampilkan badge kenaikan harga `▲ Naik Rp...` sehingga kasir dapat memberikan informasi yang akurat dan transparan saat pelanggan menanyakan perubahan harga barang di toko fisik.
+- **Pembedaan Status Nonaktif vs Stok Habis di POS:**
+  - Kartu produk yang dinonaktifkan oleh admin menampilkan label tegas **"Nonaktif"** (bukan sekadar "Habis") dan pembelian dikunci otomatis, membedakannya secara jelas dengan produk yang hanya kehabisan stok fisik.
+
+---
+
 ## [2026-09-15] - Pembaruan Menyeluruh Panduan Interaktif Toko (Buku Panduan CMS & Panduan Pembeli)
 ### Dokumentasi & Panduan Interaktif Sistem:
 - **Pembaruan Buku Panduan CMS Admin (`cms-guide-modal`):**

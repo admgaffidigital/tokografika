@@ -123,8 +123,11 @@ window.startPriceWatcher = () => {
             ssL('freshmart_last_update', serverUpdate.toString());
             if (typeof syncWishlistPrices === 'function') syncWishlistPrices();
             if (typeof syncCartPrices === 'function') syncCartPrices();
+            if (typeof syncPosCartPrices === 'function') syncPosCartPrices();
             if (typeof rDyn === 'function') rDyn();
             if (typeof rCat === 'function') rCat();
+            if (typeof renderPosProducts === 'function') renderPosProducts();
+            if (typeof renderPosCart === 'function') renderPosCart();
           } catch (e) {
             console.warn('[PriceWatcher] Error syncing updated products from Firestore:', e);
           }

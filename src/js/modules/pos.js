@@ -422,10 +422,12 @@ const _getPosMainPrice = (p) => {
 const renderPosProductCardGrid = (p) => {
   const hasVariants = p.variants && p.variants.length > 0;
   const isUnlimited = (appData.store?.stockMode === 'unlimited') || p.isUnlimited === true || p.isUnlimited === 'true';
+  const isOff = p.isActive === 'false' || p.isActive === false;
   const stock = typeof p.stock !== 'undefined' && p.stock !== '' ? (parseInt(p.stock) || 0) : 100;
   const totalStock = hasVariants ? (p.variants || []).reduce((acc, v) => acc + (parseInt(v.stock) || 0), 0) : stock;
-  const isOutOfStock = (p.isActive === 'false' || p.isActive === false) || (!isUnlimited && totalStock <= 0);
+  const isOutOfStock = isOff || (!isUnlimited && totalStock <= 0);
   const price = _getPosMainPrice(p);
+  const pInc = typeof window.getPriceIncreaseInfo === 'function' && !isOff ? window.getPriceIncreaseInfo(p) : null;
   const rawImg = p.img || p.image || (p.images && p.images[0]) || '';
   const imgUrl = rawImg ? (typeof fixD === 'function' ? fixD(rawImg) : rawImg) : '';
   const cartQty = posCart.filter(c => String(c.id) === String(p.id)).reduce((s, c) => s + c.qty, 0);
@@ -455,8 +457,8 @@ const renderPosProductCardGrid = (p) => {
             <span>${p.variants.length} Varian</span>
           </div>` : ''}
 
-        <!-- Out of Stock Overlay -->
-        ${isOutOfStock ? `<div class="absolute inset-0 bg-white/75 dark:bg-black/75 backdrop-blur-xs flex items-center justify-center"><span class="text-[10px] font-black text-rose-600 bg-white dark:bg-slate-900 px-2.5 py-1 rounded-full shadow-md">Habis</span></div>` : ''}
+        <!-- Out of Stock / Inactive Overlay -->
+        ${isOutOfStock ? `<div class="absolute inset-0 bg-white/75 dark:bg-black/75 backdrop-blur-xs flex items-center justify-center"><span class="text-[10px] font-black ${isOff ? 'text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800' : 'text-rose-600 bg-white dark:bg-slate-900'} px-2.5 py-1 rounded-full shadow-md">${isOff ? 'Nonaktif' : 'Habis'}</span></div>` : ''}
       </div>
 
       <!-- Info & Price Content -->
@@ -469,9 +471,10 @@ const renderPosProductCardGrid = (p) => {
         <div class="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-end justify-between gap-1">
           <div class="min-w-0 flex-1">
             <div class="h-4 leading-4 flex items-center">
-              ${isUnlimited ? `<span class="text-[9px] font-bold text-slate-400 leading-none">∞ Stok Bebas</span>` : (hasVariants ? `<span class="text-[9px] font-medium text-slate-400 leading-none">Stok ${totalStock}</span>` : `<span class="text-[9px] font-semibold ${stock > 5 ? 'text-slate-400' : (stock > 0 ? 'text-amber-500 font-bold' : 'text-rose-500 font-bold')} leading-none">Stok ${stock} ${esc(p.unit || 'pcs')}</span>`)}
+              ${isOff ? `<span class="text-[9px] font-bold text-rose-500 leading-none">Nonaktif</span>` : (isUnlimited ? `<span class="text-[9px] font-bold text-slate-400 leading-none">∞ Stok Bebas</span>` : (hasVariants ? `<span class="text-[9px] font-medium text-slate-400 leading-none">Stok ${totalStock}</span>` : `<span class="text-[9px] font-semibold ${stock > 5 ? 'text-slate-400' : (stock > 0 ? 'text-amber-500 font-bold' : 'text-rose-500 font-bold')} leading-none">Stok ${stock} ${esc(p.unit || 'pcs')}</span>`))}
             </div>
             <div class="text-xs sm:text-[15px] font-black text-emerald-600 dark:text-emerald-400 leading-tight mt-0.5 truncate">${fCur(price)}</div>
+            ${pInc ? `<div class="text-[8px] font-bold text-rose-500 leading-none mt-0.5 truncate"><i class="fa-solid fa-arrow-trend-up"></i> Naik ${fCur(pInc.diff)}</div>` : ''}
           </div>
           
           <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-xs shrink-0">
@@ -486,10 +489,12 @@ const renderPosProductCardGrid = (p) => {
 const renderPosProductCardList = (p) => {
   const hasVariants = p.variants && p.variants.length > 0;
   const isUnlimited = (appData.store?.stockMode === 'unlimited') || p.isUnlimited === true || p.isUnlimited === 'true';
+  const isOff = p.isActive === 'false' || p.isActive === false;
   const stock = typeof p.stock !== 'undefined' && p.stock !== '' ? (parseInt(p.stock) || 0) : 100;
   const totalStock = hasVariants ? (p.variants || []).reduce((acc, v) => acc + (parseInt(v.stock) || 0), 0) : stock;
-  const isOutOfStock = (p.isActive === 'false' || p.isActive === false) || (!isUnlimited && totalStock <= 0);
+  const isOutOfStock = isOff || (!isUnlimited && totalStock <= 0);
   const price = _getPosMainPrice(p);
+  const pInc = typeof window.getPriceIncreaseInfo === 'function' && !isOff ? window.getPriceIncreaseInfo(p) : null;
   const rawImg = p.img || p.image || (p.images && p.images[0]) || '';
   const imgUrl = rawImg ? (typeof fixD === 'function' ? fixD(rawImg) : rawImg) : '';
   const cartQty = posCart.filter(c => String(c.id) === String(p.id)).reduce((s, c) => s + c.qty, 0);
@@ -510,14 +515,14 @@ const renderPosProductCardList = (p) => {
           <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${esc(p.category || 'Umum')}</span>
           ${isGrosir ? `<span class="text-[8px] font-black bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 px-1.5 py-0.2 rounded-md uppercase">Grosir</span>` : ''}
           ${hasVariants ? `<span class="text-[8px] font-black bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.2 rounded-md">${p.variants.length} Varian</span>` : ''}
-          ${isUnlimited ? `<span class="text-[8px] font-black bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 px-1.5 py-0.2 rounded-md"><i class="fa-solid fa-infinity text-[8px]"></i> Bebas Stok</span>` : `<span class="text-[8px] font-black ${totalStock > 5 ? 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300' : (totalStock > 0 ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700')} px-1.5 py-0.2 rounded-md">Stok: ${totalStock}</span>`}
-          ${isOutOfStock ? `<span class="text-[9px] font-black text-rose-600 bg-rose-50 px-1.5 py-0.2 rounded-md">Habis</span>` : ''}
+          ${isOff ? `<span class="text-[9px] font-black text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.2 rounded-md">Nonaktif</span>` : (isUnlimited ? `<span class="text-[8px] font-black bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 px-1.5 py-0.2 rounded-md"><i class="fa-solid fa-infinity text-[8px]"></i> Bebas Stok</span>` : `<span class="text-[8px] font-black ${totalStock > 5 ? 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300' : (totalStock > 0 ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700')} px-1.5 py-0.2 rounded-md">Stok: ${totalStock}</span>`)}
         </div>
         <h4 class="text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 truncate group-hover:text-emerald-600 transition-colors">${esc(p.name)}</h4>
         <div class="flex items-baseline gap-1 mt-1">
           ${hasVariants ? `<span class="text-[9px] font-bold text-slate-400">Mulai</span>` : ''}
           <span class="text-sm sm:text-base font-black text-emerald-600 dark:text-emerald-400">${fCur(price)}</span>
           ${p.unit ? `<span class="text-[10px] text-slate-400 font-semibold">/${esc(p.unit)}</span>` : ''}
+          ${pInc ? `<span class="text-[9px] font-bold text-rose-500 ml-1.5"><i class="fa-solid fa-arrow-trend-up"></i> Naik ${fCur(pInc.diff)}</span>` : ''}
         </div>
       </div>
 
@@ -605,6 +610,30 @@ window.addToCartPos = (productId, variantId = null, qty = 1) => {
   renderPosProducts();
   if (typeof playPosBeep === 'function') playPosBeep('success');
   showToast(`${product.name} ditambahkan!`);
+};
+
+window.syncPosCartPrices = () => {
+  if (!posCart || !posCart.length || !appData?.products || !appData.products.length) return false;
+  let changed = false;
+  posCart.forEach(item => {
+    const p = (appData.products || []).find(x => String(x.id) === String(item.id));
+    if (!p) return;
+    if (p.name && item.name !== p.name) { item.name = p.name; changed = true; }
+    if (item.unit !== (p.unit || '')) { item.unit = p.unit || ''; changed = true; }
+    
+    let basePrice = parseFloat(p.salePrice > 0 ? p.salePrice : (p.price || 0)) || 0;
+    if (item.variantId && p.variants && p.variants.length > 0) {
+      const v = p.variants.find(vr => String(vr.id || vr.name) === String(item.variantId));
+      if (v && v.price !== undefined && v.price !== null) basePrice = parseFloat(v.price) || 0;
+    }
+    if (item.price !== basePrice) {
+      item.price = basePrice;
+      const isWholesale = item.wholesaleMinQty > 0 && (item.qty >= item.wholesaleMinQty);
+      item.effectivePrice = isWholesale ? (item.wholesalePrice || basePrice) : basePrice;
+      changed = true;
+    }
+  });
+  return changed;
 };
 
 window.handlePosBarcodeScan = (scannedCode) => {
