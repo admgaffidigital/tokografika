@@ -10553,6 +10553,7 @@ window.renderStockOpnameList = () => {
 };
 
 window.openStockOpnameModal = (productId = null, variantId = null) => {
+  if (typeof closeAdminModal === 'function') closeAdminModal();
   const modal = el('stock-opname-modal');
   const box = el('stock-opname-modal-box');
   if (!modal || !box) return;
@@ -12518,16 +12519,16 @@ window.rAdmItms = t => {
       </div>
       
       <!-- Action Toolbar (Clean, Unified Pill Container) -->
-      <div class="flex items-center gap-1.5 sm:gap-2 pt-2.5 sm:pt-0 border-t border-slate-100 dark:border-slate-700/80 sm:border-t-0 shrink-0 justify-end flex-wrap">
+      <div class="flex items-center gap-1.5 sm:gap-2 pt-2.5 sm:pt-0 border-t border-slate-100 dark:border-slate-700/80 sm:border-t-0 shrink-0 justify-end flex-wrap" onclick="event.stopPropagation()">
         ${isP ? `
         <!-- Tombol Cetak Price Tag / Label Harga -->
         <button type="button" onclick="event.stopPropagation(); openPricetagForSingleProduct(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500 hover:text-white transition-all border border-amber-200 dark:border-amber-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Cetak Price Tag / Label Harga Barang Ini"><i class="fa-solid fa-tags"></i></button>
 
         <!-- Tombol Edit Cepat -->
-        <button type="button" onclick="openQuickEditProduct(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white transition-all border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Edit Cepat (Stok, HPP & Harga)"><i class="fa-solid fa-bolt"></i></button>
+        <button type="button" onclick="event.stopPropagation(); openQuickEditProduct(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white transition-all border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Edit Cepat (Stok, HPP & Harga)"><i class="fa-solid fa-bolt"></i></button>
 
         <!-- Tombol Stok Opname Instan -->
-        <button type="button" onclick="openStockOpnameModal(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 hover:text-white transition-all border border-cyan-200 dark:border-cyan-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Stok Opname (Audit Fisik)"><i class="fa-solid fa-clipboard-check"></i></button>
+        <button type="button" onclick="event.stopPropagation(); openStockOpnameModal(${x.id})" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-cyan-50 dark:bg-cyan-950/40 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 hover:text-white transition-all border border-cyan-200 dark:border-cyan-800/60 flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" title="Stok Opname (Audit Fisik)"><i class="fa-solid fa-clipboard-check"></i></button>
 
         <!-- Tombol Toggle Visibilitas Toko -->
         <button type="button" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl ${isOff ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 hover:text-emerald-600' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 hover:bg-emerald-600 hover:text-white'} border border-slate-200 dark:border-slate-600 transition-all flex items-center justify-center text-xs shadow-xs active:scale-95 shrink-0" onclick="event.stopPropagation(); toggleProductStatus(${x.id}, ${isOff})" title="${isOff ? 'Aktifkan Produk (Bisa Dipesan)' : 'Nonaktifkan Produk (Tampil Abu-Abu)'}">
@@ -13053,6 +13054,7 @@ window.closeAdminModal = () => {
 };
 
 window.openQuickEditProduct = (id) => {
+  if (typeof closeAdminModal === 'function') closeAdminModal();
   const p = (appData.products || []).find(x => x.id === id || String(x.id) === String(id));
   if (!p) return;
   window._currentQuickEditProdId = p.id;
@@ -13176,15 +13178,20 @@ window.closeQuickEditModal = () => {
   window.closeModalSmooth('quick-edit-modal', 'quick-edit-modal-box', 'bottom-sheet', () => {
     window._currentQuickEditProdId = null;
   });
+  if (typeof closeAdminModal === 'function') closeAdminModal();
 };
 
 window.openQuickEditModal = window.openQuickEditProduct;
 
 window.saveQuickEditProduct = async () => {
+  if (isSaving) return;
   const id = window._currentQuickEditProdId;
   if (!id) return;
-  const p = (appData.products || []).find(x => x.id === id);
-  if (!p) return;
+  const prodIdx = (appData.products || []).findIndex(x => x.id === id || String(x.id) === String(id));
+  if (prodIdx === -1) return;
+  const p = appData.products[prodIdx];
+
+  isSaving = true;
 
   const isActive = el('qe-is-active') ? el('qe-is-active').checked : true;
   p.isActive = isActive ? 'true' : 'false';
@@ -13226,9 +13233,10 @@ window.saveQuickEditProduct = async () => {
       if (vC) v.costPrice = Math.max(0, Number(vC.value || 0));
       if (vS) v.stock = Math.max(0, Number(vS.value || 0));
     });
-    // Set base price & cost to lowest variant
+    // Set base price & cost to lowest variant, and total stock to sum of variant stock
     p.price = Math.min(...p.variants.map(v => v.price));
     p.costPrice = Math.min(...p.variants.map(v => v.costPrice || 0));
+    p.stock = p.variants.reduce((sum, v) => sum + Number(v.stock || 0), 0);
   }
 
   const qeSuppId = getV('qe-supplier-id');
@@ -13248,11 +13256,14 @@ window.saveQuickEditProduct = async () => {
     await saveApp(true);
     rAdmItms('products');
     closeQuickEditModal();
+    if (typeof closeAdminModal === 'function') closeAdminModal();
     showToast("Produk berhasil diperbarui!");
   } catch(e) {
     showToast("Gagal menyimpan perubahan!");
+  } finally {
+    isSaving = false;
+    hLoad();
   }
-  hLoad();
 };
 
 window.toggleProductStatus = async (id, toActive) => {
