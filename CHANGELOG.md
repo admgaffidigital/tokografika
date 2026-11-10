@@ -2,6 +2,30 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-11-11] - Fitur Drag & Drop Reordering, Step Buttons & Quick Sort di Keranjang Belanja & Favorit Saya
+### 1. Drag & Drop Reordering (Touchscreen & Mouse Unified Engine):
+- **Ikon Pegangan Khusus (*Grip Handle `⠿`*):**
+  - Setiap kartu item di **Favorit Saya** (`view-wishlist`) dan **Keranjang Belanja** (`view-cart`) kini dilengkapi ikon pegangan sentuh bertekstur titik (`⠿` *Grip Handle*).
+  - Menggunakan CSS standar `touch-action: none` pada pegangan handle dan Pointer Events API dengan `setPointerCapture` sehingga menggeser urutan barang di smartphone tidak pernah bentrok dengan scroll vertikal halaman.
+  - Seluruh area kartu di luar handle tetap berfungsi normal untuk scrolling layar ke atas/bawah.
+- **Efek Visual & Animasi:**
+  - Kartu yang ditarik secara visual terangkat halus dengan GPU hardware acceleration (`translate3d`), bayangan mendalam (*elevation shadow-2xl*), dan ring emerald berkilau.
+  - Kotak slot indikator putus-putus (*dashed placeholder*) muncul secara dinamis di posisi tujuan kartu.
+  - Dilengkapi fitur *auto-scroll* otomatis saat kartu ditarik mendekati tepi atas atau tepi bawah layar.
+- **Umpan Balik Haptik (*Haptic Feedback*):**
+  - Ponsel bergetar mikro halus saat kartu mulai diangkat (`vibrate(25ms)`) dan saat kartu ditaruh di slot baru (`vibrate(30ms)`).
+- **Penyimpanan Permanen Otomatis (*Auto-save Persistence*):**
+  - Setiap perpindahan urutan langsung tersimpan ke `localStorage` (`freshmart_wishlist` & `freshmart_cart`) sehingga urutan belanja pelanggan tidak pernah hilang meskipun browser ditutup atau di-refresh.
+
+### 2. Tombol Pengatur Cepat (*Step Order Buttons ▲ / ▼*):
+- Menyediakan tombol panah naik (`▲`) dan turun (`▼`) di sisi ikon pegangan untuk memindahkan urutan barang 1 posisi dengan satu ketukan instan tanpa perlu menyeret layar.
+
+### 3. Toolbar Urut Cerdas (*Quick Sort Toolbar*):
+- Menambahkan toolbar pengurutan di bagian atas daftar Keranjang Belanja dan Favorit:
+  - **Termurah:** Mengurutkan seluruh item dari harga paling terjangkau.
+  - **Termahal:** Mengurutkan seluruh item dari harga tertinggi.
+  - **A - Z:** Mengurutkan nama produk berdasarkan abjad.
+
 ## [2026-11-11] - Redesain Modal Detail Pesanan & Custom Glassmorphic WhatsApp Receipt Modal (Menghilangkan Pop-up Browser Klasik)
 ### 1. Modern Custom WhatsApp Receipt Modal (`#receipt-wa-modal`):
 - **100% Menghapus Pop-up Dialog Bawaan Browser (`window.prompt`):**
