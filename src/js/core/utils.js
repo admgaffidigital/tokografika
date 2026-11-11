@@ -527,31 +527,69 @@ window.closeModalSmooth = (modalId, boxId, type = 'bottom-sheet', callback = nul
 })();
 
 // =============================================================================
-// TRACKING KENAIKAN HARGA PRODUK
+// TRACKING KENAIKAN & PENURUNAN HARGA PRODUK
 // =============================================================================
 
-window.isPriceIncreaseActive = (item, maxDays = 14) => {
+window.isPriceIncreaseActive = (item, customMaxDays = null) => {
   if (!item) return false;
   const prev = Number(item.previousPrice || 0);
   const cur = Number(item.price || 0);
   if (prev <= 0 || cur === prev) return false;
 
-  // Jika ada timestamp priceIncreasedAt, periksa batas waktu (default 14 hari)
-  if (item.priceIncreasedAt) {
+  // Resolusi durasi aktif: customMaxDays > setting toko > default 30 hari (1 bulan)
+  const limitDays = (customMaxDays !== null && customMaxDays !== undefined && customMaxDays !== 14)
+    ? Number(customMaxDays)
+    : (window.appData?.store?.priceChangeDurationDays !== undefined && window.appData?.store?.priceChangeDurationDays !== null && window.appData?.store?.priceChangeDurationDays !== ''
+        ? Number(window.appData.store.priceChangeDurationDays)
+        : 30); // Default baru: 30 hari (sebelumnya hanya 14 hari)
+
+  // Jika limitDays adalah 0 (Selalu Tampil), lencana aktif terus tanpa batas waktu
+  if (limitDays > 0 && item.priceIncreasedAt) {
     const ageDays = (Date.now() - Number(item.priceIncreasedAt)) / (1000 * 60 * 60 * 24);
-    if (ageDays > maxDays) return false;
+    if (ageDays > limitDays) return false;
   }
   return true;
 };
 
-window.getPriceIncreaseInfo = (item, maxDays = 14) => {
-  if (!window.isPriceIncreaseActive(item, maxDays)) return null;
+window.getPriceIncreaseInfo = (item, customMaxDays = null) => {
+  if (!window.isPriceIncreaseActive(item, customMaxDays)) return null;
   const prev = Number(item.previousPrice);
   const cur = Number(item.price);
   const diff = cur - prev;
   const isUp = diff > 0;
   const absDiff = Math.abs(diff);
   const pct = Math.round((absDiff / prev) * 100);
+
+  let timeAgo = '';
+  let dateStr = '';
+  if (item.priceIncreasedAt) {
+    const ageHours = (Date.now() - Number(item.priceIncreasedAt)) / (1000 * 60 * 60);
+    const ageDays = Math.floor(ageHours / 24);
+    if (ageHours < 1) {
+      timeAgo = 'baru saja';
+    } else if (ageHours < 24) {
+      timeAgo = `${Math.floor(ageHours)} jam lalu`;
+    } else if (ageDays === 1) {
+      timeAgo = 'kemarin';
+    } else if (ageDays < 7) {
+      timeAgo = `${ageDays} hari lalu`;
+    } else if (ageDays < 30) {
+      const weeks = Math.floor(ageDays / 7);
+      timeAgo = `${weeks} minggu lalu`;
+    } else {
+      const months = Math.floor(ageDays / 30);
+      timeAgo = `${months} bulan lalu`;
+    }
+
+    try {
+      dateStr = new Date(Number(item.priceIncreasedAt)).toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+    } catch (_) {}
+  }
+
   return { 
     prev, 
     cur, 
@@ -559,6 +597,8 @@ window.getPriceIncreaseInfo = (item, maxDays = 14) => {
     rawDiff: diff, 
     pct, 
     isUp,
+    timeAgo,
+    dateStr,
     badgeClass: isUp 
       ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60' 
       : 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60',

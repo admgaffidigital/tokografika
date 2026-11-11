@@ -2,6 +2,41 @@
 
 Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan di sini.
 
+## [2026-11-11] - Pembaruan Tanda Kenaikan & Penurunan Harga: Durasi Tampil Lebih Lama (30 Hari / Fleksibel CMS), Warna Hijau/Merah, Info Waktu & Reset Cepat
+### 1. Warna Lencana Perubahan Harga yang Intuitif & Jelas:
+- **Kenaikan Harga (`▲ Naik Rp...`):** Menggunakan warna hijau zamrud (*emerald*) lembut dengan aksen teks hijau (`text-emerald-600 dark:text-emerald-400`), border halus, dan ikon `fa-arrow-trend-up`.
+- **Penurunan Harga (`▼ Turun Rp...`):** Menggunakan warna merah mawar (*rose*) elegan (`text-rose-600 dark:text-rose-400`), border halus, dan ikon `fa-arrow-trend-down`.
+- Berlaku seragam di seluruh aplikasi: Kartu Katalog Produk, Modal Rincian Produk, Modal Pilihan Varian, Keranjang & Favorit Saya, Kasir POS (Grid & List View), serta Daftar Produk Admin CMS.
+
+### 2. Perpanjangan Durasi Tampil Indikator (Default 30 Hari / 1 Bulan):
+- Sebelumnya, lencana perubahan harga dibatasi otomatis hilang setelah 14 hari saja.
+- Standar bawaan sistem kini diperpanjang menjadi **30 Hari (1 Bulan)** agar pelanggan (terutama pelanggan grosir dan warung) dapat memantau pergerakan tren harga dengan jelas dan tidak ketinggalan informasi.
+
+### 3. Pengaturan Durasi Fleksibel di Admin CMS (Tab Toko):
+- Pemilik toko kini dapat mengatur sendiri masa aktif lencana perubahan harga di **Admin Panel > Tab Pengaturan Toko**:
+  - **14 Hari (2 Minggu):** Cocok untuk barang cepat perputaran (*fast moving*).
+  - **30 Hari (1 Bulan - Standar Default):** Rekomendasi seimbang untuk toko retail & kelontong.
+  - **60 Hari (2 Bulan):** Sangat ideal untuk toko grosir / distributor.
+  - **90 Hari (3 Bulan):** Untuk pemantauan harga triwulan (*quarterly*).
+  - **Selamanya (Tanpa Batas Waktu):** Lencana tetap muncul terus menerus hingga harga produk tersebut diubah kembali di kemudian hari.
+- Pengaturan tersimpan secara aman ke Firestore CMS (`appData.store.priceChangeDurationDays`) dan otomatis berlaku ke seluruh perangkat pelanggan.
+
+### 4. Info Waktu Pembaruan Harga Relatif (*Relative Time Ago*):
+- Pada Modal Rincian Produk (`rProdMod`), di samping lencana kenaikan/penurunan harga kini ditampilkan keterangan waktu pembaruan yang ramah pelanggan, seperti:
+  - `· diperbarui baru saja`
+  - `· diperbarui 5 jam lalu`
+  - `· diperbarui kemarin`
+  - `· diperbarui 3 hari lalu`
+  - `· diperbarui 2 minggu lalu`
+  - `· diperbarui 1 bulan lalu`
+
+### 5. Tombol "Reset Tanda" Manual di Modal Edit Cepat Admin (*Quick Edit*):
+- Jika admin ingin menghapus atau menghilangkan tanda kenaikan/penurunan harga lama sebelum durasinya habis (misalnya jika kenaikan harga sudah dianggap harga normal), admin cukup membuka **Edit Cepat (Quick Edit)**:
+  - Terdapat tombol **"Reset Tanda"** berwarna merah di samping info harga lama.
+  - Untuk produk bervarian, terdapat tombol **"Reset Tanda Varian"** untuk mereset seluruh riwayat harga varian sekaligus.
+  - Dilengkapi dialog konfirmasi aman dan otomatis menyinkronkan data ke Firestore serta memperbarui tampilan seketika.
+
+
 ## [2026-11-11] - Fitur Drag & Drop Reordering, Step Buttons & Quick Sort di Keranjang Belanja & Favorit Saya
 ### 1. Drag & Drop Reordering (Touchscreen & Mouse Unified Engine):
 - **Ikon Pegangan Khusus (*Grip Handle `⠿`*):**

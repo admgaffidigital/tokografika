@@ -939,6 +939,7 @@ const rProdMod = () => {
         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black ${incInfo.badgeClass} leading-none shadow-2xs">
           <i class="fa-solid ${incInfo.icon} text-[9px]"></i> ${incInfo.isUp ? `Naik ${fCur(incInfo.diff)} (+${incInfo.pct}%)` : `Turun ${fCur(incInfo.diff)} (-${incInfo.pct}%)`}
         </span>
+        ${incInfo.timeAgo ? `<span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium leading-none">· diperbarui ${incInfo.timeAgo}</span>` : ''}
       </div>
     `;
   }

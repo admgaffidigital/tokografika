@@ -2232,6 +2232,41 @@ const rAdmSet = () => {
               </div>
             </label>
           </div>
+
+        <!-- Pengaturan Masa Aktif Tanda Naik / Turun Harga -->
+        <div class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 mt-4 space-y-3">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-widest">
+              <i class="fa-solid fa-tags text-emerald-500 mr-1"></i> Durasi Tampil Tanda Perubahan Harga (Naik / Turun)
+            </label>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mb-3 leading-relaxed">
+              Tentukan berapa lama lencana <span class="text-emerald-600 dark:text-emerald-400 font-bold">▲ Naik</span> dan <span class="text-rose-600 dark:text-rose-400 font-bold">▼ Turun</span> harga dimunculkan kepada pelanggan di katalog, modal produk, kasir, dan favorit sejak harga diubah.
+            </p>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+              ${[
+                { val: 14, label: '14 Hari', sub: '2 Minggu' },
+                { val: 30, label: '30 Hari', sub: '1 Bulan (Standar)' },
+                { val: 60, label: '60 Hari', sub: '2 Bulan (Grosir)' },
+                { val: 90, label: '90 Hari', sub: '3 Bulan' },
+                { val: 0, label: 'Selamanya', sub: 'Tanpa Batas' }
+              ].map(opt => {
+                const curDays = Number(appData.store.priceChangeDurationDays !== undefined && appData.store.priceChangeDurationDays !== null && appData.store.priceChangeDurationDays !== '' ? appData.store.priceChangeDurationDays : 30);
+                const isChecked = curDays === opt.val;
+                return `
+                <label class="flex flex-col p-3 rounded-xl border-2 cursor-pointer transition-all bg-white dark:bg-slate-800 ${isChecked ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-700'}">
+                  <div class="flex items-center justify-between mb-1">
+                    <input type="radio" name="store-price-duration" value="${opt.val}" ${isChecked ? 'checked' : ''} onchange="appData.store.priceChangeDurationDays=${opt.val}" class="text-emerald-600 focus:ring-emerald-500" />
+                    <span class="text-[9px] font-bold ${isChecked ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}">${opt.val === 0 ? 'Aktif' : `${opt.val}h`}</span>
+                  </div>
+                  <div class="text-xs font-bold text-slate-800 dark:text-white leading-tight">${opt.label}</div>
+                  <div class="text-[9px] text-slate-400 mt-0.5 leading-tight">${opt.sub}</div>
+                </label>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+
         <!-- Pengaturan Ukuran Printer Struk Kasir (58mm / 80mm) -->
         <div class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 mt-4 space-y-4">
           <div>
@@ -2581,6 +2616,8 @@ window.saveAdminSettings = async () => {
     appData.store.printerPaper = selPaper;
     const selStockMode = document.querySelector('input[name="store-stock-mode"]:checked')?.value || 'tracked';
     appData.store.stockMode = selStockMode;
+    const selPriceDuration = document.querySelector('input[name="store-price-duration"]:checked')?.value;
+    appData.store.priceChangeDurationDays = selPriceDuration !== undefined ? Number(selPriceDuration) : 30;
     const selReceiptAlign = document.querySelector('input[name="store-receipt-align"]:checked')?.value || 'center';
     appData.store.receiptAlignment = selReceiptAlign;
     const selReceiptMode = document.querySelector('input[name="store-receipt-mode"]:checked')?.value || 'compact';
@@ -3892,7 +3929,16 @@ window.openQuickEditProduct = (id) => {
       <div>
         <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider"><i class="fa-solid fa-tag text-emerald-600 mr-1"></i> Harga Jual (Rp)</label>
         <input type="number" id="qe-price" value="${p.price || 0}" class="admin-input !py-2.5 !text-sm font-bold w-full" placeholder="0" min="0" />
-        ${p.previousPrice && p.price !== p.previousPrice ? `<p class="text-[9px] ${p.price > p.previousPrice ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} font-bold mt-1"><i class="fa-solid ${p.price > p.previousPrice ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'}"></i> Sebelumnya: ${fCur(p.previousPrice)} (${p.price > p.previousPrice ? '+' : '-'}${fCur(Math.abs(p.price - p.previousPrice))})</p>` : ''}
+        ${p.previousPrice && p.price !== p.previousPrice ? `
+          <div class="flex items-center justify-between mt-1 gap-1 flex-wrap">
+            <span class="text-[9px] ${p.price > p.previousPrice ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} font-bold">
+              <i class="fa-solid ${p.price > p.previousPrice ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'}"></i> Sebelumnya: ${fCur(p.previousPrice)} (${p.price > p.previousPrice ? '+' : '-'}${fCur(Math.abs(p.price - p.previousPrice))})
+            </span>
+            <button type="button" onclick="resetProductPriceHistory('${p.id}')" class="text-[9px] text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 font-bold hover:underline flex items-center gap-1">
+              <i class="fa-solid fa-rotate-left text-[8px]"></i> Reset Tanda
+            </button>
+          </div>
+        ` : ''}
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider"><i class="fa-solid fa-coins text-amber-500 mr-1"></i> HPP / Modal (Rp)</label>
@@ -3907,8 +3953,13 @@ window.openQuickEditProduct = (id) => {
   } else {
     html += `
     <div class="space-y-3">
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between flex-wrap gap-1">
         <label class="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest"><i class="fa-solid fa-layer-group text-indigo-500 mr-1"></i> Edit Cepat Varian Produk (${p.variants.length} Varian)</label>
+        ${p.variants.some(v => v.previousPrice && v.price !== v.previousPrice) ? `
+          <button type="button" onclick="resetProductPriceHistory('${p.id}')" class="text-[9px] text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 font-bold hover:underline flex items-center gap-1">
+            <i class="fa-solid fa-rotate-left text-[8px]"></i> Reset Tanda Varian
+          </button>
+        ` : ''}
       </div>
       <div class="space-y-2.5 max-h-64 overflow-y-auto pr-1 hide-scrollbar">
       ${p.variants.map((v, idx) => `
@@ -4028,6 +4079,39 @@ window.saveQuickEditProduct = async () => {
     isSaving = false;
     hLoad();
   }
+};
+
+window.resetProductPriceHistory = async (productId) => {
+  const p = (appData.products || []).find(x => String(x.id) === String(productId));
+  if (!p) return;
+  showConfirm("Reset Riwayat Harga", `Hapus tanda kenaikan/penurunan harga untuk "${p.name}"? Tanda harga lama akan dihilangkan seketika.`, async () => {
+    if (isSaving) return;
+    isSaving = true;
+    delete p.previousPrice;
+    delete p.priceIncreasedAt;
+    if (p.variants && Array.isArray(p.variants)) {
+      p.variants.forEach(v => {
+        delete v.previousPrice;
+        delete v.priceIncreasedAt;
+      });
+    }
+    sLoad('Mereset riwayat harga...');
+    try {
+      await db.collection("freshmart").doc("cms_data").collection("products").doc(p.id.toString()).set(p);
+      appData.lastUpdate = Date.now();
+      await saveApp(true);
+      showToast('Tanda perubahan harga berhasil direset!');
+      if (typeof closeQuickEditModal === 'function') closeQuickEditModal();
+      if (typeof rCat === 'function') rCat();
+      if (typeof rAdmItms === 'function') rAdmItms('products');
+    } catch (e) {
+      console.error(e);
+      showToast('Gagal mereset tanda harga!');
+    } finally {
+      isSaving = false;
+      hLoad();
+    }
+  });
 };
 
 window.toggleProductStatus = async (id, toActive) => {
