@@ -2879,7 +2879,55 @@ html.dark .badge-counter {
           <!-- Harga Beli / HPP Satuan -->
           <div class="sm:col-span-2">
             <label class="block font-bold text-slate-600 dark:text-slate-300 mb-1 text-[10px]">Harga Beli Satuan (Rp)</label>
-            <input type="number" id="purch-item-price" min="0" value="0" class="admin-input !py-2 w-full text-xs font-bold text-right" placeholder="Rp" />
+            <input type="number" id="purch-item-price" min="0" value="0" class="admin-input !py-2 w-full text-xs font-bold text-right" placeholder="Rp" oninput="onPurchasePriceInputChange()" />
+          </div>
+        </div>
+
+        <!-- Kotak Pintar: Analisa Kenaikan Harga Kulak & Rekomendasi Harga Jual Baru -->
+        <div id="purch-price-advisor-card" class="hidden p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 space-y-2.5 transition-all">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs shadow-2xs">
+                <i class="fa-solid fa-chart-line"></i>
+              </span>
+              <div>
+                <span class="font-extrabold text-slate-800 dark:text-white text-xs block leading-tight">Analisa Harga Kulakan Distributor</span>
+                <span class="text-[9px] text-slate-400 font-medium">Bandingkan HPP & dapatkan rekomendasi harga jual baru</span>
+              </div>
+            </div>
+            <div id="purch-cost-diff-badge" class="text-[10px] font-black px-2.5 py-0.5 rounded-full"></div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+            <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80">
+              <span class="text-slate-400 block text-[9px] uppercase font-bold tracking-wider">HPP Saat Ini</span>
+              <span id="purch-curr-cost-val" class="font-black text-slate-700 dark:text-slate-300 text-xs">Rp 0</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80">
+              <span class="text-slate-400 block text-[9px] uppercase font-bold tracking-wider">Harga Jual Aktif</span>
+              <span id="purch-curr-sell-val" class="font-black text-slate-700 dark:text-slate-300 text-xs">Rp 0</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80">
+              <span class="text-slate-400 block text-[9px] uppercase font-bold tracking-wider">Margin Saat Ini</span>
+              <span id="purch-curr-profit-val" class="font-black text-emerald-600 dark:text-emerald-400 text-xs">Rp 0</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80">
+              <span class="text-amber-700 dark:text-amber-300 block text-[9px] uppercase font-bold tracking-wider">Rekomendasi Jual</span>
+              <span id="purch-recom-sell-val" class="font-black text-amber-700 dark:text-amber-300 text-xs">Rp 0</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <button type="button" id="purch-apply-recom-btn" onclick="applyPurchaseRecommendedPrice()" class="px-2.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-[10px] flex items-center gap-1.5 shadow-2xs active:scale-95 transition-all">
+                <i class="fa-solid fa-bolt"></i> Gunakan Rekomendasi Ini
+              </button>
+              <span class="text-[10px] text-slate-400 font-medium">atau ketik manual harga jual baru:</span>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <label for="purch-item-sell-price" class="text-[10px] font-bold text-slate-600 dark:text-slate-300">Update Jual (Rp):</label>
+              <input type="number" id="purch-item-sell-price" min="0" placeholder="Rp (Opsional)" class="admin-input !py-1 !px-2.5 w-28 text-xs font-bold text-right" />
+            </div>
           </div>
         </div>
 
@@ -2906,14 +2954,15 @@ html.dark .badge-counter {
                   <th class="p-2.5">No</th>
                   <th class="p-2.5">Nama Produk & Varian</th>
                   <th class="p-2.5 text-center">Jumlah</th>
-                  <th class="p-2.5 text-right">Harga Beli Satuan</th>
+                  <th class="p-2.5 text-right">Harga Beli Distributor</th>
+                  <th class="p-2.5 text-right">Penyesuaian Jual</th>
                   <th class="p-2.5 text-right">Subtotal</th>
                   <th class="p-2.5 text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody id="purch-items-tbody" class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
                 <tr>
-                  <td colspan="6" class="p-4 text-center text-slate-400 font-medium">Belum ada barang dimasukkan</td>
+                  <td colspan="7" class="p-4 text-center text-slate-400 font-medium">Belum ada barang dimasukkan</td>
                 </tr>
               </tbody>
             </table>
@@ -7094,7 +7143,7 @@ const loadAppData = async () => {
 
   // 0. CACHE-BUSTER & FORCE SYNC VERSION:
   // Membersihkan sisa cache lawas di Safari/iOS/Android agar otomatis sinkron ke data Firestore terbaru
-  const APP_DATA_VERSION = '2026-11-11-v7';
+  const APP_DATA_VERSION = '2026-11-11-v8';
   if (sL('freshmart_data_version') !== APP_DATA_VERSION) {
     try {
       localStorage.removeItem('freshmart_last_update');
@@ -16202,7 +16251,16 @@ const renderPosProductCardGrid = (p) => {
   const totalStock = hasVariants ? (p.variants || []).reduce((acc, v) => acc + (parseInt(v.stock) || 0), 0) : stock;
   const isOutOfStock = isOff || (!isUnlimited && totalStock <= 0);
   const price = _getPosMainPrice(p);
-  const pInc = typeof window.getPriceIncreaseInfo === 'function' && !isOff ? window.getPriceIncreaseInfo(p) : null;
+  let pInc = null;
+  let changedVar = null;
+  if (typeof window.getPriceIncreaseInfo === 'function' && !isOff) {
+    if (hasVariants) {
+      changedVar = p.variants.find(v => window.isPriceIncreaseActive(v));
+      if (changedVar) pInc = window.getPriceIncreaseInfo(changedVar);
+    } else {
+      pInc = window.getPriceIncreaseInfo(p);
+    }
+  }
   const rawImg = p.img || p.image || (p.images && p.images[0]) || '';
   const imgUrl = rawImg ? (typeof fixD === 'function' ? fixD(rawImg) : rawImg) : '';
   const cartQty = posCart.filter(c => String(c.id) === String(p.id)).reduce((s, c) => s + c.qty, 0);
@@ -16249,7 +16307,7 @@ const renderPosProductCardGrid = (p) => {
               ${isOff ? `<span class="text-[9px] font-bold text-rose-500 leading-none">Nonaktif</span>` : (isUnlimited ? `<span class="text-[9px] font-bold text-slate-400 leading-none">∞ Stok Bebas</span>` : (hasVariants ? `<span class="text-[9px] font-medium text-slate-400 leading-none">Stok ${totalStock}</span>` : `<span class="text-[9px] font-semibold ${stock > 5 ? 'text-slate-400' : (stock > 0 ? 'text-amber-500 font-bold' : 'text-rose-500 font-bold')} leading-none">Stok ${stock} ${esc(p.unit || 'pcs')}</span>`))}
             </div>
             <div class="text-xs sm:text-[15px] font-black text-emerald-600 dark:text-emerald-400 leading-tight mt-0.5 truncate">${fCur(price)}</div>
-            ${pInc ? `<div class="text-[8px] font-bold ${pInc.isUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} leading-none mt-0.5 truncate"><i class="fa-solid ${pInc.icon}"></i> ${pInc.label}</div>` : ''}
+            ${pInc ? `<div class="text-[8px] font-bold ${pInc.isUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} leading-none mt-0.5 truncate"><i class="fa-solid ${pInc.icon}"></i> ${changedVar?.name ? esc(changedVar.name) + ': ' : ''}${pInc.label}</div>` : ''}
           </div>
           
           <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-xs shrink-0">
@@ -16269,7 +16327,16 @@ const renderPosProductCardList = (p) => {
   const totalStock = hasVariants ? (p.variants || []).reduce((acc, v) => acc + (parseInt(v.stock) || 0), 0) : stock;
   const isOutOfStock = isOff || (!isUnlimited && totalStock <= 0);
   const price = _getPosMainPrice(p);
-  const pInc = typeof window.getPriceIncreaseInfo === 'function' && !isOff ? window.getPriceIncreaseInfo(p) : null;
+  let pInc = null;
+  let changedVar = null;
+  if (typeof window.getPriceIncreaseInfo === 'function' && !isOff) {
+    if (hasVariants) {
+      changedVar = p.variants.find(v => window.isPriceIncreaseActive(v));
+      if (changedVar) pInc = window.getPriceIncreaseInfo(changedVar);
+    } else {
+      pInc = window.getPriceIncreaseInfo(p);
+    }
+  }
   const rawImg = p.img || p.image || (p.images && p.images[0]) || '';
   const imgUrl = rawImg ? (typeof fixD === 'function' ? fixD(rawImg) : rawImg) : '';
   const cartQty = posCart.filter(c => String(c.id) === String(p.id)).reduce((s, c) => s + c.qty, 0);
@@ -16297,7 +16364,7 @@ const renderPosProductCardList = (p) => {
           ${hasVariants ? `<span class="text-[9px] font-bold text-slate-400">Mulai</span>` : ''}
           <span class="text-sm sm:text-base font-black text-emerald-600 dark:text-emerald-400">${fCur(price)}</span>
           ${p.unit ? `<span class="text-[10px] text-slate-400 font-semibold">/${esc(p.unit)}</span>` : ''}
-          ${pInc ? `<span class="text-[9px] font-bold ${pInc.isUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} ml-1.5"><i class="fa-solid ${pInc.icon}"></i> ${pInc.label}</span>` : ''}
+          ${pInc ? `<span class="text-[9px] font-bold ${pInc.isUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} ml-1.5"><i class="fa-solid ${pInc.icon}"></i> ${changedVar?.name ? esc(changedVar.name) + ': ' : ''}${pInc.label}</span>` : ''}
         </div>
       </div>
 
@@ -16343,6 +16410,8 @@ window.addToCartPos = (productId, variantId = null, qty = 1) => {
         variantName: variant.name || String(variantId),
         price: basePrice,
         effectivePrice,
+        previousPrice: variant.previousPrice || null,
+        costPrice: variant.costPrice !== undefined ? variant.costPrice : null,
         unit: variant.unit || product.unit || '',
         qty,
         image: vImg ? (typeof fixD === 'function' ? fixD(vImg) : vImg) : '',
@@ -16372,6 +16441,8 @@ window.addToCartPos = (productId, variantId = null, qty = 1) => {
         variantName: null,
         price: basePrice,
         effectivePrice,
+        previousPrice: product.previousPrice || null,
+        costPrice: product.costPrice !== undefined ? product.costPrice : null,
         unit: product.unit || '',
         qty,
         image: pImg ? (typeof fixD === 'function' ? fixD(pImg) : pImg) : '',
@@ -16393,13 +16464,21 @@ window.syncPosCartPrices = () => {
   posCart.forEach(item => {
     const p = (appData.products || []).find(x => String(x.id) === String(item.id));
     if (!p) return;
+    if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
     if (p.name && item.name !== p.name) { item.name = p.name; changed = true; }
     if (item.unit !== (p.unit || '')) { item.unit = p.unit || ''; changed = true; }
 
     let basePrice = parseFloat(p.salePrice > 0 ? p.salePrice : (p.price || 0)) || 0;
     if (item.variantId && p.variants && p.variants.length > 0) {
-      const v = p.variants.find(vr => String(vr.id || vr.name) === String(item.variantId));
-      if (v && v.price !== undefined && v.price !== null) basePrice = parseFloat(v.price) || 0;
+      const v = p.variants.find(vr => String(vr.id || vr.name) === String(item.variantId) || vr.name === item.variantName);
+      if (v && v.price !== undefined && v.price !== null) {
+        basePrice = parseFloat(v.price) || 0;
+        if (v.costPrice !== undefined) item.costPrice = v.costPrice;
+        item.previousPrice = v.previousPrice || null;
+      }
+    } else {
+      if (p.costPrice !== undefined) item.costPrice = p.costPrice;
+      item.previousPrice = p.previousPrice || null;
     }
     if (item.price !== basePrice) {
       item.price = basePrice;
@@ -16517,6 +16596,7 @@ window.openPosVariantModal = (productId) => {
       const cartQty = posCart.filter(c => String(c.id) === String(p.id) && String(c.variantId) === String(vKey)).reduce((s, c) => s + c.qty, 0);
       const vStock = typeof v.stock !== 'undefined' && v.stock !== '' ? (parseInt(v.stock) || 0) : 100;
       const isOut = (v.isActive === 'false' || v.isActive === false) || (!isUnlimited && vStock <= 0);
+      const vInc = typeof window.getPriceIncreaseInfo === 'function' ? window.getPriceIncreaseInfo(v) : null;
       return `
         <button type="button" onclick="addToCartPos('${esc(p.id)}', '${esc(vKey)}', 1); closePosVariantModal();" 
           class="w-full flex items-center justify-between p-3 rounded-xl border ${isOut ? 'border-slate-200 dark:border-slate-800 opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-800/40' : 'border-slate-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 active:scale-98'} transition-all cursor-pointer"
@@ -16527,7 +16607,13 @@ window.openPosVariantModal = (productId) => {
           </div>
           <div class="flex items-center gap-2.5">
             ${cartQty > 0 ? `<span class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-full">${cartQty} di keranjang</span>` : ''}
-            <span class="text-sm font-black text-emerald-600 dark:text-emerald-400">${fCur(v.price || 0)}</span>
+            <div class="flex flex-col items-end">
+              ${vInc ? `<span class="text-[9px] text-slate-400 dark:text-slate-500 line-through leading-none mb-0.5">${fCur(vInc.prev)}</span>` : ''}
+              <div class="flex items-center gap-1.5">
+                ${vInc ? `<span class="text-[8px] font-black px-1.5 py-0.2 rounded-md ${vInc.badgeClass} leading-none"><i class="fa-solid ${vInc.icon} text-[7px]"></i> ${vInc.label}</span>` : ''}
+                <span class="text-sm font-black text-emerald-600 dark:text-emerald-400">${fCur(v.price || 0)}</span>
+              </div>
+            </div>
           </div>
         </button>
       `;
@@ -16654,15 +16740,18 @@ const renderPosCart = () => {
     const isGrosir = item.wholesaleMinQty > 0 && item.qty >= item.wholesaleMinQty;
     const lineTotal = effPrice * item.qty;
     const isDecimal = item.unit && ['kg', 'gram', 'liter', 'ml', 'ons', 'm', 'cm'].some(u => item.unit.toLowerCase().includes(u));
+    const targetProd = (appData.products || []).find(p => String(p.id) === String(item.id));
+    const cartInc = typeof window.getCartOrWishPriceChangeInfo === 'function' ? window.getCartOrWishPriceChangeInfo(item, targetProd) : null;
 
     return `
       <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-2.5 flex items-start gap-2.5 shadow-xs hover:border-emerald-500/50 transition-colors">
         ${item.image ? `<img src="${esc(item.image)}" class="w-11 h-11 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-slate-700" onerror="if(window.imgErrRetry) window.imgErrRetry(this, 'No Image', 400); else this.style.display='none';"/>` : `<div class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-800 shrink-0 flex items-center justify-center"><i class="fa-solid fa-image text-slate-300 dark:text-slate-600"></i></div>`}
         <div class="flex-1 min-w-0">
           <p class="text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight truncate">${esc(item.name)}${item.variantName ? ` <span class="text-slate-500">(${esc(item.variantName)})</span>` : ''}</p>
-          <div class="flex items-center gap-1.5 mt-0.5">
+          <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
             ${isGrosir ? `<span class="text-[8px] font-black bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 px-1.5 py-0.2 rounded-full">GROSIR</span>` : ''}
             <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400">${fCur(effPrice)} × ${item.qty}${item.unit ? ' ' + item.unit : ''}</span>
+            ${cartInc ? `<span class="text-[8px] font-black ${cartInc.badgeClass} px-1.5 py-0.2 rounded-md leading-none"><i class="fa-solid ${cartInc.icon} text-[7px]"></i> ${cartInc.label}</span>` : ''}
           </div>
           <div class="flex items-center justify-between mt-1.5">
             <span class="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400">${fCur(lineTotal)}</span>
@@ -17715,6 +17804,9 @@ window.openPurchaseModal = () => {
   }
 
   filterPurchProducts('');
+  setV('purch-item-sell-price', '');
+  const advisorCard = el('purch-price-advisor-card');
+  if (advisorCard) advisorCard.classList.add('hidden');
   
   onPurchaseProductSelect();
   _renderPurchaseItemsTable();
@@ -17738,20 +17830,25 @@ window.closePurchaseModal = () => {
   window.closeModalSmooth('purchase-modal', 'purchase-modal-box', 'bottom-sheet');
 };
 
+window._currentPurchRecommendedPrice = 0;
+
 window.onPurchaseProductSelect = () => {
   const pId = getV('purch-item-prod');
   const varWrap = el('purch-variant-wrapper');
   const varSel = el('purch-item-var');
   const priceInput = el('purch-item-price');
+  const advisorCard = el('purch-price-advisor-card');
 
   if (!pId) {
     if (varSel) varSel.innerHTML = '<option value="">- Tanpa Varian -</option>';
     if (priceInput) priceInput.value = 0;
+    if (advisorCard) advisorCard.classList.add('hidden');
     return;
   }
 
   const p = (appData.products || []).find(x => String(x.id) === String(pId));
   if (!p) return;
+  if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
 
   if (p.variants && p.variants.length > 0) {
     if (varWrap) varWrap.classList.remove('hidden');
@@ -17762,6 +17859,7 @@ window.onPurchaseProductSelect = () => {
       varSel.onchange = () => {
         const selV = p.variants.find(v => String(v.id || v.name) === String(varSel.value));
         if (priceInput && selV) priceInput.value = selV.costPrice || selV.buyPrice || Math.round((selV.price || 0) * 0.8);
+        onPurchasePriceInputChange();
       };
       const firstV = p.variants[0];
       if (priceInput && firstV) priceInput.value = firstV.costPrice || firstV.buyPrice || Math.round((firstV.price || 0) * 0.8);
@@ -17770,6 +17868,101 @@ window.onPurchaseProductSelect = () => {
     if (varSel) varSel.innerHTML = '<option value="">- Tanpa Varian -</option>';
     if (priceInput) priceInput.value = p.costPrice || p.buyPrice || Math.round((p.price || 0) * 0.8);
   }
+
+  onPurchasePriceInputChange();
+};
+
+window.onPurchasePriceInputChange = () => {
+  const pId = getV('purch-item-prod');
+  const advisorCard = el('purch-price-advisor-card');
+  if (!pId) {
+    if (advisorCard) advisorCard.classList.add('hidden');
+    return;
+  }
+
+  const p = (appData.products || []).find(x => String(x.id) === String(pId));
+  if (!p) return;
+
+  const varSel = el('purch-item-var');
+  const varVal = varSel ? varSel.value : '';
+  let targetItem = p;
+  if (p.variants && p.variants.length > 0 && varVal) {
+    const foundVar = p.variants.find(v => String(v.id || v.name) === String(varVal));
+    if (foundVar) targetItem = foundVar;
+  }
+
+  const oldCost = parseFloat(targetItem.costPrice || targetItem.buyPrice) || 0;
+  const oldSell = parseFloat(targetItem.price) || 0;
+  const newBuyPrice = parseFloat(getV('purch-item-price')) || 0;
+
+  if (advisorCard) advisorCard.classList.remove('hidden');
+
+  setIn('purch-curr-cost-val', fCur(oldCost));
+  setIn('purch-curr-sell-val', fCur(oldSell));
+
+  const currProfit = oldSell - oldCost;
+  const currProfitEl = el('purch-curr-profit-val');
+  if (currProfitEl) {
+    if (currProfit > 0) {
+      const pct = oldCost > 0 ? Math.round((currProfit / oldCost) * 100) : 0;
+      currProfitEl.className = 'font-black text-emerald-600 dark:text-emerald-400 text-xs';
+      currProfitEl.innerText = `+${fCur(currProfit)} (${pct}%)`;
+    } else if (currProfit < 0) {
+      currProfitEl.className = 'font-black text-rose-500 text-xs';
+      currProfitEl.innerText = `${fCur(currProfit)} (Rugi)`;
+    } else {
+      currProfitEl.className = 'font-bold text-slate-500 text-xs';
+      currProfitEl.innerText = fCur(0);
+    }
+  }
+
+  // Hitung selisih harga kulak distributor
+  const badgeEl = el('purch-cost-diff-badge');
+  if (badgeEl) {
+    const diff = newBuyPrice - oldCost;
+    if (oldCost > 0 && diff > 0) {
+      const pct = Math.round((diff / oldCost) * 100);
+      badgeEl.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 shadow-2xs';
+      badgeEl.innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> Modal Naik ${fCur(diff)} (+${pct}%)`;
+    } else if (oldCost > 0 && diff < 0) {
+      const pct = Math.round((Math.abs(diff) / oldCost) * 100);
+      badgeEl.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shadow-2xs';
+      badgeEl.innerHTML = `<i class="fa-solid fa-arrow-trend-down"></i> Modal Turun ${fCur(Math.abs(diff))} (-${pct}%)`;
+    } else {
+      badgeEl.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700';
+      badgeEl.innerHTML = `<i class="fa-solid fa-check"></i> Modal Tetap`;
+    }
+  }
+
+  // Hitung rekomendasi harga jual baru
+  let recommendedSell = 0;
+  if (newBuyPrice > 0) {
+    if (oldSell > oldCost && oldCost > 0) {
+      const marginNominal = oldSell - oldCost;
+      const marginRatio = (oldSell - oldCost) / oldCost;
+      const recomA = newBuyPrice + marginNominal;
+      const recomB = newBuyPrice * (1 + marginRatio);
+      recommendedSell = Math.ceil(Math.max(recomA, recomB) / 100) * 100;
+    } else {
+      // Default standard markup jika belum ada data margin (15% di atas HPP baru)
+      recommendedSell = Math.ceil((newBuyPrice * 1.15) / 100) * 100;
+    }
+  }
+  window._currentPurchRecommendedPrice = recommendedSell;
+  setIn('purch-recom-sell-val', recommendedSell > 0 ? fCur(recommendedSell) : '-');
+};
+
+window.applyPurchaseRecommendedPrice = () => {
+  if (!window._currentPurchRecommendedPrice || window._currentPurchRecommendedPrice <= 0) {
+    return showToast('Masukkan harga beli terlebih dahulu!');
+  }
+  setV('purch-item-sell-price', window._currentPurchRecommendedPrice);
+  const inputEl = el('purch-item-sell-price');
+  if (inputEl) {
+    inputEl.classList.add('ring-2', 'ring-amber-500');
+    setTimeout(() => inputEl.classList.remove('ring-2', 'ring-amber-500'), 800);
+  }
+  showToast(`Rekomendasi harga jual ${fCur(window._currentPurchRecommendedPrice)} dipasang! ⚡`);
 };
 
 window.addPurchaseItemRow = () => {
@@ -17783,6 +17976,7 @@ window.addPurchaseItemRow = () => {
   const varVal = varSel ? varSel.value : '';
   const qty = parseFloat(getV('purch-item-qty')) || 0;
   const buyPrice = parseFloat(getV('purch-item-price')) || 0;
+  const inputNewSell = parseFloat(getV('purch-item-sell-price')) || 0;
 
   if (qty <= 0) return showToast('Jumlah (qty) harus lebih dari 0!');
   if (buyPrice < 0) return showToast('Harga beli tidak boleh minus!');
@@ -17794,12 +17988,16 @@ window.addPurchaseItemRow = () => {
     if (variantObj) varName = variantObj.name;
   }
 
+  const currSellPrice = variantObj ? (variantObj.price || 0) : (p.price || 0);
+  const finalNewSellPrice = (inputNewSell > 0 && inputNewSell !== currSellPrice) ? inputNewSell : null;
+
   // Cek jika item sudah ada di daftar
   const existingIdx = currentPurchaseItems.findIndex(i => String(i.productId) === String(pId) && String(i.variantId || '') === String(varVal || ''));
   if (existingIdx > -1) {
     currentPurchaseItems[existingIdx].qty += qty;
     currentPurchaseItems[existingIdx].buyPrice = buyPrice;
     currentPurchaseItems[existingIdx].subtotal = currentPurchaseItems[existingIdx].qty * buyPrice;
+    if (finalNewSellPrice) currentPurchaseItems[existingIdx].newSellingPrice = finalNewSellPrice;
   } else {
     currentPurchaseItems.push({
       productId: String(p.id),
@@ -17809,15 +18007,18 @@ window.addPurchaseItemRow = () => {
       unit: p.unit || variantObj?.unit || 'pcs',
       qty,
       buyPrice,
-      subtotal: qty * buyPrice
+      subtotal: qty * buyPrice,
+      currSellingPrice: currSellPrice,
+      newSellingPrice: finalNewSellPrice
     });
   }
 
   // Reset item inputs
   setV('purch-item-qty', '1');
+  setV('purch-item-sell-price', '');
   _renderPurchaseItemsTable();
   calculatePurchaseTotals();
-  showToast(`"${p.name}" ditambahkan!`);
+  showToast(`"${p.name}${varName ? ' (' + varName + ')' : ''}" ditambahkan!`);
 };
 
 window.removePurchaseItemRow = (idx) => {
@@ -17834,7 +18035,7 @@ const _renderPurchaseItemsTable = () => {
     if (tbody) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="6" class="p-4 text-center text-slate-400 font-medium">Belum ada barang dimasukkan</td>
+          <td colspan="7" class="p-4 text-center text-slate-400 font-medium">Belum ada barang dimasukkan</td>
         </tr>
       `;
     }
@@ -17855,10 +18056,21 @@ const _renderPurchaseItemsTable = () => {
         <td class="p-2.5 font-bold text-slate-500">${i + 1}</td>
         <td class="p-2.5 font-extrabold text-slate-800 dark:text-slate-200">
           ${esc(item.productName)}
-          ${item.variantName ? `<span class="block text-[10px] text-slate-400 font-semibold">[${esc(item.variantName)}]</span>` : ''}
+          ${item.variantName ? `<span class="block text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">[${esc(item.variantName)}]</span>` : ''}
         </td>
         <td class="p-2.5 text-center font-black text-slate-800 dark:text-slate-200">${item.qty} ${esc(item.unit)}</td>
         <td class="p-2.5 text-right font-bold text-slate-600 dark:text-slate-300">${fCur(item.buyPrice)}</td>
+        <td class="p-2.5 text-right font-medium">
+          ${item.newSellingPrice ? `
+            <div class="flex flex-col items-end">
+              <span class="text-xs font-black text-emerald-600 dark:text-emerald-400">${fCur(item.newSellingPrice)}</span>
+              <span class="text-[9px] text-slate-400 line-through">${fCur(item.currSellingPrice || 0)}</span>
+              <span class="text-[8px] font-black text-amber-500 uppercase tracking-tight">▲ Update Jual</span>
+            </div>
+          ` : `
+            <span class="text-[10px] text-slate-400">Tetap (${fCur(item.currSellingPrice || 0)})</span>
+          `}
+        </td>
         <td class="p-2.5 text-right font-black text-emerald-600 dark:text-emerald-400">${fCur(item.subtotal)}</td>
         <td class="p-2.5 text-center">
           <button type="button" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-colors" onclick="removePurchaseItemRow(${i})" title="Hapus Item">
@@ -17879,8 +18091,13 @@ const _renderPurchaseItemsTable = () => {
           </div>
           ${item.variantName ? `<span class="inline-block text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">[${esc(item.variantName)}]</span>` : ''}
           <div class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">
-            <span class="font-bold text-slate-700 dark:text-slate-300">${item.qty} ${esc(item.unit)}</span> × ${fCur(item.buyPrice)}
+            <span class="font-bold text-slate-700 dark:text-slate-300">${item.qty} ${esc(item.unit)}</span> × Beli ${fCur(item.buyPrice)}
           </div>
+          ${item.newSellingPrice ? `
+            <div class="text-[10px] text-amber-600 dark:text-amber-400 font-bold mt-0.5">
+              Jual Baru: ${fCur(item.newSellingPrice)} <span class="line-through text-slate-400">(${fCur(item.currSellingPrice || 0)})</span>
+            </div>
+          ` : ''}
         </div>
         <div class="text-right shrink-0 flex flex-col items-end gap-1">
           <div class="font-black text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm">${fCur(item.subtotal)}</div>
@@ -18027,11 +18244,27 @@ window.savePurchaseInvoice = async () => {
           v.buyPrice = item.buyPrice;
           v.lastPurchasePrice = item.buyPrice;
           v.lastPurchaseDate = Date.now();
+
+          // Jika ada penyesuaian / kenaikan harga jual varian baru dari kulakan
+          if (item.newSellingPrice && item.newSellingPrice > 0 && item.newSellingPrice !== v.price) {
+            v.previousPrice = v.price; // Catat harga lama untuk coret
+            v.price = item.newSellingPrice; // Terapkan harga jual baru
+            v.priceIncreasedAt = Date.now(); // Aktifkan lencana kenaikan harga
+          }
         }
       } else {
         prod.stock = (parseInt(prod.stock) || 0) + item.qty;
         prod.costPrice = item.buyPrice; // Update HPP Produk
         prod.buyPrice = item.buyPrice;
+        prod.lastPurchasePrice = item.buyPrice;
+        prod.lastPurchaseDate = Date.now();
+
+        // Jika ada penyesuaian / kenaikan harga jual produk baru dari kulakan
+        if (item.newSellingPrice && item.newSellingPrice > 0 && item.newSellingPrice !== prod.price) {
+          prod.previousPrice = prod.price; // Catat harga lama untuk coret
+          prod.price = item.newSellingPrice; // Terapkan harga jual baru
+          prod.priceIncreasedAt = Date.now(); // Aktifkan lencana kenaikan harga
+        }
       }
     }
   });
@@ -18044,7 +18277,11 @@ window.savePurchaseInvoice = async () => {
   isSaving = true;
   try {
     await saveApp();
-    showToast('Faktur pembelian berhasil disimpan & stok bertambah!');
+    if (typeof syncPosCartPrices === 'function') syncPosCartPrices();
+    if (typeof renderPosProducts === 'function') renderPosProducts();
+    if (typeof renderPosCart === 'function') renderPosCart();
+    if (typeof rCat === 'function') rCat();
+    showToast('Faktur pembelian disimpan! Stok & harga otomatis tersinkronkan! 🔄');
     closePurchaseModal();
     rAdmPurchases();
   } catch (e) {

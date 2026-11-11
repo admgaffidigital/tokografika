@@ -75,6 +75,41 @@ Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan 
 - **Tampilan Daftar Produk Admin yang Akurat:**
   - Pada daftar produk Admin, produk bervarian kini menampilkan rentang harga jual (`Rp Min - Rp Max`) dan rentang HPP (`HPP: Rp Min - Rp Max`), bukan lagi satu harga tunggal produk induk.
 
+### 10. Sinkronisasi Penuh Kasir POS dengan Sistem Varian & Kenaikan Harga:
+- **Tampilan Kartu Katalog POS (Grid & List View):**
+  - Kartu produk bervarian di kasir POS kini mendeteksi secara cerdas jika ada varian yang mengalami kenaikan harga (`[Nama Varian]: Naik Rp...`) sehingga kasir langsung waspada terhadap penyesuaian harga terbaru.
+- **Modal Pilihan Varian di Kasir POS (`openPosVariantModal`):**
+  - Setiap tombol pilihan varian menampilkan harga lama yang dicoret (`<s>Rp 10.800</s>`) berdampingan dengan lencana kenaikan harga (`Naik Rp 100`) dan harga jual aktif (`Rp 10.900`).
+- **Indikator Kenaikan Harga di Keranjang POS (`renderPosCart`):**
+  - Item belanja di keranjang kasir (desktop dan drawer mobile) menampilkan lencana kenaikan harga akurat sesuai varian yang dipilih pelanggan.
+- **Sinkronisasi Harga Keranjang POS (`syncPosCartPrices`):**
+  - Secara otomatis memperbarui `price`, `costPrice` (HPP), dan `previousPrice` pada item keranjang kasir jika terjadi perubahan harga di katalog.
+- **Isolasi HPP & Laba Transaksi POS:**
+  - Perhitungan margin keuntungan transaksi penjualan POS kini mutlak menggunakan `costPrice` spesifik dari varian yang terjual.
+
+### 11. Sistem Kulakan Distributor Pintar (Faktur Pembelian): Deteksi Kenaikan Modal & Rekomendasi Harga Jual Baru:
+- **Analisa Harga Kulakan Distributor Real-Time (`purch-price-advisor-card`):**
+  - Saat memilih produk atau varian pada form input pembelian supplier, sistem otomatis menampilkan kartu pintar yang merangkum:
+    - **HPP Saat Ini:** Harga modal lama per unit/varian.
+    - **Harga Jual Aktif:** Harga jual yang sedang berlaku di etalase toko & kasir POS.
+    - **Margin Keuntungan Saat Ini:** Nominal laba dan persentase keuntungan toko saat ini.
+- **Deteksi Kenaikan Harga Kulak / Modal dari Distributor:**
+  - Ketika admin mengetik harga beli baru dari distributor, sistem secara otomatis mendeteksi selisihnya:
+    - `▲ Modal Naik Rp X (+Y%)`: Menandakan harga beli distributor naik, memberi peringatan bahwa margin keuntungan toko akan tergerus jika harga jual tidak dinaikkan.
+    - `▼ Modal Turun Rp X (-Y%)`: Menandakan harga beli distributor lebih murah, memberi peluang promo atau penambahan margin toko.
+- **Kalkulator Cerdas Rekomendasi Harga Jual Baru:**
+  - Sistem otomatis menghitung harga jual rekomendasi terbaik untuk mempertahankan persentase margin laba toko, yang secara otomatis dibulatkan ke nominal rapi (ratusan terdekat).
+  - Dilengkapi tombol 1-klik **"⚡ Gunakan Rekomendasi Ini"** atau admin dapat mengetikkan nominal harga jual baru secara manual.
+- **Auto-Sync Etalase & POS Saat Faktur Pembelian Disimpan (`savePurchaseInvoice`):**
+  - Ketika faktur pembelian disimpan:
+    - Stok bertambah sesuai kuantitas faktur.
+    - HPP produk/varian (`v.costPrice`) ter-update ke harga beli distributor terbaru.
+    - Jika harga jual baru diisi (atau rekomendasi diterapkan):
+      - `v.previousPrice` otomatis diisi harga jual lama (untuk coret harga).
+      - `v.price` diisi harga jual baru.
+      - `v.priceIncreasedAt` diisi waktu saat ini (mengaktifkan lencana kenaikan harga `▲ Naik Rp...`).
+    - Etalase toko, katalog pembeli, dan kasir POS seketika tersinkronkan tanpa perlu berpindah ke menu Edit Produk secara terpisah.
+
 
 
 

@@ -427,7 +427,16 @@ const renderPosProductCardGrid = (p) => {
   const totalStock = hasVariants ? (p.variants || []).reduce((acc, v) => acc + (parseInt(v.stock) || 0), 0) : stock;
   const isOutOfStock = isOff || (!isUnlimited && totalStock <= 0);
   const price = _getPosMainPrice(p);
-  const pInc = typeof window.getPriceIncreaseInfo === 'function' && !isOff ? window.getPriceIncreaseInfo(p) : null;
+  let pInc = null;
+  let changedVar = null;
+  if (typeof window.getPriceIncreaseInfo === 'function' && !isOff) {
+    if (hasVariants) {
+      changedVar = p.variants.find(v => window.isPriceIncreaseActive(v));
+      if (changedVar) pInc = window.getPriceIncreaseInfo(changedVar);
+    } else {
+      pInc = window.getPriceIncreaseInfo(p);
+    }
+  }
   const rawImg = p.img || p.image || (p.images && p.images[0]) || '';
   const imgUrl = rawImg ? (typeof fixD === 'function' ? fixD(rawImg) : rawImg) : '';
   const cartQty = posCart.filter(c => String(c.id) === String(p.id)).reduce((s, c) => s + c.qty, 0);
@@ -474,7 +483,7 @@ const renderPosProductCardGrid = (p) => {
               ${isOff ? `<span class="text-[9px] font-bold text-rose-500 leading-none">Nonaktif</span>` : (isUnlimited ? `<span class="text-[9px] font-bold text-slate-400 leading-none">∞ Stok Bebas</span>` : (hasVariants ? `<span class="text-[9px] font-medium text-slate-400 leading-none">Stok ${totalStock}</span>` : `<span class="text-[9px] font-semibold ${stock > 5 ? 'text-slate-400' : (stock > 0 ? 'text-amber-500 font-bold' : 'text-rose-500 font-bold')} leading-none">Stok ${stock} ${esc(p.unit || 'pcs')}</span>`))}
             </div>
             <div class="text-xs sm:text-[15px] font-black text-emerald-600 dark:text-emerald-400 leading-tight mt-0.5 truncate">${fCur(price)}</div>
-            ${pInc ? `<div class="text-[8px] font-bold ${pInc.isUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} leading-none mt-0.5 truncate"><i class="fa-solid ${pInc.icon}"></i> ${pInc.label}</div>` : ''}
+            ${pInc ? `<div class="text-[8px] font-bold ${pInc.isUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} leading-none mt-0.5 truncate"><i class="fa-solid ${pInc.icon}"></i> ${changedVar?.name ? esc(changedVar.name) + ': ' : ''}${pInc.label}</div>` : ''}
           </div>
           
           <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center text-xs font-bold transition-all shadow-xs shrink-0">
@@ -494,7 +503,16 @@ const renderPosProductCardList = (p) => {
   const totalStock = hasVariants ? (p.variants || []).reduce((acc, v) => acc + (parseInt(v.stock) || 0), 0) : stock;
   const isOutOfStock = isOff || (!isUnlimited && totalStock <= 0);
   const price = _getPosMainPrice(p);
-  const pInc = typeof window.getPriceIncreaseInfo === 'function' && !isOff ? window.getPriceIncreaseInfo(p) : null;
+  let pInc = null;
+  let changedVar = null;
+  if (typeof window.getPriceIncreaseInfo === 'function' && !isOff) {
+    if (hasVariants) {
+      changedVar = p.variants.find(v => window.isPriceIncreaseActive(v));
+      if (changedVar) pInc = window.getPriceIncreaseInfo(changedVar);
+    } else {
+      pInc = window.getPriceIncreaseInfo(p);
+    }
+  }
   const rawImg = p.img || p.image || (p.images && p.images[0]) || '';
   const imgUrl = rawImg ? (typeof fixD === 'function' ? fixD(rawImg) : rawImg) : '';
   const cartQty = posCart.filter(c => String(c.id) === String(p.id)).reduce((s, c) => s + c.qty, 0);
@@ -522,7 +540,7 @@ const renderPosProductCardList = (p) => {
           ${hasVariants ? `<span class="text-[9px] font-bold text-slate-400">Mulai</span>` : ''}
           <span class="text-sm sm:text-base font-black text-emerald-600 dark:text-emerald-400">${fCur(price)}</span>
           ${p.unit ? `<span class="text-[10px] text-slate-400 font-semibold">/${esc(p.unit)}</span>` : ''}
-          ${pInc ? `<span class="text-[9px] font-bold ${pInc.isUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} ml-1.5"><i class="fa-solid ${pInc.icon}"></i> ${pInc.label}</span>` : ''}
+          ${pInc ? `<span class="text-[9px] font-bold ${pInc.isUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} ml-1.5"><i class="fa-solid ${pInc.icon}"></i> ${changedVar?.name ? esc(changedVar.name) + ': ' : ''}${pInc.label}</span>` : ''}
         </div>
       </div>
 
@@ -568,6 +586,8 @@ window.addToCartPos = (productId, variantId = null, qty = 1) => {
         variantName: variant.name || String(variantId),
         price: basePrice,
         effectivePrice,
+        previousPrice: variant.previousPrice || null,
+        costPrice: variant.costPrice !== undefined ? variant.costPrice : null,
         unit: variant.unit || product.unit || '',
         qty,
         image: vImg ? (typeof fixD === 'function' ? fixD(vImg) : vImg) : '',
@@ -597,6 +617,8 @@ window.addToCartPos = (productId, variantId = null, qty = 1) => {
         variantName: null,
         price: basePrice,
         effectivePrice,
+        previousPrice: product.previousPrice || null,
+        costPrice: product.costPrice !== undefined ? product.costPrice : null,
         unit: product.unit || '',
         qty,
         image: pImg ? (typeof fixD === 'function' ? fixD(pImg) : pImg) : '',
@@ -618,13 +640,21 @@ window.syncPosCartPrices = () => {
   posCart.forEach(item => {
     const p = (appData.products || []).find(x => String(x.id) === String(item.id));
     if (!p) return;
+    if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
     if (p.name && item.name !== p.name) { item.name = p.name; changed = true; }
     if (item.unit !== (p.unit || '')) { item.unit = p.unit || ''; changed = true; }
 
     let basePrice = parseFloat(p.salePrice > 0 ? p.salePrice : (p.price || 0)) || 0;
     if (item.variantId && p.variants && p.variants.length > 0) {
-      const v = p.variants.find(vr => String(vr.id || vr.name) === String(item.variantId));
-      if (v && v.price !== undefined && v.price !== null) basePrice = parseFloat(v.price) || 0;
+      const v = p.variants.find(vr => String(vr.id || vr.name) === String(item.variantId) || vr.name === item.variantName);
+      if (v && v.price !== undefined && v.price !== null) {
+        basePrice = parseFloat(v.price) || 0;
+        if (v.costPrice !== undefined) item.costPrice = v.costPrice;
+        item.previousPrice = v.previousPrice || null;
+      }
+    } else {
+      if (p.costPrice !== undefined) item.costPrice = p.costPrice;
+      item.previousPrice = p.previousPrice || null;
     }
     if (item.price !== basePrice) {
       item.price = basePrice;
@@ -742,6 +772,7 @@ window.openPosVariantModal = (productId) => {
       const cartQty = posCart.filter(c => String(c.id) === String(p.id) && String(c.variantId) === String(vKey)).reduce((s, c) => s + c.qty, 0);
       const vStock = typeof v.stock !== 'undefined' && v.stock !== '' ? (parseInt(v.stock) || 0) : 100;
       const isOut = (v.isActive === 'false' || v.isActive === false) || (!isUnlimited && vStock <= 0);
+      const vInc = typeof window.getPriceIncreaseInfo === 'function' ? window.getPriceIncreaseInfo(v) : null;
       return `
         <button type="button" onclick="addToCartPos('${esc(p.id)}', '${esc(vKey)}', 1); closePosVariantModal();" 
           class="w-full flex items-center justify-between p-3 rounded-xl border ${isOut ? 'border-slate-200 dark:border-slate-800 opacity-50 cursor-not-allowed bg-slate-50 dark:bg-slate-800/40' : 'border-slate-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 active:scale-98'} transition-all cursor-pointer"
@@ -752,7 +783,13 @@ window.openPosVariantModal = (productId) => {
           </div>
           <div class="flex items-center gap-2.5">
             ${cartQty > 0 ? `<span class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-full">${cartQty} di keranjang</span>` : ''}
-            <span class="text-sm font-black text-emerald-600 dark:text-emerald-400">${fCur(v.price || 0)}</span>
+            <div class="flex flex-col items-end">
+              ${vInc ? `<span class="text-[9px] text-slate-400 dark:text-slate-500 line-through leading-none mb-0.5">${fCur(vInc.prev)}</span>` : ''}
+              <div class="flex items-center gap-1.5">
+                ${vInc ? `<span class="text-[8px] font-black px-1.5 py-0.2 rounded-md ${vInc.badgeClass} leading-none"><i class="fa-solid ${vInc.icon} text-[7px]"></i> ${vInc.label}</span>` : ''}
+                <span class="text-sm font-black text-emerald-600 dark:text-emerald-400">${fCur(v.price || 0)}</span>
+              </div>
+            </div>
           </div>
         </button>
       `;
@@ -879,15 +916,18 @@ const renderPosCart = () => {
     const isGrosir = item.wholesaleMinQty > 0 && item.qty >= item.wholesaleMinQty;
     const lineTotal = effPrice * item.qty;
     const isDecimal = item.unit && ['kg', 'gram', 'liter', 'ml', 'ons', 'm', 'cm'].some(u => item.unit.toLowerCase().includes(u));
+    const targetProd = (appData.products || []).find(p => String(p.id) === String(item.id));
+    const cartInc = typeof window.getCartOrWishPriceChangeInfo === 'function' ? window.getCartOrWishPriceChangeInfo(item, targetProd) : null;
 
     return `
       <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-2.5 flex items-start gap-2.5 shadow-xs hover:border-emerald-500/50 transition-colors">
         ${item.image ? `<img src="${esc(item.image)}" class="w-11 h-11 rounded-xl object-cover shrink-0 border border-slate-200 dark:border-slate-700" onerror="if(window.imgErrRetry) window.imgErrRetry(this, 'No Image', 400); else this.style.display='none';"/>` : `<div class="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-800 shrink-0 flex items-center justify-center"><i class="fa-solid fa-image text-slate-300 dark:text-slate-600"></i></div>`}
         <div class="flex-1 min-w-0">
           <p class="text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight truncate">${esc(item.name)}${item.variantName ? ` <span class="text-slate-500">(${esc(item.variantName)})</span>` : ''}</p>
-          <div class="flex items-center gap-1.5 mt-0.5">
+          <div class="flex items-center gap-1.5 mt-0.5 flex-wrap">
             ${isGrosir ? `<span class="text-[8px] font-black bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 px-1.5 py-0.2 rounded-full">GROSIR</span>` : ''}
             <span class="text-[10px] font-semibold text-slate-500 dark:text-slate-400">${fCur(effPrice)} × ${item.qty}${item.unit ? ' ' + item.unit : ''}</span>
+            ${cartInc ? `<span class="text-[8px] font-black ${cartInc.badgeClass} px-1.5 py-0.2 rounded-md leading-none"><i class="fa-solid ${cartInc.icon} text-[7px]"></i> ${cartInc.label}</span>` : ''}
           </div>
           <div class="flex items-center justify-between mt-1.5">
             <span class="text-xs sm:text-sm font-black text-emerald-600 dark:text-emerald-400">${fCur(lineTotal)}</span>

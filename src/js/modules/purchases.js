@@ -281,6 +281,9 @@ window.openPurchaseModal = () => {
   }
 
   filterPurchProducts('');
+  setV('purch-item-sell-price', '');
+  const advisorCard = el('purch-price-advisor-card');
+  if (advisorCard) advisorCard.classList.add('hidden');
   
   onPurchaseProductSelect();
   _renderPurchaseItemsTable();
@@ -304,20 +307,25 @@ window.closePurchaseModal = () => {
   window.closeModalSmooth('purchase-modal', 'purchase-modal-box', 'bottom-sheet');
 };
 
+window._currentPurchRecommendedPrice = 0;
+
 window.onPurchaseProductSelect = () => {
   const pId = getV('purch-item-prod');
   const varWrap = el('purch-variant-wrapper');
   const varSel = el('purch-item-var');
   const priceInput = el('purch-item-price');
+  const advisorCard = el('purch-price-advisor-card');
 
   if (!pId) {
     if (varSel) varSel.innerHTML = '<option value="">- Tanpa Varian -</option>';
     if (priceInput) priceInput.value = 0;
+    if (advisorCard) advisorCard.classList.add('hidden');
     return;
   }
 
   const p = (appData.products || []).find(x => String(x.id) === String(pId));
   if (!p) return;
+  if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
 
   if (p.variants && p.variants.length > 0) {
     if (varWrap) varWrap.classList.remove('hidden');
@@ -328,6 +336,7 @@ window.onPurchaseProductSelect = () => {
       varSel.onchange = () => {
         const selV = p.variants.find(v => String(v.id || v.name) === String(varSel.value));
         if (priceInput && selV) priceInput.value = selV.costPrice || selV.buyPrice || Math.round((selV.price || 0) * 0.8);
+        onPurchasePriceInputChange();
       };
       const firstV = p.variants[0];
       if (priceInput && firstV) priceInput.value = firstV.costPrice || firstV.buyPrice || Math.round((firstV.price || 0) * 0.8);
@@ -336,6 +345,101 @@ window.onPurchaseProductSelect = () => {
     if (varSel) varSel.innerHTML = '<option value="">- Tanpa Varian -</option>';
     if (priceInput) priceInput.value = p.costPrice || p.buyPrice || Math.round((p.price || 0) * 0.8);
   }
+
+  onPurchasePriceInputChange();
+};
+
+window.onPurchasePriceInputChange = () => {
+  const pId = getV('purch-item-prod');
+  const advisorCard = el('purch-price-advisor-card');
+  if (!pId) {
+    if (advisorCard) advisorCard.classList.add('hidden');
+    return;
+  }
+
+  const p = (appData.products || []).find(x => String(x.id) === String(pId));
+  if (!p) return;
+
+  const varSel = el('purch-item-var');
+  const varVal = varSel ? varSel.value : '';
+  let targetItem = p;
+  if (p.variants && p.variants.length > 0 && varVal) {
+    const foundVar = p.variants.find(v => String(v.id || v.name) === String(varVal));
+    if (foundVar) targetItem = foundVar;
+  }
+
+  const oldCost = parseFloat(targetItem.costPrice || targetItem.buyPrice) || 0;
+  const oldSell = parseFloat(targetItem.price) || 0;
+  const newBuyPrice = parseFloat(getV('purch-item-price')) || 0;
+
+  if (advisorCard) advisorCard.classList.remove('hidden');
+
+  setIn('purch-curr-cost-val', fCur(oldCost));
+  setIn('purch-curr-sell-val', fCur(oldSell));
+
+  const currProfit = oldSell - oldCost;
+  const currProfitEl = el('purch-curr-profit-val');
+  if (currProfitEl) {
+    if (currProfit > 0) {
+      const pct = oldCost > 0 ? Math.round((currProfit / oldCost) * 100) : 0;
+      currProfitEl.className = 'font-black text-emerald-600 dark:text-emerald-400 text-xs';
+      currProfitEl.innerText = `+${fCur(currProfit)} (${pct}%)`;
+    } else if (currProfit < 0) {
+      currProfitEl.className = 'font-black text-rose-500 text-xs';
+      currProfitEl.innerText = `${fCur(currProfit)} (Rugi)`;
+    } else {
+      currProfitEl.className = 'font-bold text-slate-500 text-xs';
+      currProfitEl.innerText = fCur(0);
+    }
+  }
+
+  // Hitung selisih harga kulak distributor
+  const badgeEl = el('purch-cost-diff-badge');
+  if (badgeEl) {
+    const diff = newBuyPrice - oldCost;
+    if (oldCost > 0 && diff > 0) {
+      const pct = Math.round((diff / oldCost) * 100);
+      badgeEl.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 shadow-2xs';
+      badgeEl.innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> Modal Naik ${fCur(diff)} (+${pct}%)`;
+    } else if (oldCost > 0 && diff < 0) {
+      const pct = Math.round((Math.abs(diff) / oldCost) * 100);
+      badgeEl.className = 'text-[10px] font-black px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shadow-2xs';
+      badgeEl.innerHTML = `<i class="fa-solid fa-arrow-trend-down"></i> Modal Turun ${fCur(Math.abs(diff))} (-${pct}%)`;
+    } else {
+      badgeEl.className = 'text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700';
+      badgeEl.innerHTML = `<i class="fa-solid fa-check"></i> Modal Tetap`;
+    }
+  }
+
+  // Hitung rekomendasi harga jual baru
+  let recommendedSell = 0;
+  if (newBuyPrice > 0) {
+    if (oldSell > oldCost && oldCost > 0) {
+      const marginNominal = oldSell - oldCost;
+      const marginRatio = (oldSell - oldCost) / oldCost;
+      const recomA = newBuyPrice + marginNominal;
+      const recomB = newBuyPrice * (1 + marginRatio);
+      recommendedSell = Math.ceil(Math.max(recomA, recomB) / 100) * 100;
+    } else {
+      // Default standard markup jika belum ada data margin (15% di atas HPP baru)
+      recommendedSell = Math.ceil((newBuyPrice * 1.15) / 100) * 100;
+    }
+  }
+  window._currentPurchRecommendedPrice = recommendedSell;
+  setIn('purch-recom-sell-val', recommendedSell > 0 ? fCur(recommendedSell) : '-');
+};
+
+window.applyPurchaseRecommendedPrice = () => {
+  if (!window._currentPurchRecommendedPrice || window._currentPurchRecommendedPrice <= 0) {
+    return showToast('Masukkan harga beli terlebih dahulu!');
+  }
+  setV('purch-item-sell-price', window._currentPurchRecommendedPrice);
+  const inputEl = el('purch-item-sell-price');
+  if (inputEl) {
+    inputEl.classList.add('ring-2', 'ring-amber-500');
+    setTimeout(() => inputEl.classList.remove('ring-2', 'ring-amber-500'), 800);
+  }
+  showToast(`Rekomendasi harga jual ${fCur(window._currentPurchRecommendedPrice)} dipasang! ⚡`);
 };
 
 window.addPurchaseItemRow = () => {
@@ -349,6 +453,7 @@ window.addPurchaseItemRow = () => {
   const varVal = varSel ? varSel.value : '';
   const qty = parseFloat(getV('purch-item-qty')) || 0;
   const buyPrice = parseFloat(getV('purch-item-price')) || 0;
+  const inputNewSell = parseFloat(getV('purch-item-sell-price')) || 0;
 
   if (qty <= 0) return showToast('Jumlah (qty) harus lebih dari 0!');
   if (buyPrice < 0) return showToast('Harga beli tidak boleh minus!');
@@ -360,12 +465,16 @@ window.addPurchaseItemRow = () => {
     if (variantObj) varName = variantObj.name;
   }
 
+  const currSellPrice = variantObj ? (variantObj.price || 0) : (p.price || 0);
+  const finalNewSellPrice = (inputNewSell > 0 && inputNewSell !== currSellPrice) ? inputNewSell : null;
+
   // Cek jika item sudah ada di daftar
   const existingIdx = currentPurchaseItems.findIndex(i => String(i.productId) === String(pId) && String(i.variantId || '') === String(varVal || ''));
   if (existingIdx > -1) {
     currentPurchaseItems[existingIdx].qty += qty;
     currentPurchaseItems[existingIdx].buyPrice = buyPrice;
     currentPurchaseItems[existingIdx].subtotal = currentPurchaseItems[existingIdx].qty * buyPrice;
+    if (finalNewSellPrice) currentPurchaseItems[existingIdx].newSellingPrice = finalNewSellPrice;
   } else {
     currentPurchaseItems.push({
       productId: String(p.id),
@@ -375,15 +484,18 @@ window.addPurchaseItemRow = () => {
       unit: p.unit || variantObj?.unit || 'pcs',
       qty,
       buyPrice,
-      subtotal: qty * buyPrice
+      subtotal: qty * buyPrice,
+      currSellingPrice: currSellPrice,
+      newSellingPrice: finalNewSellPrice
     });
   }
 
   // Reset item inputs
   setV('purch-item-qty', '1');
+  setV('purch-item-sell-price', '');
   _renderPurchaseItemsTable();
   calculatePurchaseTotals();
-  showToast(`"${p.name}" ditambahkan!`);
+  showToast(`"${p.name}${varName ? ' (' + varName + ')' : ''}" ditambahkan!`);
 };
 
 window.removePurchaseItemRow = (idx) => {
@@ -400,7 +512,7 @@ const _renderPurchaseItemsTable = () => {
     if (tbody) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="6" class="p-4 text-center text-slate-400 font-medium">Belum ada barang dimasukkan</td>
+          <td colspan="7" class="p-4 text-center text-slate-400 font-medium">Belum ada barang dimasukkan</td>
         </tr>
       `;
     }
@@ -421,10 +533,21 @@ const _renderPurchaseItemsTable = () => {
         <td class="p-2.5 font-bold text-slate-500">${i + 1}</td>
         <td class="p-2.5 font-extrabold text-slate-800 dark:text-slate-200">
           ${esc(item.productName)}
-          ${item.variantName ? `<span class="block text-[10px] text-slate-400 font-semibold">[${esc(item.variantName)}]</span>` : ''}
+          ${item.variantName ? `<span class="block text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">[${esc(item.variantName)}]</span>` : ''}
         </td>
         <td class="p-2.5 text-center font-black text-slate-800 dark:text-slate-200">${item.qty} ${esc(item.unit)}</td>
         <td class="p-2.5 text-right font-bold text-slate-600 dark:text-slate-300">${fCur(item.buyPrice)}</td>
+        <td class="p-2.5 text-right font-medium">
+          ${item.newSellingPrice ? `
+            <div class="flex flex-col items-end">
+              <span class="text-xs font-black text-emerald-600 dark:text-emerald-400">${fCur(item.newSellingPrice)}</span>
+              <span class="text-[9px] text-slate-400 line-through">${fCur(item.currSellingPrice || 0)}</span>
+              <span class="text-[8px] font-black text-amber-500 uppercase tracking-tight">▲ Update Jual</span>
+            </div>
+          ` : `
+            <span class="text-[10px] text-slate-400">Tetap (${fCur(item.currSellingPrice || 0)})</span>
+          `}
+        </td>
         <td class="p-2.5 text-right font-black text-emerald-600 dark:text-emerald-400">${fCur(item.subtotal)}</td>
         <td class="p-2.5 text-center">
           <button type="button" class="text-rose-500 hover:text-rose-700 p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-colors" onclick="removePurchaseItemRow(${i})" title="Hapus Item">
@@ -445,8 +568,13 @@ const _renderPurchaseItemsTable = () => {
           </div>
           ${item.variantName ? `<span class="inline-block text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5">[${esc(item.variantName)}]</span>` : ''}
           <div class="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">
-            <span class="font-bold text-slate-700 dark:text-slate-300">${item.qty} ${esc(item.unit)}</span> × ${fCur(item.buyPrice)}
+            <span class="font-bold text-slate-700 dark:text-slate-300">${item.qty} ${esc(item.unit)}</span> × Beli ${fCur(item.buyPrice)}
           </div>
+          ${item.newSellingPrice ? `
+            <div class="text-[10px] text-amber-600 dark:text-amber-400 font-bold mt-0.5">
+              Jual Baru: ${fCur(item.newSellingPrice)} <span class="line-through text-slate-400">(${fCur(item.currSellingPrice || 0)})</span>
+            </div>
+          ` : ''}
         </div>
         <div class="text-right shrink-0 flex flex-col items-end gap-1">
           <div class="font-black text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm">${fCur(item.subtotal)}</div>
@@ -593,11 +721,27 @@ window.savePurchaseInvoice = async () => {
           v.buyPrice = item.buyPrice;
           v.lastPurchasePrice = item.buyPrice;
           v.lastPurchaseDate = Date.now();
+
+          // Jika ada penyesuaian / kenaikan harga jual varian baru dari kulakan
+          if (item.newSellingPrice && item.newSellingPrice > 0 && item.newSellingPrice !== v.price) {
+            v.previousPrice = v.price; // Catat harga lama untuk coret
+            v.price = item.newSellingPrice; // Terapkan harga jual baru
+            v.priceIncreasedAt = Date.now(); // Aktifkan lencana kenaikan harga
+          }
         }
       } else {
         prod.stock = (parseInt(prod.stock) || 0) + item.qty;
         prod.costPrice = item.buyPrice; // Update HPP Produk
         prod.buyPrice = item.buyPrice;
+        prod.lastPurchasePrice = item.buyPrice;
+        prod.lastPurchaseDate = Date.now();
+
+        // Jika ada penyesuaian / kenaikan harga jual produk baru dari kulakan
+        if (item.newSellingPrice && item.newSellingPrice > 0 && item.newSellingPrice !== prod.price) {
+          prod.previousPrice = prod.price; // Catat harga lama untuk coret
+          prod.price = item.newSellingPrice; // Terapkan harga jual baru
+          prod.priceIncreasedAt = Date.now(); // Aktifkan lencana kenaikan harga
+        }
       }
     }
   });
@@ -610,7 +754,11 @@ window.savePurchaseInvoice = async () => {
   isSaving = true;
   try {
     await saveApp();
-    showToast('Faktur pembelian berhasil disimpan & stok bertambah!');
+    if (typeof syncPosCartPrices === 'function') syncPosCartPrices();
+    if (typeof renderPosProducts === 'function') renderPosProducts();
+    if (typeof renderPosCart === 'function') renderPosCart();
+    if (typeof rCat === 'function') rCat();
+    showToast('Faktur pembelian disimpan! Stok & harga otomatis tersinkronkan! 🔄');
     closePurchaseModal();
     rAdmPurchases();
   } catch (e) {
