@@ -3598,25 +3598,32 @@ window.rVarsB = () => {
           </div>
         </div>
 
-        <!-- Row 2: Harga Jual & Harga Modal / HPP -->
-        <div class="grid grid-cols-${isCostPriceAllowed ? '2' : '1'} gap-2">
+        <!-- Row 2: Harga Jual, Harga Sebelum Perubahan & HPP -->
+        <div class="grid grid-cols-${isCostPriceAllowed ? '3' : '2'} gap-2">
           <div>
             <label class="text-[9px] font-bold text-slate-500 block mb-1">HARGA JUAL (Rp)</label>
             <div class="relative">
               <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">Rp</span>
-              <input placeholder="0" type="number" min="0" class="admin-input !py-2 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold" value="${v.price || ''}" oninput="uVar(${i},'price',this.value)"/>
+              <input placeholder="0" type="number" min="0" class="admin-input !py-2 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold w-full" value="${v.price || ''}" oninput="uVar(${i},'price',this.value)"/>
             </div>
-            ${v.previousPrice && Number(v.price) !== Number(v.previousPrice) ? `<span class="text-[8px] ${Number(v.price) > Number(v.previousPrice) ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} font-bold block mt-0.5"><i class="fa-solid ${Number(v.price) > Number(v.previousPrice) ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'}"></i> Sebelumnya: ${fCur(v.previousPrice)} (${Number(v.price) > Number(v.previousPrice) ? '+' : '-'}${fCur(Math.abs(Number(v.price) - Number(v.previousPrice)))})</span>` : ''}
+          </div>
+          <div>
+            <label class="text-[9px] font-bold text-slate-500 block mb-1">HARGA LAMA (Rp)</label>
+            <div class="relative">
+              <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">Rp</span>
+              <input placeholder="Opsional" type="number" min="0" class="admin-input !py-2 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold w-full" value="${v.previousPrice || ''}" oninput="uVar(${i},'previousPrice',this.value)"/>
+            </div>
           </div>
           ${isCostPriceAllowed ? `
           <div>
             <label class="text-[9px] font-bold text-slate-500 block mb-1">MODAL / HPP (Rp)</label>
             <div class="relative">
               <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">Rp</span>
-              <input placeholder="0" type="number" min="0" class="admin-input !py-2 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold" value="${v.costPrice || ''}" oninput="uVar(${i},'costPrice',this.value)"/>
+              <input placeholder="0" type="number" min="0" class="admin-input !py-2 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold w-full" value="${v.costPrice || ''}" oninput="uVar(${i},'costPrice',this.value)"/>
             </div>
           </div>` : ''}
         </div>
+        ${v.previousPrice && Number(v.price) !== Number(v.previousPrice) ? `<div class="mt-1"><span class="text-[8px] ${Number(v.price) > Number(v.previousPrice) ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} font-bold inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-700/50 px-2 py-0.5 rounded-md"><i class="fa-solid ${Number(v.price) > Number(v.previousPrice) ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'}"></i> Sebelumnya: ${fCur(v.previousPrice)} (${Number(v.price) > Number(v.previousPrice) ? '+' : '-'}${fCur(Math.abs(Number(v.price) - Number(v.previousPrice)))})</span></div>` : ''}
 
         <!-- Row 3: SKU with Auto Generator & Foto Varian -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -3643,7 +3650,18 @@ window.addVar = () => { tVars.push({ name: '', price: 0, costPrice: 0, stock: 10
 window.rmVar = i => { tVars.splice(i, 1); rVarsB(); };
 window.uVar = (i, k, v) => { 
   if (!tVars[i]) return;
-  tVars[i][k] = (k === 'price' || k === 'costPrice' || k === 'stock') ? parseFloat(v) || 0 : (k === 'img' ? fixD(v) : v); 
+  if (k === 'previousPrice') {
+    const prevVal = parseFloat(v) || 0;
+    if (prevVal > 0) {
+      tVars[i].previousPrice = prevVal;
+      if (!tVars[i].priceIncreasedAt) tVars[i].priceIncreasedAt = Date.now();
+    } else {
+      delete tVars[i].previousPrice;
+      delete tVars[i].priceIncreasedAt;
+    }
+  } else {
+    tVars[i][k] = (k === 'price' || k === 'costPrice' || k === 'stock') ? parseFloat(v) || 0 : (k === 'img' ? fixD(v) : v); 
+  }
   if (k === 'price' || k === 'costPrice') {
     const badge = el(`var-profit-badge-${i}`);
     if (badge && window.canViewCostPrice()) {
@@ -3740,13 +3758,22 @@ window.submitAdminForm = async () => {
           d.variants = d.variants.map((vNew, idx) => {
             const existingVars = Array.isArray(existingProd.variants) ? existingProd.variants : [];
             const vOld = existingVars.find(ev => (ev.name || '').trim().toLowerCase() === (vNew.name || '').trim().toLowerCase()) || existingVars[idx];
-            if (vOld) {
+            const newVP = Number(vNew.price || 0);
+            const manualPrev = (vNew.previousPrice !== undefined && vNew.previousPrice !== null && vNew.previousPrice !== '') ? Number(vNew.previousPrice) : null;
+
+            if (manualPrev !== null && manualPrev > 0 && manualPrev !== newVP) {
+              return { ...vNew, previousPrice: manualPrev, priceIncreasedAt: vNew.priceIncreasedAt || vOld?.priceIncreasedAt || Date.now() };
+            } else if (manualPrev === 0 || manualPrev === newVP) {
+              const res = { ...vNew };
+              delete res.previousPrice;
+              delete res.priceIncreasedAt;
+              return res;
+            } else if (vOld) {
               const oldVP = Number(vOld.price || 0);
-              const newVP = Number(vNew.price || 0);
               if (newVP !== oldVP && oldVP > 0) {
                 return { ...vNew, previousPrice: oldVP, priceIncreasedAt: Date.now() };
-              } else if (vOld.previousPrice && vOld.price === newVP) {
-                return { ...vNew, previousPrice: vOld.previousPrice, priceIncreasedAt: vOld.priceIncreasedAt };
+              } else if (vOld.previousPrice && Number(vOld.previousPrice) !== newVP) {
+                return { ...vNew, previousPrice: Number(vOld.previousPrice), priceIncreasedAt: vOld.priceIncreasedAt };
               }
             }
             return vNew;
@@ -3988,11 +4015,14 @@ window.openQuickEditProduct = (id) => {
             <span class="font-bold text-xs text-slate-800 dark:text-white truncate">${esc(v.name)}</span>
             <span class="text-[9px] font-mono font-bold text-slate-400 bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded">SKU: ${esc(v.sku || '-')}</span>
           </div>
-          <div class="grid grid-cols-3 gap-2">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <div>
-              <span class="block text-[9px] font-semibold text-slate-400 mb-0.5">Harga (Rp)</span>
+              <span class="block text-[9px] font-semibold text-slate-400 mb-0.5">Harga Jual (Rp)</span>
               <input type="number" id="qe-var-price-${idx}" value="${v.price || 0}" class="admin-input !py-1.5 !px-2 !text-xs font-bold w-full" min="0" />
-              ${v.previousPrice && v.price !== v.previousPrice ? `<span class="text-[8px] ${v.price > v.previousPrice ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} font-bold block mt-0.5 truncate"><i class="fa-solid ${v.price > v.previousPrice ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'}"></i> ${v.price > v.previousPrice ? '+' : '-'}${fCur(Math.abs(v.price - v.previousPrice))}</span>` : ''}
+            </div>
+            <div>
+              <span class="block text-[9px] font-semibold text-slate-400 mb-0.5">Harga Lama (Rp)</span>
+              <input type="number" id="qe-var-prev-${idx}" value="${v.previousPrice || ''}" placeholder="Opsional" class="admin-input !py-1.5 !px-2 !text-xs font-bold w-full" min="0" />
             </div>
             <div>
               <span class="block text-[9px] font-semibold text-slate-400 mb-0.5">HPP (Rp)</span>
@@ -4003,6 +4033,7 @@ window.openQuickEditProduct = (id) => {
               <input type="number" id="qe-var-stock-${idx}" value="${v.stock ?? 100}" class="admin-input !py-1.5 !px-2 !text-xs font-bold w-full" min="0" />
             </div>
           </div>
+          ${v.previousPrice && Number(v.price) !== Number(v.previousPrice) ? `<span class="text-[8px] ${Number(v.price) > Number(v.previousPrice) ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} font-bold block mt-0.5 truncate"><i class="fa-solid ${Number(v.price) > Number(v.previousPrice) ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'}"></i> Sebelumnya: ${fCur(v.previousPrice)} (${Number(v.price) > Number(v.previousPrice) ? '+' : '-'}${fCur(Math.abs(Number(v.price) - Number(v.previousPrice)))})</span>` : ''}
         </div>
       `).join('')}
       </div>
@@ -4054,12 +4085,21 @@ window.saveQuickEditProduct = async () => {
   } else {
     p.variants.forEach((v, idx) => {
       const vP = el(`qe-var-price-${idx}`);
+      const vPrev = el(`qe-var-prev-${idx}`);
       const vC = el(`qe-var-cost-${idx}`);
       const vS = el(`qe-var-stock-${idx}`);
       if (vP) {
         const oldVP = Number(v.price || 0);
         const newVP = Math.max(0, Number(vP.value || 0));
-        if (newVP !== oldVP && oldVP > 0) {
+        const manualPrev = vPrev ? (vPrev.value.trim() !== '' ? Number(vPrev.value) : null) : null;
+
+        if (manualPrev !== null && manualPrev > 0 && manualPrev !== newVP) {
+          v.previousPrice = manualPrev;
+          v.priceIncreasedAt = v.priceIncreasedAt || Date.now();
+        } else if (manualPrev === 0 || manualPrev === newVP) {
+          delete v.previousPrice;
+          delete v.priceIncreasedAt;
+        } else if (newVP !== oldVP && oldVP > 0) {
           v.previousPrice = oldVP;
           v.priceIncreasedAt = Date.now();
         }
@@ -4071,7 +4111,7 @@ window.saveQuickEditProduct = async () => {
     // Set base price & cost to lowest variant, and total stock to sum of variant stock
     const oldBasePrice = Number(p.price || 0);
     p.price = Math.min(...p.variants.map(v => v.price));
-    if (p.price !== oldBasePrice && oldBasePrice > 0) {
+    if (p.price !== oldBasePrice && oldBasePrice > 0 && !p.variants.some(v => v.previousPrice)) {
       p.previousPrice = oldBasePrice;
       p.priceIncreasedAt = Date.now();
     }

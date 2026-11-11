@@ -103,8 +103,8 @@ const loadAppData = async () => {
   }
 
   // 0. CACHE-BUSTER & FORCE SYNC VERSION:
-  // Membersihkan sisa cache lawas di Safari/iOS agar otomatis sinkron ke data Firestore terbaru
-  const APP_DATA_VERSION = '2026-09-15-v4';
+  // Membersihkan sisa cache lawas di Safari/iOS/Android agar otomatis sinkron ke data Firestore terbaru
+  const APP_DATA_VERSION = '2026-11-11-v5';
   if (sL('freshmart_data_version') !== APP_DATA_VERSION) {
     try {
       localStorage.removeItem('freshmart_last_update');
@@ -132,7 +132,14 @@ const loadAppData = async () => {
     try {
       const parsedCms = JSON.parse(localCms);
       appData = { ...defApp, ...parsedCms };
-      if (localProd) appData.products = JSON.parse(localProd);
+      if (localProd) {
+        appData.products = JSON.parse(localProd);
+        if (Array.isArray(appData.products)) {
+          appData.products.forEach(p => {
+            if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
+          });
+        }
+      }
       hasLocalData = true;
       
       // Render katalog instan (0 milidetik!)
@@ -213,6 +220,7 @@ const loadAppData = async () => {
       appData.products.forEach(p => { 
         if(p.img) p.img = fixD(p.img); 
         if (p.variants) p.variants.forEach(v => { if(v.img) v.img = fixD(v.img); }); 
+        if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
       });
       
       if (appData.banners) appData.banners.forEach(b => { if(b.img) b.img = fixD(b.img); }); 

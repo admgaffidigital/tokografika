@@ -51,7 +51,20 @@ Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan 
 - **Perbaikan Pencocokan ID Produk saat Simpan Edit Admin (`submitAdminForm`):**
   - Memperbaiki pencocokan `String(x.id) === String(eId)` saat produk diedit melalui form penuh Admin sehingga perubahan harga produk maupun varian selalu tercatat riwayat `previousPrice`-nya secara akurat.
 - **Auto-Normalisasi Harga Utama & Varian (`normalizeProductVariantPricing`):**
-  - Apabila produk memiliki varian (seperti `PCS` & `SLOP` pada *GAJAH BARU F16*) di mana harga varian utama telah diperbarui (misal `Rp 22.900`) sedangkan harga induk masih menyimpan harga lama (`Rp 22.500`), sistem otomatis menyelaraskan harga tampilan di Kartu Katalog (`Rp 22.900`) dan menampilkan lencana `<s>Rp 22.500</s> [▲ Naik Rp 400 (+2%)]` di Katalog, Modal Detail Produk, Keranjang Belanja, dan Favorit Saya.
+  - Apabila produk memiliki varian (seperti `PCS` & `SLOP` pada *GAJAH BARU F16*) di mana harga varian utama telah diperbarui (misal `Rp 22.900`) sedangkan harga induk masih menyimpan harga lama (`Rp 22.500`), sistem otomatis menyelaraskan harga tampilan di Kartu Katalog (`Rp 22.900`) dan menampilkan lencana `<s>Rp 22.500</s> [▲ PCS Naik Rp 400]` di Katalog, Modal Detail Produk, Keranjang Belanja, dan Favorit Saya.
+  - Memastikan varian dengan satuan berjenjang (seperti *Bawang Putih*: 1 KG, 1/2 KG, 1/2 ONS) tidak mengalami salah tafsir penurunan harga ekstrem (-93%).
+
+### 8. Dukungan Input Harga Lama Varian di Admin & Pembaruan Tampilan Modal Storefront:
+- **Input Harga Lama Varian di Form Penuh Admin (`rVarsB` & `uVar`):**
+  - Setiap baris varian kini memiliki input khusus **"HARGA LAMA (Rp - Opsional)"** dengan preview langsung lencana kenaikan/penurunan harga.
+- **Input Harga Lama Varian di Modal Edit Cepat (`openQuickEditProduct` & `saveQuickEditProduct`):**
+  - Tabel varian di Edit Cepat kini menyediakan kolom input **"Harga Lama (Rp)"** (`id="qe-var-prev-${idx}"`) sehingga admin dapat mengatur atau mengoreksi harga lama varian secara instan tanpa perlu membuka form penuh.
+- **Tampilan Lencana Varian Lengkap di Katalog & Modal Detail Produk:**
+  - Kartu katalog Grid & List View kini menampilkan harga yang dicoret berserta nama varian yang mengalami perubahan harga (contoh: `<s>Rp 22.500</s> [▲ PCS Naik Rp 400]`).
+  - Modal Detail Produk menampilkan coretan harga, badge kenaikan/penurunan, persentase, dan keterangan waktu update untuk varian yang dipilih, serta lencana varian pada tombol pilihan varian (`[PCS] [+Rp 400]`).
+- **Cache-Buster & Pembaruan Service Worker PWA:**
+  - Bumping versi `APP_DATA_VERSION = '2026-11-11-v5'` di `firebase.js` untuk membersihkan cache produk lawas di browser pelanggan secara otomatis saat toko dibuka.
+  - Bumping cache Service Worker ke `CACHE_NAME = 'freshmart-pwa-v16'` di `sw.js` agar seluruh aset JavaScript dan HTML teranyar langsung aktif di semua perangkat.
 
 
 

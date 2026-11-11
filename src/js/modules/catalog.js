@@ -617,32 +617,32 @@ const rCat = () => {
     `;
 
     // Cek informasi kenaikan harga (jika bukan nonaktif)
-    const incInfo = !isOff ? window.getPriceIncreaseInfo(p) : null;
-    let varIncInfo = null;
+    let incInfo = !isOff ? window.getPriceIncreaseInfo(p) : null;
+    let changedVariant = null;
     if (!incInfo && !isOff && p.variants && p.variants.length > 0) {
       const upV = p.variants.find(v => window.isPriceIncreaseActive(v));
-      if (upV) varIncInfo = window.getPriceIncreaseInfo(upV);
+      if (upV) {
+        incInfo = window.getPriceIncreaseInfo(upV);
+        changedVariant = upV;
+      }
     }
 
     let incHtml = '';
     if (incInfo) {
+      const prefix = changedVariant?.name ? `${esc(changedVariant.name)} ` : '';
       incHtml = `
       <div class="flex items-center gap-1.5 mb-1 flex-wrap">
         <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 line-through leading-none">${fCur(incInfo.prev)}</span>
         <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-black ${incInfo.badgeClass} leading-none shadow-2xs">
-          <i class="fa-solid ${incInfo.icon} text-[7px]"></i> ${incInfo.label}
-        </span>
-      </div>
-      `;
-    } else if (varIncInfo) {
-      incHtml = `
-      <div class="flex items-center gap-1 mb-1">
-        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-black ${varIncInfo.badgeClass} leading-none shadow-2xs">
-          <i class="fa-solid ${varIncInfo.icon} text-[7px]"></i> ${varIncInfo.label}
+          <i class="fa-solid ${incInfo.icon} text-[7px]"></i> ${prefix}${incInfo.label}
         </span>
       </div>
       `;
     }
+
+    const cardPrice = (p.variants && p.variants.length > 0) 
+      ? (changedVariant ? changedVariant.price : (p.variants[0]?.price || p.price)) 
+      : p.price;
 
     if (cView === 'grid') {
       return `
@@ -659,7 +659,7 @@ const rCat = () => {
           <div class="mt-auto pt-1 flex flex-col justify-end min-w-0">
             ${incHtml}
             <div class="flex items-baseline justify-between gap-1 flex-wrap">
-              <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
+              <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(cardPrice)}</span>
               ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold ${isOff ? 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800' : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60'} px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide shrink-0">/${esc(p.unit)}</span>` : ''}
             </div>
           </div>
@@ -681,7 +681,7 @@ const rCat = () => {
           <div class="mt-auto pt-1 flex flex-col justify-end min-w-0">
             ${incHtml}
             <div class="flex items-baseline gap-2">
-              <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(p.price)}</span>
+              <span class="${isOff ? 'text-slate-400 dark:text-slate-500' : 'text-emerald-600 dark:text-emerald-400'} font-extrabold text-sm sm:text-base leading-none">${fCur(cardPrice)}</span>
               ${p.unit ? `<span class="text-[9px] sm:text-[10px] font-bold ${isOff ? 'text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800' : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60'} px-1.5 py-0.5 rounded border border-slate-200/80 dark:border-slate-700 uppercase tracking-wide">/${esc(p.unit)}</span>` : ''}
             </div>
           </div>
@@ -933,6 +933,10 @@ const rProdMod = () => {
 
   // Info kenaikan harga produk atau varian aktif
   const incInfo = !isOff ? (window.getPriceIncreaseInfo(curItem) || (cVar === 0 ? window.getPriceIncreaseInfo(p) : null)) : null;
+  let otherChangedVar = null;
+  if (!incInfo && !isOff && hV) {
+    otherChangedVar = p.variants.find((vr, idx) => idx !== cVar && window.isPriceIncreaseActive(vr));
+  }
   let incPriceHtml = '';
   if (incInfo) {
     incPriceHtml = `
@@ -965,7 +969,10 @@ const rProdMod = () => {
     ${isOff ? `<span class="badge badge-xs bg-slate-700 text-white font-bold"><i class="fa-solid fa-ban text-[8px]"></i> Tidak Tersedia</span>` : ''}
     ${modInCartQty > 0 ? `<span class="badge badge-xs bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 font-bold"><i class="fa-solid fa-cart-shopping text-[8px]"></i> Di Keranjang (${modInCartQty})</span>` : ''}
     ${modInWishlist ? `<span class="badge badge-xs bg-rose-50 dark:bg-rose-950/70 text-rose-600 dark:text-rose-400 border border-rose-300 dark:border-rose-700 font-bold"><i class="fa-solid fa-heart text-[8px]"></i> Di Favorit</span>` : ''}
-    ${incInfo ? `<span class="badge badge-xs ${incInfo.badgeClass} font-bold"><i class="fa-solid ${incInfo.icon} text-[8px]"></i> ${incInfo.label}</span>` : ''}
+    ${incInfo ? `<span class="badge badge-xs ${incInfo.badgeClass} font-bold"><i class="fa-solid ${incInfo.icon} text-[8px]"></i> ${hV && curItem.name ? `${esc(curItem.name)} ` : ''}${incInfo.label}</span>` : (otherChangedVar ? (() => {
+      const oInfo = window.getPriceIncreaseInfo(otherChangedVar);
+      return oInfo ? `<span class="badge badge-xs ${oInfo.badgeClass} font-bold"><i class="fa-solid ${oInfo.icon} text-[8px]"></i> Varian ${esc(otherChangedVar.name)}: ${oInfo.label}</span>` : '';
+    })() : '')}
     <span class="badge badge-xs badge-slate badge-normal-case">
       <i class="fa-solid fa-barcode"></i> ${esc(v?.sku || p.sku || '-')}
     </span>
