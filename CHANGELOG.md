@@ -47,6 +47,13 @@ Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan 
 - **Akses Cepat Detail Produk:**
   - Gambar dan judul barang di dalam Keranjang Belanja dan Favorit Saya kini dapat diketuk langsung untuk membuka Modal Detail Produk.
 
+### 7. Sinkronisasi & Auto-Normalisasi Harga Varian (`normalizeProductVariantPricing` & `submitAdminForm`):
+- **Perbaikan Pencocokan ID Produk saat Simpan Edit Admin (`submitAdminForm`):**
+  - Memperbaiki pencocokan `String(x.id) === String(eId)` saat produk diedit melalui form penuh Admin sehingga perubahan harga produk maupun varian selalu tercatat riwayat `previousPrice`-nya secara akurat.
+- **Auto-Normalisasi Harga Utama & Varian (`normalizeProductVariantPricing`):**
+  - Apabila produk memiliki varian (seperti `PCS` & `SLOP` pada *GAJAH BARU F16*) di mana harga varian utama telah diperbarui (misal `Rp 22.900`) sedangkan harga induk masih menyimpan harga lama (`Rp 22.500`), sistem otomatis menyelaraskan harga tampilan di Kartu Katalog (`Rp 22.900`) dan menampilkan lencana `<s>Rp 22.500</s> [▲ Naik Rp 400 (+2%)]` di Katalog, Modal Detail Produk, Keranjang Belanja, dan Favorit Saya.
+
+
 
 
 ## [2026-11-11] - Fitur Drag & Drop Reordering, Step Buttons & Quick Sort di Keranjang Belanja & Favorit Saya

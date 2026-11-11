@@ -68,6 +68,7 @@ window.confirmAddToWishlist = () => {
 window.getCartOrWishPriceChangeInfo = (item, prod) => {
   if (!item || typeof window.getPriceIncreaseInfo !== 'function') return null;
   const p = prod || (appData?.products || []).find(x => String(x.id) === String(item.id));
+  if (p && typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
   if (p && (p.isActive === 'false' || p.isActive === false)) return null;
 
   const hasVars = p && Array.isArray(p.variants) && p.variants.length > 0;
@@ -78,7 +79,7 @@ window.getCartOrWishPriceChangeInfo = (item, prod) => {
   if (v) {
     const vInfo = window.getPriceIncreaseInfo(v);
     if (vInfo) return vInfo;
-    if (p.variants.length === 1) {
+    if (p.variants.length === 1 || p.variants.indexOf(v) === 0) {
       const pInfo = window.getPriceIncreaseInfo(p);
       if (pInfo) return pInfo;
     }
@@ -104,6 +105,7 @@ window.syncWishlistPrices = () => {
   wishlist.forEach(item => {
     const p = appData.products.find(x => String(x.id) === String(item.id));
     if (!p) return;
+    if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
 
     // Sinkronisasi nama & satuan
     if (p.name && item.name !== p.name) {
@@ -168,6 +170,7 @@ window.syncCartPrices = () => {
   cart.forEach(item => {
     const p = appData.products.find(x => String(x.id) === String(item.id));
     if (!p) return;
+    if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
 
     if (p.name && item.name !== p.name) {
       item.name = p.name;

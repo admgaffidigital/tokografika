@@ -6882,8 +6882,51 @@ window.closeModalSmooth = (modalId, boxId, type = 'bottom-sheet', callback = nul
 // TRACKING KENAIKAN & PENURUNAN HARGA PRODUK
 // =============================================================================
 
+window.normalizeProductVariantPricing = (p) => {
+  if (!p || !Array.isArray(p.variants) || p.variants.length === 0) return p;
+
+  const validVars = p.variants.filter(v => Number(v.price) > 0);
+  if (validVars.length === 0) return p;
+
+  const minVar = validVars.reduce((min, v) => (Number(v.price) < Number(min.price) ? v : min), validVars[0]);
+  const minVarPrice = Number(minVar.price || 0);
+  const basePrice = Number(p.price || 0);
+  const basePrevPrice = Number(p.previousPrice || 0);
+
+  // Jika harga utama produk (p.price, misal 22.500) berbeda dengan harga varian terendah (misal PCS 22.900),
+  // berarti p.price menyimpan harga lama sebelum varian diperbarui.
+  if (basePrice > 0 && minVarPrice > 0 && basePrice !== minVarPrice) {
+    if (!minVar.previousPrice) {
+      minVar.previousPrice = basePrice;
+      minVar.priceIncreasedAt = minVar.priceIncreasedAt || p.priceIncreasedAt || window.appData?.lastUpdate || Date.now();
+    }
+    if (!p.previousPrice) {
+      p.previousPrice = basePrice;
+      p.priceIncreasedAt = p.priceIncreasedAt || minVar.priceIncreasedAt || window.appData?.lastUpdate || Date.now();
+    }
+    p.price = minVarPrice;
+  }
+
+  // Jika p.previousPrice diset pada produk induk namun varian utama belum punya previousPrice
+  if (basePrevPrice > 0 && basePrevPrice !== minVarPrice && !minVar.previousPrice) {
+    minVar.previousPrice = basePrevPrice;
+    minVar.priceIncreasedAt = minVar.priceIncreasedAt || p.priceIncreasedAt || window.appData?.lastUpdate || Date.now();
+  }
+
+  // Jika varian utama punya previousPrice namun produk induk belum punya previousPrice
+  if (minVar.previousPrice && Number(minVar.previousPrice) !== minVarPrice && !p.previousPrice) {
+    p.previousPrice = Number(minVar.previousPrice);
+    p.priceIncreasedAt = p.priceIncreasedAt || minVar.priceIncreasedAt || window.appData?.lastUpdate || Date.now();
+  }
+
+  return p;
+};
+
 window.isPriceIncreaseActive = (item, customMaxDays = null) => {
   if (!item) return false;
+  if (Array.isArray(item.variants) && item.variants.length > 0) {
+    window.normalizeProductVariantPricing(item);
+  }
   const prev = Number(item.previousPrice || 0);
   const cur = Number(item.price || 0);
   if (prev <= 0 || cur === prev) return false;
@@ -7920,6 +7963,7 @@ const rCat = () => {
   const v = f.slice(0, cPage * iPP);
 
   c.innerHTML = v.map(p => {
+    if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
     // Cek apakah produk nonaktif, kehabisan stok, atau stok unlimited
     const isOff = p.isActive === 'false' || p.isActive === false;
     const isUnlimited = (appData.store?.stockMode === 'unlimited') || p.isUnlimited === true || p.isUnlimited === 'true';
@@ -8284,6 +8328,7 @@ window.copyShareLink = () => {
 const rProdMod = () => {
   if (!cProd) return;
   let p = cProd;
+  if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
   let a = p.isActive !== 'false' && p.isActive !== false;
   let isOff = !a;
   let hV = p.variants?.length > 0;
@@ -8301,7 +8346,7 @@ const rProdMod = () => {
   }
 
   // Info kenaikan harga produk atau varian aktif
-  const incInfo = !isOff ? window.getPriceIncreaseInfo(curItem) : null;
+  const incInfo = !isOff ? (window.getPriceIncreaseInfo(curItem) || (cVar === 0 ? window.getPriceIncreaseInfo(p) : null)) : null;
   let incPriceHtml = '';
   if (incInfo) {
     incPriceHtml = `
@@ -9086,6 +9131,7 @@ window.confirmAddToWishlist = () => {
 window.getCartOrWishPriceChangeInfo = (item, prod) => {
   if (!item || typeof window.getPriceIncreaseInfo !== 'function') return null;
   const p = prod || (appData?.products || []).find(x => String(x.id) === String(item.id));
+  if (p && typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
   if (p && (p.isActive === 'false' || p.isActive === false)) return null;
 
   const hasVars = p && Array.isArray(p.variants) && p.variants.length > 0;
@@ -9096,7 +9142,7 @@ window.getCartOrWishPriceChangeInfo = (item, prod) => {
   if (v) {
     const vInfo = window.getPriceIncreaseInfo(v);
     if (vInfo) return vInfo;
-    if (p.variants.length === 1) {
+    if (p.variants.length === 1 || p.variants.indexOf(v) === 0) {
       const pInfo = window.getPriceIncreaseInfo(p);
       if (pInfo) return pInfo;
     }
@@ -9122,6 +9168,7 @@ window.syncWishlistPrices = () => {
   wishlist.forEach(item => {
     const p = appData.products.find(x => String(x.id) === String(item.id));
     if (!p) return;
+    if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
 
     // Sinkronisasi nama & satuan
     if (p.name && item.name !== p.name) {
@@ -9186,6 +9233,7 @@ window.syncCartPrices = () => {
   cart.forEach(item => {
     const p = appData.products.find(x => String(x.id) === String(item.id));
     if (!p) return;
+    if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
 
     if (p.name && item.name !== p.name) {
       item.name = p.name;
@@ -13868,6 +13916,7 @@ window.oAEd = (t, id) => {
   let h = '';
   
   if (t === 'products') {
+    if (d && typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(d);
     tVars = d && d.variants ? JSON.parse(JSON.stringify(d.variants)) : [];
     tWhol = d && d.wholesale ? JSON.parse(JSON.stringify(d.wholesale)) : [];
   }
@@ -14083,6 +14132,7 @@ window.rVarsB = () => {
               <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">Rp</span>
               <input placeholder="0" type="number" min="0" class="admin-input !py-2 !pl-8 !text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 font-bold" value="${v.price || ''}" oninput="uVar(${i},'price',this.value)"/>
             </div>
+            ${v.previousPrice && Number(v.price) !== Number(v.previousPrice) ? `<span class="text-[8px] ${Number(v.price) > Number(v.previousPrice) ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'} font-bold block mt-0.5"><i class="fa-solid ${Number(v.price) > Number(v.previousPrice) ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'}"></i> Sebelumnya: ${fCur(v.previousPrice)} (${Number(v.price) > Number(v.previousPrice) ? '+' : '-'}${fCur(Math.abs(Number(v.price) - Number(v.previousPrice)))})</span>` : ''}
           </div>
           ${isCostPriceAllowed ? `
           <div>
@@ -14205,26 +14255,17 @@ window.submitAdminForm = async () => {
     }
 
     if (eId) {
-      const existingProd = (appData.products || []).find(x => x.id === eId);
+      const existingProd = (appData.products || []).find(x => x.id === eId || String(x.id) === String(eId));
       if (existingProd) {
+        if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(existingProd);
         const oldP = Number(existingProd.price || 0);
-        const newP = Number(d.price || 0);
+        let newP = Number(d.price || 0);
         const manualPrev = Number(d.previousPrice || 0);
 
-        if (manualPrev > 0 && newP !== manualPrev) {
-          d.previousPrice = manualPrev;
-          d.priceIncreasedAt = existingProd.priceIncreasedAt || Date.now();
-        } else if (newP !== oldP && oldP > 0) {
-          d.previousPrice = oldP;
-          d.priceIncreasedAt = Date.now();
-        } else if (existingProd.previousPrice && existingProd.price === newP) {
-          d.previousPrice = existingProd.previousPrice;
-          d.priceIncreasedAt = existingProd.priceIncreasedAt;
-        }
-
-        if (d.variants && Array.isArray(d.variants) && existingProd.variants && Array.isArray(existingProd.variants)) {
+        if (d.variants && Array.isArray(d.variants) && d.variants.length > 0) {
           d.variants = d.variants.map((vNew, idx) => {
-            const vOld = existingProd.variants[idx] || existingProd.variants.find(ev => ev.name === vNew.name);
+            const existingVars = Array.isArray(existingProd.variants) ? existingProd.variants : [];
+            const vOld = existingVars.find(ev => (ev.name || '').trim().toLowerCase() === (vNew.name || '').trim().toLowerCase()) || existingVars[idx];
             if (vOld) {
               const oldVP = Number(vOld.price || 0);
               const newVP = Number(vNew.price || 0);
@@ -14236,15 +14277,41 @@ window.submitAdminForm = async () => {
             }
             return vNew;
           });
+
+          const validVarPrices = d.variants.map(v => Number(v.price) || 0).filter(p => p > 0);
+          if (validVarPrices.length > 0) {
+            newP = Math.min(...validVarPrices);
+            d.price = newP;
+          }
         }
+
+        if (manualPrev > 0 && newP !== manualPrev) {
+          d.previousPrice = manualPrev;
+          d.priceIncreasedAt = existingProd.priceIncreasedAt || Date.now();
+        } else if (newP !== oldP && oldP > 0) {
+          d.previousPrice = oldP;
+          d.priceIncreasedAt = Date.now();
+        } else if (existingProd.previousPrice && Number(existingProd.previousPrice) !== newP) {
+          d.previousPrice = existingProd.previousPrice;
+          d.priceIncreasedAt = existingProd.priceIncreasedAt;
+        }
+
+        if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(d);
       }
+    } else if (d.variants && Array.isArray(d.variants) && d.variants.length > 0) {
+      const validVarPrices = d.variants.map(v => Number(v.price) || 0).filter(p => p > 0);
+      if (validVarPrices.length > 0) {
+        d.price = Math.min(...validVarPrices);
+      }
+      if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(d);
     }
   }
   
   if (!appData[activeTab]) appData[activeTab] = [];
   
   if (eId) {
-    d.id = eId;
+    const existingItem = (appData[activeTab] || []).find(x => x.id === eId || String(x.id) === String(eId));
+    d.id = existingItem ? existingItem.id : eId;
     let i = appData[activeTab].findIndex(x => x.id === eId || String(x.id) === String(eId));
     if (i > -1) appData[activeTab][i] = d;
   } else {
@@ -14342,6 +14409,7 @@ window.openQuickEditProduct = (id) => {
   if (typeof closeAdminModal === 'function') closeAdminModal();
   const p = (appData.products || []).find(x => x.id === id || String(x.id) === String(id));
   if (!p) return;
+  if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
   window._currentQuickEditProdId = p.id;
   
   const m = el('quick-edit-modal');

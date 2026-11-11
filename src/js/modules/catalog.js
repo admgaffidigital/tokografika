@@ -549,6 +549,7 @@ const rCat = () => {
   const v = f.slice(0, cPage * iPP);
 
   c.innerHTML = v.map(p => {
+    if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
     // Cek apakah produk nonaktif, kehabisan stok, atau stok unlimited
     const isOff = p.isActive === 'false' || p.isActive === false;
     const isUnlimited = (appData.store?.stockMode === 'unlimited') || p.isUnlimited === true || p.isUnlimited === 'true';
@@ -913,6 +914,7 @@ window.copyShareLink = () => {
 const rProdMod = () => {
   if (!cProd) return;
   let p = cProd;
+  if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(p);
   let a = p.isActive !== 'false' && p.isActive !== false;
   let isOff = !a;
   let hV = p.variants?.length > 0;
@@ -930,7 +932,7 @@ const rProdMod = () => {
   }
 
   // Info kenaikan harga produk atau varian aktif
-  const incInfo = !isOff ? window.getPriceIncreaseInfo(curItem) : null;
+  const incInfo = !isOff ? (window.getPriceIncreaseInfo(curItem) || (cVar === 0 ? window.getPriceIncreaseInfo(p) : null)) : null;
   let incPriceHtml = '';
   if (incInfo) {
     incPriceHtml = `

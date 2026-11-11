@@ -530,8 +530,51 @@ window.closeModalSmooth = (modalId, boxId, type = 'bottom-sheet', callback = nul
 // TRACKING KENAIKAN & PENURUNAN HARGA PRODUK
 // =============================================================================
 
+window.normalizeProductVariantPricing = (p) => {
+  if (!p || !Array.isArray(p.variants) || p.variants.length === 0) return p;
+
+  const validVars = p.variants.filter(v => Number(v.price) > 0);
+  if (validVars.length === 0) return p;
+
+  const minVar = validVars.reduce((min, v) => (Number(v.price) < Number(min.price) ? v : min), validVars[0]);
+  const minVarPrice = Number(minVar.price || 0);
+  const basePrice = Number(p.price || 0);
+  const basePrevPrice = Number(p.previousPrice || 0);
+
+  // Jika harga utama produk (p.price, misal 22.500) berbeda dengan harga varian terendah (misal PCS 22.900),
+  // berarti p.price menyimpan harga lama sebelum varian diperbarui.
+  if (basePrice > 0 && minVarPrice > 0 && basePrice !== minVarPrice) {
+    if (!minVar.previousPrice) {
+      minVar.previousPrice = basePrice;
+      minVar.priceIncreasedAt = minVar.priceIncreasedAt || p.priceIncreasedAt || window.appData?.lastUpdate || Date.now();
+    }
+    if (!p.previousPrice) {
+      p.previousPrice = basePrice;
+      p.priceIncreasedAt = p.priceIncreasedAt || minVar.priceIncreasedAt || window.appData?.lastUpdate || Date.now();
+    }
+    p.price = minVarPrice;
+  }
+
+  // Jika p.previousPrice diset pada produk induk namun varian utama belum punya previousPrice
+  if (basePrevPrice > 0 && basePrevPrice !== minVarPrice && !minVar.previousPrice) {
+    minVar.previousPrice = basePrevPrice;
+    minVar.priceIncreasedAt = minVar.priceIncreasedAt || p.priceIncreasedAt || window.appData?.lastUpdate || Date.now();
+  }
+
+  // Jika varian utama punya previousPrice namun produk induk belum punya previousPrice
+  if (minVar.previousPrice && Number(minVar.previousPrice) !== minVarPrice && !p.previousPrice) {
+    p.previousPrice = Number(minVar.previousPrice);
+    p.priceIncreasedAt = p.priceIncreasedAt || minVar.priceIncreasedAt || window.appData?.lastUpdate || Date.now();
+  }
+
+  return p;
+};
+
 window.isPriceIncreaseActive = (item, customMaxDays = null) => {
   if (!item) return false;
+  if (Array.isArray(item.variants) && item.variants.length > 0) {
+    window.normalizeProductVariantPricing(item);
+  }
   const prev = Number(item.previousPrice || 0);
   const cur = Number(item.price || 0);
   if (prev <= 0 || cur === prev) return false;
