@@ -4049,7 +4049,12 @@ window.saveQuickEditProduct = async () => {
       if (vS) v.stock = Math.max(0, Number(vS.value || 0));
     });
     // Set base price & cost to lowest variant, and total stock to sum of variant stock
+    const oldBasePrice = Number(p.price || 0);
     p.price = Math.min(...p.variants.map(v => v.price));
+    if (p.price !== oldBasePrice && oldBasePrice > 0) {
+      p.previousPrice = oldBasePrice;
+      p.priceIncreasedAt = Date.now();
+    }
     p.costPrice = Math.min(...p.variants.map(v => v.costPrice || 0));
     p.stock = p.variants.reduce((sum, v) => sum + Number(v.stock || 0), 0);
   }
@@ -4094,6 +4099,24 @@ window.resetProductPriceHistory = async (productId) => {
         delete v.previousPrice;
         delete v.priceIncreasedAt;
       });
+    }
+    if (Array.isArray(cart)) {
+      cart.forEach(c => {
+        if (String(c.id) === String(p.id)) {
+          delete c.previousPrice;
+          delete c.priceIncreasedAt;
+        }
+      });
+      ssL('freshmart_cart', JSON.stringify(cart));
+    }
+    if (Array.isArray(wishlist)) {
+      wishlist.forEach(w => {
+        if (String(w.id) === String(p.id)) {
+          delete w.previousPrice;
+          delete w.priceIncreasedAt;
+        }
+      });
+      ssL('freshmart_wishlist', JSON.stringify(wishlist));
     }
     sLoad('Mereset riwayat harga...');
     try {

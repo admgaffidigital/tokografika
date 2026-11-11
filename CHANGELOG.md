@@ -36,6 +36,18 @@ Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan 
   - Untuk produk bervarian, terdapat tombol **"Reset Tanda Varian"** untuk mereset seluruh riwayat harga varian sekaligus.
   - Dilengkapi dialog konfirmasi aman dan otomatis menyinkronkan data ke Firestore serta memperbarui tampilan seketika.
 
+### 6. Info Perubahan Harga Lengkap & Banner Ringkasan di Keranjang Belanja & Favorit Saya:
+- **Detail Perubahan pada Setiap Kartu Item (`view-cart` & `view-wishlist`):**
+  - Menampilkan harga lama yang dicoret (`<s>Rp 10.800</s>`).
+  - Lencana warna hijau (`▲ Naik Rp 100 (+1%)`) atau merah (`▼ Turun Rp 500 (-5%)`) lengkap dengan persentase.
+  - Keterangan waktu pembaruan relatif (`· diperbarui baru saja`, `· diperbarui 3 hari lalu`, dll.).
+  - Mendukung produk satuan maupun produk bervarian (DUS, SAK, PACK, dll.), serta otomatis mencatat perubahan harga apabila barang sudah tersimpan di keranjang/favorit sebelum harga toko berubah.
+- **Bar Ringkasan Perubahan Harga (*Price Change Summary Bar*):**
+  - Di bagian atas daftar Keranjang Belanja dan Favorit Saya, otomatis muncul bar ringkasan `Info Perubahan Harga: [▲ X Naik] [▼ Y Turun]` apabila terdapat barang di dalam daftar tersebut yang mengalami perubahan harga.
+- **Akses Cepat Detail Produk:**
+  - Gambar dan judul barang di dalam Keranjang Belanja dan Favorit Saya kini dapat diketuk langsung untuk membuka Modal Detail Produk.
+
+
 
 ## [2026-11-11] - Fitur Drag & Drop Reordering, Step Buttons & Quick Sort di Keranjang Belanja & Favorit Saya
 ### 1. Drag & Drop Reordering (Touchscreen & Mouse Unified Engine):

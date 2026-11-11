@@ -19,12 +19,20 @@ const syncProductPrice = (updatedProduct) => {
 
     const newBasePrice = updatedProduct.price;
     let newVariantPrice = newBasePrice;
+    let masterPrev = Number(updatedProduct.previousPrice || 0);
+    let masterIncAt = updatedProduct.priceIncreasedAt || 0;
     if (item.variantName && updatedProduct.variants && updatedProduct.variants.length > 0) {
-      const matchedVariant = updatedProduct.variants.find(v => v.name === item.variantName);
-      if (matchedVariant) newVariantPrice = matchedVariant.price;
+      const matchedVariant = updatedProduct.variants.find(v => v.name === item.variantName || (v.name || '').trim().toLowerCase() === (item.variantName || '').trim().toLowerCase());
+      if (matchedVariant) {
+        newVariantPrice = matchedVariant.price;
+        if (matchedVariant.previousPrice) {
+          masterPrev = Number(matchedVariant.previousPrice);
+          masterIncAt = matchedVariant.priceIncreasedAt || masterIncAt;
+        }
+      }
     }
 
-    const oldPrice = item.price;
+    const oldPrice = Number(item.price || 0);
     item.price = newVariantPrice;
 
     if (item.variantName && updatedProduct.variants) {
@@ -34,7 +42,17 @@ const syncProductPrice = (updatedProduct) => {
       item.img = fixD(updatedProduct.img);
     }
 
-    if (oldPrice !== item.price) cartChanged = true;
+    if (oldPrice !== Number(item.price)) {
+      if (oldPrice > 0) {
+        item.previousPrice = (masterPrev > 0 && masterPrev !== Number(item.price)) ? masterPrev : oldPrice;
+        item.priceIncreasedAt = masterIncAt || Date.now();
+      }
+      cartChanged = true;
+    } else if (masterPrev > 0 && masterPrev !== Number(item.price) && Number(item.previousPrice || 0) !== masterPrev) {
+      item.previousPrice = masterPrev;
+      item.priceIncreasedAt = masterIncAt;
+      cartChanged = true;
+    }
   });
 
   // --- Sinkronisasi FAVORIT (WISHLIST) ---
@@ -48,12 +66,20 @@ const syncProductPrice = (updatedProduct) => {
 
     const newBasePrice = updatedProduct.price;
     let newVariantPrice = newBasePrice;
+    let masterPrev = Number(updatedProduct.previousPrice || 0);
+    let masterIncAt = updatedProduct.priceIncreasedAt || 0;
     if (item.variantName && updatedProduct.variants && updatedProduct.variants.length > 0) {
-      const matchedVariant = updatedProduct.variants.find(v => v.name === item.variantName);
-      if (matchedVariant) newVariantPrice = matchedVariant.price;
+      const matchedVariant = updatedProduct.variants.find(v => v.name === item.variantName || (v.name || '').trim().toLowerCase() === (item.variantName || '').trim().toLowerCase());
+      if (matchedVariant) {
+        newVariantPrice = matchedVariant.price;
+        if (matchedVariant.previousPrice) {
+          masterPrev = Number(matchedVariant.previousPrice);
+          masterIncAt = matchedVariant.priceIncreasedAt || masterIncAt;
+        }
+      }
     }
 
-    const oldPrice = item.price;
+    const oldPrice = Number(item.price || 0);
     item.price = newVariantPrice;
 
     if (item.variantName && updatedProduct.variants) {
@@ -63,7 +89,17 @@ const syncProductPrice = (updatedProduct) => {
       item.img = fixD(updatedProduct.img);
     }
 
-    if (oldPrice !== item.price) wishlistChanged = true;
+    if (oldPrice !== Number(item.price)) {
+      if (oldPrice > 0) {
+        item.previousPrice = (masterPrev > 0 && masterPrev !== Number(item.price)) ? masterPrev : oldPrice;
+        item.priceIncreasedAt = masterIncAt || Date.now();
+      }
+      wishlistChanged = true;
+    } else if (masterPrev > 0 && masterPrev !== Number(item.price) && Number(item.previousPrice || 0) !== masterPrev) {
+      item.previousPrice = masterPrev;
+      item.priceIncreasedAt = masterIncAt;
+      wishlistChanged = true;
+    }
   });
 
   if (cartChanged) {

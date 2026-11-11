@@ -10,12 +10,27 @@ window.confirmAddProductToCart = () => {
   }
   const v = cProd.variants?.[cVar];
   const vN = v?.name || null;
+  const curTarget = v || cProd;
   const e = cart.find(i => i.id === cProd.id && i.variantName === vN);
 
   if (e) {
     e.qty += cQty;
+    if (curTarget?.previousPrice) {
+      e.previousPrice = curTarget.previousPrice;
+      e.priceIncreasedAt = curTarget.priceIncreasedAt || cProd.priceIncreasedAt || 0;
+    }
   } else {
-    cart.push({ id: cProd.id, name: cProd.name, variantName: vN, price: v?.price ?? cProd.price, img: v?.img || cProd.img, qty: cQty, unit: cProd.unit || '' });
+    cart.push({
+      id: cProd.id,
+      name: cProd.name,
+      variantName: vN,
+      price: v?.price ?? cProd.price,
+      previousPrice: curTarget?.previousPrice || cProd.previousPrice || 0,
+      priceIncreasedAt: curTarget?.priceIncreasedAt || cProd.priceIncreasedAt || 0,
+      img: v?.img || cProd.img,
+      qty: cQty,
+      unit: cProd.unit || ''
+    });
   }
   updCart();
   closeProductModal();
@@ -25,11 +40,21 @@ window.confirmAddProductToCart = () => {
 window.confirmAddToWishlist = () => {
   const v = cProd.variants?.[cVar];
   const vN = v?.name || null;
+  const curTarget = v || cProd;
 
   if (wishlist.find(i => String(i.id) === String(cProd.id) && i.variantName === vN)) {
     return showToast("Sudah di Favorit!");
   }
-  wishlist.push({ id: cProd.id, name: cProd.name, variantName: vN, price: v?.price ?? cProd.price, img: v?.img || cProd.img, unit: cProd.unit || '' });
+  wishlist.push({
+    id: cProd.id,
+    name: cProd.name,
+    variantName: vN,
+    price: v?.price ?? cProd.price,
+    previousPrice: curTarget?.previousPrice || cProd.previousPrice || 0,
+    priceIncreasedAt: curTarget?.priceIncreasedAt || cProd.priceIncreasedAt || 0,
+    img: v?.img || cProd.img,
+    unit: cProd.unit || ''
+  });
   ssL('freshmart_wishlist', JSON.stringify(wishlist));
   updWish();
   closeProductModal();
@@ -39,6 +64,38 @@ window.confirmAddToWishlist = () => {
 // =============================================================================
 // SINKRONISASI REALTIME HARGA MASTER UNTUK WISHLIST & KERANJANG
 // =============================================================================
+
+window.getCartOrWishPriceChangeInfo = (item, prod) => {
+  if (!item || typeof window.getPriceIncreaseInfo !== 'function') return null;
+  const p = prod || (appData?.products || []).find(x => String(x.id) === String(item.id));
+  if (p && (p.isActive === 'false' || p.isActive === false)) return null;
+
+  const hasVars = p && Array.isArray(p.variants) && p.variants.length > 0;
+  const v = (p && item.variantName && hasVars)
+    ? p.variants.find(vr => vr.name === item.variantName || (vr.name || '').trim().toLowerCase() === (item.variantName || '').trim().toLowerCase())
+    : null;
+
+  if (v) {
+    const vInfo = window.getPriceIncreaseInfo(v);
+    if (vInfo) return vInfo;
+    if (p.variants.length === 1) {
+      const pInfo = window.getPriceIncreaseInfo(p);
+      if (pInfo) return pInfo;
+    }
+  } else if (p) {
+    const pInfo = window.getPriceIncreaseInfo(p);
+    if (pInfo) return pInfo;
+    if (hasVars) {
+      const upV = p.variants.find(vr => window.isPriceIncreaseActive(vr));
+      if (upV) {
+        const upVInfo = window.getPriceIncreaseInfo(upV);
+        if (upVInfo) return upVInfo;
+      }
+    }
+  }
+
+  return window.getPriceIncreaseInfo(item);
+};
 
 window.syncWishlistPrices = () => {
   if (!wishlist || !wishlist.length || !appData?.products || !appData.products.length) return false;
@@ -61,12 +118,18 @@ window.syncWishlistPrices = () => {
     // Dapatkan harga terbaru sesuai varian atau master
     let latestPrice = Number(p.price) || 0;
     let latestImg = p.img || '';
+    let masterPrevPrice = Number(p.previousPrice || 0);
+    let masterIncAt = p.priceIncreasedAt || 0;
 
     if (item.variantName && p.variants && p.variants.length > 0) {
-      const v = p.variants.find(v => v.name === item.variantName);
+      const v = p.variants.find(v => v.name === item.variantName || (v.name || '').trim().toLowerCase() === (item.variantName || '').trim().toLowerCase());
       if (v) {
         if (v.price !== undefined && v.price !== null) latestPrice = Number(v.price);
         if (v.img) latestImg = v.img;
+        if (v.previousPrice) {
+          masterPrevPrice = Number(v.previousPrice);
+          masterIncAt = v.priceIncreasedAt || masterIncAt;
+        }
       }
     }
 
@@ -75,9 +138,20 @@ window.syncWishlistPrices = () => {
       changed = true;
     }
 
-    if (Number(item.price) !== latestPrice) {
+    const oldItemPrice = Number(item.price) || 0;
+    if (oldItemPrice !== latestPrice) {
+      if (oldItemPrice > 0) {
+        item.previousPrice = (masterPrevPrice > 0 && masterPrevPrice !== latestPrice) ? masterPrevPrice : oldItemPrice;
+        item.priceIncreasedAt = masterIncAt || Date.now();
+      }
       item.price = latestPrice;
       changed = true;
+    } else if (masterPrevPrice > 0 && masterPrevPrice !== latestPrice) {
+      if (Number(item.previousPrice || 0) !== masterPrevPrice || item.priceIncreasedAt !== masterIncAt) {
+        item.previousPrice = masterPrevPrice;
+        item.priceIncreasedAt = masterIncAt;
+        changed = true;
+      }
     }
   });
 
@@ -106,12 +180,18 @@ window.syncCartPrices = () => {
 
     let latestPrice = Number(p.price) || 0;
     let latestImg = p.img || '';
+    let masterPrevPrice = Number(p.previousPrice || 0);
+    let masterIncAt = p.priceIncreasedAt || 0;
 
     if (item.variantName && p.variants && p.variants.length > 0) {
-      const v = p.variants.find(v => v.name === item.variantName);
+      const v = p.variants.find(v => v.name === item.variantName || (v.name || '').trim().toLowerCase() === (item.variantName || '').trim().toLowerCase());
       if (v) {
         if (v.price !== undefined && v.price !== null) latestPrice = Number(v.price);
         if (v.img) latestImg = v.img;
+        if (v.previousPrice) {
+          masterPrevPrice = Number(v.previousPrice);
+          masterIncAt = v.priceIncreasedAt || masterIncAt;
+        }
       }
     }
 
@@ -120,9 +200,20 @@ window.syncCartPrices = () => {
       changed = true;
     }
 
-    if (Number(item.price) !== latestPrice) {
+    const oldItemPrice = Number(item.price) || 0;
+    if (oldItemPrice !== latestPrice) {
+      if (oldItemPrice > 0) {
+        item.previousPrice = (masterPrevPrice > 0 && masterPrevPrice !== latestPrice) ? masterPrevPrice : oldItemPrice;
+        item.priceIncreasedAt = masterIncAt || Date.now();
+      }
       item.price = latestPrice;
       changed = true;
+    } else if (masterPrevPrice > 0 && masterPrevPrice !== latestPrice) {
+      if (Number(item.previousPrice || 0) !== masterPrevPrice || item.priceIncreasedAt !== masterIncAt) {
+        item.previousPrice = masterPrevPrice;
+        item.priceIncreasedAt = masterIncAt;
+        changed = true;
+      }
     }
   });
 
@@ -591,6 +682,31 @@ const renderWish = () => {
     return;
   }
 
+  // Hitung ringkasan item yang naik / turun harga di daftar favorit ini
+  let wishUpCount = 0;
+  let wishDownCount = 0;
+  filteredWish.forEach(i => {
+    const p = (appData.products || []).find(prod => String(prod.id) === String(i.id));
+    const inc = window.getCartOrWishPriceChangeInfo ? window.getCartOrWishPriceChangeInfo(i, p) : null;
+    if (inc) {
+      if (inc.isUp) wishUpCount++;
+      else wishDownCount++;
+    }
+  });
+
+  const wishPriceSummaryHtml = (wishUpCount > 0 || wishDownCount > 0) ? `
+    <div class="flex items-center justify-between gap-2 px-3 py-2 mb-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs text-[11px]">
+      <div class="flex items-center gap-1.5 font-bold text-slate-600 dark:text-slate-300">
+        <i class="fa-solid fa-chart-line text-emerald-500"></i>
+        <span>Info Perubahan Harga:</span>
+      </div>
+      <div class="flex items-center gap-1.5 flex-wrap">
+        ${wishUpCount > 0 ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60"><i class="fa-solid fa-arrow-trend-up text-[8px]"></i> ${wishUpCount} Naik</span>` : ''}
+        ${wishDownCount > 0 ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60"><i class="fa-solid fa-arrow-trend-down text-[8px]"></i> ${wishDownCount} Turun</span>` : ''}
+      </div>
+    </div>
+  ` : '';
+
   const sortToolbarHtml = (!q && wishlist.length > 1) ? `
     <div class="flex items-center justify-between text-xs px-1 mb-2.5 bg-slate-100/70 dark:bg-slate-800/50 p-2.5 rounded-xl border border-slate-200/60 dark:border-slate-700/50">
       <div class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 font-bold text-[11px]">
@@ -612,7 +728,7 @@ const renderWish = () => {
     </div>
   ` : '';
 
-  setH('wishlist-items-container', sortToolbarHtml + filteredWish.map((i) => {
+  setH('wishlist-items-container', wishPriceSummaryHtml + sortToolbarHtml + filteredWish.map((i) => {
     const x = wishlist.indexOf(i);
     const p = (appData.products || []).find(prod => String(prod.id) === String(i.id));
     const isOff = p && (p.isActive === 'false' || p.isActive === false);
@@ -622,7 +738,7 @@ const renderWish = () => {
     let isOutOfStock = false;
     if (p && !isUnlimited && !isOff) {
       if (i.variantName && hasVars) {
-        const v = p.variants.find(v => v.name === i.variantName);
+        const v = p.variants.find(v => v.name === i.variantName || (v.name || '').trim().toLowerCase() === (i.variantName || '').trim().toLowerCase());
         if (v && v.stock !== undefined && v.stock !== null && v.stock !== '' && Number(v.stock) <= 0) {
           isOutOfStock = true;
         }
@@ -633,8 +749,9 @@ const renderWish = () => {
       }
     }
 
-    const curProdOrVar = (p && i.variantName && hasVars) ? p.variants.find(v => v.name === i.variantName) : p;
-    const wishInc = (!isOff && curProdOrVar) ? window.getPriceIncreaseInfo(curProdOrVar) : null;
+    const wishInc = (!isOff && typeof window.getCartOrWishPriceChangeInfo === 'function')
+      ? window.getCartOrWishPriceChangeInfo(i, p)
+      : null;
 
     return `
     <div class="card-modern p-3.5 sm:p-4 flex items-center gap-2.5 sm:gap-3 shadow-sm min-w-0 border transition-transform duration-150 ${isOff ? 'border-slate-200/90 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/70 opacity-80' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'}" data-drag-item="wishlist" data-drag-index="${x}">
@@ -653,13 +770,13 @@ const renderWish = () => {
       </div>
       ` : ''}
 
-      <div class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+      <div onclick="openProductModal('${esc(i.id)}')" class="relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 cursor-pointer">
         <img src="${esc(i.img)}" class="w-full h-full object-cover ${isOff ? 'grayscale opacity-60' : (isOutOfStock ? 'grayscale opacity-75' : '')}" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'"/>
         ${isOff ? `<div class="absolute inset-0 bg-slate-900/60 flex items-center justify-center p-1 text-center"><span class="text-[8px] font-black text-white bg-slate-800/90 px-1.5 py-0.5 rounded shadow">NONAKTIF</span></div>` : (isOutOfStock ? `<div class="absolute inset-0 bg-black/50 flex items-center justify-center p-1 text-center"><span class="text-[8px] font-black text-white bg-amber-600/90 px-1.5 py-0.5 rounded shadow">HABIS</span></div>` : '')}
       </div>
       <div class="flex-1 flex flex-col min-w-0 self-stretch justify-between">
         <div>
-          <h4 class="text-sm font-semibold ${isOff ? 'text-slate-500 dark:text-slate-400' : 'text-slate-800 dark:text-white'} mb-1 truncate">${esc(i.name)}</h4>
+          <h4 onclick="openProductModal('${esc(i.id)}')" class="text-sm font-semibold ${isOff ? 'text-slate-500 dark:text-slate-400' : 'text-slate-800 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400'} mb-1 truncate cursor-pointer transition-colors">${esc(i.name)}</h4>
           <div class="flex items-center gap-1.5 mb-1.5 flex-wrap">
             ${i.variantName ? `<span class="badge badge-xs badge-slate badge-normal-case">${esc(i.variantName)}</span>` : ''}
             ${i.unit ? `<span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold">/ ${esc(i.unit)}</span>` : ''}
@@ -668,9 +785,10 @@ const renderWish = () => {
           ${wishInc ? `
             <div class="flex items-center gap-1.5 mb-1 flex-wrap">
               <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 line-through leading-none">${fCur(wishInc.prev)}</span>
-              <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[8px] font-black ${wishInc.badgeClass} leading-none shadow-2xs">
-                <i class="fa-solid ${wishInc.icon} text-[7px]"></i> ${wishInc.label}
+              <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-black ${wishInc.badgeClass} leading-none shadow-2xs">
+                <i class="fa-solid ${wishInc.icon} text-[8px]"></i> ${wishInc.isUp ? `Naik ${fCur(wishInc.diff)}${wishInc.pct > 0 ? ` (+${wishInc.pct}%)` : ''}` : `Turun ${fCur(wishInc.diff)}${wishInc.pct > 0 ? ` (-${wishInc.pct}%)` : ''}`}
               </span>
+              ${wishInc.timeAgo ? `<span class="text-[9px] text-slate-400 dark:text-slate-500 font-medium leading-none">· diperbarui ${wishInc.timeAgo}</span>` : ''}
             </div>
           ` : ''}
           <p class="${isOff ? 'text-slate-400 dark:text-slate-500 font-bold' : 'text-emerald-600 dark:text-emerald-400 font-bold'} mb-1 text-sm drop-shadow-sm">${fCur(i.price)}</p>
@@ -751,6 +869,31 @@ const renderCart = () => {
       </div>
     `);
   } else {
+    // Hitung ringkasan item yang naik / turun harga di keranjang belanja ini
+    let cartUpCount = 0;
+    let cartDownCount = 0;
+    filteredCart.forEach(i => {
+      const p = (appData.products || []).find(prod => String(prod.id) === String(i.id));
+      const inc = window.getCartOrWishPriceChangeInfo ? window.getCartOrWishPriceChangeInfo(i, p) : null;
+      if (inc) {
+        if (inc.isUp) cartUpCount++;
+        else cartDownCount++;
+      }
+    });
+
+    const cartPriceSummaryHtml = (cartUpCount > 0 || cartDownCount > 0) ? `
+      <div class="flex items-center justify-between gap-2 px-3 py-2 mb-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs text-[11px]">
+        <div class="flex items-center gap-1.5 font-bold text-slate-600 dark:text-slate-300">
+          <i class="fa-solid fa-chart-line text-emerald-500"></i>
+          <span>Info Perubahan Harga:</span>
+        </div>
+        <div class="flex items-center gap-1.5 flex-wrap">
+          ${cartUpCount > 0 ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/80 dark:border-emerald-800/60"><i class="fa-solid fa-arrow-trend-up text-[8px]"></i> ${cartUpCount} Naik</span>` : ''}
+          ${cartDownCount > 0 ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200/80 dark:border-rose-800/60"><i class="fa-solid fa-arrow-trend-down text-[8px]"></i> ${cartDownCount} Turun</span>` : ''}
+        </div>
+      </div>
+    ` : '';
+
     const sortToolbarHtml = (!q && cart.length > 1) ? `
       <div class="flex items-center justify-between text-xs px-1 mb-2.5 bg-slate-100/70 dark:bg-slate-800/50 p-2.5 rounded-xl border border-slate-200/60 dark:border-slate-700/50">
         <div class="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 font-bold text-[11px]">
@@ -772,9 +915,15 @@ const renderCart = () => {
       </div>
     ` : '';
 
-    setH('cart-items-container', sortToolbarHtml + filteredCart.map((i) => {
+    setH('cart-items-container', cartPriceSummaryHtml + sortToolbarHtml + filteredCart.map((i) => {
       const x = cart.indexOf(i);
       let e = getEffP(i), w = e < i.price;
+      const p = (appData.products || []).find(prod => String(prod.id) === String(i.id));
+      const isOff = p && (p.isActive === 'false' || p.isActive === false);
+      const cartInc = (!isOff && typeof window.getCartOrWishPriceChangeInfo === 'function')
+        ? window.getCartOrWishPriceChangeInfo(i, p)
+        : null;
+
       return `
       <div class="card-modern p-3 sm:p-3.5 flex items-center gap-2.5 sm:gap-3 relative overflow-hidden group shadow-sm min-w-0 border transition-transform duration-150 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800" data-drag-item="cart" data-drag-index="${x}">
         ${w ? `<div class="badge badge-ribbon badge-solid-amber">GROSIR</div>` : ''}
@@ -794,14 +943,23 @@ const renderCart = () => {
         </div>
         ` : ''}
 
-        <img src="${esc(i.img)}" class="w-20 h-20 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shrink-0" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'"/>
+        <img onclick="openProductModal('${esc(i.id)}')" src="${esc(i.img)}" class="w-20 h-20 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shrink-0 cursor-pointer" onerror="this.onerror=null;this.src='https://placehold.co/400?text=No+Image'"/>
         <div class="flex-1 flex flex-col min-w-0 self-stretch justify-between">
           <div>
             <div class="flex items-start justify-between gap-1">
-              <h4 class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-white truncate">${esc(i.name)}</h4>
+              <h4 onclick="openProductModal('${esc(i.id)}')" class="text-xs sm:text-sm font-semibold text-slate-800 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 truncate cursor-pointer transition-colors">${esc(i.name)}</h4>
               <button onclick="rmCart(${x})" class="text-slate-400 hover:text-rose-500 bg-white dark:bg-slate-800 w-6 h-6 flex items-center justify-center rounded border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all shrink-0 ml-1" title="Hapus item"><i class="fa-solid fa-xmark text-[10px]"></i></button>
             </div>
             ${i.variantName ? `<span class="mt-0.5 inline-flex items-center gap-1"><span class="badge badge-xs badge-slate badge-normal-case">${esc(i.variantName)}</span>${i.unit ? ` <span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold">· ${esc(i.unit)}</span>` : ''}</span>` : (i.unit ? `<span class="text-[9px] text-slate-400 dark:text-slate-500 font-bold mt-0.5 block">${esc(i.unit)}</span>` : '')}
+            ${cartInc ? `
+              <div class="flex items-center gap-1.5 mt-1 flex-wrap">
+                <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 line-through leading-none">${fCur(cartInc.prev)}</span>
+                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-black ${cartInc.badgeClass} leading-none shadow-2xs">
+                  <i class="fa-solid ${cartInc.icon} text-[8px]"></i> ${cartInc.isUp ? `Naik ${fCur(cartInc.diff)}${cartInc.pct > 0 ? ` (+${cartInc.pct}%)` : ''}` : `Turun ${fCur(cartInc.diff)}${cartInc.pct > 0 ? ` (-${cartInc.pct}%)` : ''}`}
+                </span>
+                ${cartInc.timeAgo ? `<span class="text-[9px] text-slate-400 dark:text-slate-500 font-medium leading-none">· diperbarui ${cartInc.timeAgo}</span>` : ''}
+              </div>
+            ` : ''}
           </div>
           <div class="flex justify-between items-end mt-2 pt-1 border-t border-slate-100 dark:border-slate-700/60 min-w-0">
             <div>
