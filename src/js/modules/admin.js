@@ -506,7 +506,7 @@ window.renderReportView = () => {
         if (prod) {
           if (item.variantName && prod.variants && prod.variants.length > 0) {
             const v = prod.variants.find(vr => vr.name === item.variantName);
-            costPerUnit = parseFloat(v?.costPrice) || parseFloat(prod.costPrice) || 0;
+            costPerUnit = parseFloat(v?.costPrice) || 0;
           } else {
             costPerUnit = parseFloat(prod.costPrice) || 0;
           }
@@ -727,7 +727,7 @@ window.renderReportView = () => {
               if (pr) {
                 if (it.variantName && pr.variants && pr.variants.length > 0) {
                   const vr = pr.variants.find(v => v.name === it.variantName);
-                  cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
+                  cpu = parseFloat(vr?.costPrice) || 0;
                 } else {
                   cpu = parseFloat(pr.costPrice) || 0;
                 }
@@ -821,7 +821,7 @@ window.printFinancialReport = () => {
         if (pr) {
           if (it.variantName && pr.variants && pr.variants.length > 0) {
             const vr = pr.variants.find(v => v.name === it.variantName);
-            cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
+            cpu = parseFloat(vr?.costPrice) || 0;
           } else {
             cpu = parseFloat(pr.costPrice) || 0;
           }
@@ -1017,7 +1017,7 @@ window.exportFinancialReportCsv = () => {
         if (pr) {
           if (it.variantName && pr.variants && pr.variants.length > 0) {
             const vr = pr.variants.find(v => v.name === it.variantName);
-            cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
+            cpu = parseFloat(vr?.costPrice) || 0;
           } else {
             cpu = parseFloat(pr.costPrice) || 0;
           }
@@ -3285,21 +3285,43 @@ window.rAdmItms = t => {
     let suppBadge = (isP && (x.supplierName || x.supplierId)) ? `<span class="badge badge-xs bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/80 font-bold" title="Rekanan Asal Supplier"><i class="fa-solid fa-truck-field text-[8px]"></i> ${esc(x.supplierName || 'Supplier Tertaut')}</span>` : '';
     let varsBadge = isP && hasVars ? `<span class="badge badge-xs badge-indigo">${x.variants.length} Varian</span>` : '';
     let wholBadge = isP && x.wholesale && x.wholesale.length ? `<span class="badge badge-xs badge-purple"><i class="fa-solid fa-tags"></i> Grosir</span>` : '';
-    let costBadge = (isP && x.costPrice) ? `<span class="text-[10px] text-slate-400 font-medium bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">HPP: <b class="text-slate-700 dark:text-slate-300">${fCur(x.costPrice)}</b></span>` : '';
+    
+    let costBadge = '';
+    if (isP && window.canViewCostPrice()) {
+      if (hasVars) {
+        const varHpps = x.variants.map(v => Number(v.costPrice) || 0).filter(h => h > 0);
+        if (varHpps.length > 0) {
+          const minHpp = Math.min(...varHpps);
+          const maxHpp = Math.max(...varHpps);
+          costBadge = `<span class="text-[10px] text-slate-400 font-medium bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded" title="Modal HPP tiap varian">HPP: <b class="text-slate-700 dark:text-slate-300">${minHpp === maxHpp ? fCur(minHpp) : `${fCur(minHpp)} - ${fCur(maxHpp)}`}</b></span>`;
+        }
+      } else if (x.costPrice) {
+        costBadge = `<span class="text-[10px] text-slate-400 font-medium bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">HPP: <b class="text-slate-700 dark:text-slate-300">${fCur(x.costPrice)}</b></span>`;
+      }
+    }
     
     let priceIncBadge = '';
     if (isP) {
-      const pInc = window.getPriceIncreaseInfo(x);
-      if (pInc) {
-        priceIncBadge = `<span class="badge badge-xs ${pInc.badgeClass} font-bold"><i class="fa-solid ${pInc.icon} text-[8px]"></i> ${pInc.label}</span>`;
-      } else if (hasVars) {
+      if (hasVars) {
         const vUp = x.variants.find(v => window.isPriceIncreaseActive(v));
         if (vUp) {
           const vInc = window.getPriceIncreaseInfo(vUp);
-          priceIncBadge = `<span class="badge badge-xs ${vInc.badgeClass} font-bold"><i class="fa-solid ${vInc.icon} text-[8px]"></i> Varian ${vInc.label}</span>`;
+          priceIncBadge = `<span class="badge badge-xs ${vInc.badgeClass} font-bold"><i class="fa-solid ${vInc.icon} text-[8px]"></i> ${esc(vUp.name)} ${vInc.label}</span>`;
+        }
+      } else {
+        const pInc = window.getPriceIncreaseInfo(x);
+        if (pInc) {
+          priceIncBadge = `<span class="badge badge-xs ${pInc.badgeClass} font-bold"><i class="fa-solid ${pInc.icon} text-[8px]"></i> ${pInc.label}</span>`;
         }
       }
     }
+
+    const varPrices = (isP && hasVars) ? x.variants.map(v => Number(v.price) || 0).filter(p => p > 0) : [];
+    const minVarP = varPrices.length ? Math.min(...varPrices) : (Number(x.price) || 0);
+    const maxVarP = varPrices.length ? Math.max(...varPrices) : (Number(x.price) || 0);
+    const priceText = (isP && hasVars && varPrices.length > 0) 
+      ? (minVarP === maxVarP ? fCur(minVarP) : `${fCur(minVarP)} - ${fCur(maxVarP)}`) 
+      : fCur(x.price || 0);
     
     return `
     <div class="p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between cursor-pointer border-2 ${bC} shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 gap-3.5 group" onclick="oAEd('${t}', '${x.id}')">
@@ -3313,7 +3335,7 @@ window.rAdmItms = t => {
           ${t === 'banners' ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">${esc(x.subtitle || 'Banner Rasio 16:9')}</p>` : ''}
           ${isP ? `
           <div class="flex flex-wrap items-center gap-2 mb-1.5">
-            <span class="font-bold text-emerald-600 dark:text-emerald-400 text-sm drop-shadow-sm">${fCur(x.price)}</span>
+            <span class="font-bold text-emerald-600 dark:text-emerald-400 text-sm drop-shadow-sm">${priceText}</span>
             ${costBadge}
             ${skuBadge}
           </div>
@@ -3786,15 +3808,20 @@ window.submitAdminForm = async () => {
           }
         }
 
-        if (manualPrev > 0 && newP !== manualPrev) {
-          d.previousPrice = manualPrev;
-          d.priceIncreasedAt = existingProd.priceIncreasedAt || Date.now();
-        } else if (newP !== oldP && oldP > 0) {
-          d.previousPrice = oldP;
-          d.priceIncreasedAt = Date.now();
-        } else if (existingProd.previousPrice && Number(existingProd.previousPrice) !== newP) {
-          d.previousPrice = existingProd.previousPrice;
-          d.priceIncreasedAt = existingProd.priceIncreasedAt;
+        if (!d.variants || d.variants.length === 0) {
+          if (manualPrev > 0 && newP !== manualPrev) {
+            d.previousPrice = manualPrev;
+            d.priceIncreasedAt = existingProd.priceIncreasedAt || Date.now();
+          } else if (newP !== oldP && oldP > 0) {
+            d.previousPrice = oldP;
+            d.priceIncreasedAt = Date.now();
+          } else if (existingProd.previousPrice && Number(existingProd.previousPrice) !== newP) {
+            d.previousPrice = existingProd.previousPrice;
+            d.priceIncreasedAt = existingProd.priceIncreasedAt;
+          }
+        } else {
+          delete d.previousPrice;
+          delete d.priceIncreasedAt;
         }
 
         if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(d);
@@ -4109,14 +4136,11 @@ window.saveQuickEditProduct = async () => {
       if (vS) v.stock = Math.max(0, Number(vS.value || 0));
     });
     // Set base price & cost to lowest variant, and total stock to sum of variant stock
-    const oldBasePrice = Number(p.price || 0);
     p.price = Math.min(...p.variants.map(v => v.price));
-    if (p.price !== oldBasePrice && oldBasePrice > 0 && !p.variants.some(v => v.previousPrice)) {
-      p.previousPrice = oldBasePrice;
-      p.priceIncreasedAt = Date.now();
-    }
     p.costPrice = Math.min(...p.variants.map(v => v.costPrice || 0));
     p.stock = p.variants.reduce((sum, v) => sum + Number(v.stock || 0), 0);
+    delete p.previousPrice;
+    delete p.priceIncreasedAt;
   }
 
   const qeSuppId = getV('qe-supplier-id');

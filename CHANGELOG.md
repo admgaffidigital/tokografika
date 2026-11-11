@@ -63,8 +63,17 @@ Semua pembaruan dan perbaikan pada sistem **Toko Grafika PWA** didokumentasikan 
   - Kartu katalog Grid & List View kini menampilkan harga yang dicoret berserta nama varian yang mengalami perubahan harga (contoh: `<s>Rp 22.500</s> [▲ PCS Naik Rp 400]`).
   - Modal Detail Produk menampilkan coretan harga, badge kenaikan/penurunan, persentase, dan keterangan waktu update untuk varian yang dipilih, serta lencana varian pada tombol pilihan varian (`[PCS] [+Rp 400]`).
 - **Cache-Buster & Pembaruan Service Worker PWA:**
-  - Bumping versi `APP_DATA_VERSION = '2026-11-11-v5'` di `firebase.js` untuk membersihkan cache produk lawas di browser pelanggan secara otomatis saat toko dibuka.
-  - Bumping cache Service Worker ke `CACHE_NAME = 'freshmart-pwa-v16'` di `sw.js` agar seluruh aset JavaScript dan HTML teranyar langsung aktif di semua perangkat.
+  - Bumping versi `APP_DATA_VERSION = '2026-11-11-v6'` di `firebase.js` untuk membersihkan cache produk lawas di browser pelanggan secara otomatis saat toko dibuka.
+  - Bumping cache Service Worker ke `CACHE_NAME = 'freshmart-pwa-v17'` di `sw.js` agar seluruh aset JavaScript dan HTML teranyar langsung aktif di semua perangkat.
+
+### 9. Isolasi Total Data Varian: Harga Jual, Modal (HPP), dan Riwayat Harga Sepenuhnya Mandiri:
+- **Penetapan Harga Modal (HPP) per Varian:**
+  - Setiap varian memiliki harga modal/HPP (`v.costPrice`) yang berdiri sendiri dan tidak pernah mengambil atau terpengaruh oleh harga modal produk utama (`p.costPrice`).
+  - Laporan laba/rugi, penjualan POS kasir, dan ringkasan transaksi kini secara mutlak menghitung keuntungan berdasarkan HPP varian yang terjual (`v.costPrice`).
+- **Pemberantasan Acuan Silang Produk Induk (`normalizeProductVariantPricing`):**
+  - Menghapus seluruh asumsi penyalinan harga lama antara produk induk dan varian. Setiap varian melacak riwayat perubahannya sendiri.
+- **Tampilan Daftar Produk Admin yang Akurat:**
+  - Pada daftar produk Admin, produk bervarian kini menampilkan rentang harga jual (`Rp Min - Rp Max`) dan rentang HPP (`HPP: Rp Min - Rp Max`), bukan lagi satu harga tunggal produk induk.
 
 
 

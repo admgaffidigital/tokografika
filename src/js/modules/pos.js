@@ -1496,7 +1496,7 @@ window.submitPosTransaction = async () => {
       if (prod) {
         if (item.variantName && prod.variants && prod.variants.length > 0) {
           const vObj = prod.variants.find(v => v.name === item.variantName);
-          itemCost = parseFloat(vObj?.costPrice) || parseFloat(prod.costPrice) || 0;
+          itemCost = parseFloat(vObj?.costPrice) || 0;
         } else {
           itemCost = parseFloat(prod.costPrice) || 0;
         }

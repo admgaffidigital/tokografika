@@ -6885,7 +6885,15 @@ window.closeModalSmooth = (modalId, boxId, type = 'bottom-sheet', callback = nul
 window.normalizeProductVariantPricing = (p) => {
   if (!p || !Array.isArray(p.variants) || p.variants.length === 0) return p;
 
+  // Setiap varian memiliki harga jual (price), harga modal (costPrice),
+  // dan harga lama (previousPrice) yang sepenuhnya mandiri tanpa mengacu ke produk utama.
   p.variants.forEach(v => {
+    if (v.price !== undefined && v.price !== null) {
+      v.price = Number(v.price) || 0;
+    }
+    if (v.costPrice !== undefined && v.costPrice !== null && v.costPrice !== '') {
+      v.costPrice = Number(v.costPrice) || 0;
+    }
     if (v.previousPrice !== undefined && v.previousPrice !== null && v.previousPrice !== '') {
       v.previousPrice = Number(v.previousPrice);
       if (Number(v.price) === v.previousPrice) {
@@ -6894,37 +6902,6 @@ window.normalizeProductVariantPricing = (p) => {
       }
     }
   });
-
-  // Jika produk induk p punya previousPrice, cek apakah varian pertama atau varian terkait butuh disinkronkan
-  if (p.previousPrice && Number(p.previousPrice) > 0) {
-    const parentPrev = Number(p.previousPrice);
-    if (Number(p.price) === parentPrev) {
-      delete p.previousPrice;
-      delete p.priceIncreasedAt;
-    } else {
-      if (p.variants.length === 1 && !p.variants[0].previousPrice && Number(p.variants[0].price) !== parentPrev) {
-        p.variants[0].previousPrice = parentPrev;
-        p.variants[0].priceIncreasedAt = p.priceIncreasedAt || Date.now();
-      } else if (p.variants.length > 1) {
-        // Cari varian yang belum punya previousPrice dan selisih harganya wajar dengan parentPrev (bukan beda kelipatan ekstrim grosir)
-        const matchingVar = p.variants.find(v => !v.previousPrice && Number(v.price) !== parentPrev && Math.abs(Number(v.price) - parentPrev) <= parentPrev * 0.7);
-        if (matchingVar) {
-          matchingVar.previousPrice = parentPrev;
-          matchingVar.priceIncreasedAt = p.priceIncreasedAt || Date.now();
-        }
-      }
-    }
-  }
-
-  // Jika varian yang berubah punya previousPrice tetapi p belum punya
-  const activeVar = p.variants.find(v => v.previousPrice && Number(v.previousPrice) > 0 && Number(v.previousPrice) !== Number(v.price));
-  if (activeVar && (!p.previousPrice || Number(p.previousPrice) === Number(p.price))) {
-    // Sinkronkan ke p hanya jika harga varian tersebut sebanding dengan harga dasar p
-    if (Number(p.price) === Number(activeVar.price) || Math.abs(Number(p.price) - Number(activeVar.price)) <= Number(activeVar.price) * 0.3) {
-      p.previousPrice = Number(activeVar.previousPrice);
-      p.priceIncreasedAt = activeVar.priceIncreasedAt || p.priceIncreasedAt || Date.now();
-    }
-  }
 
   return p;
 };
@@ -7117,7 +7094,7 @@ const loadAppData = async () => {
 
   // 0. CACHE-BUSTER & FORCE SYNC VERSION:
   // Membersihkan sisa cache lawas di Safari/iOS/Android agar otomatis sinkron ke data Firestore terbaru
-  const APP_DATA_VERSION = '2026-11-11-v5';
+  const APP_DATA_VERSION = '2026-11-11-v6';
   if (sL('freshmart_data_version') !== APP_DATA_VERSION) {
     try {
       localStorage.removeItem('freshmart_last_update');
@@ -8046,13 +8023,17 @@ const rCat = () => {
     `;
 
     // Cek informasi kenaikan harga (jika bukan nonaktif)
-    let incInfo = !isOff ? window.getPriceIncreaseInfo(p) : null;
+    let incInfo = null;
     let changedVariant = null;
-    if (!incInfo && !isOff && p.variants && p.variants.length > 0) {
-      const upV = p.variants.find(v => window.isPriceIncreaseActive(v));
-      if (upV) {
-        incInfo = window.getPriceIncreaseInfo(upV);
-        changedVariant = upV;
+    if (!isOff) {
+      if (p.variants && p.variants.length > 0) {
+        const upV = p.variants.find(v => window.isPriceIncreaseActive(v));
+        if (upV) {
+          incInfo = window.getPriceIncreaseInfo(upV);
+          changedVariant = upV;
+        }
+      } else {
+        incInfo = window.getPriceIncreaseInfo(p);
       }
     }
 
@@ -8360,8 +8341,8 @@ const rProdMod = () => {
     }, 150);
   }
 
-  // Info kenaikan harga produk atau varian aktif
-  const incInfo = !isOff ? (window.getPriceIncreaseInfo(curItem) || (cVar === 0 ? window.getPriceIncreaseInfo(p) : null)) : null;
+  // Info kenaikan harga produk atau varian aktif (tiap varian sepenuhnya mandiri)
+  const incInfo = !isOff ? window.getPriceIncreaseInfo(curItem) : null;
   let otherChangedVar = null;
   if (!incInfo && !isOff && hV) {
     otherChangedVar = p.variants.find((vr, idx) => idx !== cVar && window.isPriceIncreaseActive(vr));
@@ -9162,22 +9143,9 @@ window.getCartOrWishPriceChangeInfo = (item, prod) => {
     : null;
 
   if (v) {
-    const vInfo = window.getPriceIncreaseInfo(v);
-    if (vInfo) return vInfo;
-    if (p.variants.length === 1 || p.variants.indexOf(v) === 0) {
-      const pInfo = window.getPriceIncreaseInfo(p);
-      if (pInfo) return pInfo;
-    }
-  } else if (p) {
-    const pInfo = window.getPriceIncreaseInfo(p);
-    if (pInfo) return pInfo;
-    if (hasVars) {
-      const upV = p.variants.find(vr => window.isPriceIncreaseActive(vr));
-      if (upV) {
-        const upVInfo = window.getPriceIncreaseInfo(upV);
-        if (upVInfo) return upVInfo;
-      }
-    }
+    return window.getPriceIncreaseInfo(v);
+  } else if (p && !hasVars) {
+    return window.getPriceIncreaseInfo(p);
   }
 
   return window.getPriceIncreaseInfo(item);
@@ -11054,7 +11022,7 @@ window.renderReportView = () => {
         if (prod) {
           if (item.variantName && prod.variants && prod.variants.length > 0) {
             const v = prod.variants.find(vr => vr.name === item.variantName);
-            costPerUnit = parseFloat(v?.costPrice) || parseFloat(prod.costPrice) || 0;
+            costPerUnit = parseFloat(v?.costPrice) || 0;
           } else {
             costPerUnit = parseFloat(prod.costPrice) || 0;
           }
@@ -11275,7 +11243,7 @@ window.renderReportView = () => {
               if (pr) {
                 if (it.variantName && pr.variants && pr.variants.length > 0) {
                   const vr = pr.variants.find(v => v.name === it.variantName);
-                  cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
+                  cpu = parseFloat(vr?.costPrice) || 0;
                 } else {
                   cpu = parseFloat(pr.costPrice) || 0;
                 }
@@ -11369,7 +11337,7 @@ window.printFinancialReport = () => {
         if (pr) {
           if (it.variantName && pr.variants && pr.variants.length > 0) {
             const vr = pr.variants.find(v => v.name === it.variantName);
-            cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
+            cpu = parseFloat(vr?.costPrice) || 0;
           } else {
             cpu = parseFloat(pr.costPrice) || 0;
           }
@@ -11565,7 +11533,7 @@ window.exportFinancialReportCsv = () => {
         if (pr) {
           if (it.variantName && pr.variants && pr.variants.length > 0) {
             const vr = pr.variants.find(v => v.name === it.variantName);
-            cpu = parseFloat(vr?.costPrice) || parseFloat(pr.costPrice) || 0;
+            cpu = parseFloat(vr?.costPrice) || 0;
           } else {
             cpu = parseFloat(pr.costPrice) || 0;
           }
@@ -13833,21 +13801,43 @@ window.rAdmItms = t => {
     let suppBadge = (isP && (x.supplierName || x.supplierId)) ? `<span class="badge badge-xs bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/80 font-bold" title="Rekanan Asal Supplier"><i class="fa-solid fa-truck-field text-[8px]"></i> ${esc(x.supplierName || 'Supplier Tertaut')}</span>` : '';
     let varsBadge = isP && hasVars ? `<span class="badge badge-xs badge-indigo">${x.variants.length} Varian</span>` : '';
     let wholBadge = isP && x.wholesale && x.wholesale.length ? `<span class="badge badge-xs badge-purple"><i class="fa-solid fa-tags"></i> Grosir</span>` : '';
-    let costBadge = (isP && x.costPrice) ? `<span class="text-[10px] text-slate-400 font-medium bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">HPP: <b class="text-slate-700 dark:text-slate-300">${fCur(x.costPrice)}</b></span>` : '';
+    
+    let costBadge = '';
+    if (isP && window.canViewCostPrice()) {
+      if (hasVars) {
+        const varHpps = x.variants.map(v => Number(v.costPrice) || 0).filter(h => h > 0);
+        if (varHpps.length > 0) {
+          const minHpp = Math.min(...varHpps);
+          const maxHpp = Math.max(...varHpps);
+          costBadge = `<span class="text-[10px] text-slate-400 font-medium bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded" title="Modal HPP tiap varian">HPP: <b class="text-slate-700 dark:text-slate-300">${minHpp === maxHpp ? fCur(minHpp) : `${fCur(minHpp)} - ${fCur(maxHpp)}`}</b></span>`;
+        }
+      } else if (x.costPrice) {
+        costBadge = `<span class="text-[10px] text-slate-400 font-medium bg-slate-100 dark:bg-slate-700/60 px-1.5 py-0.5 rounded">HPP: <b class="text-slate-700 dark:text-slate-300">${fCur(x.costPrice)}</b></span>`;
+      }
+    }
     
     let priceIncBadge = '';
     if (isP) {
-      const pInc = window.getPriceIncreaseInfo(x);
-      if (pInc) {
-        priceIncBadge = `<span class="badge badge-xs ${pInc.badgeClass} font-bold"><i class="fa-solid ${pInc.icon} text-[8px]"></i> ${pInc.label}</span>`;
-      } else if (hasVars) {
+      if (hasVars) {
         const vUp = x.variants.find(v => window.isPriceIncreaseActive(v));
         if (vUp) {
           const vInc = window.getPriceIncreaseInfo(vUp);
-          priceIncBadge = `<span class="badge badge-xs ${vInc.badgeClass} font-bold"><i class="fa-solid ${vInc.icon} text-[8px]"></i> Varian ${vInc.label}</span>`;
+          priceIncBadge = `<span class="badge badge-xs ${vInc.badgeClass} font-bold"><i class="fa-solid ${vInc.icon} text-[8px]"></i> ${esc(vUp.name)} ${vInc.label}</span>`;
+        }
+      } else {
+        const pInc = window.getPriceIncreaseInfo(x);
+        if (pInc) {
+          priceIncBadge = `<span class="badge badge-xs ${pInc.badgeClass} font-bold"><i class="fa-solid ${pInc.icon} text-[8px]"></i> ${pInc.label}</span>`;
         }
       }
     }
+
+    const varPrices = (isP && hasVars) ? x.variants.map(v => Number(v.price) || 0).filter(p => p > 0) : [];
+    const minVarP = varPrices.length ? Math.min(...varPrices) : (Number(x.price) || 0);
+    const maxVarP = varPrices.length ? Math.max(...varPrices) : (Number(x.price) || 0);
+    const priceText = (isP && hasVars && varPrices.length > 0) 
+      ? (minVarP === maxVarP ? fCur(minVarP) : `${fCur(minVarP)} - ${fCur(maxVarP)}`) 
+      : fCur(x.price || 0);
     
     return `
     <div class="p-4 sm:p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between cursor-pointer border-2 ${bC} shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 gap-3.5 group" onclick="oAEd('${t}', '${x.id}')">
@@ -13861,7 +13851,7 @@ window.rAdmItms = t => {
           ${t === 'banners' ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1">${esc(x.subtitle || 'Banner Rasio 16:9')}</p>` : ''}
           ${isP ? `
           <div class="flex flex-wrap items-center gap-2 mb-1.5">
-            <span class="font-bold text-emerald-600 dark:text-emerald-400 text-sm drop-shadow-sm">${fCur(x.price)}</span>
+            <span class="font-bold text-emerald-600 dark:text-emerald-400 text-sm drop-shadow-sm">${priceText}</span>
             ${costBadge}
             ${skuBadge}
           </div>
@@ -14334,15 +14324,20 @@ window.submitAdminForm = async () => {
           }
         }
 
-        if (manualPrev > 0 && newP !== manualPrev) {
-          d.previousPrice = manualPrev;
-          d.priceIncreasedAt = existingProd.priceIncreasedAt || Date.now();
-        } else if (newP !== oldP && oldP > 0) {
-          d.previousPrice = oldP;
-          d.priceIncreasedAt = Date.now();
-        } else if (existingProd.previousPrice && Number(existingProd.previousPrice) !== newP) {
-          d.previousPrice = existingProd.previousPrice;
-          d.priceIncreasedAt = existingProd.priceIncreasedAt;
+        if (!d.variants || d.variants.length === 0) {
+          if (manualPrev > 0 && newP !== manualPrev) {
+            d.previousPrice = manualPrev;
+            d.priceIncreasedAt = existingProd.priceIncreasedAt || Date.now();
+          } else if (newP !== oldP && oldP > 0) {
+            d.previousPrice = oldP;
+            d.priceIncreasedAt = Date.now();
+          } else if (existingProd.previousPrice && Number(existingProd.previousPrice) !== newP) {
+            d.previousPrice = existingProd.previousPrice;
+            d.priceIncreasedAt = existingProd.priceIncreasedAt;
+          }
+        } else {
+          delete d.previousPrice;
+          delete d.priceIncreasedAt;
         }
 
         if (typeof window.normalizeProductVariantPricing === 'function') window.normalizeProductVariantPricing(d);
@@ -14657,14 +14652,11 @@ window.saveQuickEditProduct = async () => {
       if (vS) v.stock = Math.max(0, Number(vS.value || 0));
     });
     // Set base price & cost to lowest variant, and total stock to sum of variant stock
-    const oldBasePrice = Number(p.price || 0);
     p.price = Math.min(...p.variants.map(v => v.price));
-    if (p.price !== oldBasePrice && oldBasePrice > 0 && !p.variants.some(v => v.previousPrice)) {
-      p.previousPrice = oldBasePrice;
-      p.priceIncreasedAt = Date.now();
-    }
     p.costPrice = Math.min(...p.variants.map(v => v.costPrice || 0));
     p.stock = p.variants.reduce((sum, v) => sum + Number(v.stock || 0), 0);
+    delete p.previousPrice;
+    delete p.priceIncreasedAt;
   }
 
   const qeSuppId = getV('qe-supplier-id');
@@ -17268,7 +17260,7 @@ window.submitPosTransaction = async () => {
       if (prod) {
         if (item.variantName && prod.variants && prod.variants.length > 0) {
           const vObj = prod.variants.find(v => v.name === item.variantName);
-          itemCost = parseFloat(vObj?.costPrice) || parseFloat(prod.costPrice) || 0;
+          itemCost = parseFloat(vObj?.costPrice) || 0;
         } else {
           itemCost = parseFloat(prod.costPrice) || 0;
         }

@@ -77,22 +77,9 @@ window.getCartOrWishPriceChangeInfo = (item, prod) => {
     : null;
 
   if (v) {
-    const vInfo = window.getPriceIncreaseInfo(v);
-    if (vInfo) return vInfo;
-    if (p.variants.length === 1 || p.variants.indexOf(v) === 0) {
-      const pInfo = window.getPriceIncreaseInfo(p);
-      if (pInfo) return pInfo;
-    }
-  } else if (p) {
-    const pInfo = window.getPriceIncreaseInfo(p);
-    if (pInfo) return pInfo;
-    if (hasVars) {
-      const upV = p.variants.find(vr => window.isPriceIncreaseActive(vr));
-      if (upV) {
-        const upVInfo = window.getPriceIncreaseInfo(upV);
-        if (upVInfo) return upVInfo;
-      }
-    }
+    return window.getPriceIncreaseInfo(v);
+  } else if (p && !hasVars) {
+    return window.getPriceIncreaseInfo(p);
   }
 
   return window.getPriceIncreaseInfo(item);

@@ -617,13 +617,17 @@ const rCat = () => {
     `;
 
     // Cek informasi kenaikan harga (jika bukan nonaktif)
-    let incInfo = !isOff ? window.getPriceIncreaseInfo(p) : null;
+    let incInfo = null;
     let changedVariant = null;
-    if (!incInfo && !isOff && p.variants && p.variants.length > 0) {
-      const upV = p.variants.find(v => window.isPriceIncreaseActive(v));
-      if (upV) {
-        incInfo = window.getPriceIncreaseInfo(upV);
-        changedVariant = upV;
+    if (!isOff) {
+      if (p.variants && p.variants.length > 0) {
+        const upV = p.variants.find(v => window.isPriceIncreaseActive(v));
+        if (upV) {
+          incInfo = window.getPriceIncreaseInfo(upV);
+          changedVariant = upV;
+        }
+      } else {
+        incInfo = window.getPriceIncreaseInfo(p);
       }
     }
 
@@ -931,8 +935,8 @@ const rProdMod = () => {
     }, 150);
   }
 
-  // Info kenaikan harga produk atau varian aktif
-  const incInfo = !isOff ? (window.getPriceIncreaseInfo(curItem) || (cVar === 0 ? window.getPriceIncreaseInfo(p) : null)) : null;
+  // Info kenaikan harga produk atau varian aktif (tiap varian sepenuhnya mandiri)
+  const incInfo = !isOff ? window.getPriceIncreaseInfo(curItem) : null;
   let otherChangedVar = null;
   if (!incInfo && !isOff && hV) {
     otherChangedVar = p.variants.find((vr, idx) => idx !== cVar && window.isPriceIncreaseActive(vr));

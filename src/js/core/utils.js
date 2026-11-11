@@ -533,7 +533,15 @@ window.closeModalSmooth = (modalId, boxId, type = 'bottom-sheet', callback = nul
 window.normalizeProductVariantPricing = (p) => {
   if (!p || !Array.isArray(p.variants) || p.variants.length === 0) return p;
 
+  // Setiap varian memiliki harga jual (price), harga modal (costPrice),
+  // dan harga lama (previousPrice) yang sepenuhnya mandiri tanpa mengacu ke produk utama.
   p.variants.forEach(v => {
+    if (v.price !== undefined && v.price !== null) {
+      v.price = Number(v.price) || 0;
+    }
+    if (v.costPrice !== undefined && v.costPrice !== null && v.costPrice !== '') {
+      v.costPrice = Number(v.costPrice) || 0;
+    }
     if (v.previousPrice !== undefined && v.previousPrice !== null && v.previousPrice !== '') {
       v.previousPrice = Number(v.previousPrice);
       if (Number(v.price) === v.previousPrice) {
@@ -542,37 +550,6 @@ window.normalizeProductVariantPricing = (p) => {
       }
     }
   });
-
-  // Jika produk induk p punya previousPrice, cek apakah varian pertama atau varian terkait butuh disinkronkan
-  if (p.previousPrice && Number(p.previousPrice) > 0) {
-    const parentPrev = Number(p.previousPrice);
-    if (Number(p.price) === parentPrev) {
-      delete p.previousPrice;
-      delete p.priceIncreasedAt;
-    } else {
-      if (p.variants.length === 1 && !p.variants[0].previousPrice && Number(p.variants[0].price) !== parentPrev) {
-        p.variants[0].previousPrice = parentPrev;
-        p.variants[0].priceIncreasedAt = p.priceIncreasedAt || Date.now();
-      } else if (p.variants.length > 1) {
-        // Cari varian yang belum punya previousPrice dan selisih harganya wajar dengan parentPrev (bukan beda kelipatan ekstrim grosir)
-        const matchingVar = p.variants.find(v => !v.previousPrice && Number(v.price) !== parentPrev && Math.abs(Number(v.price) - parentPrev) <= parentPrev * 0.7);
-        if (matchingVar) {
-          matchingVar.previousPrice = parentPrev;
-          matchingVar.priceIncreasedAt = p.priceIncreasedAt || Date.now();
-        }
-      }
-    }
-  }
-
-  // Jika varian yang berubah punya previousPrice tetapi p belum punya
-  const activeVar = p.variants.find(v => v.previousPrice && Number(v.previousPrice) > 0 && Number(v.previousPrice) !== Number(v.price));
-  if (activeVar && (!p.previousPrice || Number(p.previousPrice) === Number(p.price))) {
-    // Sinkronkan ke p hanya jika harga varian tersebut sebanding dengan harga dasar p
-    if (Number(p.price) === Number(activeVar.price) || Math.abs(Number(p.price) - Number(activeVar.price)) <= Number(activeVar.price) * 0.3) {
-      p.previousPrice = Number(activeVar.previousPrice);
-      p.priceIncreasedAt = activeVar.priceIncreasedAt || p.priceIncreasedAt || Date.now();
-    }
-  }
 
   return p;
 };
