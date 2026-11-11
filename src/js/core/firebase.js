@@ -104,7 +104,7 @@ const loadAppData = async () => {
 
   // 0. CACHE-BUSTER & FORCE SYNC VERSION:
   // Membersihkan sisa cache lawas di Safari/iOS/Android agar otomatis sinkron ke data Firestore terbaru
-  const APP_DATA_VERSION = '2026-11-11-v6';
+  const APP_DATA_VERSION = '2026-11-11-v7';
   if (sL('freshmart_data_version') !== APP_DATA_VERSION) {
     try {
       localStorage.removeItem('freshmart_last_update');

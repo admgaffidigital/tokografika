@@ -967,7 +967,18 @@ const rProdMod = () => {
       ${p.unit ? `<span class="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700 uppercase tracking-wider">/ ${esc(p.unit)}</span>` : ''}
     </div>
   `);
-  setIn('product-modal-desc', p.desc || '-');
+  const hasDesc = p.desc && String(p.desc).trim() && String(p.desc).trim() !== '-';
+  const descBox = el('product-modal-desc-container');
+  if (descBox) {
+    if (hasDesc) {
+      descBox.classList.remove('hidden');
+      setIn('product-modal-desc', p.desc);
+    } else {
+      descBox.classList.add('hidden');
+    }
+  } else {
+    setIn('product-modal-desc', p.desc || '-');
+  }
 
   setH('product-modal-badges', `
     ${isOff ? `<span class="badge badge-xs bg-slate-700 text-white font-bold"><i class="fa-solid fa-ban text-[8px]"></i> Tidak Tersedia</span>` : ''}

@@ -1799,7 +1799,7 @@ html.dark .badge-counter {
       <div class='mb-2 flex flex-wrap gap-1.5' id='product-modal-badges'></div>
       <h3 class='text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-1.5 leading-snug' id='product-modal-title'>Nama Produk</h3>
       <p class='text-emerald-600 dark:text-emerald-400 font-bold text-xl sm:text-2xl mb-4' id='product-modal-price'>Rp 0</p>
-      <div class='bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 mb-5'>
+      <div class='bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 mb-5' id='product-modal-desc-container'>
         <p class='text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed whitespace-pre-wrap' id='product-modal-desc'>Deskripsi Produk</p>
       </div>
       <div id='product-modal-wholesale-container'></div>
@@ -7094,7 +7094,7 @@ const loadAppData = async () => {
 
   // 0. CACHE-BUSTER & FORCE SYNC VERSION:
   // Membersihkan sisa cache lawas di Safari/iOS/Android agar otomatis sinkron ke data Firestore terbaru
-  const APP_DATA_VERSION = '2026-11-11-v6';
+  const APP_DATA_VERSION = '2026-11-11-v7';
   if (sL('freshmart_data_version') !== APP_DATA_VERSION) {
     try {
       localStorage.removeItem('freshmart_last_update');
@@ -8373,7 +8373,18 @@ const rProdMod = () => {
       ${p.unit ? `<span class="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700/60 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-700 uppercase tracking-wider">/ ${esc(p.unit)}</span>` : ''}
     </div>
   `);
-  setIn('product-modal-desc', p.desc || '-');
+  const hasDesc = p.desc && String(p.desc).trim() && String(p.desc).trim() !== '-';
+  const descBox = el('product-modal-desc-container');
+  if (descBox) {
+    if (hasDesc) {
+      descBox.classList.remove('hidden');
+      setIn('product-modal-desc', p.desc);
+    } else {
+      descBox.classList.add('hidden');
+    }
+  } else {
+    setIn('product-modal-desc', p.desc || '-');
+  }
 
   setH('product-modal-badges', `
     ${isOff ? `<span class="badge badge-xs bg-slate-700 text-white font-bold"><i class="fa-solid fa-ban text-[8px]"></i> Tidak Tersedia</span>` : ''}
